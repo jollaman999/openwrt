@@ -30,7 +30,7 @@ endef
 
 define KernelPackage/qca-ssdk-nohnat
 $(call KernelPackage/qca-ssdk/default-nohnat)
-  DEPENDS:=@!TARGET_ipq_ipq40xx||TARGET_ar71xx
+  DEPENDS:=@!TARGET_ipq_ipq40xx||TARGET_ar71xx +kmod-nf-conntrack +kmod-ppp
   VARIANT:=nohnat
 endef
 
