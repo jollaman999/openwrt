@@ -14,7 +14,8 @@
 
 
 #ifdef KVER32
-#include <linux/kconfig.h>  
+#include <linux/kconfig.h>
+#include <linux/version.h>
 #include <generated/autoconf.h>
 #else
 #include <linux/autoconf.h>
@@ -109,13 +110,21 @@ napt_ct_aging_enable(uint32_t ct_addr)
 	l3num = ct->tuplehash[IP_CT_DIR_ORIGINAL].tuple.src.l3num;
 	protonum = ct->tuplehash[IP_CT_DIR_ORIGINAL].tuple.dst.protonum;
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
     ct->timeout.expires = jiffies+10*HZ;
+#else
+    ct->timeout = (u32)jiffies+10*HZ;
+#endif
 
     if ((l3num == AF_INET) && (protonum == IPPROTO_TCP))
     {
         if (ct->proto.tcp.state == TCP_CONNTRACK_ESTABLISHED)
         {
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
             ct->timeout.expires = jiffies+(5*24*60*60*HZ);
+#else
+            ct->timeout = (u32)jiffies+(5*24*60*60*HZ);
+#endif
         }
     }
 
@@ -342,7 +351,11 @@ napt_ct_list_iterate(uint32_t *hash, uint32_t *iterate)
         if(pos == 0)
         {
             /*get head for list*/
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
             pos = rcu_dereference((&net->ct.hash[*hash])->first);
+#else
+            pos = rcu_dereference((&nf_conntrack_hash[*hash])->first);
+#endif
         }
 
         hlist_nulls_for_each_entry_from(h, pos, hnnode)

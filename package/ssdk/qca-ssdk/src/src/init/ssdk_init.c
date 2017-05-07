@@ -214,7 +214,11 @@ ssdk_phy_rgmii_set(struct qca_phy_priv *priv)
 	struct device_node *np = NULL;
 	u32 rgmii_en = 0, tx_delay = 0, rx_delay = 0;
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 	np = priv->phy->dev.of_node;
+#else
+	np = priv->phy->mdio.dev.of_node;
+#endif
 	if (!np)
 		return;
 
@@ -250,7 +254,11 @@ ssdk_phy_rgmii_set(struct qca_phy_priv *priv)
 {
 	struct ar8327_platform_data *plat_data;
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 	plat_data = priv->phy->dev.platform_data;
+#else
+	plat_data = priv->phy->mdio.dev.platform_data;
+#endif
 	if (plat_data == NULL) {
 		return;
 	}
@@ -609,7 +617,11 @@ int qca_ar8327_hw_init(struct qca_phy_priv *priv)
 	a_uint32_t reg, value, i;
 	a_int32_t len;
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 	np = priv->phy->dev.of_node;
+#else
+	np = priv->phy->mdio.dev.of_node;
+#endif
 	if(!np)
 		return -EINVAL;
 
@@ -877,7 +889,11 @@ qca_ar8327_port_init(struct qca_phy_priv *priv, a_uint32_t port)
 	struct ar8327_port_cfg *port_cfg;
 	a_uint32_t value;
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 	plat_data = priv->phy->dev.platform_data;
+#else
+	plat_data = priv->phy->mdio.dev.platform_data;
+#endif
 	if (plat_data == NULL) {
 		return;
 	}
@@ -933,7 +949,11 @@ qca_ar8327_hw_init(struct qca_phy_priv *priv)
 #ifndef BOARD_AR71XX
 	a_uint32_t value = 0;
 #endif
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 	plat_data = priv->phy->dev.platform_data;
+#else
+	plat_data = priv->phy->mdio.dev.platform_data;
+#endif
 	if (plat_data == NULL) {
 		return -EINVAL;
 	}
@@ -1267,7 +1287,11 @@ qca_phy_config_init(struct phy_device *pdev)
 	struct switch_dev *sw_dev;
 	int ret;
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 	if (pdev->addr != 0) {
+#else
+	if (pdev->mdio.addr != 0) {
+#endif
         pdev->supported |= SUPPORTED_1000baseT_Full;
         pdev->advertising |= ADVERTISED_1000baseT_Full;
 		#ifndef BOARD_AR71XX
@@ -1414,7 +1438,11 @@ qca_phy_read_status(struct phy_device *pdev)
 	struct switch_port_link port_link;
 	int ret = 0;
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 	if (pdev->addr != 0) {
+#else
+	if (pdev->mdio.addr != 0) {
+#endif
 		mutex_lock(&priv->reg_mutex);
 		ret = genphy_read_status(pdev);
 		mutex_unlock(&priv->reg_mutex);
@@ -1422,7 +1450,11 @@ qca_phy_read_status(struct phy_device *pdev)
 	}
 
 	mutex_lock(&priv->reg_mutex);
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 	qca_phy_read_port_link(priv, pdev->addr, &port_link);
+#else
+	qca_phy_read_port_link(priv, pdev->mdio.addr, &port_link);
+#endif
 	mutex_unlock(&priv->reg_mutex);
 
 	pdev->link = !!port_link.link;
@@ -1455,7 +1487,11 @@ qca_phy_read_status(struct phy_device *pdev)
 static int
 qca_phy_config_aneg(struct phy_device *pdev)
 {
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 	if (pdev->addr != 0) {
+#else
+	if (pdev->mdio.addr != 0) {
+#endif
 		return genphy_config_aneg(pdev);
 	}
 
@@ -1486,7 +1522,11 @@ qca_phy_remove(struct phy_device *pdev)
 {
 	struct qca_phy_priv *priv = pdev->priv;
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 	if ((pdev->addr == 0) && priv && (priv->sw_dev.name != NULL)) {
+#else
+	if ((pdev->mdio.addr == 0) && priv && (priv->sw_dev.name != NULL)) {
+#endif
 		qca_phy_mib_work_stop(priv);
 		qm_err_check_work_stop(priv);
 		unregister_switch(&priv->sw_dev);
@@ -1507,7 +1547,9 @@ static struct phy_driver qca_phy_driver = {
 	.config_aneg= &qca_phy_config_aneg,
 	.read_status= &qca_phy_read_status,
 	.features	= PHY_BASIC_FEATURES,
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 	.driver		= { .owner = THIS_MODULE },
+#endif
 };
 
 struct ag71xx_mdio {
@@ -2042,7 +2084,9 @@ static const struct of_device_id ssdk_of_mtable[] = {
 static struct platform_driver ssdk_driver = {
         .driver = {
                 .name    = ssdk_driver_name,
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
                 .owner   = THIS_MODULE,
+#endif
                 .of_match_table = ssdk_of_mtable,
         },
         .probe    = ssdk_probe,
@@ -2408,9 +2452,17 @@ ssdk_plat_init(ssdk_init_cfg *cfg)
 
 		printk("Register QCA PHY driver\n");
 		#ifndef BOARD_AR71XX
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 		return phy_driver_register(&qca_phy_driver);
+#else
+		return phy_driver_register(&qca_phy_driver, THIS_MODULE);
+#endif
 		#else
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 		rv = phy_driver_register(&qca_phy_driver);
+#else
+		rv = phy_driver_register(&qca_phy_driver, THIS_MODULE);
+#endif
 		ssdk_uci_takeover_init();
 		return rv;
 		#endif

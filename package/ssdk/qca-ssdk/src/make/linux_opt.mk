@@ -295,6 +295,72 @@ ifeq (KSLIB, $(MODULE_TYPE))
 
   endif
 
+  ifeq (4_9, $(OS_VER))
+                MODULE_CFLAG += -DKVER34
+                MODULE_CFLAG += -DKVER32
+            MODULE_CFLAG += -DLNX26_22
+	    ifeq ($(ARCH), arm64)
+            MODULE_INC += -I$(SYS_PATH) \
+                  -I$(TOOL_PATH)/../lib/gcc/$(TARGET_NAME)/$(GCC_VERSION)/include/ \
+                  -I$(SYS_PATH)/include \
+              -I$(SYS_PATH)/source/include \
+	      -I$(SYS_PATH)/source/arch/arm64/mach-msm/include \
+              -I$(SYS_PATH)/arch/arm64/mach-msm/include \
+              -I$(SYS_PATH)/source/arch/arm64/include \
+              -I$(SYS_PATH)/arch/arm64/include \
+              -I$(SYS_PATH)/source/arch/arm64/include/asm \
+              -I$(SYS_PATH)/arch/arm64/include/generated \
+              -I$(SYS_PATH)/include/generated/uapi \
+              -I$(SYS_PATH)/include/uapi \
+              -I$(SYS_PATH)/arch/arm64/include/uapi \
+              -I$(SYS_PATH)/source/arch/arm64/include/asm/mach \
+	      -include $(SYS_PATH)/include/linux/kconfig.h
+	    else ifeq ($(ARCH), arm)
+	    MODULE_INC += -I$(SYS_PATH) \
+              -I$(TOOL_PATH)/../lib/gcc/$(TARGET_NAME)/$(GCC_VERSION)/include/ \
+              -I$(SYS_PATH)/include \
+              -I$(SYS_PATH)/source/include \
+              -I$(SYS_PATH)/source/arch/arm/mach-msm/include \
+              -I$(SYS_PATH)/arch/arm/mach-msm/include \
+              -I$(SYS_PATH)/source/arch/arm/include \
+              -I$(SYS_PATH)/arch/arm/include \
+              -I$(SYS_PATH)/source/arch/arm/include/asm \
+              -I$(SYS_PATH)/arch/arm/include/generated \
+              -I$(SYS_PATH)/include/generated/uapi \
+              -I$(SYS_PATH)/include/uapi \
+              -I$(SYS_PATH)/arch/arm/include/uapi \
+              -I$(SYS_PATH)/source/arch/arm/include/asm/mach \
+	          -include $(SYS_PATH)/include/linux/kconfig.h
+            else
+            MODULE_INC += -I$(SYS_PATH) \
+              -I$(TOOL_PATH)/../lib/gcc/$(TARGET_NAME)/$(GCC_VERSION)/include/ \
+              -I$(SYS_PATH)/include \
+	      -I$(SYS_PATH)/source/include \
+              -I$(SYS_PATH)/source/arch/mips/mach-msm/include \
+	      -I$(SYS_PATH)/arch/mips/mach-msm/include \
+	      -I$(SYS_PATH)/source/arch/mips/include \
+              -I$(SYS_PATH)/arch/mips/include \
+	      -I$(SYS_PATH)/source/arch/mips/include/asm \
+	      -I$(SYS_PATH)/arch/mips/include/generated \
+              -I$(SYS_PATH)/include/generated/uapi \
+	      -I$(SYS_PATH)/include/uapi \
+	      -I$(SYS_PATH)/arch/mips/include/uapi \
+	      -I$(SYS_PATH)/source/arch/mips/include/asm/mach \
+	      -include $(SYS_PATH)/include/linux/kconfig.h \
+              -I$(SYS_PATH)/arch/mips/include/asm/mach-ar7240 \
+              -I$(SYS_PATH)/arch/mips/include/asm/mach-generic \
+              -I$(SYS_PATH)/arch/mips/include/asm/mach-ar7 \
+              -I$(SYS_PATH)/usr/include
+
+	    #CPU_CFLAG    = -G 0 -mno-abicalls -fno-pic -pipe -mabi=32 -march=mips32r2
+            ifndef CPU_CFLAG
+            CPU_CFLAG    = -Wstrict-prototypes -fomit-frame-pointer -G 0 -mno-abicalls -fno-strict-aliasing \
+			-O2 -fno-pic -pipe -mabi=32 -march=mips32r2 -DMODULE -mlong-calls -DEXPORT_SYMTAB
+            endif
+            endif
+
+  endif
+
   ifeq (3_14, $(OS_VER))
 		MODULE_CFLAG += -DKVER34
 		MODULE_CFLAG += -DKVER32

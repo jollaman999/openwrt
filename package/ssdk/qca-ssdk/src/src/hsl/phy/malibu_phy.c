@@ -20,6 +20,7 @@
 #include "aos_timer.h"
 #include "hsl_phy.h"
 #include <linux/kconfig.h>
+#include <linux/version.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/phy.h>
@@ -2503,10 +2504,16 @@ a_bool_t malibu_phy_register(void)
 		.probe = malibu_phy_probe,
 		.remove = malibu_phy_remove,
 		.features = PHY_BASIC_FEATURES,
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 		.driver = {.owner = THIS_MODULE},
+#endif
 	};
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 	return phy_driver_register(&qca_malibu_phy_driver);
+#else
+	return phy_driver_register(&qca_malibu_phy_driver, THIS_MODULE);
+#endif
 }
 
 int malibu_phy_init(void)

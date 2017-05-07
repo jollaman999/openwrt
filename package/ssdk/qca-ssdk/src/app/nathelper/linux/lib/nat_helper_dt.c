@@ -15,6 +15,7 @@
 
 #ifdef KVER32
 #include <linux/kconfig.h>
+#include <linux/version.h>
 #include <generated/autoconf.h>
 #else
 #include <linux/autoconf.h>
@@ -695,7 +696,11 @@ napt_ct_counter_sync(a_uint32_t hw_index)
 	napt_entry_t napt = {0};
 	struct nf_conn *ct = NULL;
 	struct nf_conn_counter *cct = NULL;
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 	a_uint64_t delta_jiffies = 0, now_jiffies;
+#else
+	u32 delta_jiffies = 0, now_jiffies;
+#endif
 	a_uint32_t ct_addr = napt_ct_addr[hw_index];
 	struct napt_ct *napt_ct;
 
@@ -707,12 +712,20 @@ napt_ct_counter_sync(a_uint32_t hw_index)
 	napt_ct = napt_ct_buf_ct_find(ct_addr);
 	if (napt_ct) {
 		now_jiffies = (a_uint64_t)get_jiffies_64();
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 		delta_jiffies = now_jiffies - napt_ct->last_jiffies;
+#else
+		delta_jiffies = now_jiffies - (u32)napt_ct->last_jiffies;
+#endif
 		napt_ct->last_jiffies = now_jiffies;
 	}
 	
 	if (!test_bit(IPS_FIXED_TIMEOUT_BIT, &ct->status)) {
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 		ct->timeout.expires += delta_jiffies;
+#else
+		ct->timeout += delta_jiffies;
+#endif
 	}
 
 	if((cct != NULL) && (napt_hw_get_by_index(&napt, hw_index) == 0))
