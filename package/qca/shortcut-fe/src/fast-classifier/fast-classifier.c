@@ -3,7 +3,7 @@
  *	Shortcut forwarding engine connection manager.
  *	fast-classifier
  *
- * Copyright (c) 2013-2016 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2013-2017 The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -241,7 +241,7 @@ static int fast_classifier_recv(struct sk_buff *skb)
 	    (dev->priv_flags & IFF_BRIDGE_PORT)) {
 		master_dev = sfe_dev_get_master(dev);
 		if (!master_dev) {
-			DEBUG_WARN("master dev is NULL\n");
+			DEBUG_WARN("master dev is NULL %s\n");
 			goto rx_exit;
 		}
 		dev = master_dev;
