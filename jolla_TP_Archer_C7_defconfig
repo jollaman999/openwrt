@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# LEDE Configuration
+# OpenWrt Configuration
 #
 CONFIG_MODULES=y
 CONFIG_HAVE_DOT_CONFIG=y
@@ -403,7 +403,7 @@ CONFIG_DEFAULT_logd=y
 CONFIG_DEFAULT_mtd=y
 CONFIG_DEFAULT_netifd=y
 CONFIG_DEFAULT_odhcp6c=y
-CONFIG_DEFAULT_odhcpd=y
+CONFIG_DEFAULT_odhcpd-ipv6only=y
 CONFIG_DEFAULT_opkg=y
 CONFIG_DEFAULT_ppp=y
 CONFIG_DEFAULT_ppp-mod-pppoe=y
@@ -1448,8 +1448,8 @@ CONFIG_BUSYBOX_DEFAULT_NETSTAT=y
 CONFIG_BUSYBOX_DEFAULT_FEATURE_NETSTAT_WIDE=y
 CONFIG_BUSYBOX_DEFAULT_FEATURE_NETSTAT_PRG=y
 # CONFIG_BUSYBOX_DEFAULT_NSLOOKUP is not set
-CONFIG_BUSYBOX_DEFAULT_NSLOOKUP_LEDE=y
-# CONFIG_BUSYBOX_DEFAULT_FEATURE_NSLOOKUP_LEDE_LONG_OPTIONS is not set
+CONFIG_BUSYBOX_DEFAULT_NSLOOKUP_OPENWRT=y
+# CONFIG_BUSYBOX_DEFAULT_FEATURE_NSLOOKUP_OPENWRT_LONG_OPTIONS is not set
 CONFIG_BUSYBOX_DEFAULT_NTPD=y
 CONFIG_BUSYBOX_DEFAULT_FEATURE_NTPD_SERVER=y
 # CONFIG_BUSYBOX_DEFAULT_FEATURE_NTPD_CONF is not set
@@ -1825,6 +1825,7 @@ CONFIG_PACKAGE_ath10k-firmware-qca988x=y
 # CONFIG_PACKAGE_brcmfmac-firmware-usb is not set
 # CONFIG_PACKAGE_brcmsmac-firmware is not set
 # CONFIG_PACKAGE_carl9170-firmware is not set
+# CONFIG_PACKAGE_e100-firmware is not set
 # CONFIG_PACKAGE_edgeport-firmware is not set
 # CONFIG_PACKAGE_ibt-firmware is not set
 # CONFIG_PACKAGE_iwl3945-firmware is not set
@@ -1932,40 +1933,41 @@ CONFIG_PACKAGE_kmod-scsi-core=y
 #
 # Cryptographic API modules
 #
-# CONFIG_PACKAGE_kmod-crypto-aead is not set
+CONFIG_PACKAGE_kmod-crypto-aead=y
 # CONFIG_PACKAGE_kmod-crypto-authenc is not set
-# CONFIG_PACKAGE_kmod-crypto-cbc is not set
+CONFIG_PACKAGE_kmod-crypto-cbc=y
 # CONFIG_PACKAGE_kmod-crypto-ccm is not set
 # CONFIG_PACKAGE_kmod-crypto-cmac is not set
 CONFIG_PACKAGE_kmod-crypto-crc32=y
 CONFIG_PACKAGE_kmod-crypto-crc32c=y
 # CONFIG_PACKAGE_kmod-crypto-ctr is not set
+CONFIG_PACKAGE_kmod-crypto-cts=y
 # CONFIG_PACKAGE_kmod-crypto-deflate is not set
-# CONFIG_PACKAGE_kmod-crypto-des is not set
-# CONFIG_PACKAGE_kmod-crypto-ecb is not set
+CONFIG_PACKAGE_kmod-crypto-des=y
+CONFIG_PACKAGE_kmod-crypto-ecb=y
 # CONFIG_PACKAGE_kmod-crypto-echainiv is not set
 # CONFIG_PACKAGE_kmod-crypto-fcrypt is not set
 # CONFIG_PACKAGE_kmod-crypto-gcm is not set
 # CONFIG_PACKAGE_kmod-crypto-gf128 is not set
 # CONFIG_PACKAGE_kmod-crypto-ghash is not set
 CONFIG_PACKAGE_kmod-crypto-hash=y
-# CONFIG_PACKAGE_kmod-crypto-hmac is not set
+CONFIG_PACKAGE_kmod-crypto-hmac=y
 # CONFIG_PACKAGE_kmod-crypto-hw-ccp is not set
 # CONFIG_PACKAGE_kmod-crypto-hw-geode is not set
 # CONFIG_PACKAGE_kmod-crypto-hw-hifn-795x is not set
 # CONFIG_PACKAGE_kmod-crypto-hw-padlock is not set
 # CONFIG_PACKAGE_kmod-crypto-hw-talitos is not set
-# CONFIG_PACKAGE_kmod-crypto-manager is not set
+CONFIG_PACKAGE_kmod-crypto-manager=y
 # CONFIG_PACKAGE_kmod-crypto-md4 is not set
-# CONFIG_PACKAGE_kmod-crypto-md5 is not set
+CONFIG_PACKAGE_kmod-crypto-md5=y
 # CONFIG_PACKAGE_kmod-crypto-michael-mic is not set
 # CONFIG_PACKAGE_kmod-crypto-misc is not set
-# CONFIG_PACKAGE_kmod-crypto-null is not set
+CONFIG_PACKAGE_kmod-crypto-null=y
 # CONFIG_PACKAGE_kmod-crypto-pcbc is not set
-# CONFIG_PACKAGE_kmod-crypto-pcompress is not set
+CONFIG_PACKAGE_kmod-crypto-pcompress=y
 # CONFIG_PACKAGE_kmod-crypto-rng is not set
 # CONFIG_PACKAGE_kmod-crypto-seqiv is not set
-# CONFIG_PACKAGE_kmod-crypto-sha1 is not set
+CONFIG_PACKAGE_kmod-crypto-sha1=y
 # CONFIG_PACKAGE_kmod-crypto-sha256 is not set
 # CONFIG_PACKAGE_kmod-crypto-sha512 is not set
 # CONFIG_PACKAGE_kmod-crypto-test is not set
@@ -1996,6 +1998,9 @@ CONFIG_PACKAGE_kmod-fs-f2fs=y
 CONFIG_PACKAGE_kmod-fs-msdos=y
 CONFIG_PACKAGE_kmod-fs-nfs=y
 CONFIG_PACKAGE_kmod-fs-nfs-common=y
+CONFIG_PACKAGE_kmod-fs-nfs-common-rpcsec=y
+CONFIG_PACKAGE_kmod-fs-nfs-v3=y
+CONFIG_PACKAGE_kmod-fs-nfs-v4=y
 CONFIG_PACKAGE_kmod-fs-nfsd=y
 CONFIG_PACKAGE_kmod-fs-ntfs=y
 # CONFIG_PACKAGE_kmod-fs-reiserfs is not set
@@ -2306,6 +2311,7 @@ CONFIG_PACKAGE_kmod-gpio-button-hotplug=y
 # CONFIG_PACKAGE_kmod-gpio-pca953x is not set
 # CONFIG_PACKAGE_kmod-gpio-pcf857x is not set
 # CONFIG_PACKAGE_kmod-ikconfig is not set
+# CONFIG_PACKAGE_kmod-it87-wdt is not set
 # CONFIG_PACKAGE_kmod-itco-wdt is not set
 # CONFIG_PACKAGE_kmod-lp is not set
 # CONFIG_PACKAGE_kmod-mmc is not set
@@ -3412,6 +3418,7 @@ CONFIG_PACKAGE_rpcd-mod-rrdns=y
 CONFIG_PACKAGE_terminfo=y
 # CONFIG_PACKAGE_tinycdb is not set
 CONFIG_PACKAGE_uclibcxx=y
+# CONFIG_PACKAGE_uw-imap is not set
 # CONFIG_PACKAGE_xmlrpc-c is not set
 # CONFIG_PACKAGE_xmlrpc-c-client is not set
 # CONFIG_PACKAGE_xmlrpc-c-server is not set
@@ -3799,6 +3806,8 @@ CONFIG_PACKAGE_luci-i18n-firewall-ko=y
 # CONFIG_PACKAGE_bogofilter is not set
 # CONFIG_PACKAGE_clamsmtp is not set
 # CONFIG_PACKAGE_dovecot is not set
+# CONFIG_PACKAGE_dovecot-pigeonhole is not set
+# CONFIG_PACKAGE_dovecot-utils is not set
 # CONFIG_PACKAGE_emailrelay is not set
 # CONFIG_PACKAGE_fdm is not set
 # CONFIG_PACKAGE_greyfix is not set
@@ -3809,7 +3818,6 @@ CONFIG_PACKAGE_luci-i18n-firewall-ko=y
 # CONFIG_PACKAGE_msmtp-nossl is not set
 # CONFIG_PACKAGE_mutt is not set
 # CONFIG_PACKAGE_nail is not set
-# CONFIG_PACKAGE_pigeonhole is not set
 # CONFIG_PACKAGE_postfix is not set
 
 #
@@ -3982,8 +3990,10 @@ CONFIG_PACKAGE_miniupnpd=y
 CONFIG_MINIUPNPD_IGDv2=y
 # CONFIG_PACKAGE_natpmpc is not set
 # CONFIG_PACKAGE_nftables is not set
+# CONFIG_PACKAGE_shorewall is not set
 # CONFIG_PACKAGE_shorewall-core is not set
 # CONFIG_PACKAGE_shorewall-lite is not set
+# CONFIG_PACKAGE_shorewall6 is not set
 # CONFIG_PACKAGE_shorewall6-lite is not set
 # CONFIG_PACKAGE_snort is not set
 
@@ -4020,6 +4030,7 @@ CONFIG_MINIUPNPD_IGDv2=y
 # CONFIG_PACKAGE_bind-rndc is not set
 # CONFIG_PACKAGE_bind-server is not set
 # CONFIG_PACKAGE_bind-tools is not set
+# CONFIG_PACKAGE_danish is not set
 CONFIG_PACKAGE_ddns-scripts=y
 # CONFIG_PACKAGE_ddns-scripts_cloudflare is not set
 # CONFIG_PACKAGE_ddns-scripts_cloudflare.com-v4 is not set
@@ -4435,6 +4446,7 @@ CONFIG_OPENVPN_openssl_ENABLE_SMALL=y
 #
 # CONFIG_PACKAGE_fossil is not set
 # CONFIG_PACKAGE_git is not set
+# CONFIG_PACKAGE_git-http is not set
 # CONFIG_PACKAGE_subversion-client is not set
 # CONFIG_PACKAGE_subversion-libs is not set
 # CONFIG_PACKAGE_subversion-server is not set
@@ -4510,6 +4522,7 @@ CONFIG_PACKAGE_uhttpd-mod-ubus=y
 # CONFIG_PACKAGE_kismet-client is not set
 # CONFIG_PACKAGE_kismet-drone is not set
 # CONFIG_PACKAGE_kismet-server is not set
+# CONFIG_PACKAGE_pixiewps is not set
 # CONFIG_PACKAGE_reaver is not set
 # CONFIG_PACKAGE_wavemon is not set
 # CONFIG_PACKAGE_wifischedule is not set
@@ -4566,6 +4579,7 @@ CONFIG_PACKAGE_hostapd-common=y
 # CONFIG_PACKAGE_httping is not set
 # CONFIG_PACKAGE_httping-nossl is not set
 # CONFIG_PACKAGE_https_dns_proxy is not set
+# CONFIG_PACKAGE_i2pd is not set
 # CONFIG_PACKAGE_ibrdtn-tools is not set
 # CONFIG_PACKAGE_ibrdtnd is not set
 # CONFIG_PACKAGE_ifstat is not set
@@ -4643,8 +4657,13 @@ CONFIG_PACKAGE_odhcpd=y
 #
 # Configuration
 #
-CONFIG_PACKAGE_odhcpd_ext_cer_id=0
-# CONFIG_PACKAGE_odhcpd_dhcpv4_support is not set
+CONFIG_PACKAGE_odhcpd_full_ext_cer_id=0
+CONFIG_PACKAGE_odhcpd-ipv6only=y
+
+#
+# Configuration
+#
+CONFIG_PACKAGE_odhcpd_ipv6only_ext_cer_id=0
 # CONFIG_PACKAGE_ola is not set
 # CONFIG_PACKAGE_omcproxy is not set
 # CONFIG_PACKAGE_openldap-server is not set
@@ -5229,6 +5248,7 @@ CONFIG_PACKAGE_libjson-script=y
 # CONFIG_PACKAGE_maccalc is not set
 # CONFIG_PACKAGE_macchanger is not set
 # CONFIG_PACKAGE_mbtools is not set
+# CONFIG_PACKAGE_mc is not set
 # CONFIG_PACKAGE_mcookie is not set
 # CONFIG_PACKAGE_mmc-utils is not set
 # CONFIG_PACKAGE_moreutils is not set
