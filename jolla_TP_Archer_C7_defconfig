@@ -380,7 +380,7 @@ CONFIG_TARGET_PROFILE="DEVICE_archer-c7-v2"
 CONFIG_TARGET_ARCH_PACKAGES="mips_24kc"
 CONFIG_DEFAULT_TARGET_OPTIMIZATION="-Os -pipe -mno-branch-likely -mips32r2 -mtune=24kc"
 CONFIG_CPU_TYPE="24kc"
-CONFIG_LINUX_4_9=y
+CONFIG_LINUX_4_14=y
 CONFIG_DEFAULT_ath10k-firmware-qca988x=y
 CONFIG_DEFAULT_base-files=y
 CONFIG_DEFAULT_busybox=y
@@ -510,6 +510,7 @@ CONFIG_KERNEL_RELAY=y
 # CONFIG_KERNEL_LXC_MISC is not set
 # CONFIG_KERNEL_SECCOMP_FILTER is not set
 # CONFIG_KERNEL_SECCOMP is not set
+CONFIG_KERNEL_IP_MROUTE=y
 CONFIG_KERNEL_IPV6=y
 CONFIG_KERNEL_IPV6_MULTIPLE_TABLES=y
 CONFIG_KERNEL_IPV6_SUBTREES=y
@@ -1169,7 +1170,7 @@ CONFIG_BUSYBOX_DEFAULT_FEATURE_DMESG_PRETTY=y
 # CONFIG_BUSYBOX_DEFAULT_FEATURE_GPT_LABEL is not set
 # CONFIG_BUSYBOX_DEFAULT_FEATURE_FDISK_ADVANCED is not set
 # CONFIG_BUSYBOX_DEFAULT_FINDFS is not set
-# CONFIG_BUSYBOX_DEFAULT_FLOCK is not set
+CONFIG_BUSYBOX_DEFAULT_FLOCK=y
 # CONFIG_BUSYBOX_DEFAULT_FDFLUSH is not set
 # CONFIG_BUSYBOX_DEFAULT_FREERAMDISK is not set
 # CONFIG_BUSYBOX_DEFAULT_FSCK_MINIX is not set
@@ -1916,6 +1917,7 @@ CONFIG_PACKAGE_wireless-regdb=y
 # CONFIG_PACKAGE_kmod-aoe is not set
 # CONFIG_PACKAGE_kmod-ata-core is not set
 # CONFIG_PACKAGE_kmod-block2mtd is not set
+# CONFIG_PACKAGE_kmod-dax is not set
 # CONFIG_PACKAGE_kmod-dm is not set
 # CONFIG_PACKAGE_kmod-loop is not set
 # CONFIG_PACKAGE_kmod-md-mod is not set
@@ -2266,7 +2268,6 @@ CONFIG_PACKAGE_kmod-ppp=y
 # CONFIG_PACKAGE_kmod-nat46 is not set
 # CONFIG_PACKAGE_kmod-netem is not set
 # CONFIG_PACKAGE_kmod-nlmon is not set
-# CONFIG_PACKAGE_kmod-openvswitch is not set
 # CONFIG_PACKAGE_kmod-pktgen is not set
 # CONFIG_PACKAGE_kmod-ppp-synctty is not set
 # CONFIG_PACKAGE_kmod-pppoa is not set
@@ -2694,6 +2695,7 @@ CONFIG_PACKAGE_lua=y
 # CONFIG_PACKAGE_python-email is not set
 # CONFIG_PACKAGE_python-email-src is not set
 # CONFIG_PACKAGE_python-enum34 is not set
+# CONFIG_PACKAGE_python-enum34-src is not set
 # CONFIG_PACKAGE_python-evdev is not set
 # CONFIG_PACKAGE_python-gdbm is not set
 # CONFIG_PACKAGE_python-gdbm-src is not set
@@ -2753,10 +2755,12 @@ CONFIG_PACKAGE_lua=y
 # CONFIG_PACKAGE_python-xml is not set
 # CONFIG_PACKAGE_python-xml-src is not set
 # CONFIG_PACKAGE_python-yaml is not set
+# CONFIG_PACKAGE_python-zope-interface is not set
 # CONFIG_PACKAGE_python3 is not set
 # CONFIG_PACKAGE_python3-asn1crypto is not set
 # CONFIG_PACKAGE_python3-asyncio is not set
 # CONFIG_PACKAGE_python3-asyncio-src is not set
+# CONFIG_PACKAGE_python3-attrs is not set
 # CONFIG_PACKAGE_python3-base is not set
 # CONFIG_PACKAGE_python3-base-src is not set
 # CONFIG_PACKAGE_python3-bottle is not set
@@ -2785,6 +2789,7 @@ CONFIG_PACKAGE_lua=y
 # CONFIG_PACKAGE_python3-flask is not set
 # CONFIG_PACKAGE_python3-gdbm is not set
 # CONFIG_PACKAGE_python3-gdbm-src is not set
+# CONFIG_PACKAGE_python3-gmpy2 is not set
 # CONFIG_PACKAGE_python3-gnupg is not set
 # CONFIG_PACKAGE_python3-idna is not set
 # CONFIG_PACKAGE_python3-itsdangerous is not set
@@ -2810,6 +2815,7 @@ CONFIG_PACKAGE_lua=y
 # CONFIG_PACKAGE_python3-ncurses-src is not set
 # CONFIG_PACKAGE_python3-openssl is not set
 # CONFIG_PACKAGE_python3-openssl-src is not set
+# CONFIG_PACKAGE_python3-parsley is not set
 # CONFIG_PACKAGE_python3-pip is not set
 # CONFIG_PACKAGE_python3-pip-src is not set
 # CONFIG_PACKAGE_python3-ply is not set
@@ -2820,6 +2826,7 @@ CONFIG_PACKAGE_lua=y
 # CONFIG_PACKAGE_python3-pydoc-src is not set
 # CONFIG_PACKAGE_python3-pyodbc is not set
 # CONFIG_PACKAGE_python3-pyopenssl is not set
+# CONFIG_PACKAGE_python3-service-identity is not set
 # CONFIG_PACKAGE_python3-setuptools is not set
 # CONFIG_PACKAGE_python3-setuptools-src is not set
 # CONFIG_PACKAGE_python3-six is not set
@@ -2833,11 +2840,11 @@ CONFIG_PACKAGE_lua=y
 # CONFIG_PACKAGE_python3-xml is not set
 # CONFIG_PACKAGE_python3-xml-src is not set
 # CONFIG_PACKAGE_python3-yaml is not set
+# CONFIG_PACKAGE_python3-zope-interface is not set
 # CONFIG_PACKAGE_pytz is not set
 # CONFIG_PACKAGE_rcssmin is not set
 # CONFIG_PACKAGE_simplejson is not set
 # CONFIG_PACKAGE_twisted is not set
-# CONFIG_PACKAGE_zope-interface is not set
 
 #
 # Ruby
@@ -3039,6 +3046,8 @@ CONFIG_OPENSSL_OPTIMIZE_SPEED=y
 #
 # CONFIG_PACKAGE_bcg729 is not set
 # CONFIG_PACKAGE_dahdi-tools-libtonezone is not set
+# CONFIG_PACKAGE_gsmlib is not set
+# CONFIG_PACKAGE_libctb is not set
 # CONFIG_PACKAGE_libiksemel is not set
 # CONFIG_PACKAGE_libosip2 is not set
 # CONFIG_PACKAGE_libpj is not set
@@ -3259,6 +3268,7 @@ CONFIG_PACKAGE_libmagic=y
 # CONFIG_PACKAGE_libmcrypt is not set
 # CONFIG_PACKAGE_libmicrohttpd is not set
 # CONFIG_PACKAGE_libmicrohttpd-no-ssl is not set
+# CONFIG_PACKAGE_libmilter-sendmail is not set
 # CONFIG_PACKAGE_libminiupnpc is not set
 # CONFIG_PACKAGE_libmms is not set
 # CONFIG_PACKAGE_libmnl is not set
@@ -3438,6 +3448,11 @@ CONFIG_PACKAGE_uclibcxx=y
 # CONFIG_PACKAGE_xmlrpc-c-server is not set
 # CONFIG_PACKAGE_yajl is not set
 CONFIG_PACKAGE_zlib=y
+
+#
+# Configuration
+#
+CONFIG_ZLIB_OPTIMIZE_SPEED=y
 
 #
 # LuCI
@@ -3761,6 +3776,7 @@ CONFIG_PACKAGE_luci-i18n-firewall-ko=y
 # CONFIG_PACKAGE_luci-i18n-statistics-zh-tw is not set
 # CONFIG_PACKAGE_luci-i18n-uhttpd-ja is not set
 # CONFIG_PACKAGE_luci-i18n-uhttpd-pt-br is not set
+# CONFIG_PACKAGE_luci-i18n-uhttpd-ru is not set
 # CONFIG_PACKAGE_luci-i18n-upnp-ca is not set
 # CONFIG_PACKAGE_luci-i18n-upnp-cs is not set
 # CONFIG_PACKAGE_luci-i18n-upnp-de is not set
@@ -3877,6 +3893,7 @@ CONFIG_PACKAGE_minidlna=y
 # CONFIG_PACKAGE_mjpg-streamer is not set
 # CONFIG_PACKAGE_motion is not set
 # CONFIG_PACKAGE_tvheadend is not set
+# CONFIG_PACKAGE_v4l2rtspserver is not set
 # CONFIG_PACKAGE_vips is not set
 # CONFIG_PACKAGE_xupnpd is not set
 # CONFIG_PACKAGE_youtube-dl is not set
@@ -4051,6 +4068,7 @@ CONFIG_PACKAGE_ddns-scripts=y
 # CONFIG_PACKAGE_ddns-scripts_godaddy.com-v1 is not set
 # CONFIG_PACKAGE_ddns-scripts_no-ip_com is not set
 # CONFIG_PACKAGE_ddns-scripts_nsupdate is not set
+# CONFIG_PACKAGE_ddns-scripts_route53-v1 is not set
 # CONFIG_PACKAGE_dhcp-forwarder is not set
 # CONFIG_PACKAGE_dnscrypt-proxy is not set
 # CONFIG_PACKAGE_dnscrypt-proxy-resolvers is not set
@@ -4159,27 +4177,6 @@ CONFIG_PACKAGE_ddns-scripts=y
 #
 # Open vSwitch
 #
-# CONFIG_PACKAGE_openvswitch is not set
-# CONFIG_PACKAGE_openvswitch-base is not set
-# CONFIG_PACKAGE_openvswitch-ovn is not set
-# CONFIG_PACKAGE_openvswitch-ovn-base is not set
-# CONFIG_PACKAGE_openvswitch-ovn-controller is not set
-# CONFIG_PACKAGE_openvswitch-ovn-controller-vtep is not set
-# CONFIG_PACKAGE_openvswitch-ovn-detrace is not set
-# CONFIG_PACKAGE_openvswitch-ovn-docker-overlay-driver is not set
-# CONFIG_PACKAGE_openvswitch-ovn-docker-underlay-driver is not set
-# CONFIG_PACKAGE_openvswitch-ovn-nbctl is not set
-# CONFIG_PACKAGE_openvswitch-ovn-sbctl is not set
-# CONFIG_PACKAGE_openvswitch-ovn-trace is not set
-# CONFIG_PACKAGE_openvswitch-ovs-dpctl-top is not set
-# CONFIG_PACKAGE_openvswitch-ovs-l3ping is not set
-# CONFIG_PACKAGE_openvswitch-ovs-parse-backtrace is not set
-# CONFIG_PACKAGE_openvswitch-ovs-pcap is not set
-# CONFIG_PACKAGE_openvswitch-ovs-tcpdump is not set
-# CONFIG_PACKAGE_openvswitch-ovs-tcpundump is not set
-# CONFIG_PACKAGE_openvswitch-ovsdb-client is not set
-# CONFIG_PACKAGE_openvswitch-python is not set
-# CONFIG_PACKAGE_openvswitch-vtep is not set
 
 #
 # Printing
@@ -4952,6 +4949,7 @@ CONFIG_PACKAGE_bash=y
 #
 # CONFIG_PACKAGE_dahdi-cfg is not set
 # CONFIG_PACKAGE_dahdi-monitor is not set
+# CONFIG_PACKAGE_gsm-utils is not set
 
 #
 # Terminal

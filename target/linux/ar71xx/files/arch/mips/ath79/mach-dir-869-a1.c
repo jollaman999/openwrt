@@ -118,7 +118,8 @@ static struct ar8327_platform_data dir869a1_ar8327_data = {
 static struct mdio_board_info dir869a1_mdio0_info[] = {
 	{
 		.bus_id = "ag71xx-mdio.0",
-		.phy_addr = 0,
+		.modalias = "ag71xx-mdio",
+		.mdio_addr = 0,
 		.platform_data = &dir869a1_ar8327_data,
 	},
 };

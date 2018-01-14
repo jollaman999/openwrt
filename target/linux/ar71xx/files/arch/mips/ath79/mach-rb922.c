@@ -108,7 +108,8 @@ static struct at803x_platform_data rb922gs_at803x_data = {
 static struct mdio_board_info rb922gs_mdio0_info[] = {
 	{
 		.bus_id = "ag71xx-mdio.0",
-		.phy_addr = RB922_PHY_ADDR,
+		.modalias = "ag71xx-mdio",
+		.mdio_addr = RB922_PHY_ADDR,
 		.platform_data = &rb922gs_at803x_data,
 	},
 };
