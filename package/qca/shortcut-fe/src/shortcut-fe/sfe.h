@@ -18,7 +18,7 @@
 /*
  * Debug output verbosity level.
  */
-#define DEBUG_LEVEL 2
+#define DEBUG_LEVEL 0
 
 #if (DEBUG_LEVEL < 1)
 #define DEBUG_ERROR(s, ...)

@@ -37,7 +37,7 @@
  */
 #define SFE_IPV6_UNALIGNED_IP_HEADER 1
 #if SFE_IPV6_UNALIGNED_IP_HEADER
-#define SFE_IPV6_UNALIGNED_STRUCT __attribute__((packed))
+#define SFE_IPV6_UNALIGNED_STRUCT __attribute__((packed, aligned(2)))
 #else
 #define SFE_IPV6_UNALIGNED_STRUCT
 #endif
