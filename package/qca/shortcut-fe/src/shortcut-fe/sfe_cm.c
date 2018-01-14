@@ -101,6 +101,7 @@ struct sfe_cm {
 
 static struct sfe_cm __sc;
 
+
 /*
  * sfe_cm_incr_exceptions()
  *	increase an exception counter.
@@ -964,10 +965,79 @@ static ssize_t sfe_cm_get_exceptions(struct device *dev,
 }
 
 /*
+ * sfe_cm_get_stop
+ * 	dump stop
+ */
+static ssize_t sfe_cm_get_stop(struct device *dev,
+                               struct device_attribute *attr,
+                               char *buf)
+{
+	int (*fast_recv)(struct sk_buff *skb);
+	rcu_read_lock();
+	fast_recv = rcu_dereference(fast_nat_recv);
+	rcu_read_unlock();
+	return snprintf(buf, (ssize_t)PAGE_SIZE, "%d\n", fast_recv ? 0 : 1);
+}
+
+static ssize_t sfe_cm_set_stop(struct device *dev,
+                               struct device_attribute *attr,
+                               const char *buf, size_t count)
+{
+	int ret;
+	u32 num;
+	int (*fast_recv)(struct sk_buff *skb);
+
+	ret = kstrtou32(buf, 0, &num);
+	if (ret)
+		return ret;
+
+	/*
+	 * Hook/Unhook the receive path in the network stack.
+	 */
+	if (num) {
+		RCU_INIT_POINTER(fast_nat_recv, NULL);
+	} else {
+		rcu_read_lock();
+		fast_recv = rcu_dereference(fast_nat_recv);
+		rcu_read_unlock();
+		if (!fast_recv) {
+			BUG_ON(fast_nat_recv);
+			RCU_INIT_POINTER(fast_nat_recv, sfe_cm_recv);
+		}
+	}
+
+	DEBUG_TRACE("sfe_cm_stop = %d\n", num);
+	return count;
+}
+
+/*
+ * sfe_cm_get_defunct_all
+ * 	dump state of SFE
+ */
+static ssize_t sfe_cm_get_defunct_all(struct device *dev,
+                                      struct device_attribute *attr,
+                                      char *buf)
+{
+	return snprintf(buf, (ssize_t)PAGE_SIZE, "%d\n", 0);
+}
+
+static ssize_t sfe_cm_set_defunct_all(struct device *dev,
+                                      struct device_attribute *attr,
+                                      const char *buf, size_t count)
+{
+	sfe_ipv4_destroy_all_rules_for_dev(NULL);
+	sfe_ipv6_destroy_all_rules_for_dev(NULL);
+	return count;
+}
+
+/*
  * sysfs attributes.
  */
-static const struct device_attribute sfe_cm_exceptions_attr =
-	__ATTR(exceptions, S_IRUGO, sfe_cm_get_exceptions, NULL);
+static const struct device_attribute sfe_attrs[] = {
+	__ATTR(exceptions, S_IRUGO, sfe_cm_get_exceptions, NULL),
+	__ATTR(stop, S_IWUSR | S_IRUGO, sfe_cm_get_stop, sfe_cm_set_stop),
+	__ATTR(defunct_all, S_IWUSR | S_IRUGO, sfe_cm_get_defunct_all, sfe_cm_set_defunct_all),
+};
 
 /*
  * sfe_cm_init()
@@ -976,6 +1046,7 @@ static int __init sfe_cm_init(void)
 {
 	struct sfe_cm *sc = &__sc;
 	int result = -1;
+	size_t i, j;
 
 	DEBUG_INFO("SFE CM init\n");
 
@@ -988,13 +1059,13 @@ static int __init sfe_cm_init(void)
 		goto exit1;
 	}
 
-	/*
-	 * Create sys/sfe_cm/exceptions
-	 */
-	result = sysfs_create_file(sc->sys_sfe_cm, &sfe_cm_exceptions_attr.attr);
-	if (result) {
-		DEBUG_ERROR("failed to register exceptions file: %d\n", result);
-		goto exit2;
+	for (i = 0; i < ARRAY_SIZE(sfe_attrs); i++) {
+		result = sysfs_create_file(sc->sys_sfe_cm, &sfe_attrs[i].attr);
+		if (result) {
+			DEBUG_ERROR("failed to register %s : %d\n",
+				    sfe_attrs[i].attr.name, result);
+			goto exit2;
+		}
 	}
 
 	sc->dev_notifier.notifier_call = sfe_cm_device_event;
@@ -1037,12 +1108,6 @@ static int __init sfe_cm_init(void)
 	spin_lock_init(&sc->lock);
 
 	/*
-	 * Hook the receive path in the network stack.
-	 */
-	BUG_ON(athrs_fast_nat_recv);
-	RCU_INIT_POINTER(athrs_fast_nat_recv, sfe_cm_recv);
-
-	/*
 	 * Hook the shortcut sync callback.
 	 */
 	sfe_ipv4_register_sync_rule_callback(sfe_cm_sync_rule);
@@ -1060,6 +1125,9 @@ exit3:
 	unregister_inetaddr_notifier(&sc->inet_notifier);
 	unregister_netdevice_notifier(&sc->dev_notifier);
 exit2:
+	for (j = 0; j < i; j++) {
+		sysfs_remove_file(sc->sys_sfe_cm, &sfe_attrs[j].attr);
+	}
 	kobject_put(sc->sys_sfe_cm);
 
 exit1:
