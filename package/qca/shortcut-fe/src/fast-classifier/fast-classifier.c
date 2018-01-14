@@ -221,6 +221,10 @@ int fast_classifier_recv(struct sk_buff *skb)
 	if (skip_to_bridge_ingress &&
 	    (dev->priv_flags & IFF_BRIDGE_PORT)) {
 		master_dev = sfe_dev_get_master(dev);
+		if (!master_dev) {
+			DEBUG_WARN("master dev is NULL\n");
+			goto rx_exit;
+		}
 		dev = master_dev;
 	}
 
