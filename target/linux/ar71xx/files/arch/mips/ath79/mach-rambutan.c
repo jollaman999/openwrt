@@ -39,8 +39,7 @@ static struct at803x_platform_data rambutan_ar8032_data = {
 static struct mdio_board_info rambutan_mdio0_info[] = {
 	{
 		.bus_id = "ag71xx-mdio.0",
-		.modalias = "ag71xx-mdio",
-		.mdio_addr = 0,
+		.phy_addr = 0,
 		.platform_data = &rambutan_ar8032_data,
 	},
 };
@@ -53,8 +52,7 @@ static struct at803x_platform_data rambutan_ar8033_data = {
 static struct mdio_board_info rambutan_mdio1_info[] = {
 	{
 		.bus_id = "ag71xx-mdio.1",
-		.modalias = "ag71xx-mdio",
-		.mdio_addr = 0,
+		.phy_addr = 0,
 		.platform_data = &rambutan_ar8033_data,
 	},
 };

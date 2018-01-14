@@ -105,8 +105,7 @@ static struct at803x_platform_data mr900_at803x_data = {
 static struct mdio_board_info mr900_mdio0_info[] = {
 	{
 		.bus_id = "ag71xx-mdio.0",
-		.modalias = "ag71xx-mdio",
-		.mdio_addr = 5,
+		.phy_addr = 5,
 		.platform_data = &mr900_at803x_data,
 	},
 };
