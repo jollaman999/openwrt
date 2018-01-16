@@ -119,6 +119,13 @@ a_uint32_t ssdk_wan_bmp_get(a_uint32_t dev_id)
 	return cfg->port_cfg.wan_bmp;
 }
 
+ssdk_port_phyinfo* ssdk_port_phyinfo_get(a_uint32_t dev_id, a_uint32_t port_id)
+{
+	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
+
+	return &cfg->port_phyinfo[port_id-1];
+}
+
 hsl_reg_mode ssdk_switch_reg_access_mode_get(a_uint32_t dev_id)
 {
 	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
@@ -474,8 +481,10 @@ static void ssdk_dt_parse_scheduler_cfg(a_uint32_t dev_id, struct device_node *s
 static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint32_t dev_id)
 {
 	struct device_node *phy_info_node, *port_node;
+	ssdk_port_phyinfo *port_phyinfo;
 	a_uint32_t port_id, phy_addr;
 	a_bool_t phy_c45, phy_combo;
+	const char *mac_type = NULL;
 	sw_error_t rv = SW_OK;
 
 	phy_info_node = of_get_child_by_name(switch_node, "qcom,port_phyinfo");
@@ -491,13 +500,36 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 
 		phy_c45 = of_property_read_bool(port_node,
 				"ethernet-phy-ieee802.3-c45");
-
 		phy_combo = of_property_read_bool(port_node,
 				"ethernet-phy-combo");
 
 		hsl_port_phy_combo_capability_set(dev_id, port_id, phy_combo);
 		hsl_port_phy_c45_capability_set(dev_id, port_id, phy_c45);
 		hsl_phy_address_init(dev_id, port_id, phy_addr);
+
+		port_phyinfo = ssdk_port_phyinfo_get(dev_id, port_id);
+		if (port_phyinfo) {
+			port_phyinfo->port_id = port_id;
+			port_phyinfo->phy_addr = phy_addr;
+			if (phy_c45) {
+				port_phyinfo->phy_features |= PHY_F_CLAUSE45;
+			}
+
+			if (phy_combo) {
+				port_phyinfo->phy_features |= PHY_F_COMBO;
+			}
+
+			if (!of_property_read_string(port_node, "port_mac_sel", &mac_type))
+			{
+				SSDK_INFO("[PORT %d] port_mac_sel = %s\n", port_id, mac_type);
+				if (!strncmp("QGMAC_PORT", mac_type, 10)) {
+					port_phyinfo->phy_features |= PHY_F_QGMAC;
+				}
+				else if (!strncmp("XGMAC_PORT", mac_type, 10)) {
+					port_phyinfo->phy_features |= PHY_F_XGMAC;
+				}
+			}
+		}
 	}
 
 	return rv;
@@ -507,9 +539,10 @@ static void ssdk_dt_parse_mdio(a_uint32_t dev_id, struct device_node *switch_nod
 {
 	struct device_node *mdio_node = NULL;
 	struct device_node *child = NULL;
+	ssdk_port_phyinfo *port_phyinfo;
 	a_uint32_t len = 0, i = 1;
 	const __be32 *phy_addr;
-	const __be32 * c45_phy;
+	const __be32 *c45_phy;
 
 	/* prefer to get phy info from ess-switch node */
 	if (SW_OK == ssdk_dt_parse_phy_info(switch_node, dev_id))
@@ -527,10 +560,23 @@ static void ssdk_dt_parse_mdio(a_uint32_t dev_id, struct device_node *switch_nod
 			if (phy_addr) {
 				hsl_phy_address_init(dev_id, i, be32_to_cpup(phy_addr));
 			}
+
 			c45_phy = of_get_property(child, "compatible", &len);
 			if (c45_phy) {
 				hsl_port_phy_c45_capability_set(dev_id, i, A_TRUE);
 			}
+
+			port_phyinfo = ssdk_port_phyinfo_get(dev_id, i);
+			if (port_phyinfo) {
+				port_phyinfo->port_id = i;
+				if (phy_addr) {
+					port_phyinfo->phy_addr = be32_to_cpup(phy_addr);
+				}
+				if (c45_phy) {
+					port_phyinfo->phy_features |= PHY_F_CLAUSE45;
+				}
+			}
+
 			i++;
 			if (i >= SW_MAX_NR_PORT) {
 				break;
@@ -805,13 +851,53 @@ sw_error_t ssdk_dt_parse(ssdk_init_cfg *cfg, a_uint32_t num, a_uint32_t *dev_id)
 
 	return SW_OK;
 }
+
+static a_uint32_t ssdk_get_switch_port_nums(a_uint32_t dev_id)
+{
+	struct device_node *child, *mdio_np, *port_np, *switch_np, *switch_instance;
+	a_uint32_t port_count = 0, switch_id = 0;
+
+	switch_instance = of_find_node_by_name(NULL, "ess-instance");
+	if (switch_instance) { /* multi ess-switch */
+		for_each_available_child_of_node(switch_instance, switch_np) {
+			if (of_property_read_u32(switch_np, "device_id", &switch_id) < 0) {
+				switch_id = 0;
+			}
+			if (switch_id == dev_id) {
+				port_np = of_find_node_by_name(switch_np, "qcom,port_phyinfo");
+				if (port_np) {
+					for_each_available_child_of_node(port_np, child)
+						port_count++;
+					break;
+				}
+			}
+		}
+	} else { /* single ess-switch */
+		switch_np = of_find_node_by_name(NULL, "ess-switch");
+		if (switch_np && dev_id == 0) {
+			port_np = of_find_node_by_name(switch_np, "qcom,port_phyinfo");
+			if (port_np) {
+				for_each_available_child_of_node(port_np, child)
+					port_count++;
+			} else {
+				mdio_np = of_find_node_by_name(NULL, "mido");
+				if (mdio_np) {
+					for_each_available_child_of_node(mdio_np, child)
+						port_count++;
+				}
+			}
+		}
+	}
+
+	return port_count;
+}
 #endif
 #endif
 
 int ssdk_switch_device_num_init(void)
 {
 	struct device_node *switch_instance = NULL;
-	a_uint32_t len = 0;
+	a_uint32_t len = 0, port_n = 0;
 	const __be32 *num_devices;
 	a_uint32_t dev_num = 1, dev_id = 0;
 
@@ -833,6 +919,21 @@ int ssdk_switch_device_num_init(void)
 		if (ssdk_dt_global.ssdk_dt_switch_nodes[dev_id] == NULL) {
 			return -ENOMEM;
 		}
+
+#ifndef BOARD_AR71XX
+#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
+		port_n = ssdk_get_switch_port_nums(dev_id);
+#endif
+#endif
+		if (!port_n) {
+			port_n = SW_MAX_NR_PORT;
+		}
+		ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->port_phyinfo = kzalloc(port_n *
+				sizeof(ssdk_port_phyinfo), GFP_KERNEL);
+		if (!ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->port_phyinfo) {
+			return -ENOMEM;
+		}
+
 		ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->switch_reg_access_mode = HSL_REG_MDIO;
 		ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->psgmii_reg_access_mode = HSL_REG_MDIO;
 		ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->ess_switch_flag = A_FALSE;
@@ -849,6 +950,11 @@ void ssdk_switch_device_num_exit(void)
 	a_uint32_t dev_id = 0;
 
 	for (dev_id = 0; dev_id < ssdk_dt_global.num_devices; dev_id++) {
+		if (ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->port_phyinfo) {
+			kfree(ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->port_phyinfo);
+			ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->port_phyinfo = NULL;
+		}
+
 		if (ssdk_dt_global.ssdk_dt_switch_nodes[dev_id])
 			kfree(ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]);
 		ssdk_dt_global.ssdk_dt_switch_nodes[dev_id] = NULL;

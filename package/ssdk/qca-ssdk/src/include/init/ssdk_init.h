@@ -168,6 +168,24 @@ enum ssdk_port_wrapper_cfg {
 
 	} led_source_cfg_t;
 
+enum {
+	QCA_PHY_F_CLAUSE45_BIT,
+	QCA_PHY_F_COMBO_BIT,
+	QCA_PHY_F_QGMAC_BIT,
+	QCA_PHY_F_XGMAC_BIT,
+	QCA_PHY_F_I2C_BIT,
+	QCA_PHY_FEATURE_MAX
+};
+
+#define phy_features_t     a_uint16_t
+#define __PHY_F_BIT(bit)    ((phy_features_t)1 << (bit))
+#define _PHY_F(name)       __PHY_F_BIT(QCA_PHY_F_##name##_BIT)
+
+#define PHY_F_CLAUSE45     _PHY_F(CLAUSE45)
+#define PHY_F_COMBO        _PHY_F(COMBO)
+#define PHY_F_QGMAC        _PHY_F(QGMAC)
+#define PHY_F_XGMAC        _PHY_F(XGMAC)
+#define PHY_F_I2C          _PHY_F(I2C)
 
 typedef struct
 {
@@ -194,7 +212,6 @@ typedef struct
 	a_uint32_t      mac_mode1;
 	a_uint32_t      mac_mode2;
 } ssdk_init_cfg;
-
 
 #if defined ATHENA
 #define def_init_cfg  {.reg_mode = HSL_MDIO, .cpu_mode = HSL_CPU_2};

@@ -68,6 +68,13 @@ typedef struct {
 
 typedef struct
 {
+	a_uint8_t port_id;
+	a_uint8_t phy_addr;
+	phy_features_t phy_features;
+} ssdk_port_phyinfo;
+
+typedef struct
+{
 	a_uint32_t switchreg_base_addr;
 	a_uint32_t switchreg_size;
 	a_uint32_t psgmiireg_base_addr;
@@ -79,6 +86,7 @@ typedef struct
 	struct clk *ess_clk;
 	struct clk *cmnblk_clk;
 	ssdk_port_cfg   port_cfg;
+	ssdk_port_phyinfo *port_phyinfo;
 	a_uint32_t      mac_mode;
 	a_uint32_t      mac_mode1;
 	a_uint32_t      mac_mode2;
@@ -122,6 +130,7 @@ a_uint32_t ssdk_dt_global_set_mac_mode(a_uint32_t dev_id, a_uint32_t index, a_ui
 a_uint32_t ssdk_cpu_bmp_get(a_uint32_t dev_id);
 a_uint32_t ssdk_lan_bmp_get(a_uint32_t dev_id);
 a_uint32_t ssdk_wan_bmp_get(a_uint32_t dev_id);
+ssdk_port_phyinfo* ssdk_port_phyinfo_get(a_uint32_t dev_id, a_uint32_t port_id);
 hsl_reg_mode ssdk_switch_reg_access_mode_get(a_uint32_t dev_id);
 hsl_reg_mode ssdk_uniphy_reg_access_mode_get(a_uint32_t dev_id);
 hsl_reg_mode ssdk_psgmii_reg_access_mode_get(a_uint32_t dev_id);
