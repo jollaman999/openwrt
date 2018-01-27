@@ -209,8 +209,8 @@
  	return 0;
  
  err_proto:
---- a/net/netfilter/nf_conntrack_ecache.c	2017-06-07 18:06:14.000000000 +0800
-+++ b/net/netfilter/nf_conntrack_ecache.c	2017-06-24 12:06:30.439749498 +0800
+--- a/net/netfilter/nf_conntrack_ecache.c	2018-01-24 03:50:18.000000000 +0900
++++ b/net/netfilter/nf_conntrack_ecache.c	2018-01-27 14:22:04.978025771 +0900
 @@ -18,6 +18,7 @@
  #include <linux/stddef.h>
  #include <linux/err.h>
@@ -219,7 +219,7 @@
  #include <linux/kernel.h>
  #include <linux/netdevice.h>
  #include <linux/slab.h>
-@@ -117,26 +118,20 @@ static void ecache_work(struct work_stru
+@@ -117,26 +118,19 @@
   * disabled softirqs */
  void nf_ct_deliver_cached_events(struct nf_conn *ct)
  {
@@ -229,7 +229,7 @@
  	struct nf_conntrack_ecache *e;
  	struct nf_ct_event item;
 -	int ret;
- 
+-
 -	rcu_read_lock();
 -	notify = rcu_dereference(net->ct.nf_conntrack_event_cb);
 -	if (notify == NULL)
@@ -249,7 +249,7 @@
  
  	/* We make a copy of the missed event cache without taking
  	 * the lock, thus we may send missed events twice. However,
-@@ -144,62 +139,35 @@ void nf_ct_deliver_cached_events(struct
+@@ -144,63 +138,34 @@
  	missed = e->missed;
  
  	if (!((events | missed) & e->ctmask))
@@ -277,7 +277,7 @@
 -		e->missed &= ~missed;
 +	e->missed &= ~missed;
  	spin_unlock_bh(&ct->lock);
- 
+-
 -out_unlock:
 -	rcu_read_unlock();
  }
@@ -319,6 +319,7 @@
 -	BUG_ON(notify != new);
 -	RCU_INIT_POINTER(net->ct.nf_conntrack_event_cb, NULL);
 -	mutex_unlock(&nf_ct_ecache_mutex);
+-	/* synchronize_rcu() is called from ctnetlink_exit. */
 +	return atomic_notifier_chain_unregister(&net->ct.nf_conntrack_chain, nb);
  }
  EXPORT_SYMBOL_GPL(nf_conntrack_unregister_notifier);
