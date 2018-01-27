@@ -16,6 +16,7 @@
  * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 #include <linux/module.h>
+#include <linux/version.h>
 #include <linux/sysfs.h>
 #include <linux/skbuff.h>
 #include <net/route.h>
@@ -1383,7 +1384,11 @@ static void fast_classifier_sync_rule(struct sfe_connection_sync *sis)
 	 */
 	if (!test_bit(IPS_FIXED_TIMEOUT_BIT, &ct->status)) {
 		spin_lock_bh(&ct->lock);
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 		ct->timeout.expires += sis->delta_jiffies;
+#else
+		ct->timeout += (u32)sis->delta_jiffies;
+#endif
 		spin_unlock_bh(&ct->lock);
 	}
 
