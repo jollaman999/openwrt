@@ -26,7 +26,6 @@
 #include <linux/netfilter_bridge.h>
 #include <linux/netfilter_ipv6.h>
 #include <net/netfilter/nf_conntrack_acct.h>
-#include <net/netfilter/nf_conntrack_ecache.h>
 #include <net/netfilter/nf_conntrack_helper.h>
 #include <net/netfilter/nf_conntrack_zones.h>
 #include <net/netfilter/nf_conntrack_core.h>
@@ -122,7 +121,7 @@ static inline void sfe_cm_incr_exceptions(sfe_cm_exception_t except)
  *
  * Returns 1 if the packet is forwarded or 0 if it isn't.
  */
-int sfe_cm_recv(struct sk_buff *skb)
+static int sfe_cm_recv(struct sk_buff *skb)
 {
 	struct net_device *dev;
 
@@ -230,7 +229,7 @@ static bool sfe_cm_find_dev_and_mac_addr(sfe_ip_addr_t *addr, struct net_device 
 	}
 
 	rcu_read_lock();
-	neigh = sfe_dst_get_neighbour(dst, addr);
+	neigh = dst_neigh_lookup(dst, addr);
 	if (unlikely(!neigh)) {
 		rcu_read_unlock();
 		dst_release(dst);
@@ -608,7 +607,7 @@ static unsigned int sfe_cm_post_routing(struct sk_buff *skb, int is_v4)
 
 	sic.src_mtu = src_dev->mtu;
 	sic.dest_mtu = dest_dev->mtu;
-
+	sic.mark = skb->mark;
 	if (likely(is_v4)) {
 		sfe_ipv4_create_rule(&sic);
 	} else {
@@ -659,16 +658,10 @@ sfe_cm_ipv6_post_routing_hook(hooknum, ops, skb, in_unused, out, okfn)
  * sfe_cm_conntrack_event()
  *	Callback event invoked when a conntrack connection's state changes.
  */
-#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
 static int sfe_cm_conntrack_event(struct notifier_block *this,
 				  unsigned long events, void *ptr)
-#else
-static int sfe_cm_conntrack_event(unsigned int events, struct nf_ct_event *item)
-#endif
 {
-#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
 	struct nf_ct_event *item = ptr;
-#endif
 	struct sfe_connection_destroy sid;
 	struct nf_conn *ct = item->ct;
 	struct nf_conntrack_tuple orig_tuple;
@@ -740,15 +733,9 @@ static int sfe_cm_conntrack_event(unsigned int events, struct nf_ct_event *item)
 /*
  * Netfilter conntrack event system to monitor connection tracking changes
  */
-#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
 static struct notifier_block sfe_cm_conntrack_notifier = {
 	.notifier_call = sfe_cm_conntrack_event,
 };
-#else
-static struct nf_ct_event_notifier sfe_cm_conntrack_notifier = {
-	.fcn = sfe_cm_conntrack_event,
-};
-#endif
 #endif
 
 /*
@@ -859,39 +846,6 @@ static void sfe_cm_sync_rule(struct sfe_connection_sync *sis)
 		}
 		spin_unlock_bh(&ct->lock);
 		break;
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 4, 0))
-	case IPPROTO_UDP:
-		/*
-		 * In Linux connection track, UDP flow has two timeout values:
-		 * /proc/sys/net/netfilter/nf_conntrack_udp_timeout:
-		 * 	this is for uni-direction UDP flow, normally its value is 60 seconds
-		 * /proc/sys/net/netfilter/nf_conntrack_udp_timeout_stream:
-		 * 	this is for bi-direction UDP flow, normally its value is 180 seconds
-		 *
-		 * Linux will update timer of UDP flow to stream timeout once it seen packets
-		 * in reply direction. But if flow is accelerated by NSS or SFE, Linux won't
-		 * see any packets. So we have to do the same thing in our stats sync message.
-		 */
-		if (!test_bit(IPS_ASSURED_BIT, &ct->status) && acct) {
-			u_int64_t reply_pkts = atomic64_read(&SFE_ACCT_COUNTER(acct)[IP_CT_DIR_REPLY].packets);
-
-			if (reply_pkts != 0) {
-				struct nf_conntrack_l4proto *l4proto;
-				unsigned int *timeouts;
-
-				set_bit(IPS_SEEN_REPLY_BIT, &ct->status);
-				set_bit(IPS_ASSURED_BIT, &ct->status);
-
-				l4proto = __nf_ct_l4proto_find((sis->is_v6 ? AF_INET6 : AF_INET), IPPROTO_UDP);
-				timeouts = nf_ct_timeout_lookup(&init_net, ct, l4proto);
-
-				spin_lock_bh(&ct->lock);
-				ct->timeout.expires = jiffies + timeouts[UDP_CT_REPLIED];
-				spin_unlock_bh(&ct->lock);
-			}
-		}
-		break;
-#endif /*KERNEL_VERSION(3, 4, 0)*/
 	}
 
 	/*
@@ -903,13 +857,17 @@ static void sfe_cm_sync_rule(struct sfe_connection_sync *sis)
 /*
  * sfe_cm_device_event()
  */
-int sfe_cm_device_event(struct notifier_block *this, unsigned long event, void *ptr)
+static int sfe_cm_device_event(struct notifier_block *this, unsigned long event, void *ptr)
 {
 	struct net_device *dev = SFE_DEV_EVENT_PTR(ptr);
 
-	if (dev && (event == NETDEV_DOWN)) {
-		sfe_ipv4_destroy_all_rules_for_dev(dev);
-		sfe_ipv6_destroy_all_rules_for_dev(dev);
+	switch (event) {
+	case NETDEV_DOWN:
+		if (dev) {
+			sfe_ipv4_destroy_all_rules_for_dev(dev);
+			sfe_ipv6_destroy_all_rules_for_dev(dev);
+		}
+		break;
 	}
 
 	return NOTIFY_DONE;
@@ -921,12 +879,7 @@ int sfe_cm_device_event(struct notifier_block *this, unsigned long event, void *
 static int sfe_cm_inet_event(struct notifier_block *this, unsigned long event, void *ptr)
 {
 	struct net_device *dev = ((struct in_ifaddr *)ptr)->ifa_dev->dev;
-
-	if (dev && (event == NETDEV_DOWN)) {
-		sfe_ipv4_destroy_all_rules_for_dev(dev);
-	}
-
-	return NOTIFY_DONE;
+	return sfe_propagate_dev_event(sfe_cm_device_event, this, event, dev);
 }
 
 /*
@@ -935,12 +888,7 @@ static int sfe_cm_inet_event(struct notifier_block *this, unsigned long event, v
 static int sfe_cm_inet6_event(struct notifier_block *this, unsigned long event, void *ptr)
 {
 	struct net_device *dev = ((struct inet6_ifaddr *)ptr)->idev->dev;
-
-	if (dev && (event == NETDEV_DOWN)) {
-		sfe_ipv6_destroy_all_rules_for_dev(dev);
-	}
-
-	return NOTIFY_DONE;
+	return sfe_propagate_dev_event(sfe_cm_device_event, this, event, dev);
 }
 
 /*
@@ -1089,21 +1037,15 @@ static int __init sfe_cm_init(void)
 		goto exit3;
 	}
 
+#ifdef CONFIG_NF_CONNTRACK_EVENTS
 	/*
 	 * Register a notifier hook to get fast notifications of expired connections.
-	 * Note: In CONFIG_NF_CONNTRACK_CHAIN_EVENTS enabled case, nf_conntrack_register_notifier()
-	 * function always returns 0.
 	 */
-#ifdef CONFIG_NF_CONNTRACK_EVENTS
-#ifdef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
-	(void)nf_conntrack_register_notifier(&init_net, &sfe_cm_conntrack_notifier);
-#else
 	result = nf_conntrack_register_notifier(&init_net, &sfe_cm_conntrack_notifier);
 	if (result < 0) {
 		DEBUG_ERROR("can't register nf notifier hook: %d\n", result);
 		goto exit4;
 	}
-#endif
 #endif
 
 	spin_lock_init(&sc->lock);
@@ -1116,10 +1058,8 @@ static int __init sfe_cm_init(void)
 	return 0;
 
 #ifdef CONFIG_NF_CONNTRACK_EVENTS
-#ifndef CONFIG_NF_CONNTRACK_CHAIN_EVENTS
 exit4:
 	nf_unregister_hooks(sfe_cm_ops_post_routing, ARRAY_SIZE(sfe_cm_ops_post_routing));
-#endif
 #endif
 exit3:
 	unregister_inet6addr_notifier(&sc->inet6_notifier);
@@ -1153,7 +1093,7 @@ static void __exit sfe_cm_exit(void)
 	/*
 	 * Unregister our receive callback.
 	 */
-	RCU_INIT_POINTER(athrs_fast_nat_recv, NULL);
+	RCU_INIT_POINTER(fast_nat_recv, NULL);
 
 	/*
 	 * Wait for all callbacks to complete.
