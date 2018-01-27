@@ -7,7 +7,7 @@ PKG_SOURCE_PROTO:=git
 PKG_BRANCH:=master
 PKG_RELEASE:=1
 
-include $(INCLUDE_DIR)/local-development.mk
+include $(INCLUDE_DIR)/local-development_qca-ssdk.mk
 ifeq ($(DUMP)$(PKG_VERSION),)
   PKG_VERSION:=$(shell git ls-remote $(PKG_SOURCE_URL) $(PKG_BRANCH) | cut -b -7)
 endif
