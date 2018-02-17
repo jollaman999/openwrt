@@ -137,7 +137,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
  		add_taint_module(mod, TAINT_CRAP, LOCKDEP_STILL_OK);
 --- a/scripts/mod/modpost.c
 +++ b/scripts/mod/modpost.c
-@@ -1965,7 +1965,9 @@ static void read_symbols(char *modname)
+@@ -1965,7 +1965,9 @@
  		symname = remove_dot(info.strtab + sym->st_name);
  
  		handle_modversions(mod, &info, sym, symname);
@@ -147,7 +147,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
  	}
  	if (!is_vmlinux(modname) ||
  	     (is_vmlinux(modname) && vmlinux_section_warnings))
-@@ -2109,7 +2111,9 @@ static void add_header(struct buffer *b,
+@@ -2109,7 +2111,9 @@
  	buf_printf(b, "#include <linux/vermagic.h>\n");
  	buf_printf(b, "#include <linux/compiler.h>\n");
  	buf_printf(b, "\n");
@@ -157,7 +157,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
  	buf_printf(b, "\n");
  	buf_printf(b, "__visible struct module __this_module\n");
  	buf_printf(b, "__attribute__((section(\".gnu.linkonce.this_module\"))) = {\n");
-@@ -2126,16 +2130,20 @@ static void add_header(struct buffer *b,
+@@ -2126,8 +2130,10 @@
  
  static void add_intree_flag(struct buffer *b, int is_intree)
  {
@@ -166,6 +166,9 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
  		buf_printf(b, "\nMODULE_INFO(intree, \"Y\");\n");
 +#endif
  }
+ 
+ /* Cannot check for assembler */
+@@ -2140,10 +2146,12 @@
  
  static void add_staging_flag(struct buffer *b, const char *name)
  {
@@ -178,7 +181,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
  }
  
  /* In kernel, this size is defined in linux/module.h;
-@@ -2239,11 +2247,13 @@ static void add_depends(struct buffer *b
+@@ -2247,11 +2255,13 @@
  
  static void add_srcversion(struct buffer *b, struct module *mod)
  {
@@ -192,7 +195,7 @@ Signed-off-by: Felix Fietkau <nbd@nbd.name>
  }
  
  static void write_if_changed(struct buffer *b, const char *fname)
-@@ -2477,7 +2487,9 @@ int main(int argc, char **argv)
+@@ -2486,7 +2496,9 @@
  		add_staging_flag(&buf, mod->name);
  		err |= add_versions(&buf, mod);
  		add_depends(&buf, mod, modules);
