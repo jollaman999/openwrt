@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2014-2018, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -44,6 +44,8 @@ sw_error_t cmd_data_check_portid(char *cmdstr, fal_port_t * val, a_uint32_t size
 sw_error_t cmd_data_check_portmap(char *cmdstr, fal_pbmp_t * val, a_uint32_t size);
 sw_error_t cmd_data_check_confirm(char *cmdstr, a_bool_t def, a_bool_t * val, a_uint32_t size);
 
+sw_error_t cmd_data_check_uint64(char *cmd_str, a_uint64_t * arg_val,
+                                 a_uint32_t size);
 sw_error_t cmd_data_check_uint32(char *cmd_str, a_uint32_t * arg_val,
                                  a_uint32_t size);
 sw_error_t cmd_data_check_uint16(char *cmd_str, a_uint32_t * arg_val,
@@ -68,6 +70,8 @@ sw_error_t cmd_data_check_fdbentry(char *cmdstr, void *val, a_uint32_t size);
 sw_error_t cmd_data_check_maclimit_ctrl(char *cmdstr, void *val, a_uint32_t size);
 sw_error_t cmd_data_check_macaddr(char *cmdstr, void *val, a_uint32_t size);
 
+void cmd_data_print_uint64(a_uint8_t * param_name, a_uint64_t * buf,
+                           a_uint32_t size);
 void cmd_data_print_uint32(a_uint8_t * param_name, a_uint32_t * buf,
                            a_uint32_t size);
 void cmd_data_print_uint16(a_uint8_t * param_name, a_uint32_t * buf,
@@ -846,6 +850,100 @@ cmd_data_check_debug_port_counter_status(char *info, fal_counter_en_t *val, a_ui
 
 void
 cmd_data_print_debug_port_counter_status(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ptp_config(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_ptp_config(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ptp_reference_clock(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_ptp_reference_clock(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ptp_rx_timestamp_mode(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_ptp_rx_timestamp_mode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ptp_direction(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ptp_pkt_info(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_ptp_pkt_info(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ptp_time(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_ptp_time(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ptp_grandmaster_mode(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_ptp_grandmaster_mode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ptp_security(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_ptp_security(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ptp_pps_sig_ctrl(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_ptp_pps_sig_ctrl(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ptp_asym_correction(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_ptp_asym_correction(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ptp_waveform(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_ptp_waveform(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ptp_tod_uart(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_ptp_tod_uart(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ptp_enhanced_timestamp_engine(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_ptp_enhanced_timestamp_engine(a_uint8_t * param_name, a_uint32_t * buf,
+		a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ptp_trigger(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_ptp_trigger(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ptp_capture(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_ptp_capture(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ptp_interrupt(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_ptp_interrupt(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 #endif
 

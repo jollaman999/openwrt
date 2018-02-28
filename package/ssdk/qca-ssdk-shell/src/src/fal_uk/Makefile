@@ -126,6 +126,10 @@ ifeq (TRUE, $(IN_POLICER))
   SRC_LIST += fal_policer.c
 endif
 
+ifeq (TRUE, $(IN_PTP))
+  SRC_LIST += fal_ptp.c
+endif
+
 include $(PRJ_PATH)/make/components.mk
 include $(PRJ_PATH)/make/defs.mk
 include $(PRJ_PATH)/make/target.mk

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2014-2018, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -158,7 +158,7 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_INT16, NULL, NULL),
     SW_TYPE_DEF(SW_UINT32, cmd_data_check_uint32, cmd_data_print_uint32),
     SW_TYPE_DEF(SW_INT32, NULL, NULL),
-    SW_TYPE_DEF(SW_UINT64, NULL, NULL),
+    SW_TYPE_DEF(SW_UINT64, cmd_data_check_uint64, cmd_data_print_uint64),
     SW_TYPE_DEF(SW_INT64, NULL, NULL),
     SW_TYPE_DEF(SW_CAP, cmd_data_check_capable, cmd_data_print_capable),
     SW_TYPE_DEF(SW_DUPLEX, cmd_data_check_duplex, cmd_data_print_duplex),
@@ -302,22 +302,56 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_COSMAP, cmd_data_check_cosmap, cmd_data_print_cosmap),
     SW_TYPE_DEF(SW_SCHEDULER, cmd_data_check_queue_scheduler, cmd_data_print_queue_scheduler),
     SW_TYPE_DEF(SW_QUEUEBMP, cmd_data_check_ring_queue, cmd_data_print_ring_queue),
-    SW_TYPE_DEF(SW_PORT_SHAPER_TOKEN_CONFIG, cmd_data_check_port_shaper_token_config, cmd_data_print_port_shaper_token_config),
-    SW_TYPE_DEF(SW_SHAPER_TOKEN_CONFIG, cmd_data_check_shaper_token_config, cmd_data_print_shaper_token_config),
-    SW_TYPE_DEF(SW_PORT_SHAPER_CONFIG, cmd_data_check_port_shaper_config, cmd_data_print_port_shaper_config),
-    SW_TYPE_DEF(SW_SHAPER_CONFIG, cmd_data_check_shaper_config, cmd_data_print_shaper_config),
-    SW_TYPE_DEF(SW_BMSTHRESH, cmd_data_check_bm_static_thresh, cmd_data_print_bm_static_thresh),
-    SW_TYPE_DEF(SW_BMDTHRESH, cmd_data_check_bm_dynamic_thresh, cmd_data_print_bm_dynamic_thresh),
+    SW_TYPE_DEF(SW_PORT_SHAPER_TOKEN_CONFIG, cmd_data_check_port_shaper_token_config,
+		    cmd_data_print_port_shaper_token_config),
+    SW_TYPE_DEF(SW_SHAPER_TOKEN_CONFIG, cmd_data_check_shaper_token_config,
+		    cmd_data_print_shaper_token_config),
+    SW_TYPE_DEF(SW_PORT_SHAPER_CONFIG, cmd_data_check_port_shaper_config,
+		    cmd_data_print_port_shaper_config),
+    SW_TYPE_DEF(SW_SHAPER_CONFIG, cmd_data_check_shaper_config,
+		    cmd_data_print_shaper_config),
+    SW_TYPE_DEF(SW_BMSTHRESH, cmd_data_check_bm_static_thresh,
+		    cmd_data_print_bm_static_thresh),
+    SW_TYPE_DEF(SW_BMDTHRESH, cmd_data_check_bm_dynamic_thresh,
+		    cmd_data_print_bm_dynamic_thresh),
     SW_TYPE_DEF(SW_BMPORTCNT, NULL, cmd_data_print_bm_port_counter),
     SW_TYPE_DEF(SW_MODULE, cmd_data_check_module, cmd_data_print_module),
     SW_TYPE_DEF(SW_FUNC_CTRL, cmd_data_check_func_ctrl, cmd_data_print_func_ctrl),
     SW_TYPE_DEF(SW_QM_CNT, NULL, cmd_data_print_queue_cnt),
-	SW_TYPE_DEF(SW_POLICER_ACL_CONFIG, cmd_data_check_acl_policer_config, cmd_data_print_acl_policer_config),
-    SW_TYPE_DEF(SW_POLICER_PORT_CONFIG, cmd_data_check_port_policer_config, cmd_data_print_port_policer_config),
-    SW_TYPE_DEF(SW_POLICER_CMD_CONFIG, cmd_data_check_policer_cmd_config, cmd_data_print_policer_cmd_config),
+    SW_TYPE_DEF(SW_POLICER_ACL_CONFIG, cmd_data_check_acl_policer_config,
+		    cmd_data_print_acl_policer_config),
+    SW_TYPE_DEF(SW_POLICER_PORT_CONFIG, cmd_data_check_port_policer_config,
+		    cmd_data_print_port_policer_config),
+    SW_TYPE_DEF(SW_POLICER_CMD_CONFIG, cmd_data_check_policer_cmd_config,
+		    cmd_data_print_policer_cmd_config),
     SW_TYPE_DEF(SW_POLICER_COUNTER, NULL, cmd_data_print_policer_counter_infor),
     SW_TYPE_DEF(SW_POLICER_GLOBAL_COUNTER, NULL, cmd_data_print_policer_global_counter_infor),
     SW_TYPE_DEF(SW_RESOURCE_SCHE, NULL, cmd_data_print_port_scheduler_resource),
+    SW_TYPE_DEF(SW_PTP_CONFIG, cmd_data_check_ptp_config, cmd_data_print_ptp_config),
+    SW_TYPE_DEF(SW_PTP_REFERENCE_CLOCK, cmd_data_check_ptp_reference_clock,
+		    cmd_data_print_ptp_reference_clock),
+    SW_TYPE_DEF(SW_PTP_RX_TIMESTAMP_MODE, cmd_data_check_ptp_rx_timestamp_mode,
+		    cmd_data_print_ptp_rx_timestamp_mode),
+    SW_TYPE_DEF(SW_PTP_DIRECTION, cmd_data_check_ptp_direction, NULL),
+    SW_TYPE_DEF(SW_PTP_PKT_INFO, cmd_data_check_ptp_pkt_info, cmd_data_print_ptp_pkt_info),
+    SW_TYPE_DEF(SW_PTP_TIME, cmd_data_check_ptp_time, cmd_data_print_ptp_time),
+    SW_TYPE_DEF(SW_PTP_GRANDMASTER_MODE, cmd_data_check_ptp_grandmaster_mode,
+		    cmd_data_print_ptp_grandmaster_mode),
+    SW_TYPE_DEF(SW_PTP_SECURITY, cmd_data_check_ptp_security,
+		    cmd_data_print_ptp_security),
+    SW_TYPE_DEF(SW_PTP_PPS_SIGNAL_CONTROL, cmd_data_check_ptp_pps_sig_ctrl,
+		    cmd_data_print_ptp_pps_sig_ctrl),
+    SW_TYPE_DEF(SW_PTP_ASYM_CORRECTION, cmd_data_check_ptp_asym_correction,
+		    cmd_data_print_ptp_asym_correction),
+    SW_TYPE_DEF(SW_PTP_OUTPUT_WAVEFORM, cmd_data_check_ptp_waveform,
+		    cmd_data_print_ptp_waveform),
+    SW_TYPE_DEF(SW_PTP_TOD_UART, cmd_data_check_ptp_tod_uart,
+		    cmd_data_print_ptp_tod_uart),
+    SW_TYPE_DEF(SW_PTP_ENHANCED_TS_ENGINE, cmd_data_check_ptp_enhanced_timestamp_engine,
+		    cmd_data_print_ptp_enhanced_timestamp_engine),
+    SW_TYPE_DEF(SW_PTP_TRIGGER, cmd_data_check_ptp_trigger, cmd_data_print_ptp_trigger),
+    SW_TYPE_DEF(SW_PTP_CAPTURE, cmd_data_check_ptp_capture, cmd_data_print_ptp_capture),
+    SW_TYPE_DEF(SW_PTP_INTERRUPT, cmd_data_check_ptp_interrupt, cmd_data_print_ptp_interrupt),
 };
 
 sw_data_type_t *
@@ -432,6 +466,35 @@ void
 cmd_data_print_uint32(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
     dprintf("[%s]:0x%x", param_name, *(a_uint32_t *) buf);
+}
+
+sw_error_t
+cmd_data_check_uint64(char *cmd_str, a_uint64_t * arg_val, a_uint32_t size)
+{
+    if (cmd_str == NULL)
+        return SW_BAD_PARAM;
+
+    if (0 == cmd_str[0])
+    {
+        return SW_BAD_VALUE;
+    }
+
+    if (strspn(cmd_str, "1234567890abcdefABCDEFXx") != strlen(cmd_str)){
+        return SW_BAD_VALUE;
+    }
+
+    if (cmd_str[0] == '0' && (cmd_str[1] == 'x' || cmd_str[1] == 'X'))
+        sscanf(cmd_str, "%llx", arg_val);
+    else
+        sscanf(cmd_str, "%lld", arg_val);
+
+    return SW_OK;
+}
+
+void
+cmd_data_print_uint64(a_uint8_t * param_name, a_uint64_t * buf, a_uint32_t size)
+{
+    dprintf("[%s]:0x%llx", param_name, *(a_uint64_t *) buf);
 }
 
 sw_error_t
@@ -25591,5 +25654,2044 @@ cmd_data_print_policer_global_counter_infor(a_uint8_t * param_name, a_uint32_t *
 	dprintf("\n[policer_bypass_byte_counter]:0x%llx", entry->policer_bypass_byte_counter);
 
 	return;
+}
+
+sw_error_t
+cmd_data_check_ptp_config(char *info, void *val, a_uint32_t size)
+{
+	char *cmd;
+	sw_error_t rv;
+	fal_ptp_config_t entry;
+
+	aos_mem_zero(&entry, sizeof (fal_ptp_config_t));
+
+	/* ptp en */
+	do
+	{
+		cmd = get_sub_cmd("ptp_en", "yes");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: <yes/no/y/n>\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.ptp_en),
+					sizeof (a_bool_t));
+			if (SW_OK != rv)
+				dprintf("usage: <yes/no/y/n>\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	/* clock mode */
+	do
+	{
+		cmd = get_sub_cmd("clock_mode", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: 0 for OC, 1 for BC, 2 for E2ETC and 3 for P2PTC\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint8(cmd, &(entry.clock_mode), sizeof(a_uint8_t));
+			if (SW_OK != rv)
+				dprintf("usage: 0 for OC, 1 for BC, 2 for E2ETC and 3 for P2PTC\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* step mode */
+	do
+	{
+		cmd = get_sub_cmd("step_mode", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: 0 for one step, 1 for two step and 2 for auto mode\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint8(cmd, &(entry.step_mode), sizeof(a_uint8_t));
+			if (SW_OK != rv)
+				dprintf("usage: 0 for one step, 1 for two step, 2 for auto mode\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	*(fal_ptp_config_t *)val = entry;
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_print_ptp_config(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+{
+	fal_ptp_config_t *entry;
+
+	entry = (fal_ptp_config_t *) buf;
+	dprintf("[ptp_en]:%s\n", entry->ptp_en ? "YES" : "NO");
+	dprintf("[clock_mode]:%d [step_mode]:%d\n", entry->clock_mode, entry->step_mode);
+	dprintf("\n");
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_ptp_reference_clock(char *info, void *val, a_uint32_t size)
+{
+	char *cmd;
+	sw_error_t rv;
+	a_uint32_t *pValue = (a_uint32_t *)val;
+
+	if (info == NULL)
+		return SW_BAD_PARAM;
+
+	if (!strcasecmp(info, "local"))
+	{
+		*pValue = FAL_REF_CLOCK_LOCAL;
+	}
+	else if (!strcasecmp(info, "synce"))
+	{
+		*pValue = FAL_REF_CLOCK_SYNCE;
+	}
+	else if (!strcasecmp(info, "external"))
+	{
+		*pValue = FAL_REF_CLOCK_EXTERNAL;
+	}
+	else
+	{
+		//dprintf("input error \n");
+		return SW_BAD_VALUE;
+	}
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_print_ptp_reference_clock(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+{
+	if (*(a_uint32_t *) buf == FAL_REF_CLOCK_LOCAL)
+	{
+		dprintf("local");
+	}
+	else if (*(a_uint32_t *) buf == FAL_REF_CLOCK_SYNCE)
+	{
+		dprintf("synce");
+	}
+	else if (*(a_uint32_t *) buf == FAL_REF_CLOCK_EXTERNAL)
+	{
+		dprintf("external");
+	}
+	else
+	{
+		dprintf("UNKNOWN VALUE");
+	}
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_ptp_rx_timestamp_mode(char *info, void *val, a_uint32_t size)
+{
+	char *cmd;
+	sw_error_t rv;
+	a_uint32_t *pValue = (a_uint32_t *)val;
+
+	if (info == NULL)
+		return SW_BAD_PARAM;
+
+	if (!strcasecmp(info, "mdio"))
+	{
+		*pValue = FAL_RX_TS_MDIO;
+	}
+	else if (!strcasecmp(info, "embed"))
+	{
+		*pValue = FAL_RX_TS_EMBED;
+	}
+	else
+	{
+		//dprintf("input error \n");
+		return SW_BAD_VALUE;
+	}
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_print_ptp_rx_timestamp_mode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+{
+	if (*(a_uint32_t *) buf == FAL_RX_TS_MDIO)
+	{
+		dprintf("mdio");
+	}
+	else if (*(a_uint32_t *) buf == FAL_RX_TS_EMBED)
+	{
+		dprintf("embed");
+	}
+	else
+	{
+		dprintf("UNKNOWN VALUE");
+	}
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_ptp_direction(char *info, void *val, a_uint32_t size)
+{
+	char *cmd;
+	sw_error_t rv;
+	a_uint32_t *pValue = (a_uint32_t *)val;
+
+	if (info == NULL)
+		return SW_BAD_PARAM;
+
+	if (!strcasecmp(info, "rx"))
+	{
+		*pValue = FAL_RX_DIRECTION;
+	}
+	else if (!strcasecmp(info, "tx"))
+	{
+		*pValue = FAL_TX_DIRECTION;
+	}
+	else
+	{
+		//dprintf("input error \n");
+		return SW_BAD_VALUE;
+	}
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_ptp_pkt_info(char *info, void *val, a_uint32_t size)
+{
+	char *cmd;
+	sw_error_t rv;
+	fal_ptp_pkt_info_t *pEntry = (fal_ptp_pkt_info_t *)val;
+
+	memset(pEntry, 0, sizeof(fal_ptp_pkt_info_t));
+
+	/* sequence id */
+	do
+	{
+		cmd = get_sub_cmd("sequence_id", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: sequence id, 16bits \n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->sequence_id), sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: sequence id, 16bits \n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* clock identify */
+	do
+	{
+		cmd = get_sub_cmd("clock_identify", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: clock identify, 64bits\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint64(cmd, &(pEntry->clock_identify),
+					sizeof(a_uint64_t));
+			if (SW_OK != rv)
+				dprintf("usage: clock identify, 64bits\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* port number */
+	do
+	{
+		cmd = get_sub_cmd("port_number", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: source port id, 16bits\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->port_number), sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: source port id, 16bits\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* message type */
+	do
+	{
+		cmd = get_sub_cmd("msg_type", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: message, 4bits\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->msg_type), sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: message type, 4bits\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_print_ptp_pkt_info(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+{
+	fal_ptp_pkt_info_t *entry;
+
+	entry = (fal_ptp_pkt_info_t *) buf;
+	dprintf("[sequence_id]:%s\n", entry->sequence_id);
+	dprintf("[clock_identify]:0x%llx\n", entry->clock_identify);
+	dprintf("[port_number]:%d [msg_type]:%d\n", entry->port_number, entry->msg_type);
+	dprintf("\n");
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_ptp_time(char *info, void *val, a_uint32_t size)
+{
+	char *cmd;
+	sw_error_t rv;
+	fal_ptp_time_t *pEntry = (fal_ptp_time_t *)val;
+
+	memset(pEntry, 0, sizeof(fal_ptp_time_t));
+
+	/* seconds */
+	do
+	{
+		cmd = get_sub_cmd("seconds", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: seconds 48bits \n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint64(cmd, &(pEntry->seconds), sizeof(a_uint64_t));
+			if (SW_OK != rv)
+				dprintf("usage: seconds 48bits \n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* nanoseconds */
+	do
+	{
+		cmd = get_sub_cmd("nanoseconds", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: nanoseconds 32bits\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->nanoseconds),
+					sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: nanoseconds 32bits\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* fracnanoseconds */
+	do
+	{
+		cmd = get_sub_cmd("fracnanoseconds", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: fracnanoseconds 32bits \n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->fracnanoseconds),
+					sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: fracnanoseconds 32bits\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_print_ptp_time(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+{
+	fal_ptp_time_t *entry;
+
+	entry = (fal_ptp_time_t *) buf;
+	dprintf("[seconds]:0x%llx\n", entry->seconds);
+	dprintf("[nanoseconds]:0x%x\n", entry->nanoseconds);
+	dprintf("[fracnanoseconds]:0x%x\n", entry->fracnanoseconds);
+	dprintf("\n");
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_ptp_grandmaster_mode(char *info, void *val, a_uint32_t size)
+{
+	char *cmd;
+	sw_error_t rv;
+	fal_ptp_grandmaster_mode_t *pEntry = (fal_ptp_grandmaster_mode_t *)val;
+
+	memset(pEntry, 0, sizeof(fal_ptp_grandmaster_mode_t));
+
+	/* grandmaster mode en */
+	do
+	{
+		cmd = get_sub_cmd("grandmaster_mode_en", "yes");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: <yes/no/y/n>\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_confirm(cmd, A_FALSE, &(pEntry->grandmaster_mode_en),
+					sizeof (a_bool_t));
+			if (SW_OK != rv)
+				dprintf("usage: <yes/no/y/n>\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	/* grandmaster second sync en */
+	do
+	{
+		cmd = get_sub_cmd("grandmaster_second_sync_en", "yes");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: <yes/no/y/n>\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_confirm(cmd, A_FALSE,
+					&(pEntry->grandmaster_second_sync_en),
+					sizeof (a_bool_t));
+			if (SW_OK != rv)
+				dprintf("usage: <yes/no/y/n>\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	/* frequency offset */
+	do
+	{
+		cmd = get_sub_cmd("freq_offset", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: enum maxfrequency offset\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint8(cmd, &(pEntry->freq_offset), sizeof(a_uint8_t));
+			if (SW_OK != rv)
+				dprintf("usage: enum maxfrequency offset\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* right shift in kp */
+	do
+	{
+		cmd = get_sub_cmd("right_shift_in_kp", "yes");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: <yes/no/y/n>\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_confirm(cmd, A_FALSE, &(pEntry->right_shift_in_kp),
+					sizeof (a_bool_t));
+			if (SW_OK != rv)
+				dprintf("usage: <yes/no/y/n>\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* kp value */
+	do
+	{
+		cmd = get_sub_cmd("kp_value", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: kp value\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->kp_value), sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: kp value\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* right shift in ki */
+	do
+	{
+		cmd = get_sub_cmd("right_shift_in_ki", "yes");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: <yes/no/y/n>\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_confirm(cmd, A_FALSE, &(pEntry->right_shift_in_ki),
+					sizeof (a_bool_t));
+			if (SW_OK != rv)
+				dprintf("usage: <yes/no/y/n>\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* ki value */
+	do
+	{
+		cmd = get_sub_cmd("ki_value", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: ki value\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->ki_value), sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: ki value\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* ns sync mode */
+	do
+	{
+		cmd = get_sub_cmd("ns_sync_mode", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: 0 for PPSIN, 1 for HWPLL, 2 for SWPLL\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint8(cmd, &(pEntry->ns_sync_mode), sizeof(a_uint8_t));
+			if (SW_OK != rv)
+				dprintf("usage: 0 for PPSIN, 1 for HWPLL, 2 for SWPLL\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_print_ptp_grandmaster_mode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+{
+	fal_ptp_grandmaster_mode_t *entry;
+
+	entry = (fal_ptp_grandmaster_mode_t *) buf;
+	dprintf("[grandmaster_mode_en]:%s\n",
+			entry->grandmaster_mode_en ? "YES" : "NO");
+	dprintf("[grandmaster_second_sync_en]:%s\n",
+			entry->grandmaster_second_sync_en ? "YES" : "NO");
+	dprintf("[freq_offset]:%d\n", entry->freq_offset);
+	dprintf("[right_shift_in_kp]:%s [kp_value]:%d\n",
+			entry->right_shift_in_kp ? "YES" : "NO", entry->kp_value);
+	dprintf("[right_shift_in_ki]:%s [ki_value]:%d\n",
+			entry->right_shift_in_ki ? "YES" : "NO", entry->ki_value);
+	dprintf("[ns_sync_mode]:%d\n", entry->ns_sync_mode);
+	dprintf("\n");
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_ptp_security(char *info, void *val, a_uint32_t size)
+{
+	char *cmd;
+	sw_error_t rv;
+	fal_ptp_security_t *pEntry = (fal_ptp_security_t *)val;
+
+	memset(pEntry, 0, sizeof(fal_ptp_security_t));
+
+	/* address_check_en */
+	do
+	{
+		cmd = get_sub_cmd("address_check_en", "yes");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: <yes/no/y/n>\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_confirm(cmd, A_FALSE, &(pEntry->address_check_en),
+					sizeof (a_bool_t));
+			if (SW_OK != rv)
+				dprintf("usage: <yes/no/y/n>\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	/* ipv6_udp_checksum_recal_en */
+	do
+	{
+		cmd = get_sub_cmd("ipv6_udp_checksum_recal_en", "yes");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: <yes/no/y/n>\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_confirm(cmd, A_FALSE,
+					&(pEntry->ipv6_udp_checksum_recal_en),
+					sizeof (a_bool_t));
+			if (SW_OK != rv)
+				dprintf("usage: <yes/no/y/n>\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	/* version_check_en */
+	do
+	{
+		cmd = get_sub_cmd("version_check_en", "yes");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: <yes/no/y/n>\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_confirm(cmd, A_FALSE,
+					&(pEntry->version_check_en),
+					sizeof (a_bool_t));
+			if (SW_OK != rv)
+				dprintf("usage: <yes/no/y/n>\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+
+	/* ptp_version */
+	do
+	{
+		cmd = get_sub_cmd("ptp_version", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: version, 8bits\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->ptp_version), sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: version, 8bits\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* ipv4_udp_checksum_force_zero_en */
+	do
+	{
+		cmd = get_sub_cmd("ipv4_udp_checksum_force_zero_en", "yes");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: <yes/no/y/n>\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_confirm(cmd, A_FALSE,
+					&(pEntry->ipv4_udp_checksum_force_zero_en),
+					sizeof (a_bool_t));
+			if (SW_OK != rv)
+				dprintf("usage: <yes/no/y/n>\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	/* ipv6_embed_udp_checksum_force_zero_en */
+	do
+	{
+		cmd = get_sub_cmd("ipv6_embed_udp_checksum_force_zero_en", "yes");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: <yes/no/y/n>\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_confirm(cmd, A_FALSE,
+					&(pEntry->ipv6_embed_udp_checksum_force_zero_en),
+					sizeof (a_bool_t));
+			if (SW_OK != rv)
+				dprintf("usage: <yes/no/y/n>\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_print_ptp_security(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+{
+	fal_ptp_security_t *entry;
+
+	entry = (fal_ptp_security_t *) buf;
+	dprintf("[address_check_en]:%s\n",
+			entry->address_check_en ? "YES" : "NO");
+	dprintf("[ipv6_udp_checksum_recal_en]:%s\n",
+			entry->ipv6_udp_checksum_recal_en ? "YES" : "NO");
+	dprintf("[version_check_en]:%s\n",
+			entry->version_check_en ? "YES" : "NO");
+	dprintf("[ptp_version]:%d\n", entry->ptp_version);
+	dprintf("[ipv4_udp_checksum_force_zero_en]:%s\n",
+			entry->ipv4_udp_checksum_force_zero_en ? "YES" : "NO");
+	dprintf("[ipv6_embed_udp_checksum_force_zero_en]:%s\n",
+			entry->ipv6_embed_udp_checksum_force_zero_en ? "YES" : "NO");
+	dprintf("\n");
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_ptp_pps_sig_ctrl(char *info, void *val, a_uint32_t size)
+{
+	char *cmd;
+	sw_error_t rv;
+	fal_ptp_pps_signal_control_t *pEntry = (fal_ptp_pps_signal_control_t *)val;
+
+	memset(pEntry, 0, sizeof(fal_ptp_pps_signal_control_t));
+
+	/* negative_in_latency */
+	do
+	{
+		cmd = get_sub_cmd("negative_in_latency", "yes");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: <yes/no/y/n>\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_confirm(cmd, A_FALSE, &(pEntry->negative_in_latency),
+					sizeof (a_bool_t));
+			if (SW_OK != rv)
+				dprintf("usage: <yes/no/y/n>\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	/* in_latency */
+	do
+	{
+		cmd = get_sub_cmd("in_latency", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: input latency\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->in_latency), sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: input latency\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* out_phase */
+	do
+	{
+		cmd = get_sub_cmd("out_phase", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: output phase\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->out_phase), sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: output phase\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* out_pulse_width */
+	do
+	{
+		cmd = get_sub_cmd("out_pulse_width", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: output pulse width\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->out_pulse_width),
+					sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: output pulse width\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_print_ptp_pps_sig_ctrl(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+{
+	fal_ptp_pps_signal_control_t *entry;
+
+	entry = (fal_ptp_pps_signal_control_t *) buf;
+	dprintf("[negative_in_latency]:%s\n", entry->negative_in_latency ? "YES" : "NO");
+	dprintf("[in_latency]:0x%x\n", entry->in_latency);
+	dprintf("[out_phase]:0x%x\n", entry->out_phase);
+	dprintf("[out_pulse_width]:0x%x\n", entry->out_pulse_width);
+	dprintf("\n");
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_ptp_asym_correction(char *info, void *val, a_uint32_t size)
+{
+	char *cmd;
+	sw_error_t rv;
+	fal_ptp_asym_correction_t *pEntry = (fal_ptp_asym_correction_t *)val;
+
+	memset(pEntry, 0, sizeof(fal_ptp_asym_correction_t));
+
+	/* eg_asym_en */
+	do
+	{
+		cmd = get_sub_cmd("eg_asym_en", "yes");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: <yes/no/y/n>\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_confirm(cmd, A_FALSE, &(pEntry->eg_asym_en),
+					sizeof (a_bool_t));
+			if (SW_OK != rv)
+				dprintf("usage: <yes/no/y/n>\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	/* in_asym_en */
+	do
+	{
+		cmd = get_sub_cmd("in_asym_en", "yes");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: <yes/no/y/n>\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_confirm(cmd, A_FALSE, &(pEntry->in_asym_en),
+					sizeof (a_bool_t));
+			if (SW_OK != rv)
+				dprintf("usage: <yes/no/y/n>\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	/* eg_asym_value */
+	do
+	{
+		cmd = get_sub_cmd("eg_asym_value", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: egress asymmetry value\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->eg_asym_value),
+					sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: egress asymmetry value\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* in_asym_value */
+	do
+	{
+		cmd = get_sub_cmd("in_asym_value", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: ingress asymmetry value\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->in_asym_value),
+					sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: ingress asymmetry value\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_print_ptp_asym_correction(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+{
+	fal_ptp_asym_correction_t *entry;
+
+	entry = (fal_ptp_asym_correction_t *) buf;
+	dprintf("[eg_asym_en]:%s\n", entry->eg_asym_en ? "YES" : "NO");
+	dprintf("[in_asym_en]:%s\n", entry->in_asym_en ? "YES" : "NO");
+	dprintf("[eg_asym_value]:0x%x\n", entry->eg_asym_value);
+	dprintf("[in_asym_value]:0x%x\n", entry->in_asym_value);
+	dprintf("\n");
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_ptp_waveform(char *info, void *val, a_uint32_t size)
+{
+	char *cmd;
+	sw_error_t rv;
+	fal_ptp_output_waveform_t *pEntry = (fal_ptp_output_waveform_t *)val;
+
+	memset(pEntry, 0, sizeof(fal_ptp_output_waveform_t));
+
+	/* waveform_type */
+	do
+	{
+		cmd = get_sub_cmd("waveform_type", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: 0 for waveform frequency, 1 for pulse 10ms, "
+					"2 for trigger0 and 3 for ptp rx state\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint8(cmd, &(pEntry->waveform_type), sizeof(a_uint8_t));
+			if (SW_OK != rv)
+				dprintf("usage: 0 for waveform frequency, 1 for pulse 10ms, "
+						"2 for trigger0 and 3 for ptp rx state\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* wave_align_pps_out_en */
+	do
+	{
+		cmd = get_sub_cmd("wave_align_pps_out_en", "yes");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: <yes/no/y/n>\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_confirm(cmd, A_FALSE, &(pEntry->wave_align_pps_out_en),
+					sizeof (a_bool_t));
+			if (SW_OK != rv)
+				dprintf("usage: <yes/no/y/n>\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	/* wave_period */
+	do
+	{
+		cmd = get_sub_cmd("wave_period", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: waveform frequency period\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint64(cmd, &(pEntry->wave_period), sizeof(a_uint64_t));
+			if (SW_OK != rv)
+				dprintf("usage: waveform frequency period\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_print_ptp_waveform(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+{
+	fal_ptp_output_waveform_t *entry;
+
+	entry = (fal_ptp_output_waveform_t *) buf;
+	dprintf("[waveform_type]:%d\n", entry->waveform_type);
+	dprintf("[wave_align_pps_out_en]:%s\n", entry->wave_align_pps_out_en ? "YES" : "NO");
+	dprintf("[wave_period]:0x%llx\n", entry->wave_period);
+	dprintf("\n");
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_ptp_tod_uart(char *info, void *val, a_uint32_t size)
+{
+	char *cmd;
+	sw_error_t rv;
+	fal_ptp_tod_uart_t *pEntry = (fal_ptp_tod_uart_t *)val;
+
+	memset(pEntry, 0, sizeof(fal_ptp_tod_uart_t));
+
+	/* baud_config */
+	do
+	{
+		cmd = get_sub_cmd("baud_config", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: baud config value \n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint16(cmd, &(pEntry->baud_config), sizeof(a_uint16_t));
+			if (SW_OK != rv)
+				dprintf("usage: baud config value \n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* uart_config_bmp */
+	do
+	{
+		cmd = get_sub_cmd("uart_config_bmp", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: UART config bitmap \n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->uart_config_bmp),
+					sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: UART config bitmap \n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* reset_buf_en */
+	do
+	{
+		cmd = get_sub_cmd("reset_buf_en", "yes");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: <yes/no/y/n>\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_confirm(cmd, A_FALSE, &(pEntry->reset_buf_en),
+					sizeof (a_bool_t));
+			if (SW_OK != rv)
+				dprintf("usage: <yes/no/y/n>\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	/* tx_buf_value */
+	do
+	{
+		cmd = get_sub_cmd("tx_buf_value", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: tx buffer value \n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint16(cmd, &(pEntry->tx_buf_value),
+					sizeof(a_uint16_t));
+			if (SW_OK != rv)
+				dprintf("usage: tx buffer value \n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_print_ptp_tod_uart(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+{
+	fal_ptp_tod_uart_t *entry;
+
+	entry = (fal_ptp_tod_uart_t *) buf;
+	dprintf("[baud_config]:0x%x\n", entry->baud_config);
+	dprintf("[uart_config_bmp]:0x%x\n", entry->uart_config_bmp);
+	dprintf("[reset_buf_en]:%s\n", entry->reset_buf_en ? "YES" : "NO");
+	dprintf("[buf_status_bmp]:0x%x\n", entry->buf_status_bmp);
+	dprintf("[tx_buf_value]:0x%x\n", entry->tx_buf_value);
+	dprintf("[rx_buf_value]:0x%x\n", entry->rx_buf_value);
+	dprintf("\n");
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_ptp_enhanced_timestamp_engine(char *info, void *val, a_uint32_t size)
+{
+	char *cmd;
+	sw_error_t rv;
+	fal_ptp_enhanced_ts_engine_t *pEntry = (fal_ptp_enhanced_ts_engine_t *)val;
+
+	memset(pEntry, 0, sizeof(fal_ptp_enhanced_ts_engine_t));
+
+	/* filt_en */
+	do
+	{
+		cmd = get_sub_cmd("filt_en", "yes");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: <yes/no/y/n>\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_confirm(cmd, A_FALSE, &(pEntry->filt_en),
+					sizeof (a_bool_t));
+			if (SW_OK != rv)
+				dprintf("usage: <yes/no/y/n>\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	/* enhance_ts_conf_bmp */
+	do
+	{
+		cmd = get_sub_cmd("enhance_ts_conf_bmp", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: enhanced timestamp config bitmap \n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint16(cmd, &(pEntry->enhance_ts_conf_bmp),
+					sizeof(a_uint16_t));
+			if (SW_OK != rv)
+				dprintf("usage: enhanced timestamp config bitmap \n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* eth_type */
+	do
+	{
+		cmd = get_sub_cmd("eth_type", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: ethernet type \n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->eth_type), sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: ethernet type \n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* dmac_addr */
+	do
+	{
+		cmd = get_sub_cmd("dmac_addr", NULL);
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: the format is xx-xx-xx-xx-xx-xx \n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_macaddr(cmd, &(pEntry->dmac_addr),
+					sizeof (fal_mac_addr_t));
+			if (SW_OK != rv)
+				dprintf("usage: the format is xx-xx-xx-xx-xx-xx \n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	/* ipv4_l4_proto */
+	do
+	{
+		cmd = get_sub_cmd("ipv4_l4_proto", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: ipv4 l4 protocol, 32bits\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->ipv4_l4_proto),
+					sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: ipv4 l4 protocol, 32bits\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	cmd_data_check_element("ipv4_dip", "0.0.0.0",
+			"usage: the format is xx.xx.xx.xx \n",
+			cmd_data_check_ip4addr, (cmd, &(pEntry->ipv4_dip), 4));
+	cmd_data_check_element("ipv6_dip", NULL,
+			"usage: the format is xxxx::xxxx \n",
+			cmd_data_check_ip6addr, (cmd, &(pEntry->ipv6_dip), 16));
+
+	/* udp_dport */
+	do
+	{
+		cmd = get_sub_cmd("udp_dport", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: udp dest port\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->udp_dport), sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: udp dest port\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* y1731_mac_addr */
+	do
+	{
+		cmd = get_sub_cmd("y1731_mac_addr", NULL);
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: the format is xx-xx-xx-xx-xx-xx \n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_macaddr(cmd, &(pEntry->y1731_mac_addr),
+					sizeof (fal_mac_addr_t));
+			if (SW_OK != rv)
+				dprintf("usage: the format is xx-xx-xx-xx-xx-xx \n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_print_ptp_enhanced_timestamp_engine(a_uint8_t * param_name,
+		a_uint32_t * buf, a_uint32_t size)
+{
+	fal_ptp_enhanced_ts_engine_t *entry;
+	entry = (fal_ptp_enhanced_ts_engine_t *) buf;
+
+	dprintf("[filt_en]:%s\n", entry->filt_en ? "YES" : "NO");
+
+	dprintf("[enhance_ts_conf_bmp]:0x%x\n", entry->enhance_ts_conf_bmp);
+	dprintf("[eth_type]:0x%x\n", entry->eth_type);
+	cmd_data_print_macaddr("[dmac_addr]:", (a_uint32_t *) & (entry->dmac_addr),
+			sizeof (fal_mac_addr_t));
+	dprintf("\n");
+	dprintf("[ipv4_l4_proto]:0x%x\n", entry->ipv4_l4_proto);
+	cmd_data_print_ip4addr("[ipv4_dip]:",
+			(a_uint32_t *) & (entry->ipv4_dip),
+			sizeof (fal_ip4_addr_t));
+	cmd_data_print_ip6addr("\n[ipv6_dip]:",
+			(a_uint32_t *) & (entry->ipv6_dip),
+			sizeof (fal_ip6_addr_t));
+	dprintf("\n");
+	dprintf("[udp_dport]:0x%x\n", entry->udp_dport);
+	cmd_data_print_macaddr("[y1731_mac_addr]:", (a_uint32_t *) & (entry->y1731_mac_addr),
+			sizeof (fal_mac_addr_t));
+	dprintf("\n");
+	dprintf("[enhance_ts_status_bmp]:0x%x\n", entry->enhance_ts_status_bmp);
+	dprintf("[enhance_ts_status_pre_bmp]:0x%x\n", entry->enhance_ts_status_pre_bmp);
+	dprintf("[y1731_identity]:0x%x\n", entry->y1731_identity);
+	dprintf("[y1731_identity_pre]:0x%x\n", entry->y1731_identity_pre);
+	dprintf("timestamp:\n");
+        dprintf("[seconds]:0x%llx\n", entry->timestamp.seconds);
+        dprintf("[nanoseconds]:0x%x\n", entry->timestamp.nanoseconds);
+        dprintf("[fracnanoseconds]:0x%x\n", entry->timestamp.fracnanoseconds);
+	dprintf("timestamp pre:\n");
+        dprintf("[seconds]:0x%llx\n", entry->timestamp_pre.seconds);
+        dprintf("[nanoseconds]:0x%x\n", entry->timestamp_pre.nanoseconds);
+        dprintf("[fracnanoseconds]:0x%x\n", entry->timestamp_pre.fracnanoseconds);
+	printf("\n");
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_ptp_trigger(char *info, void *val, a_uint32_t size)
+{
+	char *cmd;
+	sw_error_t rv;
+	fal_ptp_trigger_t *pEntry = (fal_ptp_trigger_t *)val;
+
+	memset(pEntry, 0, sizeof(fal_ptp_trigger_t));
+
+	/* trigger_en */
+	do
+	{
+		cmd = get_sub_cmd("trigger_en", "yes");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: <yes/no/y/n>\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_confirm(cmd, A_FALSE,
+					&(pEntry->trigger_conf.trigger_en),
+					sizeof (a_bool_t));
+			if (SW_OK != rv)
+				dprintf("usage: <yes/no/y/n>\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	/* output_force_en */
+	do
+	{
+		cmd = get_sub_cmd("output_force_en", "yes");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: <yes/no/y/n>\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_confirm(cmd, A_FALSE,
+					&(pEntry->trigger_conf.output_force_en),
+					sizeof (a_bool_t));
+			if (SW_OK != rv)
+				dprintf("usage: <yes/no/y/n>\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	/* output_force_value */
+	do
+	{
+		cmd = get_sub_cmd("output_force_value", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: output force value \n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->trigger_conf.output_force_value),
+					sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: output force value \n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* patten_select */
+	do
+	{
+		cmd = get_sub_cmd("patten_select", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: patten select \n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->trigger_conf.patten_select),
+					sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: patten select \n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* late_operation */
+	do
+	{
+		cmd = get_sub_cmd("late_operation", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: late operation\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->trigger_conf.late_operation),
+					sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: late operation\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* notify */
+	do
+	{
+		cmd = get_sub_cmd("notify", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: notify\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->trigger_conf.notify),
+					sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: notify\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* trigger_effect */
+	do
+	{
+		cmd = get_sub_cmd("trigger_effect", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: trigger effect\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->trigger_conf.trigger_effect),
+					sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: trigger effect\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* seconds */
+	do
+	{
+		cmd = get_sub_cmd("seconds", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: seconds 48bits \n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint64(cmd, &(pEntry->trigger_conf.tim.seconds),
+					sizeof(a_uint64_t));
+			if (SW_OK != rv)
+				dprintf("usage: seconds 48bits \n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* nanoseconds */
+	do
+	{
+		cmd = get_sub_cmd("nanoseconds", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: nanoseconds 32bits\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->trigger_conf.tim.nanoseconds),
+					sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: nanoseconds 32bits\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* fracnanoseconds */
+	do
+	{
+		cmd = get_sub_cmd("fracnanoseconds", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: fracnanoseconds 32bits \n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->trigger_conf.tim.fracnanoseconds),
+					sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: fracnanoseconds 32bits\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_print_ptp_trigger(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+{
+	fal_ptp_trigger_t *entry;
+	entry = (fal_ptp_trigger_t *) buf;
+
+	dprintf("[trigger_en]:%s\n", entry->trigger_conf.trigger_en ? "YES" : "NO");
+	dprintf("[output_force_en]:%s\n", entry->trigger_conf.output_force_en ? "YES" : "NO");
+	dprintf("[output_force_value]:0x%x\n", entry->trigger_conf.output_force_value);
+	dprintf("[patten_select]:0x%x\n", entry->trigger_conf.patten_select);
+	dprintf("[late_operation]:0x%x\n", entry->trigger_conf.late_operation);
+	dprintf("[notify]:0x%x\n", entry->trigger_conf.notify);
+	dprintf("[trigger_effect]:0x%x\n", entry->trigger_conf.trigger_effect);
+	dprintf("[trigger_finished]:0x%x\n", entry->trigger_status.trigger_finished);
+	dprintf("[trigger_active]:0x%x\n", entry->trigger_status.trigger_active);
+	dprintf("[trigger_error]:0x%x\n", entry->trigger_status.trigger_error);
+	cmd_data_print_ptp_time("[time]:",
+			(a_uint32_t *) & (entry->trigger_conf.tim),
+			sizeof (fal_ptp_time_t));
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_ptp_capture(char *info, void *val, a_uint32_t size)
+{
+	char *cmd;
+	sw_error_t rv;
+	fal_ptp_capture_t *pEntry = (fal_ptp_capture_t *)val;
+
+	memset(pEntry, 0, sizeof(fal_ptp_capture_t));
+
+	/* status_clear */
+	do
+	{
+		cmd = get_sub_cmd("status_clear", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: status clear \n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->capture_conf.status_clear),
+					sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: status clear \n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* notify_event */
+	do
+	{
+		cmd = get_sub_cmd("notify_event", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: notify event \n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->capture_conf.notify_event),
+					sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: notify event \n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* single_multi_select */
+	do
+	{
+		cmd = get_sub_cmd("single_multi_select", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: single multiple select\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->capture_conf.single_multi_select),
+					sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: single multiple select\n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	/* fall_edge_en */
+	do
+	{
+		cmd = get_sub_cmd("fall_edge_en", "yes");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: <yes/no/y/n>\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_confirm(cmd, A_FALSE,
+					&(pEntry->capture_conf.fall_edge_en),
+					sizeof (a_bool_t));
+			if (SW_OK != rv)
+				dprintf("usage: <yes/no/y/n>\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	/* rise_edge_en */
+	do
+	{
+		cmd = get_sub_cmd("rise_edge_en", "yes");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: <yes/no/y/n>\n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_confirm(cmd, A_FALSE,
+					&(pEntry->capture_conf.rise_edge_en),
+					sizeof (a_bool_t));
+			if (SW_OK != rv)
+				dprintf("usage: <yes/no/y/n>\n");
+		}
+	}
+	while (talk_mode && (SW_OK != rv));
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_print_ptp_capture(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+{
+	fal_ptp_capture_t *entry;
+	entry = (fal_ptp_capture_t *) buf;
+
+	dprintf("[status_clear]:0x%x\n", entry->capture_conf.status_clear);
+	dprintf("[notify_event]:0x%x\n", entry->capture_conf.notify_event);
+	dprintf("[single_multi_select]:0x%x\n", entry->capture_conf.single_multi_select);
+	dprintf("[fall_edge_en]:%s\n", entry->capture_conf.fall_edge_en ? "YES" : "NO");
+	dprintf("[rise_edge_en]:%s\n", entry->capture_conf.rise_edge_en ? "YES" : "NO");
+
+	dprintf("[event_detected]:0x%x\n", entry->capture_status.event_detected);
+	dprintf("[fall_rise_edge_detected]:0x%x\n", entry->capture_status.fall_rise_edge_detected);
+	dprintf("[single_multi_detected]:0x%x\n", entry->capture_status.single_multi_detected);
+	dprintf("[event_missed_cnt]:0x%x\n", entry->capture_status.event_missed_cnt);
+	cmd_data_print_ptp_time("\n[time]:",
+			(a_uint32_t *) & (entry->capture_status.tim),
+			sizeof (fal_ptp_time_t));
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_ptp_interrupt(char *info, void *val, a_uint32_t size)
+{
+	char *cmd;
+	sw_error_t rv;
+	fal_ptp_interrupt_t *pEntry = (fal_ptp_interrupt_t *)val;
+
+	memset(pEntry, 0, sizeof(fal_ptp_interrupt_t));
+
+	/* intr_mask */
+	do
+	{
+		cmd = get_sub_cmd("intr_mask", "0");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4))
+		{
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4))
+		{
+			dprintf("usage: interrupt mask \n");
+			rv = SW_BAD_VALUE;
+		}
+		else
+		{
+			rv = cmd_data_check_uint32(cmd, &(pEntry->intr_mask), sizeof(a_uint32_t));
+			if (SW_OK != rv)
+				dprintf("usage: interrupt mask \n");
+		}
+	}while (talk_mode && (SW_OK != rv));
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_print_ptp_interrupt(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+{
+	fal_ptp_interrupt_t *entry;
+	entry = (fal_ptp_interrupt_t *) buf;
+
+	dprintf("[intr_mask]:0x%x\n", entry->intr_mask);
+	dprintf("[intr_status]:0x%x\n", entry->intr_status);
+
+	return SW_OK;
 }
 
