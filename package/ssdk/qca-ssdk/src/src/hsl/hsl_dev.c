@@ -609,6 +609,34 @@ sw_error_t reduce_hsl_phy_get(a_uint32_t dev,a_uint32_t phy_addr,a_uint32_t reg,
 	return rv;
 }
 
+sw_error_t hsl_phy_i2c_set(a_uint32_t dev,a_uint32_t phy_addr,a_uint32_t reg,a_uint16_t value)
+{
+	sw_error_t rv;
+
+	hsl_api_t *p_api = hsl_api_ptr_get(dev);
+	if (p_api) {
+	    rv = p_api->phy_i2c_set(dev, phy_addr, reg, value);
+	} else {
+	    rv = SW_NOT_INITIALIZED;
+	}
+
+	return rv;
+}
+
+sw_error_t hsl_phy_i2c_get(a_uint32_t dev,a_uint32_t phy_addr,a_uint32_t reg,a_uint16_t* value)
+{
+	sw_error_t rv;
+
+	hsl_api_t *p_api = hsl_api_ptr_get(dev);
+	if (p_api) {
+	    rv = p_api->phy_i2c_get(dev, phy_addr, reg, value);
+	} else {
+	    rv = SW_NOT_INITIALIZED;
+	}
+
+	return rv;
+}
+
 #if 0
 void reduce_sw_set_reg_by_field_u32(unsigned int reg_value,unsigned int field_value,
 													unsigned int reg_offset,unsigned int reg_len)

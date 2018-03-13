@@ -2570,6 +2570,8 @@ typedef sw_error_t
       /*INIT*/ hsl_dev_reset dev_reset;
     hsl_dev_clean dev_clean;
     hsl_dev_access_set dev_access_set;
+    hsl_phy_get phy_i2c_get;
+    hsl_phy_set phy_i2c_set;
   } hsl_api_t;
 
   hsl_api_t *hsl_api_ptr_get (a_uint32_t dev_id);

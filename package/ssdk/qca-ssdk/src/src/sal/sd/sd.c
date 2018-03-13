@@ -23,6 +23,8 @@
 
 mdio_reg_set ssdk_mdio_set    = NULL;
 mdio_reg_get ssdk_mdio_get    = NULL;
+i2c_reg_set ssdk_i2c_set    = NULL;
+i2c_reg_get ssdk_i2c_get    = NULL;
 hdr_reg_set  ssdk_hdr_reg_set = NULL;
 hdr_reg_get  ssdk_hdr_reg_get = NULL;
 psgmii_reg_set  ssdk_psgmii_reg_set = NULL;
@@ -85,6 +87,77 @@ sd_reg_mdio_get(a_uint32_t dev_id, a_uint32_t phy, a_uint32_t reg, a_uint16_t * 
             a_uint32_t tmp;
 
             args[0] = SW_API_PHY_GET;
+            args[1] = (a_uint32_t) & rv;
+            args[2] = dev_id;
+            args[3] = phy;
+            args[4] = reg;
+            args[5] = (a_uint32_t) & tmp;
+            if (SW_OK != sw_uk_if(args))
+            {
+                return SW_FAIL;
+            }
+            *data = *((a_uint16_t *)&tmp);
+        }
+#else
+        return SW_NOT_SUPPORTED;
+#endif
+    }
+
+    return rv;
+}
+
+sw_error_t
+sd_reg_i2c_set(a_uint32_t dev_id, a_uint32_t phy, a_uint32_t reg,
+                a_uint16_t data)
+{
+    sw_error_t rv = SW_OK;
+
+    if (NULL != ssdk_i2c_set)
+    {
+        rv = ssdk_i2c_set(dev_id, phy, reg, data);
+    }
+    else
+    {
+#if ((!defined(KERNEL_MODULE)) && defined(UK_IF))
+        {
+            a_uint32_t args[SW_MAX_API_PARAM];
+
+            args[0] = SW_API_PHY_I2C_SET;
+            args[1] = (a_uint32_t) & rv;
+            args[2] = dev_id;
+            args[3] = phy;
+            args[4] = reg;
+            args[5] = data;
+            if (SW_OK != sw_uk_if(args))
+            {
+                return SW_FAIL;
+            }
+        }
+#else
+        return SW_NOT_SUPPORTED;
+#endif
+    }
+
+    return rv;
+}
+
+sw_error_t
+sd_reg_i2c_get(a_uint32_t dev_id, a_uint32_t phy, a_uint32_t reg, a_uint16_t * data)
+{
+    sw_error_t rv = SW_OK;
+
+    if (NULL != ssdk_i2c_get)
+    {
+        rv = ssdk_i2c_get(dev_id, phy, reg, data);
+    }
+    else
+    {
+#if ((!defined(KERNEL_MODULE)) && defined(UK_IF))
+        {
+            a_uint32_t args[SW_MAX_API_PARAM];
+            a_uint32_t tmp;
+
+            args[0] = SW_API_PHY_I2C_GET;
             args[1] = (a_uint32_t) & rv;
             args[2] = dev_id;
             args[3] = phy;
@@ -241,6 +314,16 @@ sd_init(a_uint32_t dev_id, ssdk_init_cfg * cfg)
     if (NULL != cfg->reg_func.mdio_get)
     {
         ssdk_mdio_get = cfg->reg_func.mdio_get;
+    }
+
+    if (NULL != cfg->reg_func.i2c_set)
+    {
+        ssdk_i2c_set = cfg->reg_func.i2c_set;
+    }
+
+    if (NULL != cfg->reg_func.i2c_get)
+    {
+        ssdk_i2c_get = cfg->reg_func.i2c_get;
     }
 
     if (NULL != cfg->reg_func.header_reg_set)

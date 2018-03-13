@@ -97,6 +97,10 @@
 #include "ssdk_uci.h"
 #endif
 
+#if defined(IN_PHY_I2C_MODE)
+#include "ssdk_phy_i2c.h"
+#endif
+
 #ifdef IN_IP
 #if defined (CONFIG_NF_FLOW_COOKIE)
 #include "fal_flowcookie.h"
@@ -2883,6 +2887,10 @@ static void ssdk_cfg_default_init(ssdk_init_cfg *cfg)
 	cfg->nl_prot = 30;
 	cfg->reg_func.mdio_set = qca_ar8327_phy_write;
 	cfg->reg_func.mdio_get = qca_ar8327_phy_read;
+#if defined(IN_PHY_I2C_MODE)
+	cfg->reg_func.i2c_set = qca_phy_i2c_write;
+	cfg->reg_func.i2c_get = qca_phy_i2c_read;
+#endif
 	cfg->reg_func.header_reg_set = qca_switch_reg_write;
 	cfg->reg_func.header_reg_get = qca_switch_reg_read;
 	cfg->reg_func.mii_reg_set = qca_ar8216_mii_write;

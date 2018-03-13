@@ -483,7 +483,7 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 	struct device_node *phy_info_node, *port_node;
 	ssdk_port_phyinfo *port_phyinfo;
 	a_uint32_t port_id, phy_addr;
-	a_bool_t phy_c45, phy_combo;
+	a_bool_t phy_c45, phy_combo, phy_i2c;
 	const char *mac_type = NULL;
 	sw_error_t rv = SW_OK;
 
@@ -502,7 +502,13 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 				"ethernet-phy-ieee802.3-c45");
 		phy_combo = of_property_read_bool(port_node,
 				"ethernet-phy-combo");
+		phy_i2c = of_property_read_bool(port_node,
+				"phy-i2c-mode");
 
+		if (phy_i2c) {
+			SSDK_INFO("[PORT %d] phy-i2c-mode\n", port_id);
+			hsl_port_phy_access_type_set(dev_id, port_id, PHY_I2C_ACCESS);
+		}
 		hsl_port_phy_combo_capability_set(dev_id, port_id, phy_combo);
 		hsl_port_phy_c45_capability_set(dev_id, port_id, phy_c45);
 		hsl_phy_address_init(dev_id, port_id, phy_addr);
@@ -517,6 +523,10 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 
 			if (phy_combo) {
 				port_phyinfo->phy_features |= PHY_F_COMBO;
+			}
+
+			if (phy_i2c) {
+				port_phyinfo->phy_features |= PHY_F_I2C;
 			}
 
 			if (!of_property_read_string(port_node, "port_mac_sel", &mac_type))

@@ -30,6 +30,14 @@ extern "C" {
                     a_uint16_t * data);
 
     sw_error_t
+    sd_reg_i2c_set(a_uint32_t dev_id, a_uint32_t phy, a_uint32_t reg,
+                    a_uint16_t data);
+
+    sw_error_t
+    sd_reg_i2c_get(a_uint32_t dev_id, a_uint32_t phy, a_uint32_t reg,
+                    a_uint16_t * data);
+
+    sw_error_t
     sd_reg_hdr_set(a_uint32_t dev_id, a_uint32_t reg_addr,
                    a_uint8_t * reg_data, a_uint32_t len);
 

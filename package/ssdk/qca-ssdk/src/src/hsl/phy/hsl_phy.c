@@ -151,10 +151,21 @@ a_uint32_t hsl_phyid_get(a_uint32_t dev_id,
 	if (phy_info[dev_id]->phy_c45[port_id] == A_TRUE)
 		reg_pad = BIT(30) | BIT(16);
 
-	cfg->reg_func.mdio_get(dev_id,
-			phy_info[dev_id]->phy_address[port_id], reg_pad | 2, &org_id);
-	cfg->reg_func.mdio_get(dev_id,
-			phy_info[dev_id]->phy_address[port_id], reg_pad | 3, &rev_id);
+#if defined(IN_PHY_I2C_MODE)
+	if (hsl_port_phy_access_type_get(dev_id, port_id) == PHY_I2C_ACCESS) {
+		cfg->reg_func.i2c_get(dev_id,
+				phy_info[dev_id]->phy_address[port_id], reg_pad | 2, &org_id);
+		cfg->reg_func.i2c_get(dev_id,
+				phy_info[dev_id]->phy_address[port_id], reg_pad | 3, &rev_id);
+	}
+	else
+#endif
+	{
+		cfg->reg_func.mdio_get(dev_id,
+				phy_info[dev_id]->phy_address[port_id], reg_pad | 2, &org_id);
+		cfg->reg_func.mdio_get(dev_id,
+				phy_info[dev_id]->phy_address[port_id], reg_pad | 3, &rev_id);
+	}
 
 	phy_id = (org_id<<16) | rev_id;
 

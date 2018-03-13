@@ -885,6 +885,8 @@ extern "C" {
 #define SW_API_PHY_DUMP             (13  + SW_API_DEBUG_OFFSET)
 #define SW_API_UNIPHY_REG_GET             (20  + SW_API_DEBUG_OFFSET)
 #define SW_API_UNIPHY_REG_SET             (21  + SW_API_DEBUG_OFFSET)
+#define SW_API_PHY_I2C_GET                (22  + SW_API_DEBUG_OFFSET)
+#define SW_API_PHY_I2C_SET                (23  + SW_API_DEBUG_OFFSET)
 
 #define SW_API_MAX                 0xffff
 

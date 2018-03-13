@@ -103,6 +103,14 @@ extern sw_error_t reduce_hsl_phy_set(a_uint32_t dev,a_uint32_t phy_addr,a_uint32
 #define HSL_PHY_SET(rv, dev, phy_addr, reg, value) \
 		rv = reduce_hsl_phy_set(dev,phy_addr,reg,value);
 
+extern sw_error_t hsl_phy_i2c_get(a_uint32_t dev,a_uint32_t phy_addr,a_uint32_t reg,a_uint16_t* value);
+#define HSL_PHY_I2C_GET(rv, dev, phy_addr, reg, value) \
+		rv = hsl_phy_i2c_get(dev,phy_addr,reg,value);
+
+
+extern sw_error_t hsl_phy_i2c_set(a_uint32_t dev,a_uint32_t phy_addr,a_uint32_t reg,a_uint16_t value);
+#define HSL_PHY_I2C_SET(rv, dev, phy_addr, reg, value) \
+		rv = hsl_phy_i2c_set(dev,phy_addr,reg,value);
 
 
 
