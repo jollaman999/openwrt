@@ -316,7 +316,7 @@ static void wan_nh_add(u_int8_t *host_ip , u_int8_t *host_mac, u_int32_t id)
     }
 }
 
-static uint32_t get_next_hop( uint32_t daddr , uint32_t saddr )
+uint32_t get_next_hop(uint32_t daddr, uint32_t saddr)
 {
     struct fib_result res;
 #ifdef KVER32

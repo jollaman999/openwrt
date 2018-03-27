@@ -728,30 +728,32 @@ nat_hw_pub_ip_del(a_uint32_t index)
 a_int32_t
 napt_hw_add(napt_entry_t *napt)
 {
-    a_int32_t ret = 0;
-    fal_napt_entry_t fal_napt = {0};
+	a_int32_t ret = 0;
+	fal_napt_entry_t fal_napt = {0};
 	fal_host_entry_t host_entry = {0};
+	a_uint32_t next_hop = 0;
 
-    napt_entry_cp(&fal_napt, napt);
+	napt_entry_cp(&fal_napt, napt);
 
-    fal_napt.flags |= FAL_NAT_ENTRY_TRANS_IPADDR_INDEX;
-    fal_napt.counter_en = 1;
-    fal_napt.counter_id = nat_hw_debug_counter_get();
-    fal_napt.action = FAL_MAC_FRWRD;
+	fal_napt.flags |= FAL_NAT_ENTRY_TRANS_IPADDR_INDEX;
+	fal_napt.counter_en = 1;
+	fal_napt.counter_id = nat_hw_debug_counter_get();
+	fal_napt.action = FAL_MAC_FRWRD;
 
 	/*check arp entry*/
 	host_entry.flags = FAL_IP_IP4_ADDR;
 	host_entry.ip4_addr = fal_napt.src_addr;
 	ret = IP_HOST_GET(0, FAL_IP_ENTRY_IPADDR_EN, &host_entry);
 	if (ret) {
-		printk("can not find src host entry!\n");
+		HNAT_ERR_PRINTK("can not find src host entry!\n");
 		return ret;
 	}
 	if (nf_athrs17_hnat_wan_type != NF_S17_WAN_TYPE_PPPOE) {
-		host_entry.ip4_addr = fal_napt.dst_addr;
+		next_hop = get_next_hop(fal_napt.dst_addr, fal_napt.src_addr);
+		host_entry.ip4_addr =  next_hop ? next_hop : fal_napt.dst_addr;
 		ret = IP_HOST_GET(0, FAL_IP_ENTRY_IPADDR_EN, &host_entry);
 		if (ret) {
-			printk("can not find dst host entry!\n");
+			HNAT_ERR_PRINTK("can not find dst host entry!\n");
 			return ret;
 		}
 	}

@@ -33,6 +33,7 @@ void nat_helper_bg_task_init(void);
 void nat_helper_bg_task_exit(void);
 
 a_uint32_t nat_helper_wan_port_get(void);
+uint32_t get_next_hop(uint32_t daddr,  uint32_t saddr);
 
 void hnat_log_msg(int level, char *string, ...);
 #define NAT_LOG_MAX_SIZE 1024
