@@ -315,7 +315,6 @@ void hsl_phy_address_init(a_uint32_t dev_id, a_uint32_t i,
 			a_uint32_t value)
 {
 	phy_info[dev_id]->phy_address[i] = value;
-	phy_info[dev_id]->phy_address_from_dts[i] = value;
 
 	return;
 }
@@ -347,13 +346,6 @@ qca_ssdk_phy_address_set(a_uint32_t dev_id, a_uint32_t port_id,
 	 phy_info[dev_id]->phy_address[port_id] = phy_addr;
 
 	 return;
-}
-
-a_uint32_t
-qca_ssdk_phy_address_from_dts_get(a_uint32_t dev_id,
-	a_uint32_t port_id)
-{
-	 return phy_info[dev_id]->phy_address_from_dts[port_id];
 }
 
 a_uint32_t

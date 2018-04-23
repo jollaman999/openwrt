@@ -2521,6 +2521,7 @@ _adpt_hppe_port_phyaddr_update(a_uint32_t dev_id, a_uint32_t port_id,
 {
 	sw_error_t rv = SW_OK;
 	a_uint32_t phy_addr = 0, mode0 = PORT_WRAPPER_MAX;
+	ssdk_port_phyinfo *port_phyinfo = NULL;
 
 	if(port_id != SSDK_PHYSICAL_PORT5)
 	{
@@ -2528,7 +2529,8 @@ _adpt_hppe_port_phyaddr_update(a_uint32_t dev_id, a_uint32_t port_id,
 	}
 	if(mode == PORT_WRAPPER_10GBASE_R)
 	{
-		phy_addr = qca_ssdk_phy_address_from_dts_get(dev_id, port_id);
+		port_phyinfo = ssdk_port_phyinfo_get(dev_id, port_id);
+		phy_addr = port_phyinfo->phy_addr;
 		qca_ssdk_phy_address_set(dev_id, port_id, phy_addr);
 		SSDK_DEBUG("port %x phy_addr is %x\n", port_id, phy_addr);
 	}

@@ -296,7 +296,6 @@ typedef enum
 
 typedef struct {
 	a_uint32_t phy_address[SW_MAX_NR_PORT];
-	a_uint32_t phy_address_from_dts[SW_MAX_NR_PORT];
 	a_uint32_t phy_type[SW_MAX_NR_PORT];
 	/* fake mdio address is used to register the phy device,
 	 * when the phy is not accessed by the MDIO bus.
@@ -413,9 +412,6 @@ hsl_phydriver_update(a_uint32_t dev_id, a_uint32_t port_id,
 void
 qca_ssdk_phy_address_set(a_uint32_t dev_id, a_uint32_t port_id,
 	a_uint32_t phy_addr);
-
-a_uint32_t
-qca_ssdk_phy_address_from_dts_get(a_uint32_t dev_id, a_uint32_t port_id);
 
 #ifdef __cplusplus
 }
