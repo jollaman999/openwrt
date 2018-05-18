@@ -297,9 +297,16 @@ int qca_ssdk_phy_info_init(a_uint32_t dev_id)
 	memset(phy_information, 0, sizeof(*phy_information));
 	phy_info[dev_id] = phy_information;
 
-	for (j = 1; j < SW_MAX_NR_PORT; j ++)
+	for (j = SSDK_PHYSICAL_PORT0; j < SW_MAX_NR_PORT; j ++)
 	{
-		phy_info[dev_id]->phy_address[j] = j - 1;
+		if(j == SSDK_PHYSICAL_PORT0)
+		{
+			phy_info[dev_id]->phy_address[j] = INVALID_PHY_ADDR;
+		}
+		else
+		{
+			phy_info[dev_id]->phy_address[j] = j - 1;
+		}
 	}
 
 	return 0;

@@ -335,6 +335,8 @@ typedef struct {
 
 #define PHY_I2C_ACCESS 1
 
+#define INVALID_PHY_ADDR 0xff
+
 sw_error_t
 hsl_phy_api_ops_register(phy_type_t phy_type, hsl_phy_ops_t * phy_api_ops);
 
