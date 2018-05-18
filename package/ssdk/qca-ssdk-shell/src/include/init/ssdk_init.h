@@ -48,6 +48,14 @@ extern "C" {
                      a_uint16_t * data);
 
     typedef sw_error_t
+    (*i2c_reg_set) (a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t reg,
+                     a_uint16_t data);
+
+    typedef sw_error_t
+    (*i2c_reg_get) (a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t reg,
+                     a_uint16_t * data);
+
+    typedef sw_error_t
     (*hdr_reg_set) (a_uint32_t dev_id, a_uint32_t reg_addr, a_uint8_t *reg_data, a_uint32_t len);
 
     typedef sw_error_t
@@ -81,6 +89,8 @@ extern "C" {
         uniphy_reg_get     uniphy_reg_get;
 	mii_reg_set	mii_reg_set;
 	mii_reg_get	mii_reg_get;
+        i2c_reg_set    i2c_set;
+        i2c_reg_get    i2c_get;
     } hsl_reg_func;
 
     typedef struct
