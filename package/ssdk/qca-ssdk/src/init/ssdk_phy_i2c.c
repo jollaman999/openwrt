@@ -119,10 +119,12 @@ qca_phy_i2c_mmd_read(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint16_t mmd_num,
 		1st byte: Bit[6](1:MMD 0:MII) Bit[5](1:MMD address 0:MMD data) Bit[4:0](MMD num)
 		2nd byte is high 8bits of reg addr
 		3rd byte is low 8bits of reg addr
+		4th byte: add one extra byte at the end of address writing msg to avoid qca808x
+                          treat it as data writing operation
 	*/
-	a_uint8_t tx[3] = { ((QCA_PHY_I2C_IS_MMD << QCA_PHY_I2C_MMD_OR_MII_SHIFT) |
+	a_uint8_t tx[4] = { ((QCA_PHY_I2C_IS_MMD << QCA_PHY_I2C_MMD_OR_MII_SHIFT) |
 		(QCA_PHY_I2C_MMD_IS_ADDR << QCA_PHY_I2C_MMD_ADDR_OR_DATA_SHIFT) | mmd_num),
-		(reg_addr >> 8) & 0xff, reg_addr & 0xff };
+		(reg_addr >> 8) & 0xff, reg_addr & 0xff, 0 };
 	/*
 		RX buffer to receive:
 		1st byte is high 8bits of reg data
@@ -175,10 +177,12 @@ qca_phy_i2c_mmd_write(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint16_t mmd_num
 		1st byte: Bit[6](1:MMD 0:MII) Bit[5](1:MMD address 0:MMD data) Bit[4:0](MMD num)
 		2nd byte is high 8bits of reg addr
 		3rd byte is low 8bits of reg addr
+		4th byte: add one extra byte at the end of address writing msg to avoid qca808x
+                          treat it as data writing operation
 	*/
-	a_uint8_t tx[3] = { ((QCA_PHY_I2C_IS_MMD << QCA_PHY_I2C_MMD_OR_MII_SHIFT) |
+	a_uint8_t tx[4] = { ((QCA_PHY_I2C_IS_MMD << QCA_PHY_I2C_MMD_OR_MII_SHIFT) |
 		(QCA_PHY_I2C_MMD_IS_ADDR << QCA_PHY_I2C_MMD_ADDR_OR_DATA_SHIFT) | mmd_num),
-		(reg_addr >> 8) & 0xff, reg_addr & 0xff };
+		(reg_addr >> 8) & 0xff, reg_addr & 0xff, 0 };
 
 	/*
 		Second TX buffer to send:
