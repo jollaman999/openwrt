@@ -42,7 +42,9 @@ typedef enum sfe_cm_exception {
 	SFE_CM_EXCEPTION_PACKET_MULTICAST,
 	SFE_CM_EXCEPTION_NO_IIF,
 	SFE_CM_EXCEPTION_NO_CT,
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,14,0))
 	SFE_CM_EXCEPTION_CT_NO_TRACK,
+#endif
 	SFE_CM_EXCEPTION_CT_NO_CONFIRM,
 	SFE_CM_EXCEPTION_CT_IS_ALG,
 	SFE_CM_EXCEPTION_IS_IPV4_MCAST,
@@ -347,6 +349,7 @@ static unsigned int sfe_cm_post_routing(struct sk_buff *skb, int is_v4)
 		return NF_ACCEPT;
 	}
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,14,0))
 	/*
 	 * Don't process untracked connections.
 	 */
@@ -355,6 +358,7 @@ static unsigned int sfe_cm_post_routing(struct sk_buff *skb, int is_v4)
 		DEBUG_TRACE("untracked connection\n");
 		return NF_ACCEPT;
 	}
+#endif
 
 	/*
 	 * Unconfirmed connection may be dropped by Linux at the final step,
@@ -675,6 +679,7 @@ static int sfe_cm_conntrack_event(struct notifier_block *this,
 		return NOTIFY_DONE;
 	}
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,14,0))
 	/*
 	 * If this is an untracked connection then we can't have any state either.
 	 */
@@ -682,6 +687,7 @@ static int sfe_cm_conntrack_event(struct notifier_block *this,
 		DEBUG_TRACE("ignoring untracked conn\n");
 		return NOTIFY_DONE;
 	}
+#endif
 
 	/*
 	 * We're only interested in destroy events.
@@ -803,7 +809,9 @@ static void sfe_cm_sync_rule(struct sfe_connection_sync *sis)
 	}
 
 	ct = nf_ct_tuplehash_to_ctrack(h);
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 	NF_CT_ASSERT(ct->timeout.data == (unsigned long)ct);
+#endif
 
 	/*
 	 * Only update if this is not a fixed timeout
@@ -993,6 +1001,25 @@ static const struct device_attribute sfe_attrs[] = {
 	__ATTR(defunct_all, S_IWUSR | S_IRUGO, sfe_cm_get_defunct_all, sfe_cm_set_defunct_all),
 };
 
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,14,0))
+static int __net_init sfe_nf_register(struct net *net)
+{
+	return nf_register_net_hooks(net, sfe_cm_ops_post_routing,
+				 ARRAY_SIZE(sfe_cm_ops_post_routing));
+}
+
+static void __net_exit sfe_nf_unregister(struct net *net)
+{
+	nf_unregister_net_hooks(net, sfe_cm_ops_post_routing,
+				ARRAY_SIZE(sfe_cm_ops_post_routing));
+}
+
+static struct pernet_operations sfe_net_ops = {
+	.init = sfe_nf_register,
+	.exit = sfe_nf_unregister,
+};
+#endif
+
 /*
  * sfe_cm_init()
  */
@@ -1036,7 +1063,11 @@ static int __init sfe_cm_init(void)
 	/*
 	 * Register our netfilter hooks.
 	 */
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,14,0))
 	result = nf_register_hooks(sfe_cm_ops_post_routing, ARRAY_SIZE(sfe_cm_ops_post_routing));
+#else
+	result = register_pernet_subsys(&sfe_net_ops);
+#endif
 	if (result < 0) {
 		DEBUG_ERROR("can't register nf post routing hook: %d\n", result);
 		goto exit3;
@@ -1064,7 +1095,11 @@ static int __init sfe_cm_init(void)
 
 #ifdef CONFIG_NF_CONNTRACK_EVENTS
 exit4:
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,14,0))
 	nf_unregister_hooks(sfe_cm_ops_post_routing, ARRAY_SIZE(sfe_cm_ops_post_routing));
+#else
+	unregister_pernet_subsys(&sfe_net_ops);
+#endif
 #endif
 exit3:
 	unregister_inet6addr_notifier(&sc->inet6_notifier);
@@ -1115,7 +1150,11 @@ static void __exit sfe_cm_exit(void)
 	nf_conntrack_unregister_notifier(&init_net, &sfe_cm_conntrack_notifier);
 
 #endif
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,14,0))
 	nf_unregister_hooks(sfe_cm_ops_post_routing, ARRAY_SIZE(sfe_cm_ops_post_routing));
+#else
+	unregister_pernet_subsys(&sfe_net_ops);
+#endif
 
 	unregister_inet6addr_notifier(&sc->inet6_notifier);
 	unregister_inetaddr_notifier(&sc->inet_notifier);

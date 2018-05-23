@@ -342,7 +342,8 @@ static struct ar8327_platform_data uap_pro_ar8327_data = {
 static struct mdio_board_info uap_pro_mdio0_info[] = {
 	{
 		.bus_id = "ag71xx-mdio.0",
-		.phy_addr = 0,
+		.modalias = "uap_pro",
+		.mdio_addr = 0,
 		.platform_data = &uap_pro_ar8327_data,
 	},
 };
@@ -489,7 +490,8 @@ static struct at803x_platform_data ubnt_loco_m_xw_at803x_data = {
 static struct mdio_board_info ubnt_loco_m_xw_mdio_info[] = {
 	{
 		.bus_id = "ag71xx-mdio.0",
-		.phy_addr = 1,
+		.modalias = "ubnt_loco_m_xw",
+		.mdio_addr = 1,
 		.platform_data = &ubnt_loco_m_xw_at803x_data,
 	},
 };
@@ -594,11 +596,12 @@ static struct at803x_platform_data ubnt_rocket_m_ti_at803_data = {
 	.enable_rgmii_tx_delay = 1,
 };
 static struct mdio_board_info ubnt_rocket_m_ti_mdio_info[] = {
-        {
-                .bus_id = "ag71xx-mdio.0",
-                .phy_addr = 4,
-                .platform_data = &ubnt_rocket_m_ti_at803_data,
-        },
+		{
+			.bus_id = "ag71xx-mdio.0",
+			.modalias = "ubnt_rocket_m_ti",
+			.mdio_addr = 4,
+			.platform_data = &ubnt_rocket_m_ti_at803_data,
+		},
 };
 
 static void __init ubnt_rocket_m_ti_setup(void)

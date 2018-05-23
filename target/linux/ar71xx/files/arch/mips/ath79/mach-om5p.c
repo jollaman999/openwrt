@@ -160,7 +160,8 @@ static struct at803x_platform_data om5p_an_at803x_data = {
 static struct mdio_board_info om5p_an_mdio0_info[] = {
 	{
 		.bus_id = "ag71xx-mdio.0",
-		.phy_addr = 7,
+		.modalias = " om5p_an",
+		.mdio_addr = 7,
 		.platform_data = &om5p_an_at803x_data,
 	},
 };

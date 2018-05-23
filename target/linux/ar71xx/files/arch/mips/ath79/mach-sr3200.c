@@ -114,7 +114,8 @@ static struct ar8327_platform_data sr3200_xd3200_qca833x_data = {
 static struct mdio_board_info sr3200_xd3200_mdio0_info[] = {
 	{
 		.bus_id = "ag71xx-mdio.0",
-		.phy_addr = 0,
+		.modalias = "sr3200_xd3200",
+		.mdio_addr = 0,
 		.platform_data = &sr3200_xd3200_qca833x_data,
 	},
 };

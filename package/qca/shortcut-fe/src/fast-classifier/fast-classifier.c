@@ -125,18 +125,14 @@ static struct genl_multicast_group fast_classifier_genl_mcgrp[] = {
 	},
 };
 
-static struct genl_family fast_classifier_gnl_family = {
-	.id = GENL_ID_GENERATE,
-	.hdrsize = FAST_CLASSIFIER_GENL_HDRSIZE,
-	.name = FAST_CLASSIFIER_GENL_NAME,
-	.version = FAST_CLASSIFIER_GENL_VERSION,
-	.maxattr = FAST_CLASSIFIER_A_MAX,
-};
-
 static int fast_classifier_offload_genl_msg(struct sk_buff *skb, struct genl_info *info);
 static int fast_classifier_nl_genl_msg_DUMP(struct sk_buff *skb, struct netlink_callback *cb);
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,14,0))
 static struct genl_ops fast_classifier_gnl_ops[] = {
+#else
+static const struct genl_ops fast_classifier_gnl_ops[] = {
+#endif
 	{
 		.cmd = FAST_CLASSIFIER_C_OFFLOAD,
 		.flags = 0,
@@ -159,6 +155,28 @@ static struct genl_ops fast_classifier_gnl_ops[] = {
 		.dumpit = fast_classifier_nl_genl_msg_DUMP,
 	},
 };
+
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,14,0))
+static struct genl_family fast_classifier_gnl_family = {
+	.id = GENL_ID_GENERATE,
+	.hdrsize = FAST_CLASSIFIER_GENL_HDRSIZE,
+	.name = FAST_CLASSIFIER_GENL_NAME,
+	.version = FAST_CLASSIFIER_GENL_VERSION,
+	.maxattr = FAST_CLASSIFIER_A_MAX,
+};
+#else
+static struct genl_family fast_classifier_gnl_family = {
+	.hdrsize = FAST_CLASSIFIER_GENL_HDRSIZE,
+	.name = FAST_CLASSIFIER_GENL_NAME,
+	.version = FAST_CLASSIFIER_GENL_VERSION,
+	.maxattr = FAST_CLASSIFIER_A_MAX,
+	.module		= THIS_MODULE,
+	.ops		= fast_classifier_gnl_ops,
+	.n_ops		= ARRAY_SIZE(fast_classifier_gnl_ops),
+	.mcgrps		= fast_classifier_genl_mcgrp,
+	.n_mcgrps	= ARRAY_SIZE(fast_classifier_genl_mcgrp),
+};
+#endif
 
 static atomic_t offload_msgs = ATOMIC_INIT(0);
 static atomic_t offload_no_match_msgs = ATOMIC_INIT(0);
@@ -779,6 +797,7 @@ static unsigned int fast_classifier_post_routing(struct sk_buff *skb, bool is_v4
 		return NF_ACCEPT;
 	}
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,14,0))
 	/*
 	 * Don't process untracked connections.
 	 */
@@ -787,6 +806,7 @@ static unsigned int fast_classifier_post_routing(struct sk_buff *skb, bool is_v4
 		DEBUG_TRACE("untracked connection\n");
 		return NF_ACCEPT;
 	}
+#endif
 
 	/*
 	 * Unconfirmed connection may be dropped by Linux at the final step,
@@ -1165,6 +1185,7 @@ static int fast_classifier_conntrack_event(struct notifier_block *this,
 		return NOTIFY_DONE;
 	}
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,14,0))
 	/*
 	 * If this is an untracked connection then we can't have any state either.
 	 */
@@ -1172,6 +1193,7 @@ static int fast_classifier_conntrack_event(struct notifier_block *this,
 		DEBUG_TRACE("ignoring untracked conn\n");
 		return NOTIFY_DONE;
 	}
+#endif
 
 	orig_tuple = ct->tuplehash[IP_CT_DIR_ORIGINAL].tuple;
 	sid.protocol = (s32)orig_tuple.dst.protonum;
@@ -1377,7 +1399,9 @@ static void fast_classifier_sync_rule(struct sfe_connection_sync *sis)
 	}
 
 	ct = nf_ct_tuplehash_to_ctrack(h);
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 	NF_CT_ASSERT(ct->timeout.data == (unsigned long)ct);
+#endif
 
 	/*
 	 * Only update if this is not a fixed timeout
@@ -1600,6 +1624,25 @@ static const struct device_attribute fast_classifier_attrs[] = {
 	__ATTR(exceptions, S_IRUGO, fast_classifier_get_exceptions, NULL),
 };
 
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,14,0))
+static int __net_init fast_classifier_nf_register(struct net *net)
+{
+	return nf_register_net_hooks(net, fast_classifier_ops_post_routing,
+				 ARRAY_SIZE(fast_classifier_ops_post_routing));
+}
+
+static void __net_exit fast_classifier_nf_unregister(struct net *net)
+{
+	nf_unregister_net_hooks(net, fast_classifier_ops_post_routing,
+				ARRAY_SIZE(fast_classifier_ops_post_routing));
+}
+
+static struct pernet_operations fast_classifier_net_ops = {
+	.init = fast_classifier_nf_register,
+	.exit = fast_classifier_nf_unregister,
+};
+#endif
+
 /*
  * fast_classifier_init()
  */
@@ -1647,7 +1690,11 @@ static int __init fast_classifier_init(void)
 	/*
 	 * Register our netfilter hooks.
 	 */
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,14,0))
 	result = nf_register_hooks(fast_classifier_ops_post_routing, ARRAY_SIZE(fast_classifier_ops_post_routing));
+#else
+	result = register_pernet_subsys(&fast_classifier_net_ops);
+#endif
 	if (result < 0) {
 		DEBUG_ERROR("can't register nf post routing hook: %d\n", result);
 		goto exit3;
@@ -1665,9 +1712,13 @@ static int __init fast_classifier_init(void)
 #endif
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 13, 0))
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4, 14, 0))
+	result = genl_register_family(&fast_classifier_gnl_family);
+#else
 	result = genl_register_family_with_ops_groups(&fast_classifier_gnl_family,
 						      fast_classifier_gnl_ops,
 						      fast_classifier_genl_mcgrp);
+#endif
 	if (result) {
 		DEBUG_ERROR("failed to register genl ops: %d\n", result);
 		goto exit5;
@@ -1721,7 +1772,11 @@ exit5:
 
 exit4:
 #endif
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,14,0))
 	nf_unregister_hooks(fast_classifier_ops_post_routing, ARRAY_SIZE(fast_classifier_ops_post_routing));
+#else
+	unregister_pernet_subsys(&fast_classifier_net_ops);
+#endif
 
 exit3:
 	unregister_inetaddr_notifier(&sc->inet_notifier);
@@ -1787,7 +1842,11 @@ static void __exit fast_classifier_exit(void)
 	nf_conntrack_unregister_notifier(&init_net, &fast_classifier_conntrack_notifier);
 
 #endif
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,14,0))
 	nf_unregister_hooks(fast_classifier_ops_post_routing, ARRAY_SIZE(fast_classifier_ops_post_routing));
+#else
+	unregister_pernet_subsys(&fast_classifier_net_ops);
+#endif
 
 	unregister_inet6addr_notifier(&sc->inet6_notifier);
 	unregister_inetaddr_notifier(&sc->inet_notifier);

@@ -115,7 +115,8 @@ static struct ar8327_platform_data db120_ar8327_data = {
 static struct mdio_board_info db120_mdio0_info[] = {
 	{
 		.bus_id = "ag71xx-mdio.0",
-		.phy_addr = 0,
+		.modalias = "tl_wr1041nv2",
+		.mdio_addr = 0,
 		.platform_data = &db120_ar8327_data,
 	},
 };

@@ -2173,12 +2173,20 @@ void host_helper_init(void)
     napt_procfs_init();
     memcpy(nat_bridge_dev, nat_lan_dev_list, strlen(nat_lan_dev_list)+1);
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,14,0))
     nf_register_hook(&arpinhook);
+#else
+    nf_register_net_hook(&init_net, &arpinhook);
+#endif
 /*hnat not upport ipv6*/
 #if 0
 #ifdef CONFIG_IPV6_HWACCEL
     aos_printk("Registering IPv6 hooks... \n");
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,14,0))
     nf_register_hook(&ipv6_inhook);
+#else
+    nf_register_net_hook(&init_net, &ipv6_inhook);
+#endif
 #endif
 #endif
 
@@ -2200,10 +2208,18 @@ void host_helper_exit(void)
 {
     napt_procfs_exit();
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,14,0))
     nf_unregister_hook(&arpinhook);
+#else
+    nf_unregister_net_hook(&init_net, &arpinhook);
+#endif
 #if 0
 #ifdef CONFIG_IPV6_HWACCEL
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,14,0))
     nf_unregister_hook(&ipv6_inhook);
+#else
+    nf_unregister_net_hook(&init_net, &ipv6_inhook);
+#endif
 #endif
 #endif
 

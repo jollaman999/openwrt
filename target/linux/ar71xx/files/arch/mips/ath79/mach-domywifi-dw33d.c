@@ -131,7 +131,8 @@ static struct ar8327_platform_data dw33d_qca8337_data = {
 static struct mdio_board_info dw33d_mdio0_info[] = {
 	{
 		.bus_id = "ag71xx-mdio.0",
-		.phy_addr = 0,
+		.modalias = "dw33d",
+		.mdio_addr = 0,
 		.platform_data = &dw33d_qca8337_data,
 	},
 };
