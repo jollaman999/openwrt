@@ -1853,15 +1853,6 @@ aquantia_phy_hw_init(a_uint32_t dev_id,  a_uint32_t port_bmp)
 				FAL_PHY_ADV_XGE_SPEED_ALL | FAL_PHY_ADV_100TX_FD |
 				FAL_PHY_ADV_1000T_FD);
 			SW_RTN_ON_ERROR(rv);
-			/*configure aq phy as master mode and multi port*/
-			rv = aquantia_phy_reg_read(dev_id, phy_addr, AQUANTIA_MMD_AUTONEG,
-				AQUANTIA_AUTONEG_10GBASE_T_CONTROL_REGISTER, &phy_data);
-			SW_RTN_ON_ERROR(rv);
-			phy_data |= AQUANTIA_PHY_MANUAL_MASTER;
-			phy_data |= AQUANTIA_PHY_MULTI_PORT;
-			rv = aquantia_phy_reg_write(dev_id, phy_addr, AQUANTIA_MMD_AUTONEG,
-				AQUANTIA_AUTONEG_10GBASE_T_CONTROL_REGISTER, phy_data);
-			SW_RTN_ON_ERROR(rv);
 		}
 	}
 

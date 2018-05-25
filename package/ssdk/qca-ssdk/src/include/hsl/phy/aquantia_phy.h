@@ -304,8 +304,6 @@ extern "C"
 #define AQUANTIA_PHY_CDT_MODE0 0
 #define AQUANTIA_PHY_CDT_MODE1 1
 #define AQUANTIA_PHY_CDT_MODE2 2
-#define AQUANTIA_PHY_MANUAL_MASTER 0xc000
-#define AQUANTIA_PHY_MULTI_PORT 0x2000
 
 /** Phy pages */
   typedef enum
