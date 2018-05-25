@@ -169,7 +169,6 @@ a_uint32_t hsl_phyid_get(a_uint32_t dev_id,
 
 	phy_id = (org_id<<16) | rev_id;
 
-
 	return phy_id;
 }
 
@@ -347,7 +346,7 @@ qca_ssdk_phy_address_set(a_uint32_t dev_id, a_uint32_t port_id,
 {
 	 phy_info[dev_id]->phy_address[port_id] = phy_addr;
 
-	return;
+	 return;
 }
 
 a_uint32_t
@@ -357,6 +356,33 @@ qca_ssdk_phy_address_from_dts_get(a_uint32_t dev_id,
 	 return phy_info[dev_id]->phy_address_from_dts[port_id];
 }
 
+a_uint32_t
+qca_ssdk_port_to_phy_mdio_fake_addr(a_uint32_t dev_id, a_uint32_t port_id)
+{
+	return phy_info[dev_id]->phy_mdio_fake_address[port_id];
+}
+
+void qca_ssdk_phy_mdio_fake_address_set(a_uint32_t dev_id, a_uint32_t i,
+			a_uint32_t value)
+{
+	phy_info[dev_id]->phy_mdio_fake_address[i] = value;
+
+	return;
+}
+
+a_uint32_t
+qca_ssdk_phy_mdio_fake_addr_to_port(a_uint32_t dev_id, a_uint32_t phy_mdio_fake_addr)
+{
+	a_uint32_t i = 0;
+
+	for (i = 0; i < SW_MAX_NR_PORT; i ++)
+	{
+		if (phy_info[dev_id]->phy_mdio_fake_address[i] == phy_mdio_fake_addr)
+			return i;
+	}
+	SSDK_ERROR("doesn't match port_id to specified phy_mdio_fake_addr !\n");
+	return 0;
+}
 
 a_uint32_t
 qca_ssdk_port_to_phy_addr(a_uint32_t dev_id, a_uint32_t port_id)

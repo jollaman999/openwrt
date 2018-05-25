@@ -279,11 +279,11 @@ qca808x_phy_get_speed(a_uint32_t dev_id, a_uint32_t phy_id,
 
 /******************************************************************************
 *
-* _qca808x_phy_set_force_speed - Force the speed of qca808x phy ports associated with the
+* qca808x_phy_set_force_speed - Force the speed of qca808x phy ports associated with the
 * specified device.
 */
 sw_error_t
-_qca808x_phy_set_force_speed(a_uint32_t dev_id, a_uint32_t phy_id,
+qca808x_phy_set_force_speed(a_uint32_t dev_id, a_uint32_t phy_id,
 		     fal_port_speed_t speed)
 {
 	a_uint16_t phy_data1 = 0;
@@ -392,7 +392,7 @@ qca808x_phy_set_speed(a_uint32_t dev_id, a_uint32_t phy_id,
 		case FAL_SPEED_100:
 		case FAL_SPEED_10:
 			/* set qca808x phy speed by pma control registers */
-			rv = _qca808x_phy_set_force_speed(dev_id, phy_id, speed);
+			rv = qca808x_phy_set_force_speed(dev_id, phy_id, speed);
 			PHY_RTN_ON_ERROR(rv);
 			rv = qca808x_phy_get_duplex(dev_id, phy_id, &old_duplex);
 			PHY_RTN_ON_ERROR(rv);
@@ -457,7 +457,7 @@ qca808x_phy_set_duplex(a_uint32_t dev_id, a_uint32_t phy_id,
 		case FAL_SPEED_100:
 		case FAL_SPEED_10:
 			/* force the speed */
-			rv = _qca808x_phy_set_force_speed(dev_id, phy_id, old_speed);
+			rv = qca808x_phy_set_force_speed(dev_id, phy_id, old_speed);
 			PHY_RTN_ON_ERROR(rv);
 			phy_data &= ~QCA808X_CTRL_AUTONEGOTIATION_ENABLE;
 			if (duplex == FAL_FULL_DUPLEX) {
@@ -769,7 +769,7 @@ qca808x_phy_set_local_loopback(a_uint32_t dev_id, a_uint32_t phy_id,
 		 * speed to enable local loopback */
 		rv = qca808x_phy_get_speed(dev_id, phy_id, &old_speed);
 		PHY_RTN_ON_ERROR(rv);
-		rv = _qca808x_phy_set_force_speed(dev_id, phy_id, old_speed);
+		rv = qca808x_phy_set_force_speed(dev_id, phy_id, old_speed);
 		PHY_RTN_ON_ERROR(rv);
 
 		phy_data &= ~QCA808X_CTRL_AUTONEGOTIATION_ENABLE;

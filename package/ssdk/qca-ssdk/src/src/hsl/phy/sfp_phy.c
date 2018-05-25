@@ -100,7 +100,8 @@ static struct phy_driver sfp_phy_driver = {
 	.driver		= { .owner = THIS_MODULE },
 #endif
 };
-static int sfp_phy_device_setup(a_uint32_t dev_id, a_uint32_t port)
+
+int sfp_phy_device_setup(a_uint32_t dev_id, a_uint32_t port, a_uint32_t phy_id)
 {
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0))
 	struct phy_device *phydev;
@@ -111,10 +112,17 @@ static int sfp_phy_device_setup(a_uint32_t dev_id, a_uint32_t port)
 
 	priv = ssdk_phy_priv_data_get(dev_id);
 	/*create phy device*/
-	addr = qca_ssdk_port_to_phy_addr(dev_id, port);
+#if defined(IN_PHY_I2C_MODE)
+	if (hsl_port_phy_access_type_get(dev_id, port) == PHY_I2C_ACCESS) {
+		addr = qca_ssdk_port_to_phy_mdio_fake_addr(dev_id, port);
+	} else
+#endif
+	{
+		addr = qca_ssdk_port_to_phy_addr(dev_id, port);
+	}
 	bus = ssdk_miibus_get_by_device(dev_id);
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0))
-	phydev = phy_device_create(bus, addr, SFP_PHY, false, NULL);
+	phydev = phy_device_create(bus, addr, phy_id, false, NULL);
 	if (IS_ERR(phydev) || phydev == NULL) {
 		SSDK_ERROR("Failed to create phy device!\n");
 		return SW_NOT_SUPPORTED;
@@ -127,7 +135,7 @@ static int sfp_phy_device_setup(a_uint32_t dev_id, a_uint32_t port)
 	return 0;
 }
 
-static void sfp_phy_device_remove(a_uint32_t dev_id, a_uint32_t port)
+void sfp_phy_device_remove(a_uint32_t dev_id, a_uint32_t port)
 {
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0))
 	struct phy_device *phydev = NULL;
@@ -136,8 +144,14 @@ static void sfp_phy_device_remove(a_uint32_t dev_id, a_uint32_t port)
 	struct mii_bus *bus;
 
 	bus = ssdk_miibus_get_by_device(dev_id);
-	addr = qca_ssdk_port_to_phy_addr(dev_id, port);
-
+#if defined(IN_PHY_I2C_MODE)
+	if (hsl_port_phy_access_type_get(dev_id, port) == PHY_I2C_ACCESS) {
+		addr = qca_ssdk_port_to_phy_mdio_fake_addr(dev_id, port);
+	} else
+#endif
+	{
+		addr = qca_ssdk_port_to_phy_addr(dev_id, port);
+	}
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0))
 	if (addr < PHY_MAX_ADDR) {
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
@@ -159,7 +173,7 @@ int sfp_phy_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 
 	for (port_id = 0; port_id < SW_MAX_NR_PORT; port_id ++) {
 		if (port_bmp & (0x1 << port_id)) {
-			sfp_phy_device_setup(dev_id, port_id);
+			sfp_phy_device_setup(dev_id, port_id, SFP_PHY);
 		}
 	}
 

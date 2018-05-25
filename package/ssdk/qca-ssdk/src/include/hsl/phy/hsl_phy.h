@@ -298,6 +298,10 @@ typedef struct {
 	a_uint32_t phy_address[SW_MAX_NR_PORT];
 	a_uint32_t phy_address_from_dts[SW_MAX_NR_PORT];
 	a_uint32_t phy_type[SW_MAX_NR_PORT];
+	/* fake mdio address is used to register the phy device,
+	 * when the phy is not accessed by the MDIO bus.
+	 * */
+	a_uint32_t phy_mdio_fake_address[SW_MAX_NR_PORT];
 	a_uint8_t phy_access_type[SW_MAX_NR_PORT];
 	a_bool_t phy_c45[SW_MAX_NR_PORT];
 	a_bool_t phy_combo[SW_MAX_NR_PORT];
@@ -356,6 +360,15 @@ hsl_phyid_get(a_uint32_t dev_id, a_uint32_t port_id, ssdk_init_cfg *cfg);
 
 a_uint32_t
 qca_ssdk_port_to_phy_addr(a_uint32_t dev_id, a_uint32_t port_id);
+
+a_uint32_t
+qca_ssdk_port_to_phy_mdio_fake_addr(a_uint32_t dev_id, a_uint32_t port_id);
+
+a_uint32_t
+qca_ssdk_phy_mdio_fake_addr_to_port(a_uint32_t dev_id, a_uint32_t phy_addr);
+
+void qca_ssdk_phy_mdio_fake_address_set(a_uint32_t dev_id, a_uint32_t i,
+				a_uint32_t value);
 
 void qca_ssdk_port_bmp_set(a_uint32_t dev_id, a_uint32_t value);
 

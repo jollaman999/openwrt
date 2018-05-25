@@ -210,6 +210,7 @@ extern "C"
 
 #define QCA808X_STATUS_1000X_FD_CAPS             0x8000
 
+#define QCA808X_MMD1_PMA_CAP_REG                 0x4
 	/* MMD1 2500T capabilities */
 #define QCA808X_STATUS_2500T_FD_CAPS             0x2000
 
@@ -373,6 +374,28 @@ extern "C"
 #define QCA808X_PHY_FRAME_CHECK_EN              0x0001
 #define QCA808X_PHY_XMIT_MAC_CNT_SELFCLR        0x0002
 
+a_uint16_t
+qca808x_phy_reg_read(a_uint32_t dev_id, a_uint32_t phy_id, a_uint32_t reg_id);
+
+sw_error_t
+qca808x_phy_reg_write(a_uint32_t dev_id, a_uint32_t phy_id, a_uint32_t
+reg_id, a_uint16_t reg_val);
+
+sw_error_t
+qca808x_phy_debug_write(a_uint32_t dev_id, a_uint32_t phy_id, a_uint16_t reg_id,
+		       a_uint16_t reg_val);
+a_uint16_t
+qca808x_phy_debug_read(a_uint32_t dev_id, a_uint32_t phy_id, a_uint16_t reg_id);
+
+sw_error_t
+qca808x_phy_mmd_write(a_uint32_t dev_id, a_uint32_t phy_id,
+		a_uint16_t mmd_num, a_uint16_t reg_id, a_uint16_t
+reg_val);
+
+a_uint16_t
+qca808x_phy_mmd_read(a_uint32_t dev_id, a_uint32_t phy_id,
+		a_uint16_t mmd_num, a_uint16_t reg_id);
+
 sw_error_t
 qca808x_phy_set_duplex (a_uint32_t dev_id, a_uint32_t phy_id,
 		   fal_port_duplex_t duplex);
@@ -423,6 +446,20 @@ qca808x_phy_intr_status_get (a_uint32_t dev_id, a_uint32_t phy_id,
 sw_error_t
 qca808x_phy_get_phy_id(a_uint32_t dev_id, a_uint32_t phy_id,
 		a_uint16_t * org_id, a_uint16_t * rev_id);
+
+sw_error_t
+qca808x_phy_get_status(a_uint32_t dev_id, a_uint32_t phy_id,
+		struct port_phy_status *phy_status);
+
+sw_error_t
+qca808x_phy_interface_get_mode_status(a_uint32_t dev_id, a_uint32_t phy_id,
+		fal_port_interface_mode_t *interface_mode_status);
+
+sw_error_t qca808x_phy_reset(a_uint32_t dev_id, a_uint32_t phy_id);
+
+sw_error_t
+qca808x_phy_set_force_speed(a_uint32_t dev_id, a_uint32_t phy_id,
+		     fal_port_speed_t speed);
 
 int qca808x_phy_init(a_uint32_t dev_id, a_uint32_t port_bmp);
 

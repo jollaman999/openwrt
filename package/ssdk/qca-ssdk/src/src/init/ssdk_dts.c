@@ -482,7 +482,7 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 {
 	struct device_node *phy_info_node, *port_node;
 	ssdk_port_phyinfo *port_phyinfo;
-	a_uint32_t port_id, phy_addr;
+	a_uint32_t port_id, phy_addr, phy_i2c_addr;
 	a_bool_t phy_c45, phy_combo, phy_i2c;
 	const char *mac_type = NULL;
 	sw_error_t rv = SW_OK;
@@ -508,10 +508,21 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 		if (phy_i2c) {
 			SSDK_INFO("[PORT %d] phy-i2c-mode\n", port_id);
 			hsl_port_phy_access_type_set(dev_id, port_id, PHY_I2C_ACCESS);
+			if (of_property_read_u32(port_node, "phy_i2c_address",
+						&phy_i2c_addr)) {
+				return SW_BAD_VALUE;
+			}
+			/* phy_i2c_address is the i2c slave addr */
+			hsl_phy_address_init(dev_id, port_id, phy_i2c_addr);
+			/* phy_address is the mdio addr,
+			 * which is a fake mdio addr in i2c mode */
+			qca_ssdk_phy_mdio_fake_address_set(dev_id, port_id, phy_addr);
+		} else {
+			hsl_phy_address_init(dev_id, port_id, phy_addr);
 		}
+
 		hsl_port_phy_combo_capability_set(dev_id, port_id, phy_combo);
 		hsl_port_phy_c45_capability_set(dev_id, port_id, phy_c45);
-		hsl_phy_address_init(dev_id, port_id, phy_addr);
 
 		port_phyinfo = ssdk_port_phyinfo_get(dev_id, port_id);
 		if (port_phyinfo) {
