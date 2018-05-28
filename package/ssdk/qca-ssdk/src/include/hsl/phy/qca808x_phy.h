@@ -82,7 +82,7 @@ extern "C"
 #define QCA808X_PHY_MMD3_WOL_MAGIC_MAC_CTRL3        0x804c
 #define QCA808X_PHY_MMD3_WOL_CTRL                   0x8012
 #define QCA808X_PHY_MMD3_ADDR_8023AZ_TIMER_CTRL     0x804e
-#define QCA808X_PHY_MMD3_ADDR_8023AZ_CLD_CTRL       0x8007
+#define QCA808X_PHY_MMD3_ADDR_CLD_CTRL7             0x8007
 #define QCA808X_PHY_MMD3_ADDR_CLD_CTRL5             0x8005
 #define QCA808X_PHY_MMD3_ADDR_CLD_CTRL3             0x8003
 
@@ -395,6 +395,9 @@ reg_val);
 a_uint16_t
 qca808x_phy_mmd_read(a_uint32_t dev_id, a_uint32_t phy_id,
 		a_uint16_t mmd_num, a_uint16_t reg_id);
+
+#define QCA808X_PHY_8023AZ_AFE_CTRL_MASK        0x01f0
+#define QCA808X_PHY_8023AZ_AFE_EN               0x0190
 
 sw_error_t
 qca808x_phy_set_duplex (a_uint32_t dev_id, a_uint32_t phy_id,

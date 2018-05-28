@@ -1703,6 +1703,32 @@ qca808x_phy_show_counter(a_uint32_t dev_id, a_uint32_t phy_id,
 	return SW_OK;
 }
 
+static sw_error_t
+qca808x_phy_hw_init(a_uint32_t dev_id,  a_uint32_t port_bmp)
+{
+	a_uint16_t phy_data = 0;
+	a_uint32_t port_id = 0, phy_addr = 0;
+	sw_error_t rv = SW_OK;
+
+	for (port_id = SSDK_PHYSICAL_PORT0; port_id < SW_MAX_NR_PORT; port_id ++)
+	{
+		if (port_bmp & (0x1 << port_id))
+		{
+			phy_addr = qca_ssdk_port_to_phy_addr(dev_id, port_id);
+			/*enable vga when init napa to fix 8023az issue*/
+			phy_data = qca808x_phy_mmd_read(dev_id, phy_addr, QCA808X_PHY_MMD3_NUM,
+				QCA808X_PHY_MMD3_ADDR_CLD_CTRL7);
+			phy_data &= (~QCA808X_PHY_8023AZ_AFE_CTRL_MASK);
+			phy_data |= QCA808X_PHY_8023AZ_AFE_EN;
+			rv = qca808x_phy_mmd_write(dev_id, phy_addr, QCA808X_PHY_MMD3_NUM,
+				QCA808X_PHY_MMD3_ADDR_CLD_CTRL7, phy_data);
+			SW_RTN_ON_ERROR(rv);
+		}
+	}
+
+	return rv;
+}
+
 static sw_error_t qca808x_phy_api_ops_init(void)
 {
 	sw_error_t  ret = SW_OK;
@@ -1786,6 +1812,7 @@ int qca808x_phy_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 			phy_ops_flag = A_TRUE;
 		}
 	}
+	qca808x_phy_hw_init(dev_id, port_bmp);
 
 	return 0;
 }
