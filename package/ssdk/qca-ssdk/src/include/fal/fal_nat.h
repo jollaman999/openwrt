@@ -279,7 +279,8 @@ extern "C" {
     fal_nat_unk_session_cmd_get(a_uint32_t dev_id, fal_fwd_cmd_t * cmd);
 
     sw_error_t
-    fal_nat_global_set(a_uint32_t dev_id, a_bool_t enable, a_bool_t sync_cnt_enable);
+    fal_nat_global_set(a_uint32_t dev_id, a_bool_t enable,
+    		a_bool_t sync_cnt_enable, a_uint32_t portbmp);
 
 
 #ifdef __cplusplus

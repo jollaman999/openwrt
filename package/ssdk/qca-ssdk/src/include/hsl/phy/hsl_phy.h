@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2015, 2017-2018, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -206,8 +206,10 @@ extern "C" {
 	typedef sw_error_t(*hsl_phy_counter_show) (a_uint32_t dev_id,
 						      a_uint32_t phy_id,
 						      fal_port_counter_info_t * counter_info);
+	typedef sw_error_t(*hsl_phy_serdes_reset) (a_uint32_t dev_id);
 
-
+	typedef sw_error_t(*hsl_phy_get_status) (a_uint32_t dev_id,
+				a_uint32_t phy_id, struct port_phy_status *phy_status);
 	typedef struct hsl_phy_ops_s {
 
 		hsl_phy_init phy_init;
@@ -268,15 +270,127 @@ extern "C" {
 		hsl_phy_counter_set  phy_counter_set;
 		hsl_phy_counter_get  phy_counter_get;
 		hsl_phy_counter_show  phy_counter_show;
+		hsl_phy_serdes_reset phy_serdes_reset;
+		hsl_phy_get_status phy_get_status;
 	} hsl_phy_ops_t;
 
-	sw_error_t hsl_phy_api_ops_register(hsl_phy_ops_t * phy_api_ops);
+typedef struct phy_driver_instance {
+	a_uint32_t phy_type;
+	a_uint32_t port_bmp[SW_MAX_NR_DEV];
+	hsl_phy_ops_t *phy_ops;
+	int (*init)(a_uint32_t dev_id, a_uint32_t portbmp);
+	void (*exit)(a_uint32_t dev_id, a_uint32_t portbmp);
+} phy_driver_instance_t;
 
-	sw_error_t hsl_phy_api_ops_unregister(hsl_phy_ops_t * phy_api_ops);
+typedef enum
+{
+	F1_PHY_CHIP = 0,
+	F2_PHY_CHIP,
+	MALIBU_PHY_CHIP,
+	AQUANTIA_PHY_CHIP,
+	QCA803X_PHY_CHIP,
+	SFP_PHY_CHIP,
+	MAX_PHY_CHIP,
+} phy_type_t;
 
-	hsl_phy_ops_t *hsl_phy_api_ops_get(a_uint32_t dev_id);
+typedef struct {
+	a_uint32_t phy_address[SW_MAX_NR_PORT];
+	a_uint32_t phy_address_from_dts[SW_MAX_NR_PORT];
+	a_uint32_t phy_type[SW_MAX_NR_PORT];
+	a_bool_t phy_c45[SW_MAX_NR_PORT];
+	a_bool_t phy_combo[SW_MAX_NR_PORT];
+} phy_info_t;
 
-	sw_error_t phy_api_ops_init(a_uint32_t dev_id);
+#define MALIBU5PORT_PHY 0x004DD0B1
+#define MALIBU2PORT_PHY 0x004DD0B2
+#define QCA8030_PHY 0x004DD076
+#define QCA8033_PHY 0x004DD074
+#define QCA8035_PHY 0x004DD072
+#define F1V1_PHY 0x004DD033
+#define F1V2_PHY 0x004DD034
+#define F1V3_PHY 0x004DD035
+#define F1V4_PHY 0x004DD036
+#define F2V1_PHY 0x004DD042
+#define AQUANTIA_PHY_107 0x03a1b4e2
+#define AQUANTIA_PHY_108 0x03a1b4f2
+#define AQUANTIA_PHY_109 0x03a1b502
+#define AQUANTIA_PHY_111 0x03a1b610
+#define AQUANTIA_PHY_111B0 0x03a1b612
+#define AQUANTIA_PHY_112 0x03a1b660
+#define PHY_805XV2 0x004DD082
+#define PHY_805XV1 0x004DD081
+#define SFP_PHY	0xaaaabbbb
+#define SFP_PHY_MASK	0xffffffff
+
+#define CABLE_PAIR_A  0
+#define CABLE_PAIR_B  1
+#define CABLE_PAIR_C  2
+#define CABLE_PAIR_D  3
+
+sw_error_t
+hsl_phy_api_ops_register(phy_type_t phy_type, hsl_phy_ops_t * phy_api_ops);
+
+sw_error_t
+hsl_phy_api_ops_unregister(phy_type_t phy_type, hsl_phy_ops_t * phy_api_ops);
+
+hsl_phy_ops_t *hsl_phy_api_ops_get(a_uint32_t dev_id, a_uint32_t port_id);
+
+sw_error_t phy_api_ops_init(phy_type_t phy_type);
+
+int ssdk_phy_driver_init(a_uint32_t dev_id, ssdk_init_cfg *cfg);
+
+int qca_ssdk_phy_info_init(a_uint32_t dev_id);
+
+void qca_ssdk_port_bmp_init(a_uint32_t dev_id);
+
+void hsl_phy_address_init(a_uint32_t dev_id, a_uint32_t i,
+				a_uint32_t value);
+
+a_uint32_t
+hsl_phyid_get(a_uint32_t dev_id, a_uint32_t port_id, ssdk_init_cfg *cfg);
+
+a_uint32_t
+qca_ssdk_port_to_phy_addr(a_uint32_t dev_id, a_uint32_t port_id);
+
+void qca_ssdk_port_bmp_set(a_uint32_t dev_id, a_uint32_t value);
+
+a_uint32_t qca_ssdk_port_bmp_get(a_uint32_t dev_id);
+
+a_uint32_t qca_ssdk_phy_type_port_bmp_get(a_uint32_t dev_id,
+				phy_type_t phy_type);
+
+a_uint32_t
+qca_ssdk_phy_addr_to_port(a_uint32_t dev_id, a_uint32_t phy_addr);
+
+void
+hsl_port_phy_c45_capability_set(a_uint32_t dev_id, a_uint32_t port_id,
+			a_bool_t enable);
+
+a_bool_t
+hsl_port_phy_combo_capability_get(a_uint32_t dev_id, a_uint32_t port_id);
+
+void
+hsl_port_phy_combo_capability_set(a_uint32_t dev_id, a_uint32_t port_id,
+		a_bool_t enable);
+
+sw_error_t
+hsl_ssdk_phy_serdes_reset(a_uint32_t dev_id);
+
+sw_error_t
+hsl_ssdk_phy_mode_set(a_uint32_t dev_id, fal_port_interface_mode_t mode);
+
+sw_error_t ssdk_phy_driver_cleanup(void);
+
+sw_error_t
+hsl_phydriver_update(a_uint32_t dev_id, a_uint32_t port_id,
+	a_uint32_t mode);
+
+void
+qca_ssdk_phy_address_set(a_uint32_t dev_id, a_uint32_t port_id,
+	a_uint32_t phy_addr);
+
+a_uint32_t
+qca_ssdk_phy_address_from_dts_get(a_uint32_t dev_id, a_uint32_t port_id);
 
 #ifdef __cplusplus
 }

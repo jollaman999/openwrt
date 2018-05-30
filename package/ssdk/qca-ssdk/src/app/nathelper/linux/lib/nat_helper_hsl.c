@@ -271,10 +271,18 @@ if_mac_cleanup(void)
 	return 0;
 }
 
+#define MACADDR_LEN	6
 a_int32_t
 if_mac_add(a_uint8_t *mac, a_uint32_t vid, uint32_t ipv6)
 {
     a_uint8_t i = 0;
+    a_uint8_t zero_mac[MACADDR_LEN] = {0};
+
+    if (!memcmp(mac, zero_mac, MACADDR_LEN))
+        return 0;
+
+    if(if_mac_count > MAX_INTF_NUM)
+        return -1;
 
     for(i = 0; i < if_mac_count; i++)
     {
@@ -282,7 +290,7 @@ if_mac_add(a_uint8_t *mac, a_uint32_t vid, uint32_t ipv6)
                 (global_if_mac_entry[i].vid_low == vid))
         {
             HNAT_PRINTK("%s: mac exist id:%d\n", __func__,
-                        global_if_mac_entry[if_mac_count].entry_id);
+                        global_if_mac_entry[i].entry_id);
             return 0;
         }
     }
@@ -656,9 +664,19 @@ napt_hw_mode_init(void)
 void
 napt_hw_mode_cleanup(void)
 {
-	if (!DESS_CHIP(nat_chip_ver))
+	a_uint32_t entry;
+	sw_error_t rv;
+	if (!DESS_CHIP(nat_chip_ver)) {
 		IP_ROUTE_STATUS_SET(0, A_FALSE);
-    ACL_STATUS_SET(0, A_FALSE);
+		entry = 0;
+	} else {
+		HSL_REG_ENTRY_GET(rv, 0, NAT_CTRL, 0,
+                      		(a_uint8_t *) (&entry), sizeof (a_uint32_t));
+		SW_SET_REG_BY_FIELD(NAT_CTRL, NAT_EN, 0, entry);
+	}
+	HSL_REG_ENTRY_SET(rv, 0, NAT_CTRL, 0,
+                      (a_uint8_t *) (&entry), sizeof (a_uint32_t));
+	ACL_STATUS_SET(0, A_FALSE);
 }
 
 a_int32_t

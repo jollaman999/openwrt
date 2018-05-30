@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2015, 2017, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -47,7 +47,7 @@ extern "C"
 #define MALIBU_1_0 0x004DD0B0
 #define MALIBU_1_1 0x004DD0B1
 #define MALIBU_1_1_2PORT 0x004DD0B2
-
+#define MALIBU_ORG_ID_OFFSET_LEN 16
 
   /* PHY Registers */
 #define MALIBU_PHY_CONTROL                      0
@@ -117,6 +117,17 @@ extern "C"
 #define MALIBU_PHY_PSGMII_MODE_CTRL_ADJUST_VALUE        0x220c
 #define MALIBU_PHY_PSGMII_REDUCE_SERDES_TX_AMP	0x8a
 
+#define MALIBU_PHY_QSGMII 0x8504
+#define MALIBU_PHY_PSGMII_ADDR_INC 0x5
+#define MALIBU_PHY_MAX_ADDR_INC 0x4
+#define MALIBU_MODE_CHANAGE_RESET 0x0
+#define MALIBU_MODE_RESET_DEFAULT_VALUE 0x5f
+#define MALIBU_MODE_RESET_REG 0x0
+
+#define MALIBU_PHY_TX_FLOWCTRL_STATUS 0x8
+#define MALIBU_PHY_RX_FLOWCTRL_STATUS 0x4
+
+
 #define MALIBU_PHY_MMD7_NUM  7
 #define MALIBU_PHY_MMD3_NUM  3
 #define MALIBU_PHY_MMD1_NUM  1
@@ -159,6 +170,9 @@ extern "C"
 #define MODE_CFG                     BIT_0
 #define MODE_CFG_OFFSET              0
 #define MODE_CFG_LEN                 4
+
+#define MALIBU_MODECTRL_DFLT	0x533
+#define MALIBU_MIICTRL_DFLT	0x140
 
   /*debug port */
 #define MALIBU_DEBUG_PORT_RGMII_MODE            18
@@ -637,7 +651,7 @@ extern "C"
   malibu_phy_get_phy_id(a_uint32_t dev_id, a_uint32_t phy_id,
 			a_uint16_t * org_id, a_uint16_t * rev_id);
 
-  int malibu_phy_init(void);
+  int malibu_phy_init(a_uint32_t dev_id, a_uint32_t port_bmp);
 
 #ifdef __cplusplus
 }

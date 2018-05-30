@@ -285,7 +285,6 @@ _dess_ip_feature_check(a_uint32_t dev_id)
                       (a_uint8_t *) (&entry), sizeof (a_uint32_t));
     SW_RTN_ON_ERROR(rv);
 
-/*linchen: force as dess*/
     if (DESS_DEVICE_ID == entry)
     {
         return SW_OK;

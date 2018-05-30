@@ -22,7 +22,7 @@
 
 #define S17_WAN_PORT nat_helper_wan_port_get()
 
-void host_helper_init(void);
+void host_helper_init(a_uint32_t portbmp);
 void host_helper_exit(void);
 void  napt_helper_init(void);
 void napt_helper_exit(void);

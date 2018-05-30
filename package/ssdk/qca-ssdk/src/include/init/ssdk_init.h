@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2015, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012, 2015-2017, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -22,9 +22,20 @@ extern "C" {
 #endif                          /* __cplusplus */
 
 #include "common/sw.h"
-#include "fal_led.h"
+#include "fal/fal_led.h"
 
-#define SSDK_MAX_PORT_NUM 7
+#define SSDK_MAX_PORT_NUM		8
+#define SSDK_MAX_VIRTUAL_PORT_NUM	256
+#define SSDK_MAX_SERVICE_CODE_NUM	256
+#define SSDK_MAX_CPU_CODE_NUM		256
+#define SSDK_L0SCHEDULER_CFG_MAX	300
+#define SSDK_L0SCHEDULER_UCASTQ_CFG_MAX	256
+#define SSDK_L1SCHEDULER_CFG_MAX	64
+#define SSDK_SP_MAX_PRIORITY		8
+#define SSDK_MAX_FRAME_SIZE	0x3000
+
+#define PORT_GMAC_TYPE	1
+#define PORT_XGMAC_TYPE	2
 
     typedef enum {
         HSL_MDIO = 1,
@@ -66,6 +77,16 @@ extern "C" {
     typedef sw_error_t
     (*psgmii_reg_get) (a_uint32_t dev_id, a_uint32_t reg_addr, a_uint8_t *reg_data, a_uint32_t len);
 
+	typedef sw_error_t
+	(*uniphy_reg_set) (a_uint32_t dev_id, a_uint32_t index, a_uint32_t reg_addr, a_uint8_t *reg_data, a_uint32_t len);
+
+	typedef sw_error_t
+	(*uniphy_reg_get) (a_uint32_t dev_id, a_uint32_t index, a_uint32_t reg_addr, a_uint8_t *reg_data, a_uint32_t len);
+
+	typedef void (*mii_reg_set)(a_uint32_t dev_id, a_uint32_t reg, a_uint32_t val);
+
+	typedef a_uint32_t (*mii_reg_get)(a_uint32_t dev_id, a_uint32_t reg);
+
 enum ssdk_port_wrapper_cfg {
 	PORT_WRAPPER_PSGMII = 0,
 	PORT_WRAPPER_PSGMII_RGMII5,
@@ -78,7 +99,16 @@ enum ssdk_port_wrapper_cfg {
 	PORT_WRAPPER_SGMII0_RGMII4,
 	PORT_WRAPPER_SGMII1_RGMII4,
 	PORT_WRAPPER_SGMII4_RGMII4,
-	PORT_WRAPPER_MAX
+	PORT_WRAPPER_QSGMII,
+	PORT_WRAPPER_SGMII_PLUS,
+	PORT_WRAPPER_USXGMII,
+	PORT_WRAPPER_10GBASE_R,
+	PORT_WRAPPER_SGMII_CHANNEL0,
+	PORT_WRAPPER_SGMII_CHANNEL1,
+	PORT_WRAPPER_SGMII_CHANNEL4,
+	PORT_WRAPPER_RGMII,
+	PORT_WRAPPER_PSGMII_FIBER,
+	PORT_WRAPPER_MAX = 0xFF
 };
 
     typedef struct
@@ -89,6 +119,10 @@ enum ssdk_port_wrapper_cfg {
         hdr_reg_get     header_reg_get;
         psgmii_reg_set     psgmii_reg_set;
         psgmii_reg_get     psgmii_reg_get;
+        uniphy_reg_set     uniphy_reg_set;
+        uniphy_reg_get     uniphy_reg_get;
+	mii_reg_set	mii_reg_set;
+	mii_reg_get	mii_reg_get;
     } hsl_reg_func;
 
     typedef struct
@@ -115,6 +149,8 @@ enum ssdk_port_wrapper_cfg {
         CHIP_ISIS,
         CHIP_ISISC,
         CHIP_DESS,
+        CHIP_HPPE,
+	CHIP_SCOMPHY,
     } ssdk_chip_type;
 
 	typedef struct
@@ -155,27 +191,10 @@ typedef struct
 	a_uint32_t led_source_num;
 	led_source_cfg_t led_source_cfg[15];
 	a_uint32_t      phy_id;
+	a_uint32_t      mac_mode1;
+	a_uint32_t      mac_mode2;
 } ssdk_init_cfg;
 
-	typedef struct
-	{
-		a_uint32_t switchreg_base_addr;
-		a_uint32_t switchreg_size;
-		a_uint32_t psgmiireg_base_addr;
-		a_uint32_t psgmiireg_size;
-		a_uint8_t *reg_access_mode;
-		a_uint8_t *psgmii_reg_access_str;
-		hsl_reg_mode switch_reg_access_mode;
-		hsl_reg_mode psgmii_reg_access_mode;
-		struct clk *ess_clk;
-		a_uint32_t      mac_mode;
-	} ssdk_dt_cfg;
-
-typedef struct phy_identification {
-	a_uint16_t phy_addr;
-	a_uint32_t phy_id;
-	int (*init)(void);
-} phy_identification_t;
 
 #if defined ATHENA
 #define def_init_cfg  {.reg_mode = HSL_MDIO, .cpu_mode = HSL_CPU_2};
@@ -278,22 +297,34 @@ typedef struct phy_identification {
         ssdk_init_cfg init_cfg;
     } ssdk_cfg_t;
 
-    sw_error_t
-    ssdk_init(a_uint32_t dev_id, ssdk_init_cfg *cfg);
+#define SSDK_RFS_INTF_MAX	8
+typedef struct
+{
+	a_uint32_t if_idx; /*netdevic idx*/
+	fal_mac_addr_t macaddr;
+	a_uint16_t vid;
+	a_uint8_t hw_idx; /* HW table entry idx*/
+} ssdk_rfs_intf_t;
 
-sw_error_t qca_ar8327_phy_read(a_uint32_t dev_id, a_uint32_t phy_addr,
-                           a_uint32_t reg, a_uint16_t* data);
-sw_error_t qca_ar8327_phy_write(a_uint32_t dev_id, a_uint32_t phy_addr,
-                            a_uint32_t reg, a_uint16_t data);
+sw_error_t
+ssdk_init(a_uint32_t dev_id, ssdk_init_cfg *cfg);
 
-sw_error_t qca_switch_reg_read(a_uint32_t dev_id, a_uint32_t reg_addr,
-			a_uint8_t * reg_data, a_uint32_t len);
-sw_error_t qca_switch_reg_write(a_uint32_t dev_id, a_uint32_t reg_addr,
-			a_uint8_t * reg_data, a_uint32_t len);
+sw_error_t
+ssdk_hsl_access_mode_set(a_uint32_t dev_id, hsl_access_mode reg_mode);
 
-    sw_error_t
-    ssdk_hsl_access_mode_set(a_uint32_t dev_id, hsl_access_mode reg_mode);
-	a_uint32_t ssdk_dt_global_get_mac_mode(void);
+a_uint32_t ssdk_dt_global_get_mac_mode(a_uint32_t dev_id, a_uint32_t index);
+a_uint32_t ssdk_dt_global_set_mac_mode(a_uint32_t dev_id, a_uint32_t index, a_uint32_t mode);
+
+a_uint32_t
+qca_hppe_port_mac_type_get(a_uint32_t dev_id, a_uint32_t port_id);
+a_uint32_t
+qca_hppe_port_mac_type_set(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t port_type);
+
+void
+qca_mac_sw_sync_port_status_init(a_uint32_t dev_id);
+
+struct qca_phy_priv* ssdk_phy_priv_data_get(a_uint32_t dev_id);
+sw_error_t qca_switch_init(a_uint32_t dev_id);
 
 #ifdef __cplusplus
 }

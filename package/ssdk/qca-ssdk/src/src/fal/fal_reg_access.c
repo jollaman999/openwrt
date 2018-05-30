@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012, 2017, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -211,6 +211,37 @@ _fal_phy_dump(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t idx,fal_phy_dum
         return SW_NOT_SUPPORTED;
 
     rv = p_api->phy_dump(dev_id, phy_addr,idx,phy_dump);
+    return rv;
+}
+static sw_error_t
+_fal_uniphy_reg_get(a_uint32_t dev_id, a_uint32_t index, a_uint32_t reg_addr,
+		a_uint8_t value[], a_uint32_t value_len)
+{
+    sw_error_t rv;
+    hsl_api_t *p_api;
+
+    SW_RTN_ON_NULL(p_api = hsl_api_ptr_get(dev_id));
+
+    if (NULL == p_api->uniphy_reg_get)
+        return SW_NOT_SUPPORTED;
+
+    rv = p_api->uniphy_reg_get(dev_id, index, reg_addr, value, value_len);
+    return rv;
+}
+
+static sw_error_t
+_fal_uniphy_reg_set(a_uint32_t dev_id, a_uint32_t index, a_uint32_t reg_addr,
+		a_uint8_t value[], a_uint32_t value_len)
+{
+    sw_error_t rv;
+    hsl_api_t *p_api;
+
+    SW_RTN_ON_NULL(p_api = hsl_api_ptr_get(dev_id));
+
+    if (NULL == p_api->uniphy_reg_set)
+        return SW_NOT_SUPPORTED;
+
+    rv = p_api->uniphy_reg_set(dev_id, index, reg_addr, value, value_len);
     return rv;
 }
 
@@ -453,6 +484,48 @@ fal_phy_dump(a_uint32_t dev_id, a_uint32_t phy_addr,
 
     FAL_API_LOCK;
     rv = _fal_phy_dump(dev_id, phy_addr, idx, phy_dump);
+    FAL_API_UNLOCK;
+    return rv;
+}
+
+/**
+  * fal_uniphy_reg_get - get value of specific register in uniphy module
+  * @reg_addr: address of the register
+  * @uniphy_index: index of uniphy
+  * @value: pointer to the memory storing the value.
+  * @value_len: length of the value.
+  *
+  * Get the value of a specific register field with related parameter
+  */
+sw_error_t
+fal_uniphy_reg_get(a_uint32_t dev_id, a_uint32_t index, a_uint32_t reg_addr,
+		a_uint8_t value[], a_uint32_t value_len)
+{
+    sw_error_t rv;
+
+    FAL_API_LOCK;
+    rv = _fal_uniphy_reg_get(dev_id, index, reg_addr, value, value_len);
+    FAL_API_UNLOCK;
+    return rv;
+}
+
+/**
+  * fal_uniphy_reg_set - set value of specific register in uniphy module
+  * @reg_addr: address of the register
+  * @uniphy_index: index of uniphy
+  * @value: pointer to the memory storing the value.
+  * @value_len: length of the value.
+  *
+  * Get the value of a specific register field with related parameter
+  */
+sw_error_t
+fal_uniphy_reg_set(a_uint32_t dev_id, a_uint32_t index, a_uint32_t reg_addr,
+		a_uint8_t value[], a_uint32_t value_len)
+{
+    sw_error_t rv;
+
+    FAL_API_LOCK;
+    rv = _fal_uniphy_reg_set(dev_id, index, reg_addr, value, value_len);
     FAL_API_UNLOCK;
     return rv;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012, 2016-2017, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -22,7 +22,7 @@
 #include "hsl.h"
 #include "hsl_dev.h"
 #include "hsl_api.h"
-
+#include "adpt.h"
 
 /**
  * @brief Init fal layer.
@@ -48,6 +48,9 @@ fal_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
     rv = fal_vlan_init(dev_id);
     SW_RTN_ON_ERROR(rv);
 #endif
+
+    rv = adpt_init(dev_id, cfg);
+    SW_RTN_ON_ERROR(rv);
 
     return rv;
 }
@@ -82,6 +85,18 @@ _fal_ssdk_cfg(a_uint32_t dev_id, ssdk_cfg_t *ssdk_cfg)
     rv = hsl_ssdk_cfg(dev_id, ssdk_cfg);
 
     return rv;
+}
+
+static sw_error_t
+_fal_module_func_ctrl_set(a_uint32_t dev_id, a_uint32_t module, fal_func_ctrl_t *func_ctrl)
+{
+    return adpt_module_func_ctrl_set(dev_id, module, func_ctrl);
+}
+
+static sw_error_t
+_fal_module_func_ctrl_get(a_uint32_t dev_id, a_uint32_t module, fal_func_ctrl_t *func_ctrl)
+{
+    return adpt_module_func_ctrl_get(dev_id, module, func_ctrl);
 }
 
 sw_error_t
@@ -132,6 +147,40 @@ fal_ssdk_cfg(a_uint32_t dev_id, ssdk_cfg_t *ssdk_cfg)
     FAL_API_LOCK;
     rv = _fal_ssdk_cfg(dev_id, ssdk_cfg);
     FAL_API_UNLOCK;
+    return rv;
+}
+
+sw_error_t
+fal_module_func_ctrl_set(a_uint32_t dev_id, a_uint32_t module, fal_func_ctrl_t *func_ctrl)
+{
+    sw_error_t rv;
+
+    FAL_API_LOCK;
+    rv = _fal_module_func_ctrl_set(dev_id, module, func_ctrl);
+    FAL_API_UNLOCK;
+    return rv;
+}
+
+sw_error_t
+fal_module_func_ctrl_get(a_uint32_t dev_id, a_uint32_t module, fal_func_ctrl_t *func_ctrl)
+{
+    sw_error_t rv;
+
+    FAL_API_LOCK;
+    rv = _fal_module_func_ctrl_get(dev_id, module, func_ctrl);
+    FAL_API_UNLOCK;
+    return rv;
+}
+
+sw_error_t
+fal_module_func_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
+{
+    sw_error_t rv;
+    HSL_DEV_ID_CHECK(dev_id);
+
+    rv = adpt_module_func_init(dev_id, cfg);
+    SW_RTN_ON_ERROR(rv);
+
     return rv;
 }
 

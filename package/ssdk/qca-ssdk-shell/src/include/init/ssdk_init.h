@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2014, 2017, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -59,6 +59,16 @@ extern "C" {
     typedef sw_error_t
     (*psgmii_reg_get) (a_uint32_t dev_id, a_uint32_t reg_addr, a_uint8_t *reg_data, a_uint32_t len);
 
+    typedef sw_error_t
+    (*uniphy_reg_set) (a_uint32_t dev_id, a_uint32_t index, a_uint32_t reg_addr, a_uint8_t *reg_data, a_uint32_t len);
+
+    typedef sw_error_t
+    (*uniphy_reg_get) (a_uint32_t dev_id, a_uint32_t index, a_uint32_t reg_addr, a_uint8_t *reg_data, a_uint32_t len);
+
+    typedef void (*mii_reg_set)(a_uint32_t reg, a_uint32_t val);
+
+    typedef a_uint32_t (*mii_reg_get)(a_uint32_t reg);
+
     typedef struct
     {
         mdio_reg_set    mdio_set;
@@ -67,6 +77,10 @@ extern "C" {
         hdr_reg_get     header_reg_get;
         psgmii_reg_set     psgmii_reg_set;
         psgmii_reg_get     psgmii_reg_get;
+        uniphy_reg_set     uniphy_reg_set;
+        uniphy_reg_get     uniphy_reg_get;
+	mii_reg_set	mii_reg_set;
+	mii_reg_get	mii_reg_get;
     } hsl_reg_func;
 
     typedef struct
@@ -93,6 +107,7 @@ extern "C" {
         CHIP_ISIS,
         CHIP_ISISC,
         CHIP_DESS,
+        CHIP_HPPE,
     } ssdk_chip_type;
 
     typedef struct
@@ -132,6 +147,8 @@ typedef struct
 	a_uint32_t led_source_num;
 	led_source_cfg_t led_source_cfg[15];
 	a_uint32_t      phy_id;
+	a_uint32_t      mac_mode1;
+	a_uint32_t      mac_mode2;
 } ssdk_init_cfg;
 
 #if defined ATHENA

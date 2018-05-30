@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, 2015, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2014-2017, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -30,9 +30,16 @@ typedef struct
 void  set_talk_mode(int mode);
 int get_talk_mode(void);
 void set_full_cmdstrp(char **cmdstrp);
+int
+get_jump(void);
 sw_data_type_t * cmd_data_type_find(sw_data_type_e type);
 void  cmd_strtol(char *str, a_uint32_t * arg_val);
 
+sw_error_t __cmd_data_check_complex(char *info, char *defval, char *usage,
+				sw_error_t(*chk_func)(), void *arg_val,
+				a_uint32_t size);
+
+sw_error_t cmd_data_check_portid(char *cmdstr, fal_port_t * val, a_uint32_t size);
 
 sw_error_t cmd_data_check_portmap(char *cmdstr, fal_pbmp_t * val, a_uint32_t size);
 sw_error_t cmd_data_check_confirm(char *cmdstr, a_bool_t def, a_bool_t * val, a_uint32_t size);
@@ -58,6 +65,7 @@ sw_error_t cmd_data_check_egmode(char *cmd_str, a_uint32_t * arg_val,
 sw_error_t cmd_data_check_capable(char *cmd_str, a_uint32_t * arg_val,
                                   a_uint32_t size);
 sw_error_t cmd_data_check_fdbentry(char *cmdstr, void *val, a_uint32_t size);
+sw_error_t cmd_data_check_maclimit_ctrl(char *cmdstr, void *val, a_uint32_t size);
 sw_error_t cmd_data_check_macaddr(char *cmdstr, void *val, a_uint32_t size);
 
 void cmd_data_print_uint32(a_uint8_t * param_name, a_uint32_t * buf,
@@ -79,6 +87,10 @@ void cmd_data_print_vlan(a_uint8_t * param_name, a_uint32_t * buf,
                          a_uint32_t size);
 void cmd_data_print_mib(a_uint8_t * param_name, a_uint32_t * buf,
                         a_uint32_t size);
+void cmd_data_print_mib_cntr(a_uint8_t * param_name, a_uint64_t * buf,
+                        a_uint32_t size);
+void cmd_data_print_xgmib(a_uint8_t * param_name, a_uint64_t * buf,
+                        a_uint64_t size);
 void cmd_data_print_1qmode(a_uint8_t * param_name, a_uint32_t * buf,
                            a_uint32_t size);
 void cmd_data_print_egmode(a_uint8_t * param_name, a_uint32_t * buf,
@@ -86,6 +98,8 @@ void cmd_data_print_egmode(a_uint8_t * param_name, a_uint32_t * buf,
 void cmd_data_print_capable(a_uint8_t * param_name, a_uint32_t * buf,
                             a_uint32_t size);
 void cmd_data_print_fdbentry(a_uint8_t * param_name, a_uint32_t * buf,
+                             a_uint32_t size);
+void cmd_data_print_maclimit_ctrl(a_uint8_t * param_name, a_uint32_t * buf,
                              a_uint32_t size);
 void cmd_data_print_macaddr(char * param_name, a_uint32_t * buf,
                             a_uint32_t size);
@@ -138,6 +152,14 @@ cmd_data_print_ledpattern(a_uint8_t * param_name, a_uint32_t * buf,
                           a_uint32_t size);
 
 sw_error_t
+cmd_data_check_mirr_analy_cfg(char *info, void *val, a_uint32_t size);
+void
+cmd_data_print_mirr_analy_cfg(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+sw_error_t
+cmd_data_check_mirr_direction(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size);
+void
+cmd_data_print_mirr_direction(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+sw_error_t
 cmd_data_check_invlan_mode(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size);
 void
 cmd_data_print_invlan_mode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
@@ -176,6 +198,9 @@ cmd_data_check_fdboperation(char *cmd_str, void * val, a_uint32_t size);
 sw_error_t
 cmd_data_check_pppoe(char *cmd_str, void * val, a_uint32_t size);
 
+sw_error_t
+cmd_data_check_pppoe_less(char *cmd_str, void * val, a_uint32_t size);
+
 void
 cmd_data_print_pppoe(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
@@ -184,6 +209,13 @@ cmd_data_check_udf_type(char *cmdstr, fal_acl_udf_type_t * arg_val, a_uint32_t s
 
 void
 cmd_data_print_udf_type(char * param_name, a_uint32_t * buf,
+                        a_uint32_t size);
+
+sw_error_t
+cmd_data_check_udf_pkt_type(char *cmdstr, fal_acl_udf_pkt_type_t * arg_val, a_uint32_t size);
+
+void
+cmd_data_print_udf_pkt_type(char * param_name, a_uint32_t * buf,
                         a_uint32_t size);
 
 sw_error_t
@@ -295,6 +327,9 @@ cmd_data_check_fdb_smode(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size);
 void
 cmd_data_print_fdb_smode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
+void
+cmd_data_print_fdb_ctrl_mode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
 sw_error_t
 cmd_data_check_fx100_config(char *cmd_str, void * arg_val, a_uint32_t size);
 
@@ -339,6 +374,9 @@ cmd_data_print_remark_entry(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t
 sw_error_t
 cmd_data_check_default_route_entry(char *cmd_str, void * val, a_uint32_t size);
 
+sw_error_t
+cmd_data_check_u_qmap(char *cmd_str, void * val, a_uint32_t size);
+
 void
 cmd_data_print_default_route_entry(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
@@ -347,6 +385,102 @@ cmd_data_check_host_route_entry(char *cmd_str, void * val, a_uint32_t size);
 
 void
 cmd_data_print_host_route_entry(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_arp_sg(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_arp_sg(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_intf(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_intf(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_flow_age(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_flow_age(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_flow_ctrl(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_flow_ctrl(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ac_static_thresh(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_ac_static_thresh(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ac_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_ac_dynamic_thresh(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ac_group_buff(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_ac_group_buff(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ac_ctrl(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_ac_ctrl(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ac_obj(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_ac_obj(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_vsi_intf(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_vsi_intf(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ip_pub(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_ip_pub(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ip_mcmode(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_ip_mcmode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ip_portmac(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_ip_portmac(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ip_sg(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_ip_sg(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_nexthop(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_nexthop(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_network_route(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_network_route(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_ip_wcmp_entry(char *cmd_str, void * val, a_uint32_t size);
@@ -358,6 +492,113 @@ sw_error_t
 cmd_data_check_ip4_rfs_entry(char *cmd_str, void * val, a_uint32_t size);
 sw_error_t
 cmd_data_check_ip6_rfs_entry(char *cmd_str, void * val, a_uint32_t size);
+sw_error_t
+cmd_data_check_flow_age_entry(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_flow_age_entry(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+sw_error_t
+cmd_data_check_flow_ctrl_entry(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_flow_ctrl_entry(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_flow(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_flow_host(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_flow_host(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ip_global(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_ip_global(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_flow_global(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_flow_global(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_l3_parser(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_l3_parser(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_l4_parser(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_l4_parser(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_exp_ctrl(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_exp_ctrl(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_port_group(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_port_group(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_port_pri(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_port_pri(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_port_remark(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_port_remark(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_cosmap(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_cosmap(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_queue_scheduler(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_queue_scheduler(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ring_queue(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_ring_queue(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_bm_static_thresh(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_bm_static_thresh(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_queue_cnt(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_bm_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_bm_dynamic_thresh(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+void
+cmd_data_print_bm_port_counter(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
 sw_error_t
 cmd_data_check_flow_cookie(char *cmd_str, void * val, a_uint32_t size);
 
@@ -381,6 +622,33 @@ cmd_data_check_fiber_mode(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size);
 sw_error_t
 cmd_data_check_interface_mode(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size);
 
+sw_error_t
+cmd_data_check_newadr_lrn(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_newaddr_lrn_entry(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_stamove(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_stamove_entry(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_vsi_member(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_vsi_member_entry(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+void
+cmd_data_print_vsi_counter(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_mtu_entry(char *cmd_str, void * val, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_mru_entry(char *cmd_str, void * val, a_uint32_t size);
+
 void
 cmd_data_print_crossover_mode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
@@ -403,10 +671,181 @@ void
 cmd_data_print_register_info(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 void
+cmd_data_print_phy_register_info(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+void
 cmd_data_print_debug_register_info(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 void
-cmd_data_print_phy_register_info(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+cmd_data_print_mtu_info(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+void
+cmd_data_print_mru_info(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_global_qinqmode(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_global_qinqmode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_port_qinqmode(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_port_qinqmode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_tpid(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_tpid(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ingress_filter(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_ingress_filter(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_port_default_vid_en(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_port_default_vid_en(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_port_vlan_tag(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_port_vlan_tag(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_port_vlan_direction(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_port_vlan_direction(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_port_vlan_translation_adv_rule(char *info, fal_vlan_trans_adv_rule_t *val, a_uint32_t size);
+
+void
+cmd_data_print_port_vlan_translation_adv_rule(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_port_vlan_translation_adv_action(char *info, fal_vlan_trans_adv_action_t *val, a_uint32_t size);
+
+void
+cmd_data_print_port_vlan_translation_adv_action(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+void
+cmd_data_print_port_vlan_counter(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_tag_propagation(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_tag_propagation(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_egress_vsi_tag(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_egress_vsi_tag(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_egress_mode(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_egress_mode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_ctrlpkt_profile(char *info, void *val, a_uint32_t size);
+
+sw_error_t
+cmd_data_print_ctrlpkt_profile(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_servcode_config(char *info, fal_servcode_config_t *val, a_uint32_t size);
+
+void
+cmd_data_print_servcode_config(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_rss_hash_mode(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_rss_hash_config(char *info, fal_rss_hash_config_t *val, a_uint32_t size);
+
+void
+cmd_data_print_rss_hash_config(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_port_policer_config(char *cmd_str, void * val, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_policer_cmd_config(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_port_policer_config(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+void
+cmd_data_print_policer_cmd_config(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_acl_policer_config(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_acl_policer_config(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+void
+cmd_data_print_policer_counter_infor(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+void
+cmd_data_print_policer_global_counter_infor(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+void
+cmd_data_print_port_scheduler_resource(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_port_shaper_token_config(char *cmd_str, void * val, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_shaper_token_config(char *cmd_str, void * val, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_port_shaper_config(char *cmd_str, void * val, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_shaper_config(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_port_shaper_token_config(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+void
+cmd_data_print_shaper_token_config(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+void
+cmd_data_print_port_shaper_config(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+void
+cmd_data_print_shaper_config(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_module(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size);
+
+void
+cmd_data_print_module(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_func_ctrl(char *cmd_str, void * val, a_uint32_t size);
+
+void
+cmd_data_print_func_ctrl(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+
+sw_error_t
+cmd_data_check_debug_port_counter_status(char *info, fal_counter_en_t *val, a_uint32_t size);
+
+void
+cmd_data_print_debug_port_counter_status(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 #endif
 

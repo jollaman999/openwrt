@@ -19,6 +19,13 @@
 extern "C" {
 #endif                          /* __cplusplus */
 
+#if defined(IN_SWCONFIG)
+#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
+#include <linux/switch.h>
+#else
+#include <net/switch.h>
+#endif
+
 int
 qca_ar8327_sw_set_reset_mibs(struct switch_dev *dev,
 			 						const struct switch_attr *attr,
@@ -35,9 +42,7 @@ qca_ar8327_sw_get_port_mib(struct switch_dev *dev,
 		       						const struct switch_attr *attr,
 		       						struct switch_val *val);
 
-void
-qca_ar8327_sw_mib_task(struct switch_dev *dev);
-
+#endif
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2014, 2017, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -28,7 +28,7 @@
 static int glb_socket_fd = 0;
 
 sw_error_t
-sw_uk_if(a_uint32_t arg_val[SW_MAX_API_PARAM])
+sw_uk_if(unsigned long arg_val[SW_MAX_API_PARAM])
 {
     ioctl(glb_socket_fd, SIOCDEVPRIVATE, arg_val);
     return SW_OK;

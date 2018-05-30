@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2014, 2017, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -45,6 +45,16 @@ extern "C" {
 #include "fal_interface_ctrl.h"
 #include "fal_fdb.h"
 #include "fal_multi.h"
+#include "fal_vsi.h"
+#include "fal_qm.h"
+#include "fal_flow.h"
+#include "fal_ctrlpkt.h"
+#include "fal_servcode.h"
+#include "fal_rss_hash.h"
+#include "fal_pppoe.h"
+#include "fal_shaper.h"
+#include "fal_bm.h"
+#include "fal_policer.h"
 
 #ifdef __cplusplus
 }

@@ -40,7 +40,7 @@ endef
 
 define KernelPackage/qca-ssdk-hnat
 $(call KernelPackage/qca-ssdk/default-nohnat)
-  DEPENDS:=@TARGET_ipq_ipq40xx||TARGET_ar71xx||TARGET_ipq806x +kmod-ipt-extra +kmod-ipt-filter +(TARGET_ipq806x||TARGET_ipq):kmod-qca-rfs +kmod-ppp
+  DEPENDS:=@TARGET_ar71xx +kmod-ipt-extra +kmod-ipt-filter +kmod-ipv6 +kmod-ppp
   TITLE+= (hnat)
   VARIANT:=hnat
 endef
@@ -91,6 +91,7 @@ define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include/qca-ssdk/ref
 	$(INSTALL_DIR) $(1)/usr/include/qca-ssdk/fal
 	$(INSTALL_DIR) $(1)/usr/include/qca-ssdk/sal
+	$(INSTALL_DIR) $(1)/usr/include/qca-ssdk/init
 	$(CP) -rf $(PKG_BUILD_DIR)/include/api/sw_ioctl.h $(1)/usr/include/qca-ssdk/api
 	if [ -f $(PKG_BUILD_DIR)/include/ref/ref_vsi.h ]; then \
 	$(CP) -rf $(PKG_BUILD_DIR)/include/ref/ref_vsi.h $(1)/usr/include/qca-ssdk/ref/; \
@@ -98,52 +99,29 @@ define Build/InstallDev
 	if [ -f $(PKG_BUILD_DIR)/include/ref/ref_fdb.h ]; then \
 	$(CP) -rf $(PKG_BUILD_DIR)/include/ref/ref_fdb.h $(1)/usr/include/qca-ssdk/ref/; \
 	fi
-	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_bm.h ]; then \
-	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_bm.h $(1)/usr/include/qca-ssdk/fal/; \
-	fi
-	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_fdb.h $(1)/usr/include/qca-ssdk/fal
-	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_qm.h ]; then \
-	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_qm.h $(1)/usr/include/qca-ssdk/fal/; \
-	fi
-	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_qos.h $(1)/usr/include/qca-ssdk/fal
-	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_shaper.h ]; then \
-	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_shaper.h $(1)/usr/include/qca-ssdk/fal/; \
-	fi
-	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_type.h $(1)/usr/include/qca-ssdk/fal
-	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_portvlan.h $(1)/usr/include/qca-ssdk/fal
-	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_vsi.h ]; then \
-	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_vsi.h $(1)/usr/include/qca-ssdk/fal/; \
-	fi
-	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_policer.h ]; then \
-	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_policer.h $(1)/usr/include/qca-ssdk/fal/; \
-	fi
-	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_ctrlpkt.h ]; then \
-	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_ctrlpkt.h $(1)/usr/include/qca-ssdk/fal/; \
-	fi
-	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_mirror.h ]; then \
-	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_mirror.h $(1)/usr/include/qca-ssdk/fal/; \
-	fi
-	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_trunk.h ]; then \
-	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_trunk.h $(1)/usr/include/qca-ssdk/fal/; \
-	fi
-	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_stp.h ]; then \
-	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_stp.h $(1)/usr/include/qca-ssdk/fal/; \
-	fi
-	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_pppoe.h ]; then \
-	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_pppoe.h $(1)/usr/include/qca-ssdk/fal/; \
-	fi
-	if [ -f $(PKG_BUILD_DIR)/include/fal/fal_mib.h ]; then \
-	$(CP) -rf $(PKG_BUILD_DIR)/include/fal/fal_mib.h $(1)/usr/include/qca-ssdk/fal/; \
-	fi
 	if [ -f $(PKG_BUILD_DIR)/include/ref/ref_port_ctrl.h ]; then \
 	$(CP) -rf $(PKG_BUILD_DIR)/include/ref/ref_port_ctrl.h $(1)/usr/include/qca-ssdk/ref/; \
 	fi
+	if [ -f $(PKG_BUILD_DIR)/include/init/ssdk_init.h ]; then \
+	$(CP) -rf $(PKG_BUILD_DIR)/include/init/ssdk_init.h $(1)/usr/include/qca-ssdk/init/; \
+	fi
+	$(CP) -rf $(PKG_BUILD_DIR)/include/fal $(1)/usr/include/qca-ssdk
 	$(CP) -rf $(PKG_BUILD_DIR)/include/common $(1)/usr/include/qca-ssdk
 	$(CP) -rf $(PKG_BUILD_DIR)/include/sal/os $(1)/usr/include/qca-ssdk/sal
 endef
 
 define Build/Compile
 	$(MAKE) -C $(PKG_BUILD_DIR) $(strip $(QCASSDK_CONFIG_OPTS))
+endef
+
+define KernelPackage/qca-ssdk-nohnat/install
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/qca-ssdk $(1)/etc/init.d/qca-ssdk
+endef
+
+define KernelPackage/qca-ssdk-hnat/install
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/qca-ssdk $(1)/etc/init.d/qca-ssdk
 endef
 
 $(eval $(call KernelPackage,qca-ssdk-nohnat))

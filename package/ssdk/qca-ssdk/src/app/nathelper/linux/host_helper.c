@@ -408,7 +408,7 @@ uint32_t napt_set_default_route(fal_ip4_addr_t dst_addr, fal_ip4_addr_t src_addr
         }
         else
         {
-            printk("multi_route_indev %p nf_athrs17_hnat_wan_type %d\n", multi_route_indev, nf_athrs17_hnat_wan_type);
+            printk("multi_route_indev %pK nf_athrs17_hnat_wan_type %d\n", multi_route_indev, nf_athrs17_hnat_wan_type);
         }
     }
     /* end next hop (s) */
@@ -884,12 +884,13 @@ static void setup_dev_list(void)
 				/*wan port*/
 				HNAT_PRINTK("wan port vid:%d\n", tmp_vid);
 				nat_wan_vid = tmp_vid;
-				snprintf(nat_wan_dev_list, IFNAMSIZ, "eth0.%d eth0 pppoe-wan", tmp_vid);
+				snprintf(nat_wan_dev_list, IFNAMSIZ*4, "eth0.%d eth0 pppoe-wan erouter0", tmp_vid);
 			} else {
 				/*lan port*/
 				HNAT_PRINTK("lan port vid:%d\n", tmp_vid);
 				nat_lan_vid = tmp_vid;
-				snprintf(nat_lan_dev_list, IFNAMSIZ, "eth0.%d eth1", tmp_vid);
+				snprintf(nat_lan_dev_list, IFNAMSIZ*4, "eth0.%d eth1 eth1.%d br-lan",
+					tmp_vid, tmp_vid);
 			}
 		}
 	}
@@ -1338,6 +1339,7 @@ arp_in_bg_handle(struct nat_helper_bg_msg *msg)
     uint8_t dev_is_lan = 0;
     uint32_t sport = 0, vid = 0;
     a_bool_t prvbasemode = 1;
+    sw_error_t rv = SW_OK;
 
     a_int32_t arp_entry_id = -1;
 	struct net_device *in = msg->arp_in.in;
@@ -1391,7 +1393,7 @@ arp_in_bg_handle(struct nat_helper_bg_msg *msg)
 
 	smac = skb_mac_header(skb) + MAC_LEN;
     aos_mem_copy(&(entry.addr), smac, sizeof(fal_mac_addr_t));
-    if(fal_fdb_find(0, &entry) == SW_OK) {
+    if(fal_fdb_entry_search(0, &entry) == SW_OK) {
         vid  = entry.fid;
         sport = 0;
         while (sport < 32) {
@@ -1401,9 +1403,14 @@ arp_in_bg_handle(struct nat_helper_bg_msg *msg)
             sport++;
         }
     } else {
-        printk("not find the FDB entry\n");
+        HNAT_PRINTK("not find the FDB entry\n");
     }
 #endif
+
+    if (sport == 0) {
+        HNAT_PRINTK("Not the expected arp, ignore it!\n");
+        return 0;
+    }
 
     arp = arp_hdr(skb);
     smac = ((uint8_t *) arp) + ARP_HEADER_LEN;
@@ -1448,13 +1455,13 @@ arp_in_bg_handle(struct nat_helper_bg_msg *msg)
     /* check for SIP and DIP range */
     if ((lanip[0] != 0) && (wanip[0] != 0))
     {
-		if(!NAT_PRV_ADDR_MODE_GET)
-			return 1;
-
-        if (NAT_PRV_ADDR_MODE_GET(0, &prvbasemode) != SW_OK)
-        {
-            aos_printk("Private IP base mode check failed: %d\n", prvbasemode);
-        }
+	 rv = NAT_PRV_ADDR_MODE_GET(0, &prvbasemode);
+	 if (rv == SW_NOT_SUPPORTED || rv == SW_NOT_INITIALIZED) {
+		 return 1;
+	 }
+	 else if (rv != SW_OK) {
+		 aos_printk("Private IP base mode check failed: %d\n", prvbasemode);
+	 }
 
         if (!prvbasemode) /* mode 0 */
         {
@@ -1953,7 +1960,7 @@ static unsigned int ipv6_bg_handle(struct nat_helper_bg_msg *msg)
             smac = skb_mac_header(skb) + MAC_LEN;
             aos_mem_copy(&(entry.addr), smac, sizeof(fal_mac_addr_t));
 
-            if(fal_fdb_find(0, &entry) == SW_OK) {
+            if(fal_fdb_entry_search(0, &entry) == SW_OK) {
                 vid  = entry.fid;
                 sport = 0;
                 while (sport < 32) {
@@ -2120,19 +2127,10 @@ void nat_helper_bg_task_exit()
 
 extern int napt_procfs_init(void);
 extern void napt_procfs_exit(void);
-extern a_uint32_t hsl_dev_wan_port_get(a_uint32_t dev_id);
 
-void host_helper_wan_port_init(void)
-{
-	nat_wan_port = hsl_dev_wan_port_get(0);
-	printk("nat wan port is %d\n", nat_wan_port);
-}
-
-void host_helper_init(void)
+void host_helper_init(a_uint32_t portbmp)
 {
 	int i;
-	sw_error_t rv;
-	a_uint32_t entry;
 
 	REG_GET(0, 0, (a_uint8_t *)&nat_chip_ver, 4);
 
@@ -2166,10 +2164,6 @@ void host_helper_init(void)
     CPU_PORT_STATUS_SET(0, A_TRUE);
     IP_ROUTE_STATUS_SET(0, A_TRUE);
 
-    /* CPU port with VLAN tag, others w/o VLAN */
-    entry = 0x01111112;
-    HSL_REG_ENTRY_SET(rv, 0, ROUTER_EG, 0, (a_uint8_t *) (&entry), sizeof (a_uint32_t));
-
     napt_procfs_init();
     memcpy(nat_bridge_dev, nat_lan_dev_list, strlen(nat_lan_dev_list)+1);
 
@@ -2194,14 +2188,15 @@ void host_helper_init(void)
     register_inetaddr_notifier(&qcaswitch_ip_notifier);
 #endif // ifdef AUTO_UPDATE_PPPOE_INFO
 
+    nat_wan_port = portbmp;
+
     /* Enable ACLs to handle MLD packets */
     upnp_ssdp_add_acl_rules();
     ipv6_snooping_solicted_node_add_acl_rules();
     ipv6_snooping_sextuple0_group_add_acl_rules();
     ipv6_snooping_quintruple0_1_group_add_acl_rules();
 
-	napt_helper_hsl_init();
-	host_helper_wan_port_init();
+    napt_helper_hsl_init();
 }
 
 void host_helper_exit(void)
