@@ -2176,6 +2176,46 @@ _adpt_hppe_port_mux_mac_set(a_uint32_t dev_id, fal_port_t port_id, a_uint32_t po
 
 	return rv;
 }
+#ifdef HAWKEYE_CHIP
+static sw_error_t
+adpt_hppe_port_xgmac_promiscuous_mode_set(a_uint32_t dev_id,
+	a_uint32_t port_id)
+{
+	sw_error_t rv = 0;
+
+	port_id = HPPE_TO_XGMAC_PORT_ID(port_id);
+
+	rv = hppe_mac_packet_filter_pr_set(dev_id, port_id, PROMISCUOUS_MODE);
+
+	SW_RTN_ON_ERROR (rv);
+
+	rv = hppe_mac_packet_filter_pcf_set(dev_id, port_id, PASS_CONTROL_PACKET);
+
+	return rv;
+}
+static sw_error_t
+adpt_hppe_port_speed_change_mac_reset(a_uint32_t dev_id, a_uint32_t port_id)
+{
+	a_uint32_t uniphy_index = 0, mode = 0;
+	sw_error_t rv = 0;
+
+	if (port_id == HPPE_MUX_PORT1) {
+		uniphy_index = SSDK_UNIPHY_INSTANCE1;
+	} else if (port_id == HPPE_MUX_PORT2) {
+		uniphy_index = SSDK_UNIPHY_INSTANCE2;
+	} else {
+		return SW_OK;
+	}
+	mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
+	if (mode == PORT_WRAPPER_USXGMII) {
+		ssdk_port_mac_clock_reset(dev_id, port_id);
+		/*restore xgmac's pr and pcf setting after reset operation*/
+		rv = adpt_hppe_port_xgmac_promiscuous_mode_set(dev_id,
+			port_id);
+	}
+	return rv;
+}
+#endif
 sw_error_t
 adpt_hppe_port_mac_speed_set(a_uint32_t dev_id, a_uint32_t port_id,
 				fal_port_speed_t speed)
@@ -2199,7 +2239,6 @@ adpt_hppe_port_mac_speed_set(a_uint32_t dev_id, a_uint32_t port_id,
 	}
 	return rv;
 }
-
 static sw_error_t
 _adpt_hppe_port_mux_set(a_uint32_t dev_id, fal_port_t port_id,
 	a_uint32_t mode1, a_uint32_t mode2)
@@ -4227,11 +4266,10 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 			SSDK_DEBUG("Port %d change to link down status\n", port_id);
 			/* first check uniphy auto-neg complete interrupt to usxgmii */
 			adpt_hppe_uniphy_autoneg_status_check(priv->device_id, port_id);
-			/* disable mac */
-			adpt_hppe_port_txmac_status_set(priv->device_id, port_id, A_FALSE);
-			adpt_hppe_port_rxmac_status_set(priv->device_id, port_id, A_FALSE);
 			/* disable ppe port bridge txmac */
 			adpt_hppe_port_bridge_txmac_set(priv->device_id, port_id, A_FALSE);
+			/* disable rx mac */
+			adpt_hppe_port_rxmac_status_set(priv->device_id, port_id, A_FALSE);
 			priv->port_old_link[port_id - 1] = phy_status.link_status;
 			continue;
 		}
@@ -4241,11 +4279,11 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 		{
 			SSDK_DEBUG("Port %d change to link up status\n", port_id);
 			status = adpt_hppe_port_phy_status_change(priv, port_id, phy_status);
+			/*disable tx mac*/
+			adpt_hppe_port_txmac_status_set(priv->device_id, port_id, A_FALSE);
 			if (status == A_TRUE)
 			{
 				adpt_hppe_gcc_uniphy_clock_status_set(priv->device_id,
-						port_id, A_FALSE);
-				adpt_hppe_gcc_mac_clock_status_set(priv->device_id,
 						port_id, A_FALSE);
 				if ((a_uint32_t)phy_status.speed !=
 						priv->port_old_speed[port_id - 1])
@@ -4264,6 +4302,9 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 					/* config uniphy speed to usxgmii mode */
 					adpt_hppe_uniphy_speed_set(priv->device_id, port_id,
 							phy_status.speed);
+
+					/* reset port mac when speed change under usxgmii mode */
+					adpt_hppe_port_speed_change_mac_reset(priv->device_id, port_id);
 
 					/* config mac speed */
 					adpt_hppe_port_mac_speed_set(priv->device_id, port_id,
@@ -4326,16 +4367,14 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 							priv->port_old_rx_flowctrl[port_id-1]);
 					}
 				}
-				adpt_hppe_gcc_mac_clock_status_set(priv->device_id,
-						port_id, A_TRUE);
 				adpt_hppe_gcc_uniphy_clock_status_set(priv->device_id,
 						port_id, A_TRUE);
 				adpt_hppe_uniphy_port_adapter_reset(priv->device_id, port_id);
 			}
 			/* enable mac and ppe txmac*/
-			adpt_hppe_port_bridge_txmac_set(priv->device_id, port_id, A_TRUE);
 			adpt_hppe_port_txmac_status_set(priv->device_id, port_id, A_TRUE);
 			adpt_hppe_port_rxmac_status_set(priv->device_id, port_id, A_TRUE);
+			adpt_hppe_port_bridge_txmac_set(priv->device_id, port_id, A_TRUE);
 			priv->port_old_link[port_id - 1] = phy_status.link_status;
 		}
 		SSDK_DEBUG("polling task PPE port %d link status is %d and speed is %d\n",

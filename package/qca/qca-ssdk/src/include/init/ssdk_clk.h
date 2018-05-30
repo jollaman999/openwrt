@@ -199,6 +199,9 @@ ssdk_port_speed_clock_set(
 void ssdk_ppe_reset_init(void);
 sw_error_t
 qca_cppe_fpga_xgmac_clock_enable(a_uint32_t dev_id);
+void ssdk_port_mac_clock_reset(
+	a_uint32_t dev_id,
+	a_uint32_t port_id);
 #endif
 
 #ifdef __cplusplus
