@@ -1740,7 +1740,6 @@ CONFIG_PACKAGE_diffutils=y
 #
 # Extra packages
 #
-# CONFIG_PACKAGE_fast-classifier-example is not set
 
 #
 # Firmware
