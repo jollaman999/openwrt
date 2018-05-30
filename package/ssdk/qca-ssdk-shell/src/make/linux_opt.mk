@@ -306,10 +306,6 @@ ifeq (SHELL, $(MODULE_TYPE))
     ifneq (TRUE, $(KERNEL_MODE))
       MODULE_CFLAG += -DUSER_MODE
     endif
-
-    ifneq (arm64, $(ARCH))
-      MODULE_CFLAG += -static
-    endif
  
 endif
 
@@ -319,4 +315,5 @@ ifneq (TRUE, $(KERNEL_MODE))
   endif
 endif
 
-EXTRA_CFLAGS += $(MODULE_INC) $(MODULE_CFLAG)
+EXTRA_CFLAGS += $(MODULE_INC) $(MODULE_CFLAG) -fpie
+EXTRA_LDFLAGS += -pie
