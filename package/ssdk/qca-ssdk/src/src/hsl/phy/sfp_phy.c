@@ -139,8 +139,13 @@ static void sfp_phy_device_remove(a_uint32_t dev_id, a_uint32_t port)
 	addr = qca_ssdk_port_to_phy_addr(dev_id, port);
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0))
-	if (addr < PHY_MAX_ADDR)
+	if (addr < PHY_MAX_ADDR) {
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 		phydev = bus->phy_map[addr];
+#else
+		phydev = mdiobus_get_phy(bus, addr);
+#endif
+	}
 	if (phydev)
 		phy_device_remove(phydev);
 #endif

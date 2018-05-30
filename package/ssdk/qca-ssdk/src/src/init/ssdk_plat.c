@@ -60,8 +60,10 @@
 #include <linux/reset.h>
 #else
 #include <linux/ar8216_platform.h>
+#if 0
 #include <drivers/net/phy/ar8216.h>
 #include <drivers/net/ethernet/atheros/ag71xx/ag71xx.h>
+#endif
 #endif
 #include "ssdk_plat.h"
 #include "ssdk_clk.h"
@@ -131,7 +133,7 @@ static int ssdk_dev_id = 0;
 
 a_uint32_t ssdk_log_level = SSDK_LOG_LEVEL_DEFAULT;
 
-#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
+#ifdef BOARD_AR71XX
 struct ag71xx_mdio {
 	struct mii_bus		*mii_bus;
 	int			mii_irq[PHY_MAX_ADDR];

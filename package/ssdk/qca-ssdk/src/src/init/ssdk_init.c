@@ -44,11 +44,7 @@
 #include <linux/gpio.h>
 
 #if defined(IN_SWCONFIG)
-#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
 #include <linux/switch.h>
-#else
-#include <net/switch.h>
-#endif
 #endif
 
 #if defined(ISIS) ||defined(ISISC) ||defined(GARUDA)
@@ -65,11 +61,13 @@
 #include <linux/of_net.h>
 #include <linux/of_address.h>
 #include <linux/reset.h>
+#if 0
 #ifdef BOARD_AR71XX
 #ifdef CONFIG_AR8216_PHY
 #include "drivers/net/phy/ar8327.h"
 #endif
 #include "drivers/net/ethernet/atheros/ag71xx/ag71xx.h"
+#endif
 #endif
 #elif defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
 #include <linux/of.h>
@@ -80,8 +78,10 @@
 #include <linux/reset.h>
 #else
 #include <linux/ar8216_platform.h>
+#if 0
 #include <drivers/net/phy/ar8216.h>
 #include <drivers/net/ethernet/atheros/ag71xx/ag71xx.h>
+#endif
 #endif
 #include "ssdk_plat.h"
 #include "ssdk_clk.h"
@@ -229,7 +229,7 @@ ssdk_phy_rgmii_set(struct qca_phy_priv *priv)
 {
 	struct ar8327_platform_data *plat_data;
 
-	plat_data = priv->phy->dev.platform_data;
+	plat_data = priv->phy->mdio.dev.platform_data;
 	if (plat_data == NULL) {
 		return;
 	}
@@ -909,7 +909,7 @@ qca_ar8327_port_init(struct qca_phy_priv *priv, a_uint32_t port)
 	struct ar8327_port_cfg *port_cfg;
 	a_uint32_t value;
 
-	plat_data = priv->phy->dev.platform_data;
+	plat_data = priv->phy->mdio.dev.platform_data;
 	if (plat_data == NULL) {
 		return;
 	}
@@ -919,7 +919,7 @@ qca_ar8327_port_init(struct qca_phy_priv *priv, a_uint32_t port)
 	    ((port == 6) && plat_data->pad6_cfg)) {
 	        switch (port) {
 		        case 0:
-		            port_cfg = &plat_data->cpuport_cfg;
+		            port_cfg = &plat_data->port0_cfg;
 		            break;
 		        case 5:
 		            port_cfg = &plat_data->port5_cfg;
@@ -964,7 +964,7 @@ qca_ar8327_hw_init(struct qca_phy_priv *priv)
 	a_uint32_t i = 0;
 	a_uint32_t value = 0;
 
-	plat_data = priv->phy->dev.platform_data;
+	plat_data = priv->phy->mdio.dev.platform_data;
 	if (plat_data == NULL) {
 		return -EINVAL;
 	}
@@ -2409,10 +2409,12 @@ static void ssdk_driver_register(a_uint32_t dev_id)
 		ssdk_uci_takeover_init();
 #endif
 
+#if 0
 #ifdef CONFIG_AR8216_PHY
 		ar8327_port_link_notify_register(ssdk_port_link_notify);
 #endif
 		ar7240_port_link_notify_register(ssdk_port_link_notify);
+#endif
 #endif
 	}
 }

@@ -26,11 +26,8 @@
 #include <linux/string.h>
 #if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
 #include <linux/of.h>
- #include <linux/switch.h>
-#else
-#include <net/switch.h>
-#include <linux/ar8216_platform.h>
 #endif
+#include <linux/switch.h>
 #include "sw.h"
 #include "ssdk_init.h"
 #include "ssdk_plat.h"

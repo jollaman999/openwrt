@@ -35,12 +35,7 @@
 #include <linux/types.h>
 //#include <asm/mach-types.h>
 #include <generated/autoconf.h>
-#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
 #include <linux/switch.h>
-#else
-#include <net/switch.h>
-#include <linux/ar8216_platform.h>
-#endif
 #include <linux/delay.h>
 #include <linux/phy.h>
 #include <linux/netdevice.h>

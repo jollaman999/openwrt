@@ -19,6 +19,7 @@
 #else
 #include <linux/autoconf.h>
 #endif
+#include <linux/version.h>
 #include <linux/kthread.h>
 #include <linux/udp.h>
 #include <linux/rculist_nulls.h>
@@ -711,7 +712,11 @@ napt_ct_counter_sync(a_uint32_t hw_index)
 	}
 	
 	if (!test_bit(IPS_FIXED_TIMEOUT_BIT, &ct->status)) {
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 		ct->timeout.expires += delta_jiffies;
+#else
+		ct->timeout += (u32)delta_jiffies;
+#endif
 	}
 
 	if((cct != NULL) && (napt_hw_get_by_index(&napt, hw_index) == 0))
@@ -760,7 +765,11 @@ napt_ct_timer_update(a_uint32_t hw_index)
 	}
 
 	if (!test_bit(IPS_FIXED_TIMEOUT_BIT, &ct->status)) {
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 		ct->timeout.expires += delta_jiffies;
+#else
+		ct->timeout += (u32)delta_jiffies;
+#endif
 	}
 
 	return 0;

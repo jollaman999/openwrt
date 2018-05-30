@@ -20,11 +20,7 @@ extern "C" {
 #endif                          /* __cplusplus */
 
 #if defined(IN_SWCONFIG)
-#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
 #include <linux/switch.h>
-#else
-#include <net/switch.h>
-#endif
 
 int
 qca_ar8327_sw_set_vlan(struct switch_dev *dev,
