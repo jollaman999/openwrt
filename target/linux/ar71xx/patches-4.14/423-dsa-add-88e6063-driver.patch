@@ -17,8 +17,8 @@
  source "drivers/net/dsa/mv88e6xxx/Kconfig"
 --- a/drivers/net/dsa/Makefile
 +++ b/drivers/net/dsa/Makefile
-@@ -4,6 +4,7 @@ bcm-sf2-objs			:= bcm_sf2.o bcm_sf2_cfp.o
- obj-$(CONFIG_NET_DSA_LOOP)	+= dsa_loop.o dsa_loop_bdinfo.o
+@@ -7,6 +7,7 @@ obj-$(CONFIG_FIXED_PHY)		+= dsa_loop_bdinfo.o
+ endif
  obj-$(CONFIG_NET_DSA_MT7530)	+= mt7530.o
  obj-$(CONFIG_NET_DSA_MV88E6060) += mv88e6060.o
 +obj-$(CONFIG_NET_DSA_MV88E6063) += mv88e6063.o
