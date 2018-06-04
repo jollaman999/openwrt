@@ -45,7 +45,7 @@ Signed-off-by: Daniel Golle <daniel@makrotopia.org>
  	depends on ACPI
 --- a/drivers/ata/libata-core.c
 +++ b/drivers/ata/libata-core.c
-@@ -731,6 +731,19 @@ u64 ata_tf_read_block(const struct ata_taskfile *tf, struct ata_device *dev)
+@@ -731,6 +731,19 @@ u64 ata_tf_read_block(const struct ata_t
  	return block;
  }
  
@@ -65,7 +65,7 @@ Signed-off-by: Daniel Golle <daniel@makrotopia.org>
  /**
   *	ata_build_rw_tf - Build ATA taskfile for given read/write request
   *	@tf: Target ATA taskfile
-@@ -5120,6 +5133,9 @@ struct ata_queued_cmd *ata_qc_new_init(struct ata_device *dev, int tag)
+@@ -5120,6 +5133,9 @@ struct ata_queued_cmd *ata_qc_new_init(s
  		if (tag < 0)
  			return NULL;
  	}
@@ -75,17 +75,17 @@ Signed-off-by: Daniel Golle <daniel@makrotopia.org>
  
  	qc = __ata_qc_from_tag(ap, tag);
  	qc->tag = tag;
-@@ -6020,6 +6036,9 @@ struct ata_port *ata_port_alloc(struct ata_host *host)
- #ifdef ATA_IRQ_TRAP
+@@ -6021,6 +6037,9 @@ struct ata_port *ata_port_alloc(struct a
  	ap->stats.unhandled_irq = 1;
  	ap->stats.idle_irq = 1;
-+#endif
+ #endif
 +#ifdef CONFIG_ATA_LEDS
 +	ap->ledtrig = kzalloc(sizeof(struct led_trigger), GFP_KERNEL);
- #endif
++#endif
  	ata_sff_port_init(ap);
  
-@@ -6042,6 +6061,12 @@ static void ata_host_release(struct device *gendev, void *res)
+ 	return ap;
+@@ -6042,6 +6061,12 @@ static void ata_host_release(struct devi
  
  		kfree(ap->pmp_link);
  		kfree(ap->slave_link);
@@ -98,7 +98,7 @@ Signed-off-by: Daniel Golle <daniel@makrotopia.org>
  		kfree(ap);
  		host->ports[i] = NULL;
  	}
-@@ -6488,7 +6513,23 @@ int ata_host_register(struct ata_host *host, struct scsi_host_template *sht)
+@@ -6488,7 +6513,23 @@ int ata_host_register(struct ata_host *h
  		host->ports[i]->print_id = atomic_inc_return(&ata_print_id);
  		host->ports[i]->local_port_no = i + 1;
  	}
@@ -106,11 +106,11 @@ Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 +	for (i = 0; i < host->n_ports; i++) {
 +		if (unlikely(!host->ports[i]->ledtrig))
 +			continue;
-+
+ 
 +		snprintf(host->ports[i]->ledtrig_name,
 +			sizeof(host->ports[i]->ledtrig_name), "ata%u",
 +			host->ports[i]->print_id);
- 
++
 +		host->ports[i]->ledtrig->name = host->ports[i]->ledtrig_name;
 +
 +		if (led_trigger_register(host->ports[i]->ledtrig)) {
