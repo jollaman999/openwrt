@@ -338,6 +338,8 @@ a_uint32_t
 qca_hppe_port_mac_type_set(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t port_type);
 
 void
+qca_mac_port_status_init(a_uint32_t dev_id, a_uint32_t port_id);
+void
 qca_mac_sw_sync_port_status_init(a_uint32_t dev_id);
 
 struct qca_phy_priv* ssdk_phy_priv_data_get(a_uint32_t dev_id);

@@ -33,7 +33,9 @@
 #ifdef IN_SFP_PHY
 #include <sfp_phy.h>
 #endif
-
+#ifdef IN_QCA808X_PHY
+#include <qca808x_phy.h>
+#endif
 #include "sw.h"
 #include "ssdk_plat.h"
 
@@ -72,6 +74,11 @@ phy_driver_instance_t ssdk_phy_driver[] =
 	{SFP_PHY_CHIP, {0}, NULL, sfp_phy_init, sfp_phy_exit},
 	#else
 	{SFP_PHY_CHIP, {0}, NULL, NULL, NULL},
+	#endif
+	#ifdef IN_QCA808X_PHY
+	{QCA808X_PHY_CHIP, {0}, NULL, qca808x_phy_init, NULL},
+	#else
+	{QCA808X_PHY_CHIP, {0}, NULL, NULL, NULL},
 	#endif
 	{MAX_PHY_CHIP, {0}, NULL, NULL, NULL}
 };
@@ -189,6 +196,9 @@ phy_type_t hsl_phytype_get_by_phyid(a_uint32_t dev_id, a_uint32_t phy_id)
 			break;
 		case SFP_PHY:
 			phytype = SFP_PHY_CHIP;
+			break;
+		case QCA8081_PHY:
+			phytype = QCA808X_PHY_CHIP;
 			break;
 		default:
 			phytype = MAX_PHY_CHIP;
@@ -374,6 +384,27 @@ hsl_port_phy_combo_capability_set(a_uint32_t dev_id, a_uint32_t port_id,
 		return;
 
 	phy_info[dev_id]->phy_combo[port_id] = enable;
+
+	return;
+}
+
+a_uint8_t
+hsl_port_phy_access_type_get(a_uint32_t dev_id, a_uint32_t port_id)
+{
+	if (dev_id >= SW_MAX_NR_DEV)
+		return 0;
+
+	return phy_info[dev_id]->phy_access_type[port_id];
+}
+
+void
+hsl_port_phy_access_type_set(a_uint32_t dev_id, a_uint32_t port_id,
+		a_uint8_t access_type)
+{
+	if (dev_id >= SW_MAX_NR_DEV)
+		return;
+
+	phy_info[dev_id]->phy_access_type[port_id] = access_type;
 
 	return;
 }

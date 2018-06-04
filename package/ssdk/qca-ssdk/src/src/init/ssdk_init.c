@@ -1349,19 +1349,24 @@ dess_rgmii_mac_work_stop(struct qca_phy_priv *priv)
 #endif
 
 void
+qca_mac_port_status_init(a_uint32_t dev_id, a_uint32_t port_id)
+{
+	qca_phy_priv_global[dev_id]->port_old_link[port_id - 1] = 0;
+	qca_phy_priv_global[dev_id]->port_old_speed[port_id - 1] = FAL_SPEED_BUTT;
+	qca_phy_priv_global[dev_id]->port_old_duplex[port_id - 1] = FAL_DUPLEX_BUTT;
+	qca_phy_priv_global[dev_id]->port_old_tx_flowctrl[port_id - 1] = A_FALSE;
+	qca_phy_priv_global[dev_id]->port_old_rx_flowctrl[port_id - 1] = A_FALSE;
+	qca_phy_priv_global[dev_id]->port_tx_flowctrl_forcemode[port_id - 1] = A_FALSE;
+	qca_phy_priv_global[dev_id]->port_rx_flowctrl_forcemode[port_id - 1] = A_FALSE;
+}
+
+void
 qca_mac_sw_sync_port_status_init(a_uint32_t dev_id)
 {
 	a_uint32_t port_id;
 
-	for (port_id = 1; port_id < SW_MAX_NR_PORT; port_id ++) {
-
-		qca_phy_priv_global[dev_id]->port_old_link[port_id - 1] = 0;
-		qca_phy_priv_global[dev_id]->port_old_speed[port_id - 1] = FAL_SPEED_BUTT;
-		qca_phy_priv_global[dev_id]->port_old_duplex[port_id - 1] = FAL_DUPLEX_BUTT;
-		qca_phy_priv_global[dev_id]->port_old_tx_flowctrl[port_id - 1] = A_FALSE;
-		qca_phy_priv_global[dev_id]->port_old_rx_flowctrl[port_id - 1] = A_FALSE;
-		qca_phy_priv_global[dev_id]->port_tx_flowctrl_forcemode[port_id - 1] = A_FALSE;
-		qca_phy_priv_global[dev_id]->port_rx_flowctrl_forcemode[port_id - 1] = A_FALSE;
+	for (port_id = SSDK_PHYSICAL_PORT1; port_id < SW_MAX_NR_PORT; port_id ++) {
+		qca_mac_port_status_init(dev_id, port_id);	for (port_id = 1; port_id < SW_MAX_NR_PORT; port_id ++) {
 	}
 }
 void

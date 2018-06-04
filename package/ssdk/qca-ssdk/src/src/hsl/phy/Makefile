@@ -47,6 +47,10 @@ ifeq (TRUE, $(IN_QCA803X_PHY))
     SRC_LIST += qca803x_phy.c
 endif
 
+ifeq (TRUE, $(IN_QCA808X_PHY))
+    SRC_LIST += qca808x_phy.c
+endif
+
 ifeq (TRUE, $(IN_SFP_PHY))
     SRC_LIST += sfp_phy.c
 endif

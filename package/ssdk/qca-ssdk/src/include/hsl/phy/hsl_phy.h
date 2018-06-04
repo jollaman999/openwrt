@@ -290,6 +290,7 @@ typedef enum
 	AQUANTIA_PHY_CHIP,
 	QCA803X_PHY_CHIP,
 	SFP_PHY_CHIP,
+	QCA808X_PHY_CHIP,
 	MAX_PHY_CHIP,
 } phy_type_t;
 
@@ -297,6 +298,7 @@ typedef struct {
 	a_uint32_t phy_address[SW_MAX_NR_PORT];
 	a_uint32_t phy_address_from_dts[SW_MAX_NR_PORT];
 	a_uint32_t phy_type[SW_MAX_NR_PORT];
+	a_uint8_t phy_access_type[SW_MAX_NR_PORT];
 	a_bool_t phy_c45[SW_MAX_NR_PORT];
 	a_bool_t phy_combo[SW_MAX_NR_PORT];
 } phy_info_t;
@@ -306,6 +308,7 @@ typedef struct {
 #define QCA8030_PHY 0x004DD076
 #define QCA8033_PHY 0x004DD074
 #define QCA8035_PHY 0x004DD072
+#define QCA8081_PHY 0x004DD100
 #define F1V1_PHY 0x004DD033
 #define F1V2_PHY 0x004DD034
 #define F1V3_PHY 0x004DD035
@@ -372,6 +375,13 @@ hsl_port_phy_combo_capability_get(a_uint32_t dev_id, a_uint32_t port_id);
 void
 hsl_port_phy_combo_capability_set(a_uint32_t dev_id, a_uint32_t port_id,
 		a_bool_t enable);
+
+a_uint8_t
+hsl_port_phy_access_type_get(a_uint32_t dev_id, a_uint32_t port_id);
+
+void
+hsl_port_phy_access_type_set(a_uint32_t dev_id, a_uint32_t port_id,
+		a_uint8_t access_type);
 
 sw_error_t
 hsl_ssdk_phy_serdes_reset(a_uint32_t dev_id);
