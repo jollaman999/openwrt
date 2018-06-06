@@ -591,7 +591,7 @@
  	return neigh_create(&arp_tbl, pkey, dev);
 --- a/net/ipv4/tcp_input.c
 +++ b/net/ipv4/tcp_input.c
-@@ -3842,14 +3842,16 @@ static bool tcp_parse_aligned_timestamp(struct tcp_sock *tp, const struct tcphdr
+@@ -3844,14 +3844,16 @@ static bool tcp_parse_aligned_timestamp(struct tcp_sock *tp, const struct tcphdr
  {
  	const __be32 *ptr = (const __be32 *)(th + 1);
  
@@ -920,7 +920,7 @@
  			goto next_ht;
 --- a/net/xfrm/xfrm_input.c
 +++ b/net/xfrm/xfrm_input.c
-@@ -187,8 +187,8 @@ int xfrm_parse_spi(struct sk_buff *skb, u8 nexthdr, __be32 *spi, __be32 *seq)
+@@ -193,8 +193,8 @@ int xfrm_parse_spi(struct sk_buff *skb, u8 nexthdr, __be32 *spi, __be32 *seq)
  	if (!pskb_may_pull(skb, hlen))
  		return -EINVAL;
  
