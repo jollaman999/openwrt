@@ -20,6 +20,7 @@
 #include "sw.h"
 #include "fal_reg_access.h"
 #include "hsl_api.h"
+#include "hsl_phy.h"
 
 static sw_error_t
 _fal_phy_get(a_uint32_t dev_id, a_uint32_t phy_addr,
@@ -27,13 +28,30 @@ _fal_phy_get(a_uint32_t dev_id, a_uint32_t phy_addr,
 {
     sw_error_t rv;
     hsl_api_t *p_api;
+    a_uint8_t phy_addr_type;
+    hsl_phy_get phy_get_func;
 
     SW_RTN_ON_NULL(p_api = hsl_api_ptr_get(dev_id));
 
-    if (NULL == p_api->phy_get)
-        return SW_NOT_SUPPORTED;
+    /* the MSB first byte of phy_addr marks the type of
+     * phy address, such as the i2c address, the value of
+     * MSB first byte should be 1 */
+    phy_addr_type = (phy_addr & 0xff000000) >> 24;
+    phy_addr = phy_addr & 0xff;
+    switch (phy_addr_type) {
+	    case PHY_I2C_ACCESS:
+		    phy_get_func = p_api->phy_i2c_get;
+		    break;
+	    default:
+		    phy_get_func = p_api->phy_get;
+		    break;
+    }
 
-    rv = p_api->phy_get(dev_id, phy_addr, reg, value);
+    if (NULL == phy_get_func) {
+	    return SW_NOT_SUPPORTED;
+    }
+
+    rv = phy_get_func(dev_id, phy_addr, reg, value);
     return rv;
 }
 
@@ -43,13 +61,30 @@ _fal_phy_set(a_uint32_t dev_id, a_uint32_t phy_addr,
 {
     sw_error_t rv;
     hsl_api_t *p_api;
+    a_uint8_t phy_addr_type;
+    hsl_phy_set phy_set_func;
 
     SW_RTN_ON_NULL(p_api = hsl_api_ptr_get(dev_id));
 
-    if (NULL == p_api->phy_set)
-        return SW_NOT_SUPPORTED;
+    /* the MSB first byte of phy_addr marks the type of
+     * phy address, such as the i2c address, the value of
+     * MSB first byte should be 1 */
+    phy_addr_type = (phy_addr & 0xff000000) >> 24;
+    phy_addr = phy_addr & 0xff;
+    switch (phy_addr_type) {
+	    case PHY_I2C_ACCESS:
+		    phy_set_func = p_api->phy_i2c_set;
+		    break;
+	    default:
+		    phy_set_func = p_api->phy_set;
+		    break;
+    }
 
-    rv = p_api->phy_set(dev_id, phy_addr, reg, value);
+    if (NULL == phy_set_func) {
+	    return SW_NOT_SUPPORTED;
+    }
+
+    rv = phy_set_func(dev_id, phy_addr, reg, value);
     return rv;
 }
 
