@@ -16,6 +16,7 @@
 #if defined(CONFIG_OF)
 #include <linux/of.h>
 #include <linux/of_net.h>
+#include <linux/of_mdio.h>
 #endif
 #include <linux/etherdevice.h>
 #include <linux/clk.h>
@@ -124,6 +125,20 @@ ssdk_port_phyinfo* ssdk_port_phyinfo_get(a_uint32_t dev_id, a_uint32_t port_id)
 	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
 
 	return &cfg->port_phyinfo[port_id-1];
+}
+
+struct mii_bus *
+ssdk_dts_miibus_get(a_uint32_t dev_id, a_uint32_t phy_addr)
+{
+	a_uint32_t i;
+	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
+
+	for (i = 0; i < cfg->phyinfo_num; i++) {
+		if (phy_addr == cfg->port_phyinfo[i].phy_addr)
+			return cfg->port_phyinfo[i].miibus;
+	}
+
+	return NULL;
 }
 
 hsl_reg_mode ssdk_switch_reg_access_mode_get(a_uint32_t dev_id)
@@ -486,6 +501,7 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 	a_bool_t phy_c45, phy_combo, phy_i2c;
 	const char *mac_type = NULL;
 	sw_error_t rv = SW_OK;
+	struct device_node *mdio_node;
 
 	phy_info_node = of_get_child_by_name(switch_node, "qcom,port_phyinfo");
 	if (!phy_info_node) {
@@ -502,6 +518,7 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 				"ethernet-phy-ieee802.3-c45");
 		phy_combo = of_property_read_bool(port_node,
 				"ethernet-phy-combo");
+		mdio_node = of_parse_phandle(port_node, "mdiobus", 0);
 		phy_i2c = of_property_read_bool(port_node,
 				"phy-i2c-mode");
 
@@ -550,6 +567,9 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 					port_phyinfo->phy_features |= PHY_F_XGMAC;
 				}
 			}
+
+			if (mdio_node)
+				port_phyinfo->miibus = of_mdio_find_bus(mdio_node);
 		}
 	}
 
@@ -954,6 +974,7 @@ int ssdk_switch_device_num_init(void)
 		if (!ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->port_phyinfo) {
 			return -ENOMEM;
 		}
+		ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->phyinfo_num = port_n;
 
 		ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->switch_reg_access_mode = HSL_REG_MDIO;
 		ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->psgmii_reg_access_mode = HSL_REG_MDIO;

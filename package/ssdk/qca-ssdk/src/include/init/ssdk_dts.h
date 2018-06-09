@@ -23,6 +23,7 @@ extern "C" {
 #include <linux/version.h>
 #endif
 #include "ssdk_init.h"
+#include <linux/phy.h>
 
 typedef struct {
 	a_uint16_t ucastq_start;
@@ -71,6 +72,7 @@ typedef struct
 	a_uint8_t port_id;
 	a_uint8_t phy_addr;
 	phy_features_t phy_features;
+	struct mii_bus *miibus;
 } ssdk_port_phyinfo;
 
 typedef struct
@@ -86,6 +88,7 @@ typedef struct
 	struct clk *ess_clk;
 	struct clk *cmnblk_clk;
 	ssdk_port_cfg   port_cfg;
+	a_uint32_t phyinfo_num;
 	ssdk_port_phyinfo *port_phyinfo;
 	a_uint32_t      mac_mode;
 	a_uint32_t      mac_mode1;
@@ -131,6 +134,8 @@ a_uint32_t ssdk_cpu_bmp_get(a_uint32_t dev_id);
 a_uint32_t ssdk_lan_bmp_get(a_uint32_t dev_id);
 a_uint32_t ssdk_wan_bmp_get(a_uint32_t dev_id);
 ssdk_port_phyinfo* ssdk_port_phyinfo_get(a_uint32_t dev_id, a_uint32_t port_id);
+struct mii_bus *
+ssdk_dts_miibus_get(a_uint32_t dev_id, a_uint32_t phy_addr);
 hsl_reg_mode ssdk_switch_reg_access_mode_get(a_uint32_t dev_id);
 hsl_reg_mode ssdk_uniphy_reg_access_mode_get(a_uint32_t dev_id);
 hsl_reg_mode ssdk_psgmii_reg_access_mode_get(a_uint32_t dev_id);
