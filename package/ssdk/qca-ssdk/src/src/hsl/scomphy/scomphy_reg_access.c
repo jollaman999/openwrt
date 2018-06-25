@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -56,6 +56,28 @@ scomphy_phy_set(a_uint32_t dev_id, a_uint32_t phy_addr,
 }
 
 sw_error_t
+scomphy_phy_i2c_get(a_uint32_t dev_id, a_uint32_t phy_addr,
+             a_uint32_t reg, a_uint16_t * value)
+{
+	sw_error_t rv;
+
+	rv = sd_reg_i2c_get(dev_id, phy_addr, reg, value);
+
+	return rv;
+}
+
+sw_error_t
+scomphy_phyi2c_set(a_uint32_t dev_id, a_uint32_t phy_addr,
+             a_uint32_t reg, a_uint16_t value)
+{
+	sw_error_t rv;
+
+	rv = sd_reg_i2c_set(dev_id, phy_addr, reg, value);
+
+	return rv;
+}
+
+sw_error_t
 scomphy_reg_access_init(a_uint32_t dev_id, hsl_access_mode mode)
 {
 	hsl_api_t *p_api;
@@ -65,6 +87,8 @@ scomphy_reg_access_init(a_uint32_t dev_id, hsl_access_mode mode)
 	SW_RTN_ON_NULL(p_api = hsl_api_ptr_get(dev_id));
 	p_api->phy_get = scomphy_phy_get;
 	p_api->phy_set = scomphy_phy_set;
+	p_api->phy_i2c_get = scomphy_phy_i2c_get;
+	p_api->phy_i2c_set = scomphy_phyi2c_set;
 
 	return SW_OK;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012, 2017-2018, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -74,10 +74,13 @@ static struct file_operations switch_device_fops =
     .release = switch_close
 };
 
+#ifndef SHELL_DEV
+#define SHELL_DEV "switch_ssdk"
+#endif
 static struct miscdevice switch_device =
 {
     MISC_DYNAMIC_MINOR,
-    "switch_ssdk",
+    SHELL_DEV,
     &switch_device_fops
 };
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -34,19 +34,23 @@ scomphy_portproperty_init(a_uint32_t dev_id, hsl_init_mode mode)
 	hsl_port_prop_t p_type;
 	hsl_dev_t *pdev = NULL;
 	fal_port_t port_id;
+	a_uint32_t port_bmp = qca_ssdk_port_bmp_get(dev_id);
 
 	pdev = hsl_dev_ptr_get(dev_id);
 	if (pdev == NULL)
 		return SW_NOT_INITIALIZED;
 
 	/* for port property set, SSDK should not generate some limitations */
-	for (port_id = 1; port_id < pdev->nr_ports+1; port_id++)
+	for (port_id = 1; port_id < SW_MAX_NR_PORT; port_id++)
 	{
-		hsl_port_prop_portmap_set(dev_id, port_id);
-
-		for (p_type = HSL_PP_PHY; p_type < HSL_PP_BUTT; p_type++)
+		if((1 << port_id) & port_bmp)
 		{
-			SW_RTN_ON_ERROR(hsl_port_prop_set(dev_id, port_id, p_type));
+			hsl_port_prop_portmap_set(dev_id, port_id);
+
+			for (p_type = HSL_PP_PHY; p_type < HSL_PP_BUTT; p_type++)
+			{
+				SW_RTN_ON_ERROR(hsl_port_prop_set(dev_id, port_id, p_type));
+			}
 		}
 	}
 

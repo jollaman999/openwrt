@@ -541,7 +541,7 @@ static int miibus_get(a_uint32_t dev_id)
 	struct platform_device *mdio_plat = NULL;
 	struct ipq40xx_mdio_data *mdio_data = NULL;
 	struct qca_phy_priv *priv;
-	hsl_reg_mode reg_mode;
+	hsl_reg_mode reg_mode = HSL_REG_LOCAL_BUS;
 
 	priv = qca_phy_priv_global[dev_id];
 	switch_node = qca_phy_priv_global[dev_id]->of_node;
@@ -576,7 +576,7 @@ static int miibus_get(a_uint32_t dev_id)
 		if (!mdio_data) {
 			SSDK_ERROR("cannot get mdio_data reference from device data\n");
 			return 1;
-        		}
+		}
 		priv->miibus = mdio_data->mii_bus;
 	}
 	else

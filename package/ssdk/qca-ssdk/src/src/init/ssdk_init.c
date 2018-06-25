@@ -2464,6 +2464,7 @@ static int chip_is_scomphy(a_uint32_t dev_id, ssdk_init_cfg* cfg)
 				case QCA8030_PHY:
 				case QCA8033_PHY:
 				case QCA8035_PHY:
+				case QCA8081_PHY:
 					cfg->chip_type = CHIP_SCOMPHY;
 					rv = SW_OK;
 					break;
@@ -3178,7 +3179,7 @@ static void qca_dess_rfs_init(void)
 
 static void ssdk_free_priv(void)
 {
-	a_uint32_t dev_id, dev_num;
+	a_uint32_t dev_id, dev_num = 1;
 
 	dev_num = ssdk_switch_device_num_get();
 	for (dev_id = 0; dev_id < dev_num; dev_id++) {
@@ -3199,7 +3200,7 @@ static void ssdk_free_priv(void)
 static int ssdk_alloc_priv(a_uint32_t dev_num)
 {
 	int rev = SW_OK;
-	a_uint32_t dev_id;
+	a_uint32_t dev_id = 0;
 
 	qca_phy_priv_global = kzalloc(dev_num * sizeof(struct qca_phy_priv *), GFP_KERNEL);
 	if (qca_phy_priv_global == NULL) {
@@ -3222,7 +3223,7 @@ static int ssdk_alloc_priv(a_uint32_t dev_num)
 
 static int __init regi_init(void)
 {
-	a_uint32_t num = 0, dev_id = 0, dev_num = 0;
+	a_uint32_t num = 0, dev_id = 0, dev_num = 1;
 	ssdk_init_cfg cfg;
 	garuda_init_spec_cfg chip_spec_cfg;
 	int rv = 0;
@@ -3347,7 +3348,7 @@ out:
 static void __exit
 regi_exit(void)
 {
-	a_uint32_t dev_id, dev_num;
+	a_uint32_t dev_id, dev_num = 1;
 	sw_error_t rv;
 
 	dev_num = ssdk_switch_device_num_get();
