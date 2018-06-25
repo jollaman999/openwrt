@@ -75,7 +75,7 @@ static int qca_phy_disable_intr(struct qca_phy_priv *priv)
 
 static int qca_mac_disable_intr(struct qca_phy_priv *priv)
 {
-	a_uint8_t data;
+	a_uint32_t data;
 
 	fal_reg_get(priv->device_id, GBL_INT_MASK1_OFFSET, (a_uint8_t *)&data, 4);
 	if (data )
