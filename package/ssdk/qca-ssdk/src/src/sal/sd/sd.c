@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012, 2017-2018, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -12,7 +12,7 @@
  * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-
+/*qca808x_start*/
 #include "sw.h"
 #include "ssdk_init.h"
 #include "sd.h"
@@ -25,6 +25,7 @@ mdio_reg_set ssdk_mdio_set    = NULL;
 mdio_reg_get ssdk_mdio_get    = NULL;
 i2c_reg_set ssdk_i2c_set    = NULL;
 i2c_reg_get ssdk_i2c_get    = NULL;
+/*qca808x_end*/
 hdr_reg_set  ssdk_hdr_reg_set = NULL;
 hdr_reg_get  ssdk_hdr_reg_get = NULL;
 psgmii_reg_set  ssdk_psgmii_reg_set = NULL;
@@ -34,7 +35,7 @@ uniphy_reg_get  ssdk_uniphy_reg_get = NULL;
 mii_reg_set	ssdk_mii_reg_set = NULL;
 mii_reg_get	ssdk_mii_reg_get = NULL;
 
-
+/*qca808x_start*/
 sw_error_t
 sd_reg_mdio_set(a_uint32_t dev_id, a_uint32_t phy, a_uint32_t reg,
                 a_uint16_t data)
@@ -176,7 +177,7 @@ sd_reg_i2c_get(a_uint32_t dev_id, a_uint32_t phy, a_uint32_t reg, a_uint16_t * d
 
     return rv;
 }
-
+/*qca808x_end*/
 sw_error_t
 sd_reg_hdr_set(a_uint32_t dev_id, a_uint32_t reg_addr, a_uint8_t * reg_data, a_uint32_t len)
 {
@@ -302,7 +303,7 @@ sd_reg_mii_get(a_uint32_t dev_id, a_uint32_t reg)
 
     return value;
 }
-
+/*qca808x_start*/
 sw_error_t
 sd_init(a_uint32_t dev_id, ssdk_init_cfg * cfg)
 {
@@ -325,7 +326,7 @@ sd_init(a_uint32_t dev_id, ssdk_init_cfg * cfg)
     {
         ssdk_i2c_get = cfg->reg_func.i2c_get;
     }
-
+/*qca808x_end*/
     if (NULL != cfg->reg_func.header_reg_set)
     {
         ssdk_hdr_reg_set = cfg->reg_func.header_reg_set;
@@ -364,7 +365,7 @@ sd_init(a_uint32_t dev_id, ssdk_init_cfg * cfg)
     {
         ssdk_mii_reg_get = cfg->reg_func.mii_reg_get;
     }
-
+/*qca808x_start*/
     return SW_OK;
 }
-
+/*qca808x_end*/

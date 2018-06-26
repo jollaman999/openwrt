@@ -12,7 +12,7 @@
  * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-
+/*qca808x_start*/
 #include "sw.h"
 #include "ssdk_init.h"
 #include "fal_init.h"
@@ -20,24 +20,28 @@
 #include "hsl.h"
 #include "hsl_dev.h"
 #include "hsl_phy.h"
-#include "ssdk_init.h"
+/*qca808x_end*/
 #include "ssdk_dts.h"
 #include "ssdk_interrupt.h"
 #include <linux/kconfig.h>
 #include <linux/version.h>
 #include <linux/kernel.h>
+/*qca808x_start*/
 #include <linux/module.h>
 #include <linux/phy.h>
 #include <linux/platform_device.h>
 #include <linux/types.h>
+/*qca808x_end*/
 //#include <asm/mach-types.h>
 #include <generated/autoconf.h>
 #include <linux/if_arp.h>
 #include <linux/inetdevice.h>
 #include <linux/netdevice.h>
 #include <linux/etherdevice.h>
+/*qca808x_start*/
 #include <linux/phy.h>
 #include <linux/mdio.h>
+/*qca808x_end*/
 #include <linux/clk.h>
 #include <linux/delay.h>
 #include <linux/string.h>
@@ -57,10 +61,12 @@
 #include <malibu_phy.h>
 #endif
 #if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4,1,0))
+/*qca808x_start*/
 #include <linux/of.h>
 #include <linux/of_net.h>
 #include <linux/of_address.h>
 #include <linux/reset.h>
+/*qca808x_end*/
 #if 0
 #ifdef BOARD_AR71XX
 #ifdef CONFIG_AR8216_PHY
@@ -83,7 +89,9 @@
 #include <drivers/net/ethernet/atheros/ag71xx/ag71xx.h>
 #endif
 #endif
+/*qca808x_start*/
 #include "ssdk_plat.h"
+/*qca808x_end*/
 #include "ssdk_clk.h"
 #include "ref_vlan.h"
 #include "ref_fdb.h"
@@ -96,11 +104,11 @@
 #ifdef BOARD_AR71XX
 #include "ssdk_uci.h"
 #endif
-
+/*qca808x_start*/
 #if defined(IN_PHY_I2C_MODE)
 #include "ssdk_phy_i2c.h"
 #endif
-
+/*qca808x_end*/
 #ifdef IN_IP
 #if defined (CONFIG_NF_FLOW_COOKIE)
 #include "fal_flowcookie.h"
@@ -150,7 +158,7 @@ extern void qca_ar8327_sw_mib_task(struct qca_phy_priv *priv);
 #define QCA_MAC_SW_SYNC_WORK_DELAY	1000
 
 static bool qca_dess_rfs_registered = false;
-
+/*qca808x_start*/
 struct qca_phy_priv **qca_phy_priv_global;
 
 struct qca_phy_priv* ssdk_phy_priv_data_get(a_uint32_t dev_id)
@@ -160,6 +168,7 @@ struct qca_phy_priv* ssdk_phy_priv_data_get(a_uint32_t dev_id)
 
 	return qca_phy_priv_global[dev_id];
 }
+/*qca808x_end*/
 
 a_uint32_t hppe_port_type[6] = {0,0,0,0,0,0}; // this variable should be init by ssdk_init
 
@@ -2223,7 +2232,7 @@ void clear_self_test_config(a_uint32_t dev_id)
 	fal_fdb_entry_flush(dev_id,1);
 }
 #endif
-
+/*qca808x_start*/
 sw_error_t
 ssdk_init(a_uint32_t dev_id, ssdk_init_cfg * cfg)
 {
@@ -2256,6 +2265,7 @@ ssdk_cleanup(void)
 
 	return rv;
 }
+/*qca808x_end*/
 
 sw_error_t
 ssdk_hsl_access_mode_set(a_uint32_t dev_id, hsl_access_mode reg_mode)
@@ -2451,7 +2461,7 @@ static void ssdk_driver_unregister(a_uint32_t dev_id)
 #endif
 	}
 }
-
+/*qca808x_start*/
 static int chip_is_scomphy(a_uint32_t dev_id, ssdk_init_cfg* cfg)
 {
 	int rv = -ENODEV;
@@ -2483,6 +2493,7 @@ static int chip_ver_get(a_uint32_t dev_id, ssdk_init_cfg* cfg)
 {
 	int rv = SW_OK;
 	a_uint8_t chip_ver = 0;
+/*qca808x_end*/
 	hsl_reg_mode reg_mode;
 
 	reg_mode= ssdk_switch_reg_access_mode_get(dev_id);
@@ -2495,7 +2506,7 @@ static int chip_ver_get(a_uint32_t dev_id, ssdk_init_cfg* cfg)
 		qca_switch_reg_read(dev_id,0,(a_uint8_t *)&reg_val, 4);
 		chip_ver = (reg_val&0xff00)>>8;
 	}
-
+/*qca808x_start*/
 	if(chip_ver == QCA_VER_AR8227)
 		cfg->chip_type = CHIP_SHIVA;
 	else if(chip_ver == QCA_VER_AR8337)
@@ -2513,6 +2524,7 @@ static int chip_ver_get(a_uint32_t dev_id, ssdk_init_cfg* cfg)
 
 	return rv;
 }
+/*qca808x_end*/
 
 #ifdef DESS
 static int ssdk_flow_default_act_init(a_uint32_t dev_id)
@@ -2880,7 +2892,7 @@ qca_dess_hw_init(ssdk_init_cfg *cfg, a_uint32_t dev_id)
 	return SW_OK;
 }
 #endif
-
+/*qca808x_start*/
 static void ssdk_cfg_default_init(ssdk_init_cfg *cfg)
 {
 	memset(cfg, 0, sizeof(ssdk_init_cfg));
@@ -2892,11 +2904,15 @@ static void ssdk_cfg_default_init(ssdk_init_cfg *cfg)
 	cfg->reg_func.i2c_set = qca_phy_i2c_write;
 	cfg->reg_func.i2c_get = qca_phy_i2c_read;
 #endif
+/*qca808x_end*/
+
 	cfg->reg_func.header_reg_set = qca_switch_reg_write;
 	cfg->reg_func.header_reg_get = qca_switch_reg_read;
 	cfg->reg_func.mii_reg_set = qca_ar8216_mii_write;
 	cfg->reg_func.mii_reg_get = qca_ar8216_mii_read;
+/*qca808x_start*/
 }
+/*qca808x_end*/
 
 #ifdef IN_RFS
 #if defined(CONFIG_RFS_ACCEL)
@@ -3176,12 +3192,13 @@ static void qca_dess_rfs_init(void)
 	}
 }
 #endif
-
+/*qca808x_start*/
 static void ssdk_free_priv(void)
 {
 	a_uint32_t dev_id, dev_num = 1;
-
+/*qca808x_end*/
 	dev_num = ssdk_switch_device_num_get();
+/*qca808x_start*/
 	for (dev_id = 0; dev_id < dev_num; dev_id++) {
 		if (qca_phy_priv_global[dev_id])
 			kfree(qca_phy_priv_global[dev_id]);
@@ -3193,8 +3210,9 @@ static void ssdk_free_priv(void)
 		kfree(qca_phy_priv_global);
 
 	qca_phy_priv_global = NULL;
-
+/*qca808x_end*/
 	ssdk_switch_device_num_exit();
+/*qca808x_start*/
 }
 
 static int ssdk_alloc_priv(a_uint32_t dev_num)
@@ -3212,8 +3230,10 @@ static int ssdk_alloc_priv(a_uint32_t dev_num)
 		if (qca_phy_priv_global[dev_id] == NULL) {
 			return -ENOMEM;
 		}
+/*qca808x_end*/
 		qca_phy_priv_global[dev_id]->qca_ssdk_sw_dev_registered = A_FALSE;
 		qca_phy_priv_global[dev_id]->ess_switch_flag = A_FALSE;
+/*qca808x_start*/
 		qca_ssdk_phy_info_init(dev_id);
 		qca_ssdk_port_bmp_init(dev_id);
 	}
@@ -3225,21 +3245,23 @@ static int __init regi_init(void)
 {
 	a_uint32_t num = 0, dev_id = 0, dev_num = 1;
 	ssdk_init_cfg cfg;
+/*qca808x_end*/
 	garuda_init_spec_cfg chip_spec_cfg;
+/*qca808x_start*/
 	int rv = 0;
-
+/*qca808x_end*/
 	/*init switch device num firstly*/
 	ssdk_switch_device_num_init();
 
 	dev_num = ssdk_switch_device_num_get();
-
+/*qca808x_start*/
 	rv = ssdk_alloc_priv(dev_num);
 	if (rv)
 		goto out;
 
 	for (num = 0; num < dev_num; num++) {
 		ssdk_cfg_default_init(&cfg);
-
+/*qca808x_end*/
 #ifndef BOARD_AR71XX
 #if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
 		if(SW_DISABLE == ssdk_dt_parse(&cfg, num, &dev_id)) {
@@ -3253,22 +3275,23 @@ static int __init regi_init(void)
 		qca_phy_priv_global[dev_id]->device_id = ssdk_device_id_get(dev_id);
 		qca_phy_priv_global[dev_id]->ess_switch_flag = ssdk_ess_switch_flag_get(dev_id);
 		qca_phy_priv_global[dev_id]->of_node = ssdk_dts_node_get(dev_id);
-
+/*qca808x_start*/
 		rv = ssdk_plat_init(&cfg, dev_id);
 		SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
-
+/*qca808x_end*/
 		ssdk_driver_register(dev_id);
-
+/*qca808x_start*/
 		rv = chip_ver_get(dev_id, &cfg);
 		SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
-
+/*qca808x_end*/
 		ssdk_miireg_ioctrl_register();
 
 		memset(&chip_spec_cfg, 0, sizeof(garuda_init_spec_cfg));
 		cfg.chip_spec_cfg = &chip_spec_cfg;
-
+/*qca808x_start*/
 		rv = ssdk_init(dev_id, &cfg);
 		SW_CNTU_ON_ERROR_AND_COND1_OR_GOTO_OUT(rv, -ENODEV);
+/*qca808x_end*/
 
 
 		switch (cfg.chip_type)
@@ -3320,7 +3343,10 @@ static int __init regi_init(void)
 		}
 
 			fal_module_func_init(dev_id, &cfg);
+/*qca808x_start*/
+
 	}
+/*qca808x_end*/
 
 	ssdk_sysfs_init();
 
@@ -3328,6 +3354,7 @@ static int __init regi_init(void)
 	ssdk_dev_notifier.notifier_call = ssdk_dev_event;
 	ssdk_dev_notifier.priority = 1;
 	register_netdevice_notifier(&ssdk_dev_notifier);
+/*qca808x_start*/
 
 out:
 	if (rv == 0)
@@ -3348,22 +3375,25 @@ out:
 static void __exit
 regi_exit(void)
 {
+/*qca808x_end*/
 	a_uint32_t dev_id, dev_num = 1;
+/*qca808x_start*/
 	sw_error_t rv;
-
+/*qca808x_end*/
 	dev_num = ssdk_switch_device_num_get();
 	for (dev_id = 0; dev_id < dev_num; dev_id++) {
 		ssdk_driver_unregister(dev_id);
 		if (qca_phy_priv_global[dev_id]->qca_ssdk_sw_dev_registered == A_TRUE)
 			ssdk_switch_unregister(dev_id);
 	}
-
+/*qca808x_start*/
 	rv = ssdk_cleanup();
 
 	if (rv == 0)
 		SSDK_INFO("qca-ssdk module exit  done!\n");
 	else
 		SSDK_ERROR("qca-ssdk module exit failed! (code: %d)\n", rv);
+/*qca808x_end*/
 
 	#ifdef DESS
 	qca_dess_rfs_remove();
@@ -3377,7 +3407,7 @@ regi_exit(void)
 	}
 
 	unregister_netdevice_notifier(&ssdk_dev_notifier);
-
+/*qca808x_start*/
 	ssdk_free_priv();
 }
 
@@ -3386,4 +3416,4 @@ module_exit(regi_exit);
 
 MODULE_DESCRIPTION("QCA SSDK Driver");
 MODULE_LICENSE("Dual BSD/GPL");
-
+/*qca808x_end*/

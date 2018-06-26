@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2015-2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012, 2015-2018, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -11,7 +11,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
  * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
+/*qca808x_start*/
 /**
  * @defgroup fal_port_ctrl FAL_PORT_CONTROL
  * @{
@@ -282,7 +282,7 @@ typedef struct {
 } fal_port_counter_info_t;
 
 /*above is new add for malibu phy*/
-
+/*qca808x_end*/
 enum
 {
 	/*port contorl*/
@@ -392,7 +392,7 @@ fal_port_mru_set(a_uint32_t dev_id, fal_port_t port_id,
 sw_error_t
 fal_port_mru_get(a_uint32_t dev_id, fal_port_t port_id,
 		fal_mru_ctrl_t *ctrl);
-
+/*qca808x_start*/
 sw_error_t
 fal_port_duplex_set(a_uint32_t dev_id, fal_port_t port_id,
 				fal_port_duplex_t duplex);
@@ -425,7 +425,7 @@ fal_port_autoneg_adv_set(a_uint32_t dev_id, fal_port_t port_id,
 sw_error_t
 fal_port_autoneg_adv_get(a_uint32_t dev_id, fal_port_t port_id,
 				     a_uint32_t * autoadv);
-
+/*qca808x_end*/
 sw_error_t
 fal_port_hdr_status_set(a_uint32_t dev_id, fal_port_t port_id,
 				    a_bool_t enable);
@@ -530,14 +530,14 @@ fal_port_link_forcemode_set(a_uint32_t dev_id, fal_port_t port_id,
 sw_error_t
 fal_port_link_forcemode_get(a_uint32_t dev_id, fal_port_t port_id,
 					a_bool_t * enable);
-
+/*qca808x_start*/
 sw_error_t
 fal_port_link_status_get(a_uint32_t dev_id, fal_port_t port_id,
 				     a_bool_t * status);
 
 sw_error_t
 fal_ports_link_status_get(a_uint32_t dev_id, a_uint32_t * status);
-
+/*qca808x_end*/
 sw_error_t
 fal_port_congestion_drop_set(a_uint32_t dev_id, fal_port_t port_id,
 					 a_uint32_t queue_id, a_bool_t enable);
@@ -555,7 +555,7 @@ sw_error_t
 fal_ring_flow_ctrl_thres_get(a_uint32_t dev_id, a_uint32_t ring_id,
 					 a_uint8_t * on_thres,
 					 a_uint8_t * off_thres);
-
+/*qca808x_start*/
 sw_error_t
 fal_port_powersave_set(a_uint32_t dev_id, fal_port_t port_id,
 			  a_bool_t enable);
@@ -600,7 +600,7 @@ fal_port_mdix_get(a_uint32_t dev_id, fal_port_t port_id,
 sw_error_t
 fal_port_mdix_status_get(a_uint32_t dev_id, fal_port_t port_id,
 				     fal_port_mdix_status_t * mode);
-
+/*qca808x_end*/
 sw_error_t
 fal_port_combo_prefer_medium_set(a_uint32_t dev_id,
 					     a_uint32_t port_id,
@@ -626,7 +626,7 @@ sw_error_t
 fal_port_combo_fiber_mode_get(a_uint32_t dev_id,
 						  a_uint32_t port_id,
 						  fal_port_fiber_mode_t * mode);
-
+/*qca808x_start*/
 sw_error_t
 fal_port_local_loopback_set(a_uint32_t dev_id,
 						fal_port_t port_id,
@@ -672,7 +672,7 @@ fal_port_wol_status_set(a_uint32_t dev_id, fal_port_t port_id,
 sw_error_t
 fal_port_wol_status_get(a_uint32_t dev_id, fal_port_t port_id,
 			      a_bool_t * enable);
-
+ /*qca808x_end*/
 sw_error_t
 fal_port_interface_mode_set(a_uint32_t dev_id, fal_port_t port_id,
 			      fal_port_interface_mode_t mode);
@@ -683,7 +683,7 @@ fal_port_interface_mode_apply(a_uint32_t dev_id);
 sw_error_t
 fal_port_interface_mode_get(a_uint32_t dev_id, fal_port_t port_id,
 			      fal_port_interface_mode_t * mode);
-
+/*qca808x_start*/
 sw_error_t
 fal_port_interface_mode_status_get(a_uint32_t dev_id, fal_port_t port_id,
 			      fal_port_interface_mode_t * mode);
@@ -699,7 +699,7 @@ fal_debug_phycounter_get(a_uint32_t dev_id, fal_port_t port_id,
 sw_error_t
 fal_debug_phycounter_show(a_uint32_t dev_id, fal_port_t port_id,
 				 fal_port_counter_info_t * port_counter_info);
-
+/*qca808x_end*/
 sw_error_t
 fal_port_source_filter_status_get(a_uint32_t dev_id,
 				fal_port_t port_id, a_bool_t * enable);
@@ -714,7 +714,7 @@ fal_port_interface_3az_status_set(a_uint32_t dev_id, fal_port_t port_id,
 sw_error_t
 fal_port_interface_3az_status_get(a_uint32_t dev_id, fal_port_t port_id,
 		a_bool_t * enable);
-
+/*qca808x_start*/
 #ifdef __cplusplus
 }
 #endif				/* __cplusplus */
@@ -722,3 +722,4 @@ fal_port_interface_3az_status_get(a_uint32_t dev_id, fal_port_t port_id,
 /**
  * @}
  */
+/*qca808x_end*/

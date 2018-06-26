@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012, 2017-2018, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -13,13 +13,13 @@
  */
 
 
-
+/*qca808x_start*/
 #include "sw.h"
 #include "hsl.h"
 #include "hsl_dev.h"
 #include "hsl_lock.h"
 #include "sd.h"
-
+/*qca808x_end*/
 #if defined ATHENA
 #include "athena_init.h"
 #endif
@@ -44,16 +44,20 @@
 #if defined HPPE
 #include "hppe_init.h"
 #endif
+/*qca808x_start*/
 #if defined SCOMPHY
 #include "scomphy_init.h"
 #endif
 #include "sw_api.h"
+/*qca808x_end*/
 #ifdef KERNEL_MODULE
+/*qca808x_start*/
 #include "sw_api_ks.h"
+/*qca808x_end*/
 #else
 #include "sw_api_us.h"
 #endif
-
+/*qca808x_start*/
 static hsl_dev_t dev_table[SW_MAX_NR_DEV];
 static ssdk_init_cfg *dev_ssdk_cfg[SW_MAX_NR_DEV] = { 0 };
 ssdk_chip_type SSDK_CURRENT_CHIP_TYPE = CHIP_UNSPECIFIED;
@@ -99,7 +103,7 @@ hsl_dev_ptr_get(a_uint32_t dev_id)
 
     return &dev_table[dev_id];
 }
-
+/*qca808x_end*/
 hsl_acl_func_t *
 hsl_acl_ptr_get(a_uint32_t dev_id)
 {
@@ -115,7 +119,7 @@ a_uint32_t hsl_dev_wan_port_get(a_uint32_t dev_id)
 		return dev_ssdk_cfg[dev_id]->port_cfg.wan_bmp;
 	return 0;
 }
-
+/*qca808x_start*/
 sw_error_t
 hsl_dev_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 {
@@ -147,6 +151,7 @@ hsl_dev_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
     rv = SW_INIT_ERROR;
     switch (cfg->chip_type)
     {
+/*qca808x_end*/
         case CHIP_ATHENA:
 #if defined ATHENA
             rv = athena_init(dev_id, cfg);
@@ -191,12 +196,13 @@ hsl_dev_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
             rv = hppe_init(dev_id, cfg);
 #endif
             break;
+/*qca808x_start*/
 	case CHIP_SCOMPHY:
 #if defined SCOMPHY
 	    rv = scomphy_init(dev_id, cfg);
 #endif
 	    break;
-
+/*qca808x_end*/
         case CHIP_UNSPECIFIED:
 #if defined ATHENA
             rv = athena_init(dev_id, cfg);
@@ -212,7 +218,7 @@ hsl_dev_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
             rv = isisc_init(dev_id, cfg);
 #endif
             break;
-
+/*qca808x_start*/
         default:
             return SW_BAD_PARAM;
     }
@@ -235,7 +241,7 @@ hsl_dev_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 
     return rv;
 }
-
+/*qca808x_end*/
 sw_error_t
 hsl_ssdk_cfg(a_uint32_t dev_id, ssdk_cfg_t *ssdk_cfg)
 {
@@ -407,7 +413,7 @@ hsl_ssdk_cfg(a_uint32_t dev_id, ssdk_cfg_t *ssdk_cfg)
 
     return SW_OK;
 }
-
+/*qca808x_start*/
 sw_error_t
 hsl_dev_cleanup(void)
 {
@@ -438,7 +444,7 @@ hsl_dev_cleanup(void)
 
     return SW_OK;
 }
-
+/*qca808x_end*/
 sw_error_t
 hsl_access_mode_set(a_uint32_t dev_id, hsl_access_mode reg_mode)
 {
@@ -580,7 +586,7 @@ sw_error_t reduce_hsl_reg_field_gen_set(a_uint32_t dev,a_uint32_t regaddr,a_uint
 	return rv;
 }
 
-
+/*qca808x_start*/
 sw_error_t reduce_hsl_phy_set(a_uint32_t dev,a_uint32_t phy_addr,a_uint32_t reg,a_uint16_t value)
 {
 	sw_error_t rv;
@@ -658,5 +664,5 @@ void reduce_sw_field_get_by_reg_u32(unsigned int reg_value,unsigned int field_va
 
 }
 #endif
-
+/*qca808x_end*/
 

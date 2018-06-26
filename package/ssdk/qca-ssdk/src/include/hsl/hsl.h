@@ -13,7 +13,7 @@
  */
 
 
-
+/*qca808x_start*/
 #ifndef _HSL_H
 #define _HSL_H
 
@@ -41,6 +41,7 @@ extern "C" {
         hsl_acl_rule_invalid  acl_rule_invalid;
         hsl_acl_addr_update   acl_addr_update;
     } hsl_acl_func_t;
+/*qca808x_end*/
 
 #if 1
 extern sw_error_t reduce_hsl_reg_entry_get(a_uint32_t dev,a_uint32_t reg,a_uint8_t* value,a_uint8_t val_len);
@@ -93,7 +94,7 @@ extern sw_error_t reduce_hsl_reg_field_gen_set(a_uint32_t dev,a_uint32_t regaddr
 		rv = reduce_hsl_reg_field_gen_set(dev,regaddr,bitoffset,bitlength, (a_uint8_t*)value,val_len);
 
 
-
+/*qca808x_start*/
 extern sw_error_t reduce_hsl_phy_get(a_uint32_t dev,a_uint32_t phy_addr,a_uint32_t reg,a_uint16_t* value);
 #define HSL_PHY_GET(rv, dev, phy_addr, reg, value) \
 		rv = reduce_hsl_phy_get(dev,phy_addr,reg,value);
@@ -111,7 +112,7 @@ extern sw_error_t hsl_phy_i2c_get(a_uint32_t dev,a_uint32_t phy_addr,a_uint32_t 
 extern sw_error_t hsl_phy_i2c_set(a_uint32_t dev,a_uint32_t phy_addr,a_uint32_t reg,a_uint16_t value);
 #define HSL_PHY_I2C_SET(rv, dev, phy_addr, reg, value) \
 		rv = hsl_phy_i2c_set(dev,phy_addr,reg,value);
-
+/*qca808x_end*/
 
 
 
@@ -225,7 +226,7 @@ do { \
     } \
 } while (0);
 #endif
-
+/*qca808x_start*/
 #if (defined(API_LOCK) \
 && (defined(HSL_STANDALONG) || (defined(KERNEL_MODULE) && defined(USER_MODE))))
     extern  aos_lock_t sw_hsl_api_lock;
@@ -240,3 +241,4 @@ do { \
 }
 #endif                          /* __cplusplus */
 #endif                          /* _HSL_H */
+/*qca808x_end*/

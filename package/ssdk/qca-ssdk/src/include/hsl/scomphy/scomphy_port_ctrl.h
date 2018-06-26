@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -12,7 +12,7 @@
  * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-
+/*qca808x_start*/
 #ifndef _SCOMPHY_PORT_CTRL_H_
 #define _SCOMPHY_PORT_CTRL_H_
 
@@ -133,7 +133,7 @@ scomphy_port_mdix_get (a_uint32_t dev_id, fal_port_t port_id,
 HSL_LOCAL sw_error_t
 scomphy_port_mdix_status_get (a_uint32_t dev_id, fal_port_t port_id,
 		fal_port_mdix_status_t * mode);
-
+/*qca808x_end*/
 HSL_LOCAL sw_error_t
 scomphy_port_combo_prefer_medium_set (a_uint32_t dev_id, a_uint32_t phy_id,
 		fal_port_medium_t phy_medium);
@@ -153,7 +153,7 @@ scomphy_port_combo_fiber_mode_set (a_uint32_t dev_id, a_uint32_t phy_id,
 HSL_LOCAL sw_error_t
 scomphy_port_combo_fiber_mode_get (a_uint32_t dev_id, a_uint32_t phy_id,
 		fal_port_fiber_mode_t * fiber_mode);
-
+/*qca808x_start*/
 HSL_LOCAL sw_error_t
 scomphy_port_local_loopback_set (a_uint32_t dev_id, fal_port_t port_id,
 		a_bool_t enable);
@@ -195,7 +195,7 @@ scomphy_port_power_off (a_uint32_t dev_id, fal_port_t port_id);
 
 HSL_LOCAL sw_error_t
 scomphy_port_power_on (a_uint32_t dev_id, fal_port_t port_id);
-
+/*qca808x_end*/
 HSL_LOCAL sw_error_t
 scomphy_port_interface_mode_set (a_uint32_t dev_id, fal_port_t port_id,
 			fal_port_interface_mode_t mode);
@@ -203,7 +203,7 @@ scomphy_port_interface_mode_set (a_uint32_t dev_id, fal_port_t port_id,
 HSL_LOCAL sw_error_t
 scomphy_port_interface_mode_get (a_uint32_t dev_id, fal_port_t port_id,
 		fal_port_interface_mode_t * mode);
-
+/*qca808x_start*/
 HSL_LOCAL sw_error_t
 scomphy_port_interface_mode_status_get (a_uint32_t dev_id, fal_port_t port_id,
 		fal_port_interface_mode_t * mode);
@@ -225,3 +225,4 @@ scomphy_port_counter_show (a_uint32_t dev_id, fal_port_t port_id,
 }
 #endif				/* __cplusplus */
 #endif				/* _SCOMPHY_PORT_CTRL_H_ */
+/*qca808x_end*/

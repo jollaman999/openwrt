@@ -13,7 +13,7 @@
  */
 
 
-
+/*qca808x_start*/
 #ifndef _FAL_API_H_
 #define _FAL_API_H_
 
@@ -33,6 +33,7 @@ extern "C" {
     SW_API_DEF(SW_API_PT_AN_RESTART, fal_port_autoneg_restart), \
     SW_API_DEF(SW_API_PT_AN_ADV_GET, fal_port_autoneg_adv_get), \
     SW_API_DEF(SW_API_PT_AN_ADV_SET, fal_port_autoneg_adv_set), \
+/*qca808x_end*/\
     SW_API_DEF(SW_API_PT_HDR_SET, fal_port_hdr_status_set), \
     SW_API_DEF(SW_API_PT_HDR_GET, fal_port_hdr_status_get), \
     SW_API_DEF(SW_API_PT_FLOWCTRL_SET, fal_port_flowctrl_set), \
@@ -41,9 +42,11 @@ extern "C" {
     SW_API_DEF(SW_API_PT_FLOWCTRL_MODE_GET, fal_port_flowctrl_forcemode_get), \
     SW_API_DEF(SW_API_PT_POWERSAVE_SET, fal_port_powersave_set), \
     SW_API_DEF(SW_API_PT_POWERSAVE_GET, fal_port_powersave_get), \
+/*qca808x_start*/\
     SW_API_DEF(SW_API_PT_HIBERNATE_SET, fal_port_hibernate_set), \
     SW_API_DEF(SW_API_PT_HIBERNATE_GET, fal_port_hibernate_get), \
     SW_API_DEF(SW_API_PT_CDT, fal_port_cdt),  \
+/*qca808x_end*/\
     SW_API_DEF(SW_API_PT_TXHDR_SET, fal_port_txhdr_mode_set), \
     SW_API_DEF(SW_API_PT_TXHDR_GET, fal_port_txhdr_mode_get), \
     SW_API_DEF(SW_API_PT_RXHDR_SET, fal_port_rxhdr_mode_set), \
@@ -62,7 +65,9 @@ extern "C" {
     SW_API_DEF(SW_API_BP_STATUS_GET, fal_port_bp_status_get),   \
     SW_API_DEF(SW_API_PT_LINK_MODE_SET, fal_port_link_forcemode_set),   \
     SW_API_DEF(SW_API_PT_LINK_MODE_GET, fal_port_link_forcemode_get), \
+/*qca808x_start*/\
     SW_API_DEF(SW_API_PT_LINK_STATUS_GET, fal_port_link_status_get), \
+/*qca808x_end*/\
     SW_API_DEF(SW_API_PT_MAC_LOOPBACK_SET, fal_port_mac_loopback_set), \
     SW_API_DEF(SW_API_PT_MAC_LOOPBACK_GET, fal_port_mac_loopback_get), \
     SW_API_DEF(SW_API_PTS_LINK_STATUS_GET, fal_ports_link_status_get), \
@@ -70,16 +75,19 @@ extern "C" {
     SW_API_DEF(SW_API_PT_CONGESTION_DROP_GET, fal_port_congestion_drop_get), \
     SW_API_DEF(SW_API_PT_RING_FLOW_CTRL_THRES_SET, fal_ring_flow_ctrl_thres_set), \
     SW_API_DEF(SW_API_PT_RING_FLOW_CTRL_THRES_GET, fal_ring_flow_ctrl_thres_get), \
+/*qca808x_start*/\
     SW_API_DEF(SW_API_PT_8023AZ_SET, fal_port_8023az_set), \
     SW_API_DEF(SW_API_PT_8023AZ_GET, fal_port_8023az_get), \
     SW_API_DEF(SW_API_PT_MDIX_SET, fal_port_mdix_set), \
     SW_API_DEF(SW_API_PT_MDIX_GET, fal_port_mdix_get), \
     SW_API_DEF(SW_API_PT_MDIX_STATUS_GET, fal_port_mdix_status_get), \
+/*qca808x_end*/\
     SW_API_DEF(SW_API_PT_COMBO_PREFER_MEDIUM_SET, fal_port_combo_prefer_medium_set), \
     SW_API_DEF(SW_API_PT_COMBO_PREFER_MEDIUM_GET, fal_port_combo_prefer_medium_get), \
     SW_API_DEF(SW_API_PT_COMBO_MEDIUM_STATUS_GET, fal_port_combo_medium_status_get), \
     SW_API_DEF(SW_API_PT_COMBO_FIBER_MODE_SET, fal_port_combo_fiber_mode_set), \
     SW_API_DEF(SW_API_PT_COMBO_FIBER_MODE_GET, fal_port_combo_fiber_mode_get), \
+/*qca808x_start*/\
     SW_API_DEF(SW_API_PT_LOCAL_LOOPBACK_SET, fal_port_local_loopback_set), \
     SW_API_DEF(SW_API_PT_LOCAL_LOOPBACK_GET, fal_port_local_loopback_get), \
     SW_API_DEF(SW_API_PT_REMOTE_LOOPBACK_SET, fal_port_remote_loopback_set), \
@@ -92,13 +100,16 @@ extern "C" {
     SW_API_DEF(SW_API_PT_PHY_ID_GET, fal_port_phy_id_get), \
     SW_API_DEF(SW_API_PT_WOL_STATUS_SET, fal_port_wol_status_set), \
     SW_API_DEF(SW_API_PT_WOL_STATUS_GET, fal_port_wol_status_get), \
+/*qca808x_end*/\
     SW_API_DEF(SW_API_PT_INTERFACE_MODE_SET, fal_port_interface_mode_set), \
     SW_API_DEF(SW_API_PT_INTERFACE_MODE_APPLY, fal_port_interface_mode_apply), \
     SW_API_DEF(SW_API_PT_INTERFACE_MODE_GET, fal_port_interface_mode_get), \
+/*qca808x_start*/\
     SW_API_DEF(SW_API_PT_INTERFACE_MODE_STATUS_GET, fal_port_interface_mode_status_get), \
     SW_API_DEF(SW_API_DEBUG_PHYCOUNTER_SET, fal_debug_phycounter_set), \
     SW_API_DEF(SW_API_DEBUG_PHYCOUNTER_GET, fal_debug_phycounter_get), \
     SW_API_DEF(SW_API_DEBUG_PHYCOUNTER_SHOW, fal_debug_phycounter_show),\
+/*qca808x_end*/\
     SW_API_DEF(SW_API_PT_MTU_SET, fal_port_mtu_set), \
     SW_API_DEF(SW_API_PT_MTU_GET, fal_port_mtu_get), \
     SW_API_DEF(SW_API_PT_MRU_SET, fal_port_mru_set), \
@@ -109,7 +120,8 @@ extern "C" {
     SW_API_DEF(SW_API_PT_FRAME_MAX_SIZE_SET, fal_port_max_frame_size_set), \
     SW_API_DEF(SW_API_PT_INTERFACE_3AZ_STATUS_SET, fal_port_interface_3az_status_set), \
     SW_API_DEF(SW_API_PT_INTERFACE_3AZ_STATUS_GET, fal_port_interface_3az_status_get),
-
+/*qca808x_start*/
+/*end of PORTCONTROL_API*/
 #define PORTCONTROL_API_PARAM \
     SW_API_DESC(SW_API_PT_DUPLEX_GET) \
     SW_API_DESC(SW_API_PT_DUPLEX_SET) \
@@ -120,6 +132,7 @@ extern "C" {
     SW_API_DESC(SW_API_PT_AN_RESTART) \
     SW_API_DESC(SW_API_PT_AN_ADV_GET) \
     SW_API_DESC(SW_API_PT_AN_ADV_SET) \
+/*qca808x_end*/\
     SW_API_DESC(SW_API_PT_HDR_SET) \
     SW_API_DESC(SW_API_PT_HDR_GET) \
     SW_API_DESC(SW_API_PT_FLOWCTRL_SET) \
@@ -128,9 +141,11 @@ extern "C" {
     SW_API_DESC(SW_API_PT_FLOWCTRL_MODE_GET) \
     SW_API_DESC(SW_API_PT_POWERSAVE_SET) \
     SW_API_DESC(SW_API_PT_POWERSAVE_GET) \
+/*qca808x_start*/\
     SW_API_DESC(SW_API_PT_HIBERNATE_SET) \
     SW_API_DESC(SW_API_PT_HIBERNATE_GET) \
     SW_API_DESC(SW_API_PT_CDT) \
+/*qca808x_end*/\
     SW_API_DESC(SW_API_PT_TXHDR_SET) \
     SW_API_DESC(SW_API_PT_TXHDR_GET) \
     SW_API_DESC(SW_API_PT_RXHDR_SET) \
@@ -149,7 +164,9 @@ extern "C" {
     SW_API_DESC(SW_API_BP_STATUS_GET) \
     SW_API_DESC(SW_API_PT_LINK_MODE_SET) \
     SW_API_DESC(SW_API_PT_LINK_MODE_GET) \
+/*qca808x_start*/\
     SW_API_DESC(SW_API_PT_LINK_STATUS_GET) \
+/*qca808x_end*/\
     SW_API_DESC(SW_API_PT_MAC_LOOPBACK_SET) \
     SW_API_DESC(SW_API_PT_MAC_LOOPBACK_GET) \
     SW_API_DESC(SW_API_PTS_LINK_STATUS_GET) \
@@ -157,16 +174,19 @@ extern "C" {
     SW_API_DESC(SW_API_PT_CONGESTION_DROP_GET) \
     SW_API_DESC(SW_API_PT_RING_FLOW_CTRL_THRES_SET) \
     SW_API_DESC(SW_API_PT_RING_FLOW_CTRL_THRES_GET) \
+/*qca808x_start*/\
     SW_API_DESC(SW_API_PT_8023AZ_SET) \
     SW_API_DESC(SW_API_PT_8023AZ_GET) \
     SW_API_DESC(SW_API_PT_MDIX_SET) \
     SW_API_DESC(SW_API_PT_MDIX_GET) \
     SW_API_DESC(SW_API_PT_MDIX_STATUS_GET) \
+/*qca808x_end*/\
     SW_API_DESC(SW_API_PT_COMBO_PREFER_MEDIUM_SET) \
     SW_API_DESC(SW_API_PT_COMBO_PREFER_MEDIUM_GET) \
     SW_API_DESC(SW_API_PT_COMBO_MEDIUM_STATUS_GET) \
     SW_API_DESC(SW_API_PT_COMBO_FIBER_MODE_SET) \
     SW_API_DESC(SW_API_PT_COMBO_FIBER_MODE_GET) \
+/*qca808x_start*/\
     SW_API_DESC(SW_API_PT_LOCAL_LOOPBACK_SET) \
     SW_API_DESC(SW_API_PT_LOCAL_LOOPBACK_GET) \
     SW_API_DESC(SW_API_PT_REMOTE_LOOPBACK_SET) \
@@ -179,13 +199,16 @@ extern "C" {
     SW_API_DESC(SW_API_PT_PHY_ID_GET) \
     SW_API_DESC(SW_API_PT_WOL_STATUS_SET) \
     SW_API_DESC(SW_API_PT_WOL_STATUS_GET) \
+/*qca808x_end*/\
     SW_API_DESC(SW_API_PT_INTERFACE_MODE_SET) \
     SW_API_DESC(SW_API_PT_INTERFACE_MODE_GET) \
     SW_API_DESC(SW_API_PT_INTERFACE_MODE_APPLY) \
+/*qca808x_start*/\
     SW_API_DESC(SW_API_PT_INTERFACE_MODE_STATUS_GET) \
     SW_API_DESC(SW_API_DEBUG_PHYCOUNTER_SET) \
     SW_API_DESC(SW_API_DEBUG_PHYCOUNTER_GET) \
     SW_API_DESC(SW_API_DEBUG_PHYCOUNTER_SHOW) \
+/*qca808x_end*/\
     SW_API_DESC(SW_API_PT_MTU_SET) \
     SW_API_DESC(SW_API_PT_MTU_GET) \
     SW_API_DESC(SW_API_PT_MRU_SET) \
@@ -196,6 +219,8 @@ extern "C" {
     SW_API_DESC(SW_API_PT_FRAME_MAX_SIZE_SET) \
     SW_API_DESC(SW_API_PT_INTERFACE_3AZ_STATUS_SET)  \
     SW_API_DESC(SW_API_PT_INTERFACE_3AZ_STATUS_GET)
+/*qca808x_start*/
+/*end of PORTCONTROL_API_PARAM*/
 #else
 #define PORTCONTROL_API \
     SW_API_DEF(SW_API_PT_DUPLEX_SET, fal_port_duplex_set), \
@@ -203,40 +228,49 @@ extern "C" {
     SW_API_DEF(SW_API_PT_AN_ENABLE, fal_port_autoneg_enable), \
     SW_API_DEF(SW_API_PT_AN_RESTART, fal_port_autoneg_restart), \
     SW_API_DEF(SW_API_PT_AN_ADV_SET, fal_port_autoneg_adv_set), \
+/*qca808x_end*/\
     SW_API_DEF(SW_API_PT_LINK_MODE_SET, fal_port_link_forcemode_set),   \
     SW_API_DEF(SW_API_PT_TXHDR_SET, fal_port_txhdr_mode_set), \
     SW_API_DEF(SW_API_PT_RXHDR_SET, fal_port_rxhdr_mode_set), \
     SW_API_DEF(SW_API_HEADER_TYPE_SET, fal_header_type_set),  \
     SW_API_DEF(SW_API_TXMAC_STATUS_SET, fal_port_txmac_status_set), \
     SW_API_DEF(SW_API_RXMAC_STATUS_SET, fal_port_rxmac_status_set), \
+/*qca808x_start*/\
     SW_API_DEF(SW_API_PT_POWER_OFF, fal_port_power_off), \
     SW_API_DEF(SW_API_PT_POWER_ON, fal_port_power_on), \
+/*qca808x_end*/\
     SW_API_DEF(SW_API_TXFC_STATUS_SET, fal_port_txfc_status_set),   \
     SW_API_DEF(SW_API_RXFC_STATUS_SET, fal_port_rxfc_status_set),
-
+/*qca808x_start*/
+/*end of PORTCONTROL_API*/
 #define PORTCONTROL_API_PARAM \
     SW_API_DESC(SW_API_PT_DUPLEX_SET) \
     SW_API_DESC(SW_API_PT_SPEED_SET)  \
     SW_API_DESC(SW_API_PT_AN_ENABLE) \
     SW_API_DESC(SW_API_PT_AN_RESTART) \
     SW_API_DESC(SW_API_PT_AN_ADV_SET) \
+/*qca808x_end*/\
     SW_API_DESC(SW_API_PT_LINK_MODE_SET) \
     SW_API_DESC(SW_API_PT_TXHDR_SET) \
     SW_API_DESC(SW_API_PT_RXHDR_SET) \
     SW_API_DESC(SW_API_HEADER_TYPE_SET) \
     SW_API_DESC(SW_API_TXMAC_STATUS_SET) \
     SW_API_DESC(SW_API_RXMAC_STATUS_SET) \
+/*qca808x_start*/\
     SW_API_DESC(SW_API_PT_POWER_OFF) \
     SW_API_DESC(SW_API_PT_POWER_ON) \
+/*qca808x_end*/\
     SW_API_DESC(SW_API_TXFC_STATUS_SET) \
     SW_API_DESC(SW_API_RXFC_STATUS_SET)
+/*qca808x_start*/\
+/*end of PORTCONTROL_API_PARAM*/
 #endif
 
 #else
 #define PORTCONTROL_API
 #define PORTCONTROL_API_PARAM
 #endif
-
+/*qca808x_end*/
 #ifdef IN_VLAN
 #define VLAN_API \
     SW_API_DEF(SW_API_VLAN_ADD, fal_vlan_create), \
@@ -1769,10 +1803,11 @@ extern "C" {
 #define BM_API_PARAM
 #endif
 
-
+/*qca808x_start*/
 #define REG_API \
     SW_API_DEF(SW_API_PHY_GET, fal_phy_get), \
-    SW_API_DEF(SW_API_PHY_SET, fal_phy_set), \
+	SW_API_DEF(SW_API_PHY_SET, fal_phy_set), \
+/*qca808x_end*/\
     SW_API_DEF(SW_API_REG_GET, fal_reg_get), \
     SW_API_DEF(SW_API_REG_SET, fal_reg_set), \
     SW_API_DEF(SW_API_PSGMII_REG_GET, fal_psgmii_reg_get), \
@@ -1785,10 +1820,12 @@ extern "C" {
     SW_API_DEF(SW_API_PHY_DUMP, fal_phy_dump), \
     SW_API_DEF(SW_API_UNIPHY_REG_GET, fal_uniphy_reg_get), \
     SW_API_DEF(SW_API_UNIPHY_REG_SET, fal_uniphy_reg_set),
-
+/*qca808x_start*/\
+/*end of REG_API*/
 #define REG_API_PARAM \
     SW_API_DESC(SW_API_PHY_GET) \
     SW_API_DESC(SW_API_PHY_SET) \
+/*qca808x_end*/\
     SW_API_DESC(SW_API_REG_GET) \
     SW_API_DESC(SW_API_REG_SET) \
     SW_API_DESC(SW_API_PSGMII_REG_GET) \
@@ -1801,7 +1838,9 @@ extern "C" {
     SW_API_DESC(SW_API_PHY_DUMP) \
     SW_API_DESC(SW_API_UNIPHY_REG_GET) \
     SW_API_DESC(SW_API_UNIPHY_REG_SET)
-
+/*qca808x_start*/\
+/*end of REG_API_PARAM*/
+/*qca808x_end*/
 #ifdef IN_CTRLPKT
 #define CTRLPKT_API \
     SW_API_DEF(SW_API_MGMTCTRL_ETHTYPE_PROFILE_SET, fal_mgmtctrl_ethtype_profile_set), \
@@ -1940,13 +1979,16 @@ extern "C" {
 #define POLICER_API
 #define POLICER_API_PARAM
 #endif
-
+/*qca808x_start*/
 #define SSDK_API \
+/*qca808x_end*/\
     SW_API_DEF(SW_API_SWITCH_RESET, fal_reset), \
     SW_API_DEF(SW_API_SSDK_CFG, fal_ssdk_cfg), \
     SW_API_DEF(SW_API_MODULE_FUNC_CTRL_SET, fal_module_func_ctrl_set), \
     SW_API_DEF(SW_API_MODULE_FUNC_CTRL_GET, fal_module_func_ctrl_get), \
+/*qca808x_start*/\
     PORTCONTROL_API \
+/*qca808x_end*/\
     VLAN_API \
     PORTVLAN_API \
     FDB_API \
@@ -1971,16 +2013,20 @@ extern "C" {
     QM_API \
     BM_API \
     PPPOE_API \
+/*qca808x_start*/\
     REG_API \
+/*qca808x_end*/\
     CTRLPKT_API \
     SERVCODE_API \
     RSS_HASH_API \
 	POLICER_API \
 	SHAPER_API \
+/*qca808x_start*/\
     SW_API_DEF(SW_API_MAX, NULL),
 
 
 #define SSDK_PARAM  \
+/*qca808x_end*/\
     SW_PARAM_DEF(SW_API_SWITCH_RESET, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"), \
     SW_PARAM_DEF(SW_API_SSDK_CFG, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"), \
     SW_PARAM_DEF(SW_API_SSDK_CFG, SW_SSDK_CFG, sizeof(ssdk_cfg_t), SW_PARAM_PTR|SW_PARAM_OUT, "ssdk configuration"), \
@@ -1995,7 +2041,9 @@ extern "C" {
     MISC_API_PARAM \
     IGMP_API_PARAM \
     MIRROR_API_PARAM \
+/*qca808x_start*/\
     PORTCONTROL_API_PARAM \
+/*qca808x_end*/\
     PORTVLAN_API_PARAM \
     VLAN_API_PARAM \
     FDB_API_PARAM \
@@ -2015,12 +2063,15 @@ extern "C" {
     QM_API_PARAM \
     BM_API_PARAM \
     PPPOE_API_PARAM \
+/*qca808x_start*/\
     REG_API_PARAM \
+/*qca808x_end*/\
     CTRLPKT_API_PARAM \
     SERVCODE_API_PARAM \
     RSS_HASH_API_PARAM \
 	POLICER_API_PARAM \
 	SHAPER_API_PARAM \
+/*qca808x_start*/\
     SW_PARAM_DEF(SW_API_MAX, SW_UINT32, 4, SW_PARAM_IN, "Dev ID"),
 
 
@@ -2029,3 +2080,4 @@ extern "C" {
 #endif                          /* __cplusplus */
 
 #endif                          /* _FAL_API_H_ */
+/*qca808x_end*/

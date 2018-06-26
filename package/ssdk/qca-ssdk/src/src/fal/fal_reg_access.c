@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012, 2017-2018, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -12,7 +12,7 @@
  * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-
+/*qca808x_start*/
 /**
  * @defgroup fal_reg_access FAL_REG_ACCESS
  * @{
@@ -87,7 +87,7 @@ _fal_phy_set(a_uint32_t dev_id, a_uint32_t phy_addr,
     rv = phy_set_func(dev_id, phy_addr, reg, value);
     return rv;
 }
-
+/*qca808x_end*/
 static sw_error_t
 _fal_reg_get(a_uint32_t dev_id, a_uint32_t reg_addr, a_uint8_t value[],
              a_uint32_t value_len)
@@ -279,7 +279,7 @@ _fal_uniphy_reg_set(a_uint32_t dev_id, a_uint32_t index, a_uint32_t reg_addr,
     rv = p_api->uniphy_reg_set(dev_id, index, reg_addr, value, value_len);
     return rv;
 }
-
+/*qca808x_start*/
 /**
   * fal_phy_get - get value of specific phy device
   * @phy_addr: id of the phy device
@@ -317,7 +317,7 @@ fal_phy_set(a_uint32_t dev_id, a_uint32_t phy_addr,
     FAL_API_UNLOCK;
     return rv;
 }
-
+/*qca808x_end*/
 /**
   * fal_reg_get - get value of specific register
   * @reg_addr: address of the register

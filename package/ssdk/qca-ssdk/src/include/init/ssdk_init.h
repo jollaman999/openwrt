@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2015-2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012, 2015-2018, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -13,7 +13,7 @@
  */
 
 
-
+/*qca808x_start*/
 #ifndef _SSDK_INIT_H_
 #define _SSDK_INIT_H_
 
@@ -23,9 +23,11 @@ extern "C" {
 
 #include "sw.h"
 #include "fal_type.h"
+/*qca808x_end*/
 #include "fal/fal_led.h"
-
+/*qca808x_start*/
 #define SSDK_MAX_PORT_NUM		8
+/*qca808x_end*/
 #define SSDK_MAX_VIRTUAL_PORT_NUM	256
 #define SSDK_MAX_SERVICE_CODE_NUM	256
 #define SSDK_MAX_CPU_CODE_NUM		256
@@ -37,7 +39,7 @@ extern "C" {
 
 #define PORT_GMAC_TYPE	1
 #define PORT_XGMAC_TYPE	2
-
+/*qca808x_start*/
     typedef enum {
         HSL_MDIO = 1,
         HSL_HEADER,
@@ -73,6 +75,7 @@ extern "C" {
     typedef sw_error_t
     (*i2c_reg_get) (a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t reg,
                      a_uint16_t * data);
+/*qca808x_end*/
 
     typedef sw_error_t
     (*hdr_reg_set) (a_uint32_t dev_id, a_uint32_t reg_addr, a_uint8_t *reg_data, a_uint32_t len);
@@ -95,7 +98,7 @@ extern "C" {
 	typedef void (*mii_reg_set)(a_uint32_t dev_id, a_uint32_t reg, a_uint32_t val);
 
 	typedef a_uint32_t (*mii_reg_get)(a_uint32_t dev_id, a_uint32_t reg);
-
+/*qca808x_start*/
 enum ssdk_port_wrapper_cfg {
 	PORT_WRAPPER_PSGMII = 0,
 	PORT_WRAPPER_PSGMII_RGMII5,
@@ -124,6 +127,7 @@ enum ssdk_port_wrapper_cfg {
     {
         mdio_reg_set    mdio_set;
         mdio_reg_get    mdio_get;
+/*qca808x_end*/
         hdr_reg_set     header_reg_set;
         hdr_reg_get     header_reg_get;
         psgmii_reg_set     psgmii_reg_set;
@@ -132,10 +136,11 @@ enum ssdk_port_wrapper_cfg {
         uniphy_reg_get     uniphy_reg_get;
 	mii_reg_set	mii_reg_set;
 	mii_reg_get	mii_reg_get;
+/*qca808x_start*/
         i2c_reg_set    i2c_set;
         i2c_reg_get    i2c_get;
     } hsl_reg_func;
-
+/*qca808x_end*/
     typedef struct
     {
         a_bool_t  mac0_rgmii;
@@ -149,7 +154,7 @@ enum ssdk_port_wrapper_cfg {
         a_bool_t  phy4_rx_delay;
         a_bool_t  phy4_tx_delay;
     } garuda_init_spec_cfg;
-
+/*qca808x_start*/
     typedef enum
     {
         CHIP_UNSPECIFIED = 0,
@@ -163,7 +168,7 @@ enum ssdk_port_wrapper_cfg {
         CHIP_HPPE,
 	CHIP_SCOMPHY,
     } ssdk_chip_type;
-
+/*qca808x_end*/
 	typedef struct
 	{
 		a_uint32_t cpu_bmp;
@@ -187,7 +192,7 @@ enum {
 	QCA_PHY_F_I2C_BIT,
 	QCA_PHY_FEATURE_MAX
 };
-
+/*qca808x_start*/
 #define phy_features_t     a_uint16_t
 #define __PHY_F_BIT(bit)    ((phy_features_t)1 << (bit))
 #define _PHY_F(name)       __PHY_F_BIT(QCA_PHY_F_##name##_BIT)
@@ -214,15 +219,18 @@ typedef struct
 
 	/* chip specific parameter */
 	void *          chip_spec_cfg;
+/*qca808x_end*/
 	/* port cfg */
 	ssdk_port_cfg   port_cfg;
 	a_uint32_t      mac_mode;
 	a_uint32_t led_source_num;
 	led_source_cfg_t led_source_cfg[15];
+/*qca808x_start*/
 	a_uint32_t      phy_id;
 	a_uint32_t      mac_mode1;
 	a_uint32_t      mac_mode2;
 } ssdk_init_cfg;
+/*qca808x_end*/
 
 #if defined ATHENA
 #define def_init_cfg  {.reg_mode = HSL_MDIO, .cpu_mode = HSL_CPU_2};
@@ -306,7 +314,7 @@ typedef struct
         a_bool_t in_nathelper;
         a_bool_t in_interfacectrl;
     } ssdk_features;
-
+/*qca808x_start*/
 #define CFG_STR_SIZE 20
     typedef struct
     {
@@ -320,8 +328,9 @@ typedef struct
         a_bool_t  fal_mod;
         a_bool_t  kernel_mode;
         a_bool_t  uk_if;
-
+/*qca808x_end*/
         ssdk_features features;
+/*qca808x_start*/
         ssdk_init_cfg init_cfg;
     } ssdk_cfg_t;
 
@@ -336,7 +345,7 @@ typedef struct
 
 sw_error_t
 ssdk_init(a_uint32_t dev_id, ssdk_init_cfg *cfg);
-
+/*qca808x_end*/
 sw_error_t
 ssdk_hsl_access_mode_set(a_uint32_t dev_id, hsl_access_mode reg_mode);
 
@@ -352,11 +361,14 @@ void
 qca_mac_port_status_init(a_uint32_t dev_id, a_uint32_t port_id);
 void
 qca_mac_sw_sync_port_status_init(a_uint32_t dev_id);
-
+/*qca808x_start*/
 struct qca_phy_priv* ssdk_phy_priv_data_get(a_uint32_t dev_id);
+/*qca808x_end*/
 sw_error_t qca_switch_init(a_uint32_t dev_id);
-
+/*qca808x_start*/
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */
+
 #endif                          /* _SSDK_INIT_H */
+/*qca808x_end*/

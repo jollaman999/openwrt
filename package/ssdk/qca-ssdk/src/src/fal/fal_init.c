@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2016-2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012, 2016-2018, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -12,18 +12,19 @@
  * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-
+/*qca808x_start*/
 /**
  * @defgroup fal_init FAL_INIT
  * @{
  */
 #include "sw.h"
-#include "fal_vlan.h"
 #include "hsl.h"
 #include "hsl_dev.h"
 #include "hsl_api.h"
+/*qca808x_end*/
+#include "fal_vlan.h"
 #include "adpt.h"
-
+/*qca808x_start*/
 /**
  * @brief Init fal layer.
  * @details Comments:
@@ -43,7 +44,7 @@ fal_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 
     rv = hsl_dev_init(dev_id, cfg);
     SW_RTN_ON_ERROR(rv);
-
+/*qca808x_end*/
 #ifdef IN_VLAN
     rv = fal_vlan_init(dev_id);
     SW_RTN_ON_ERROR(rv);
@@ -51,10 +52,11 @@ fal_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 
     rv = adpt_init(dev_id, cfg);
     SW_RTN_ON_ERROR(rv);
+/*qca808x_start*/
 
     return rv;
 }
-
+/*qca808x_end*/
 
 static sw_error_t
 _fal_reset(a_uint32_t dev_id)
@@ -98,7 +100,7 @@ _fal_module_func_ctrl_get(a_uint32_t dev_id, a_uint32_t module, fal_func_ctrl_t 
 {
     return adpt_module_func_ctrl_get(dev_id, module, func_ctrl);
 }
-
+/*qca808x_start*/
 sw_error_t
 fal_cleanup(void)
 {
@@ -106,15 +108,15 @@ fal_cleanup(void)
 
     rv = hsl_dev_cleanup();
     SW_RTN_ON_ERROR(rv);
-
+/*qca808x_end*/
 #ifdef IN_VLAN
     rv = fal_vlan_cleanup();
     SW_RTN_ON_ERROR(rv);
 #endif
-
+/*qca808x_start*/
     return SW_OK;
 }
-
+/*qca808x_end*/
 /**
  * @brief Reset fal layer.
  * @details Comments:

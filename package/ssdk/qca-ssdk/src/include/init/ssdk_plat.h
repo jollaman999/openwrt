@@ -11,15 +11,17 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
  * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
+/*qca808x_start*/
 #ifndef __SSDK_PLAT_H
 #define __SSDK_PLAT_H
 
 #include "sw.h"
+/*qca808x_end*/
 #include <linux/kconfig.h>
 #include <linux/version.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
+/*qca808x_start*/
 #include <linux/phy.h>
 
 #if defined(IN_SWCONFIG)
@@ -40,7 +42,7 @@
 #define QCA_MII_MMD_DATA		0x0e
 #define QCA_MII_DBG_ADDR		0x1d
 #define QCA_MII_DBG_DATA		0x1e
-
+/*qca808x_end*/
 #define AR8327_REG_CTRL			0x0000
 #define   AR8327_CTRL_REVISION		BITS(0, 8)
 #define   AR8327_CTRL_REVISION_S	0
@@ -144,10 +146,11 @@
 #define DESS_PSGMII_VCO_CALIBRATION_CONTROL_1  0x9c
 
 #define SSDK_PSGMII_ID 5
+/*qca808x_start*/
 #define SSDK_PHY_BCAST_ID 0x1f
 #define SSDK_PHY_MIN_ID 0x0
 #define SSDK_PORT_CPU	0
-
+/*qca808x_end*/
 #define SSDK_PORT0_FC_THRESH_ON_DFLT	0x60
 #define SSDK_PORT0_FC_THRESH_OFF_DFLT	0x90
 
@@ -164,7 +167,7 @@ enum {
     AR8327_PORT_SPEED_1000M = 2,
     AR8327_PORT_SPEED_NONE = 3,
 };
-
+/*qca808x_start*/
 enum {
 	QCA_VER_AR8216 = 0x01,
 	QCA_VER_AR8227 = 0x02,
@@ -175,7 +178,7 @@ enum {
 	QCA_VER_DESS = 0x14,
 	QCA_VER_HPPE = 0x15
 };
-
+/*qca808x_end*/
 /*poll mib per 120secs*/
 #define QCA_PHY_MIB_WORK_DELAY	120000
 #define QCA_MIB_ITEM_NUMBER	41
@@ -184,7 +187,7 @@ enum {
 #define SSDK_UNIPHY_INSTANCE0	0
 #define SSDK_UNIPHY_INSTANCE1	1
 #define SSDK_UNIPHY_INSTANCE2	2
-
+/*qca808x_start*/
 #define SSDK_PHYSICAL_PORT0	0
 #define SSDK_PHYSICAL_PORT1	1
 #define SSDK_PHYSICAL_PORT2	2
@@ -193,7 +196,7 @@ enum {
 #define SSDK_PHYSICAL_PORT5	5
 #define SSDK_PHYSICAL_PORT6	6
 #define SSDK_PHYSICAL_PORT7	7
-
+/*qca808x_end*/
 #define SSDK_GLOBAL_INT0_ACL_INI_INT        (1<<29)
 #define SSDK_GLOBAL_INT0_LOOKUP_INI_INT     (1<<28)
 #define SSDK_GLOBAL_INT0_QM_INI_INT         (1<<27)
@@ -210,7 +213,7 @@ enum {
 			SSDK_GLOBAL_INT0_OFFLOAD_INI_INT |	\
 			SSDK_GLOBAL_INT0_HARDWARE_INI_DONE	\
 			)
-
+/*qca808x_start*/
 #define SSDK_LOG_LEVEL_ERROR    0
 #define SSDK_LOG_LEVEL_WARN     1
 #define SSDK_LOG_LEVEL_INFO     2
@@ -253,6 +256,7 @@ struct qca_phy_priv {
                            a_uint32_t reg, a_uint16_t* data);
 
 	bool init;
+/*qca808x_end*/
 	a_bool_t qca_ssdk_sw_dev_registered;
 	a_bool_t ess_switch_flag;
 	struct mutex reg_mutex;
@@ -274,8 +278,10 @@ struct qca_phy_priv {
 	struct delayed_work qm_dwork_polling;
 	struct work_struct	 intr_workqueue;
 	/*qm_err_check end*/
+/*qca808x_start*/
 	a_uint8_t device_id;
 	struct device_node *of_node;
+/*qca808x_end*/
 	/*dess_rgmii_mac*/
 	struct mutex rgmii_lock;
 	struct delayed_work rgmii_dwork;
@@ -284,8 +290,9 @@ struct qca_phy_priv {
 	struct mutex mac_sw_sync_lock;
 	struct delayed_work mac_sw_sync_dwork;
 	/*hppe_mac_sw_sync end*/
+/*qca808x_start*/
 	struct mii_bus *miibus;
-
+/*qca808x_end*/
 	u64 *mib_counters;
 	/* dump buf */
 	a_uint8_t  buf[2048];
@@ -304,6 +311,7 @@ struct qca_phy_priv {
 	u8 __iomem *hw_addr;
 	u8 __iomem *psgmii_hw_addr;
 	u8 __iomem *uniphy_hw_addr;
+/*qca808x_start*/
 };
 
 struct ipq40xx_mdio_data {
@@ -317,11 +325,12 @@ struct ipq40xx_mdio_data {
 		container_of(_dev, struct qca_phy_priv, sw_dev)
 #endif
 
-
+/*qca808x_end*/
 a_uint32_t
 qca_ar8216_mii_read(a_uint32_t dev_id, a_uint32_t reg);
 void
 qca_ar8216_mii_write(a_uint32_t dev_id, a_uint32_t reg, a_uint32_t val);
+/*qca808x_start*/
 sw_error_t
 qca_ar8327_phy_read(a_uint32_t dev_id, a_uint32_t phy_addr,
 			a_uint32_t reg, a_uint16_t* data);
@@ -345,7 +354,7 @@ qca_phy_mmd_write(u32 dev_id, u32 phy_id,
 u16
 qca_phy_mmd_read(u32 dev_id, u32 phy_id,
 		u16 mmd_num, u16 reg_id);
-
+/*qca808x_end*/
 sw_error_t
 qca_switch_reg_read(a_uint32_t dev_id, a_uint32_t reg_addr,
 			a_uint8_t * reg_data, a_uint32_t len);
@@ -374,8 +383,9 @@ struct mii_bus *ssdk_miibus_get_by_device(a_uint32_t dev_id);
 
 int ssdk_sysfs_init (void);
 void ssdk_sysfs_exit (void);
-
+/*qca808x_start*/
 int ssdk_plat_init(ssdk_init_cfg *cfg, a_uint32_t dev_id);
 void ssdk_plat_exit(a_uint32_t dev_id);
 
 #endif
+/*qca808x_end*/
