@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014,2016-2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2014,2016-2018, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -13,7 +13,7 @@
  */
 
 
-
+/*qca808x_start*/
 #include "sw.h"
 #include "sw_ioctl.h"
 #include "fal_port_ctrl.h"
@@ -108,7 +108,7 @@ fal_port_autoneg_adv_get(a_uint32_t dev_id, fal_port_t port_id,
     rv = sw_uk_exec(SW_API_PT_AN_ADV_GET, dev_id, port_id, autoadv);
     return rv;
 }
-
+/*qca808x_end*/
 sw_error_t
 fal_port_hdr_status_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
 {
@@ -188,7 +188,7 @@ fal_port_powersave_get(a_uint32_t dev_id, fal_port_t port_id,
     rv = sw_uk_exec(SW_API_PT_POWERSAVE_GET, dev_id, port_id, enable);
     return rv;
 }
-
+/*qca808x_start*/
 sw_error_t
 fal_port_hibernate_set(a_uint32_t dev_id, fal_port_t port_id,
                        a_bool_t enable)
@@ -220,7 +220,7 @@ fal_port_cdt(a_uint32_t dev_id, fal_port_t port_id, a_uint32_t mdi_pair,
                     cable_status, cable_len);
     return rv;
 }
-
+/*qca808x_end*/
 sw_error_t
 fal_port_rxhdr_mode_set(a_uint32_t dev_id, fal_port_t port_id,
                         fal_port_header_mode_t mode)
@@ -386,7 +386,7 @@ fal_port_link_forcemode_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * en
     rv = sw_uk_exec(SW_API_PT_LINK_MODE_GET, dev_id, port_id, enable);
     return rv;
 }
-
+/*qca808x_start*/
 sw_error_t
 fal_port_link_status_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * status)
 {
@@ -395,7 +395,7 @@ fal_port_link_status_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * statu
     rv = sw_uk_exec(SW_API_PT_LINK_STATUS_GET, dev_id, port_id, status);
     return rv;
 }
-
+/*qca808x_end*/
 sw_error_t
 fal_ports_link_status_get(a_uint32_t dev_id, a_uint32_t * status)
 {
@@ -466,7 +466,7 @@ fal_ring_flow_ctrl_thres_get(a_uint32_t dev_id, a_uint32_t ring_id,
     rv = sw_uk_exec(SW_API_PT_RING_FLOW_CTRL_THRES_GET, dev_id, ring_id, on_thres, off_thres);
     return rv;
 }
-
+/*qca808x_start*/
 sw_error_t
 fal_port_8023az_set(a_uint32_t dev_id, fal_port_t port_id,
                        a_bool_t enable)
@@ -517,7 +517,7 @@ fal_port_mdix_status_get(a_uint32_t dev_id, fal_port_t port_id,
     rv = sw_uk_exec(SW_API_PT_MDIX_STATUS_GET, dev_id, port_id, mode);
     return rv;
 }
-
+/*qca808x_end*/
 sw_error_t
 fal_port_combo_prefer_medium_set(a_uint32_t dev_id, fal_port_t port_id,
                         fal_port_medium_t medium)
@@ -567,7 +567,7 @@ fal_port_combo_fiber_mode_get(a_uint32_t dev_id, fal_port_t port_id,
     rv = sw_uk_exec(SW_API_PT_COMBO_FIBER_MODE_GET, dev_id, port_id, mode);
     return rv;
 }
-
+/*qca808x_start*/
 sw_error_t
 fal_port_local_loopback_set(a_uint32_t dev_id, fal_port_t port_id,
                        a_bool_t enable)
@@ -689,7 +689,7 @@ fal_port_power_on(a_uint32_t dev_id, fal_port_t port_id)
     rv = sw_uk_exec(SW_API_PT_WOL_STATUS_GET, dev_id, port_id,enable);
     return rv;
  }
-
+ /*qca808x_end*/
 sw_error_t
 fal_port_interface_mode_set (a_uint32_t dev_id, fal_port_t port_id,
 			fal_port_interface_mode_t  mode)
@@ -717,7 +717,7 @@ fal_port_interface_mode_apply (a_uint32_t dev_id)
   rv = sw_uk_exec(SW_API_PT_INTERFACE_MODE_APPLY, dev_id);
   return rv;
 }
-
+/*qca808x_start*/
 sw_error_t
 fal_port_interface_mode_status_get (a_uint32_t dev_id, fal_port_t port_id,
 			fal_port_interface_mode_t * mode)
@@ -758,7 +758,7 @@ fal_debug_phycounter_show(a_uint32_t dev_id, fal_port_t port_id,
     rv = sw_uk_exec(SW_API_DEBUG_PHYCOUNTER_SHOW, dev_id, port_id, port_counter_info);
     return rv;
 }
-
+/*qca808x_end*/
 sw_error_t
 fal_port_mtu_set(a_uint32_t dev_id, fal_port_t port_id,
                        fal_mtu_ctrl_t *ctrl)

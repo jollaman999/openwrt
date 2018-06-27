@@ -11,7 +11,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
  * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
+/*qca808x_start*/
 #include "shell_config.h"
 #include "shell_sw.h"
 
@@ -33,6 +33,7 @@ struct cmd_des_t gcmd_des[] =
             {"autoNeg", "get", "get auto-negotiation status of a port", "<port_id>", SW_API_PT_AN_GET, NULL},
             {"autoNeg", "enable", "enable auto-negotiation of a port", "<port_id>", SW_API_PT_AN_ENABLE, NULL},
             {"autoNeg", "restart", "restart auto-negotiation process of a port", "<port_id>", SW_API_PT_AN_RESTART, NULL},
+/*qca808x_end*/
             {"header", "set", "set atheros header/tag status of a port", "<port_id> <enable|disable>", SW_API_PT_HDR_SET, NULL},
             {"header", "get", "get atheros header/tag status of a port", "<port_id>", SW_API_PT_HDR_GET, NULL},
             {"txhdr", "set", "set tx frame atheros header/tag status of a port", "<port_id> <noheader|onlymanagement|allframe>", SW_API_PT_TXHDR_SET, NULL},
@@ -47,9 +48,11 @@ struct cmd_des_t gcmd_des[] =
             {"flowCtrlforcemode", "get", "get flow control force mode of a port", "<port_id>", SW_API_PT_FLOWCTRL_MODE_GET, NULL},
             {"powersave", "set", "set powersave status of a port", "<port_id> <enable|disable>", SW_API_PT_POWERSAVE_SET, NULL},
             {"powersave", "get", "get powersave status of a port", "<port_id>", SW_API_PT_POWERSAVE_GET, NULL},
+/*qca808x_start*/
             {"hibernate", "set", "set hibernate status of a port", "<port_id> <enable|disable>", SW_API_PT_HIBERNATE_SET, NULL},
             {"hibernate", "get", "get hibernate status of a port", "<port_id>", SW_API_PT_HIBERNATE_GET, NULL},
             {"cdt", "run", "run cable diagnostic test of a port", "<port_id> <mdi_pair>", SW_API_PT_CDT, NULL},
+/*qca808x_end*/
             {"txmacstatus", "set", "set txmac status of a port", "<port_id> <enable|disable>", SW_API_TXMAC_STATUS_SET, NULL},
             {"txmacstatus", "get", "get txmac status of a port", "<port_id>", SW_API_TXMAC_STATUS_GET, NULL},
             {"rxmacstatus", "set", "set rxmac status of a port", "<port_id> <enable|disable>", SW_API_RXMAC_STATUS_SET, NULL},
@@ -62,7 +65,9 @@ struct cmd_des_t gcmd_des[] =
             {"bpstatus", "get", "get back pressure status of a port", "<port_id>", SW_API_BP_STATUS_GET, NULL},
             {"linkforcemode", "set", "set link force mode of a port", "<port_id> <enable|disable>", SW_API_PT_LINK_MODE_SET, NULL},
             {"linkforcemode", "get", "get link force mode of a port", "<port_id>", SW_API_PT_LINK_MODE_GET, NULL},
+/*qca808x_start*/
             {"linkstatus", "get", "get link status of a port", "<port_id>", SW_API_PT_LINK_STATUS_GET, NULL},
+/*qca808x_end*/
             {"macLoopback", "set", "set mac level loop back mode of port", "<port_id> <enable|disable>", SW_API_PT_MAC_LOOPBACK_SET, NULL},
             {"macLoopback", "get", "get mac level loop back mode of port", "<port_id>", SW_API_PT_MAC_LOOPBACK_GET, NULL},
             {"ptslinkstatus", "get", "get link status of all ports", "", SW_API_PTS_LINK_STATUS_GET, NULL},
@@ -70,16 +75,19 @@ struct cmd_des_t gcmd_des[] =
 			{"congedrop", "get", "get congestion drop of port queue", "<port_id> <queue_id>", SW_API_PT_CONGESTION_DROP_GET, NULL},
 			{"ringfcthres", "set", "set ring flow ctrl of ring", "<ring_id> <on_thres> <off_thres>", SW_API_PT_RING_FLOW_CTRL_THRES_SET, NULL},
 			{"ringfcthres", "get", "get ring flow ctrl of ring", "<ring_id>", SW_API_PT_RING_FLOW_CTRL_THRES_GET, NULL},
+/*qca808x_start*/
             {"Ieee8023az", "set", "set 8023az status of a port", "<port_id> <enable|disable>", SW_API_PT_8023AZ_SET, NULL},
             {"Ieee8023az", "get", "get 8023az status of a port", "<port_id>", SW_API_PT_8023AZ_GET, NULL},
             {"crossover", "set", "set crossover mode of a port", "<port_id> <auto|mdi|mdix>", SW_API_PT_MDIX_SET, NULL},
             {"crossover", "get", "get crossover mode of a port", "<port_id>", SW_API_PT_MDIX_GET, NULL},
             {"crossover", "status", "get current crossover status of a port", "<port_id>", SW_API_PT_MDIX_STATUS_GET, NULL},
+/*qca808x_end*/
             {"preferMedium", "set", "set prefer medium of a combo port", "<port_id> <copper|fiber>", SW_API_PT_COMBO_PREFER_MEDIUM_SET, NULL},
             {"preferMedium", "get", "get prefer medium of a combo port", "<port_id>", SW_API_PT_COMBO_PREFER_MEDIUM_GET, NULL},
             {"mediumType", "get", "get current medium status of a combo port", "<port_id>", SW_API_PT_COMBO_MEDIUM_STATUS_GET, NULL},
             {"fiberMode", "set", "set fiber mode of a combo fiber port", "<port_id> <100fx|1000bx |10g_r>", SW_API_PT_COMBO_FIBER_MODE_SET, NULL},
             {"fiberMode", "get", "get fiber mode of a combo fiber port", "<port_id>", SW_API_PT_COMBO_FIBER_MODE_GET, NULL},
+/*qca808x_start*/
             {"localLoopback", "set", "set local loopback of a port", "<port_id> <enable|disable>", SW_API_PT_LOCAL_LOOPBACK_SET, NULL},
             {"localLoopback", "get", "get local loopback of a port", "<port_id>", SW_API_PT_LOCAL_LOOPBACK_GET, NULL},
             {"remoteLoopback", "set", "set remote loopback of a port", "<port_id> <enable|disable>", SW_API_PT_REMOTE_LOOPBACK_SET, NULL},
@@ -92,10 +100,13 @@ struct cmd_des_t gcmd_des[] =
             {"phyId", "get", "get phy id of a port", "<port_id>", SW_API_PT_PHY_ID_GET, NULL},
             {"wolstatus", "set", "set wol status of a port", "<port_id> <enable|disable>", SW_API_PT_WOL_STATUS_SET, NULL},
             {"wolstatus", "get", "get wol status of a port", "<port_id>", SW_API_PT_WOL_STATUS_GET, NULL},
+/*qca808x_end*/
             {"interfaceMode", "set", "set interface mode of phy", "<port_id> <psgmii_baset|psgmii_bx1000|psgmii_fx100|psgmii_amdet|sgmii_baset|qsgmii|usxgmii|sgmii_plus|10gbase_r |interfacemode_max>", SW_API_PT_INTERFACE_MODE_SET, NULL},
             {"interfaceMode", "get", "get interface mode of phy", "<port_id>", SW_API_PT_INTERFACE_MODE_GET, NULL},
             {"interfaceMode", "apply", "apply interface mode","", SW_API_PT_INTERFACE_MODE_APPLY, NULL},
+/*qca808x_start*/
             {"interfaceMode", "status", "get current interface mode of phy", "<port_id>", SW_API_PT_INTERFACE_MODE_STATUS_GET, NULL},
+/*qca808x_end*/
             {"interface3az", "set", "set interface and phy 3az info", "<port_id> <enable/disable>", SW_API_PT_INTERFACE_3AZ_STATUS_SET, NULL},
             {"interface3az", "get", "get interface and phy 3az info", "<port_id>", SW_API_PT_INTERFACE_3AZ_STATUS_GET, NULL},
             {"mtu", "set", "set port mtu value", "", SW_API_PT_MTU_SET, NULL},
@@ -106,10 +117,12 @@ struct cmd_des_t gcmd_des[] =
             {"srcfilter", "get", "get port source filter bypass", "<port_id>", SW_API_PT_SOURCE_FILTER_GET, NULL},
             {"frameMaxSize", "get", "get port frame max size", "<port_id>", SW_API_PT_FRAME_MAX_SIZE_GET},
             {"frameMaxSize", "set", "set port frame max size", "<port_id> <frame_max_size>", SW_API_PT_FRAME_MAX_SIZE_SET},
+            /*qca808x_start*/
             {NULL, NULL, NULL, NULL, (int)NULL, NULL},/*end of desc*/
         },
     },
 #endif
+/*qca808x_end*/
 
     /*vlan*/
 #ifdef IN_VLAN
@@ -1049,13 +1062,14 @@ struct cmd_des_t gcmd_des[] =
         },
     },
 #endif
-
+/*qca808x_start*/
     /* debug */
     {
         "debug", "read/write register",
         {
             {"phy", "get", "read phy register", "<ph_id> <reg_addr>", SW_API_PHY_GET, NULL},
             {"phy", "set", "write phy register", "<ph_id> <reg_addr> <value>", SW_API_PHY_SET, NULL},
+/*qca808x_end*/
             {"reg", "get", "read switch register", "<reg_addr> <4>", SW_API_REG_GET, NULL},
             {"reg", "set", "write switch register", "<reg_addr> <value> <4>", SW_API_REG_SET, NULL},
 			{"reg", "dump", "dump switch register group", "<group id> <0-6>", SW_API_REG_DUMP, NULL},
@@ -1074,15 +1088,18 @@ struct cmd_des_t gcmd_des[] =
             {"ssdk",  "config", "show ssdk configuration",     "", SW_API_SSDK_CFG, NULL},
             {"portCounterEn", "get", "get counter status based on port", "<port_id>", SW_API_DEBUG_PORT_COUNTER_STATUS_GET, NULL},
             {"portCounterEn", "set", "set counter status based on port", "<port_id>", SW_API_DEBUG_PORT_COUNTER_ENABLE, NULL},
+/*qca808x_start*/
             {"phycounter",  "set", "set counter status of a port",   "<port_id> <enable|disable>", SW_API_DEBUG_PHYCOUNTER_SET, NULL},
             {"phycounter",  "get", "get counter status of a port",   "<port_id>", SW_API_DEBUG_PHYCOUNTER_GET, NULL},
             {"phycounter",  "show", "show counter of a port",   "<port_id>", SW_API_DEBUG_PHYCOUNTER_SHOW, NULL},
+/*qca808x_end*/
             {"uniphy", "get", "read uniphy register", "<uniphy_index> <reg_addr> <4>", SW_API_UNIPHY_REG_GET, NULL},
             {"uniphy", "set", "write uniphy register", "<uniphy_index> <reg_addr> <value> <4>", SW_API_UNIPHY_REG_SET, NULL},
+/*qca808x_start*/
             {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
         },
     },
-
+/*qca808x_end*/
     /*debug*/
     {
         "device", "set device id",
@@ -1196,11 +1213,11 @@ struct cmd_des_t gcmd_des[] =
 		},
 	},
 #endif
-
+/*qca808x_start*/
     {"help", "type ? get help", {{NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/}},
 
     {"quit", "type quit/q quit shell", {{NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/}},
 
     {NULL, NULL, {{NULL, NULL, NULL, NULL, (int)NULL, NULL}}} /*end of desc*/
 };
-
+/*qca808x_end*/

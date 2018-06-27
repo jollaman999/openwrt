@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, 2016-2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2014, 2016-2018, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -12,7 +12,7 @@
  * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-
+/*qca808x_start*/
 /**
  * @defgroup fal_port_ctrl FAL_PORT_CONTROL
  * @{
@@ -178,7 +178,7 @@ typedef enum {
     PHY_MASTER_SLAVE     = 1,   /**< Phy manual SLAVE configuration */
     PHY_MASTER_AUTO      = 2    /**< Phy automatic MASTER/SLAVE configuration */
 } fal_port_master_t;
-
+/*qca808x_end*/
 /** Phy preferred medium type */
 typedef enum {
     PHY_MEDIUM_COPPER    = 0,   /**< Copper */
@@ -213,7 +213,7 @@ typedef enum {
     PHY_AUTO_NEG_STATUS_BUSY   = 0, /**< Phy still in auto-negotiation process */
     PHY_AUTO_NEG_STATUS_DONE   = 1  /**< Phy auto-negotiation done */
 } fal_port_auto_neg_status_t;
-
+/*qca808x_start*/
 
 /** Phy interface mode */
 	typedef enum {
@@ -259,7 +259,7 @@ typedef struct {
 } fal_port_counter_info_t;
 
 /*above is new add for malibu phy*/
-
+/*qca808x_end*/
 enum
 {
 	/*port contorl*/
@@ -359,7 +359,6 @@ enum
 		a_uint32_t		mru_size;
 		fal_mru_action_t	action;
 	} fal_mru_ctrl_t;
-
 	sw_error_t
 	fal_port_max_frame_size_set(a_uint32_t dev_id, fal_port_t port_id,
 			a_uint32_t max_frame);
@@ -383,7 +382,7 @@ enum
 	sw_error_t
 	fal_port_mru_get(a_uint32_t dev_id, fal_port_t port_id,
 			fal_mru_ctrl_t *ctrl);
-
+/*qca808x_start*/
     sw_error_t
     fal_port_duplex_set(a_uint32_t dev_id, fal_port_t port_id,
                         fal_port_duplex_t duplex);
@@ -435,7 +434,7 @@ enum
                              a_uint32_t * autoadv);
 
 
-
+/*qca808x_end*/
     sw_error_t
     fal_port_hdr_status_set(a_uint32_t dev_id, fal_port_t port_id,
                             a_bool_t enable);
@@ -474,20 +473,18 @@ enum
     sw_error_t
     fal_port_powersave_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t *enable);
 
-
+/*qca808x_start*/
     sw_error_t
     fal_port_hibernate_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable);
 
 
     sw_error_t
     fal_port_hibernate_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t *enable);
-
-
     sw_error_t
     fal_port_cdt(a_uint32_t dev_id, fal_port_t port_id, a_uint32_t mdi_pair,
                  fal_cable_status_t *cable_status, a_uint32_t *cable_len);
 
-
+/*qca808x_end*/
     sw_error_t
     fal_port_rxhdr_mode_set(a_uint32_t dev_id, fal_port_t port_id,
                             fal_port_header_mode_t mode);
@@ -563,13 +560,13 @@ enum
     sw_error_t
     fal_port_link_forcemode_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * enable);
 
-
+/*qca808x_start*/
     sw_error_t
     fal_port_link_status_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t * status);
 
     sw_error_t
     fal_ports_link_status_get(a_uint32_t dev_id, a_uint32_t * status);
-
+/*qca808x_end*/
     sw_error_t
     fal_port_mac_loopback_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable);
 
@@ -590,7 +587,7 @@ enum
 
 	sw_error_t
 	fal_ring_flow_ctrl_thres_get(a_uint32_t dev_id, a_uint32_t ring_id, a_uint8_t *on_thres, a_uint8_t *off_thres);
-
+/*qca808x_start*/
     sw_error_t
     fal_port_8023az_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable);
 
@@ -607,6 +604,7 @@ enum
    sw_error_t
    fal_port_mdix_status_get(a_uint32_t dev_id, fal_port_t port_id,
                         fal_port_mdix_status_t * mode);
+/*qca808x_end*/
    sw_error_t
    fal_port_combo_prefer_medium_set(a_uint32_t dev_id, a_uint32_t port_id,
                           fal_port_medium_t medium);
@@ -622,6 +620,7 @@ enum
   sw_error_t
   fal_port_combo_fiber_mode_get(a_uint32_t dev_id, a_uint32_t port_id,
                           fal_port_fiber_mode_t * mode);
+/*qca808x_start*/
       sw_error_t
     fal_port_local_loopback_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable);
 
@@ -662,7 +661,7 @@ enum
  sw_error_t
     fal_port_wol_status_get (a_uint32_t dev_id, fal_port_t port_id,
 			      a_bool_t * enable);
-
+/*qca808x_end*/
  sw_error_t
     fal_port_interface_mode_set(a_uint32_t dev_id, fal_port_t port_id, fal_port_interface_mode_t mode);
 
@@ -672,6 +671,7 @@ enum
  sw_error_t
     fal_port_interface_mode_get (a_uint32_t dev_id, fal_port_t port_id,
 			      fal_port_interface_mode_t * mode);
+ /*qca808x_start*/
  sw_error_t
     fal_port_interface_mode_status_get (a_uint32_t dev_id, fal_port_t port_id,
 			      fal_port_interface_mode_t * mode);
@@ -685,7 +685,7 @@ enum
  sw_error_t
 	fal_debug_phycounter_show (a_uint32_t dev_id, fal_port_t port_id,
 				  fal_port_counter_info_t * port_counter_info);
-
+/*qca808x_end*/
  sw_error_t
        fal_port_source_filter_enable(a_uint32_t dev_id,
                        fal_port_t port_id, a_bool_t enable);
@@ -699,7 +699,7 @@ enum
  sw_error_t
  fal_port_interface_3az_status_get(a_uint32_t dev_id, fal_port_t port_id,
 		 a_bool_t * enable);
-
+/*qca808x_start*/
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */
@@ -707,3 +707,4 @@ enum
 /**
  * @}
  */
+ /*qca808x_end*/

@@ -11,7 +11,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
  * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
+/*qca808x_start*/
 #include <stdio.h>
 #include "shell_io.h"
 #include "shell.h"
@@ -163,15 +163,18 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_CAP, cmd_data_check_capable, cmd_data_print_capable),
     SW_TYPE_DEF(SW_DUPLEX, cmd_data_check_duplex, cmd_data_print_duplex),
     SW_TYPE_DEF(SW_SPEED, cmd_data_check_speed, cmd_data_print_speed),
+/*qca808x_end*/
     SW_TYPE_DEF(SW_1QMODE, cmd_data_check_1qmode, cmd_data_print_1qmode),
     SW_TYPE_DEF(SW_EGMODE, cmd_data_check_egmode, cmd_data_print_egmode),
     SW_TYPE_DEF(SW_MIB, NULL, cmd_data_print_mib),
      SW_TYPE_DEF(SW_XGMIB, NULL, cmd_data_print_xgmib),
     SW_TYPE_DEF(SW_MIB_CNTR, NULL, cmd_data_print_mib_cntr),
     SW_TYPE_DEF(SW_VLAN, cmd_data_check_vlan, cmd_data_print_vlan),
+/*qca808x_start*/
     SW_TYPE_DEF(SW_PBMP, cmd_data_check_pbmp, cmd_data_print_pbmp),
     SW_TYPE_DEF(SW_ENABLE, cmd_data_check_enable, cmd_data_print_enable),
     SW_TYPE_DEF(SW_MACADDR, cmd_data_check_macaddr, cmd_data_print_macaddr),
+/*qca808x_end*/
     SW_TYPE_DEF(SW_FDBENTRY, cmd_data_check_fdbentry, cmd_data_print_fdbentry),
     SW_TYPE_DEF(SW_MACLIMIT_CTRL, cmd_data_check_maclimit_ctrl, cmd_data_print_maclimit_ctrl),
     SW_TYPE_DEF(SW_SCH, cmd_data_check_qos_sch, cmd_data_print_qos_sch),
@@ -192,9 +195,11 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_VLANTRANSLATION, cmd_data_check_vlan_translation, cmd_data_print_vlan_translation),
     SW_TYPE_DEF(SW_QINQMODE, cmd_data_check_qinq_mode, cmd_data_print_qinq_mode),
     SW_TYPE_DEF(SW_QINQROLE, cmd_data_check_qinq_role, cmd_data_print_qinq_role),
+/*qca808x_start*/
     SW_TYPE_DEF(SW_CABLESTATUS, NULL, cmd_data_print_cable_status),
     SW_TYPE_DEF(SW_CABLELEN, NULL, cmd_data_print_cable_len),
     SW_TYPE_DEF(SW_SSDK_CFG, NULL, cmd_data_print_ssdk_cfg),
+/*qca808x_end*/
     SW_TYPE_DEF(SW_HDRMODE, cmd_data_check_hdrmode, cmd_data_print_hdrmode),
     SW_TYPE_DEF(SW_FDBOPRATION, cmd_data_check_fdboperation, NULL),
     SW_TYPE_DEF(SW_PPPOE, cmd_data_check_pppoe, cmd_data_print_pppoe),
@@ -237,15 +242,19 @@ static sw_data_type_t sw_data_type[] =
 	SW_TYPE_DEF(SW_FLOWCOOKIE, cmd_data_check_flow_cookie, NULL),
 	SW_TYPE_DEF(SW_FLOWRFS, cmd_data_check_flow_rfs, NULL),
 	SW_TYPE_DEF(SW_FDB_RFS, cmd_data_check_fdb_rfs, NULL),
+/*qca808x_start*/
 	SW_TYPE_DEF(SW_CROSSOVER_MODE, cmd_data_check_crossover_mode, cmd_data_print_crossover_mode),
     SW_TYPE_DEF(SW_CROSSOVER_STATUS, cmd_data_check_crossover_status, cmd_data_print_crossover_status),
+/*qca808x_end*/
     SW_TYPE_DEF(SW_PREFER_MEDIUM, cmd_data_check_prefer_medium, cmd_data_print_prefer_medium),
     SW_TYPE_DEF(SW_FIBER_MODE, cmd_data_check_fiber_mode, cmd_data_print_fiber_mode),
+/*qca808x_start*/
     SW_TYPE_DEF(SW_INTERFACE_MODE, cmd_data_check_interface_mode, cmd_data_print_interface_mode),
     SW_TYPE_DEF(SW_COUNTER_INFO, NULL, cmd_data_print_counter_info),
     SW_TYPE_DEF(SW_REG_DUMP, NULL, cmd_data_print_register_info),
     SW_TYPE_DEF(SW_PHY_DUMP, NULL, cmd_data_print_phy_register_info),
     SW_TYPE_DEF(SW_DBG_REG_DUMP, NULL, cmd_data_print_debug_register_info),
+/*qca808x_end*/
     SW_TYPE_DEF(SW_VSI_NEWADDR_LRN, cmd_data_check_newadr_lrn, cmd_data_print_newaddr_lrn_entry),
     SW_TYPE_DEF(SW_VSI_STAMOVE, cmd_data_check_stamove, cmd_data_print_stamove_entry),
     SW_TYPE_DEF(SW_VSI_MEMBER, cmd_data_check_vsi_member, cmd_data_print_vsi_member_entry),
@@ -352,6 +361,7 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_PTP_TRIGGER, cmd_data_check_ptp_trigger, cmd_data_print_ptp_trigger),
     SW_TYPE_DEF(SW_PTP_CAPTURE, cmd_data_check_ptp_capture, cmd_data_print_ptp_capture),
     SW_TYPE_DEF(SW_PTP_INTERRUPT, cmd_data_check_ptp_interrupt, cmd_data_print_ptp_interrupt),
+/*qca808x_start*/
 };
 
 sw_data_type_t *
@@ -586,7 +596,7 @@ cmd_data_print_enable(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
         dprintf("UNKNOWN VALUE");
     }
 }
-
+/*qca808x_end*/
 /*mib*/
 static char *mib_regname[] =
 {
@@ -783,7 +793,7 @@ cmd_data_print_xgmib(a_uint8_t * param_name, a_uint64_t * buf, a_uint64_t size)
             dprintf("\n");
     }
 }
-
+/*qca808x_start*/
 /*port counter*/
 static char *counter_regname[] =
 {
@@ -1147,7 +1157,7 @@ cmd_data_print_crossover_status(a_uint8_t * param_name, a_uint32_t * buf, a_uint
         dprintf("UNKNOWN VALUE");
     }
 }
-
+/*qca808x_end*/
 sw_error_t
 cmd_data_check_prefer_medium(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
 {
@@ -1221,7 +1231,7 @@ cmd_data_print_fiber_mode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t s
         dprintf("UNKNOWN VALUE");
     }
 }
-
+/*qca808x_start*/
 sw_error_t
 cmd_data_check_interface_mode(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
 {
@@ -1330,7 +1340,7 @@ cmd_data_print_interface_mode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32
 	    dprintf("UNKNOWN VALUE");
     }
 }
-
+/*qca808x_end*/
 void
 cmd_data_print_mtu_info(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
@@ -2172,7 +2182,6 @@ cmd_data_print_leaky(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
         dprintf("UNKNOWN VALUE");
     }
 }
-
 sw_error_t
 cmd_data_check_uinta(char *cmdstr, a_uint32_t * val, a_uint32_t size)
 {
@@ -2255,7 +2264,6 @@ cmd_data_check_maccmd(char *cmdstr, fal_fwd_cmd_t * val, a_uint32_t size)
 
     return SW_OK;
 }
-
 void
 cmd_data_print_maccmd(char * param_name, a_uint32_t * buf, a_uint32_t size)
 {
@@ -2281,7 +2289,6 @@ cmd_data_print_maccmd(char * param_name, a_uint32_t * buf, a_uint32_t size)
         dprintf("UNKNOWN VALUE");
     }
 }
-
 /*flow*/
 sw_error_t
 cmd_data_check_flowcmd(char *cmdstr, fal_default_flow_cmd_t * val, a_uint32_t size)
@@ -2403,7 +2410,7 @@ cmd_data_print_flowtype(char * param_name, a_uint32_t * buf, a_uint32_t size)
         dprintf("UNKNOWN VALUE");
     }
 }
-
+/*qca808x_start*/
 sw_error_t
 cmd_data_check_confirm(char *cmdstr, a_bool_t def, a_bool_t * val,
                        a_uint32_t size)
@@ -2590,7 +2597,7 @@ cmd_data_print_macaddr(char * param_name, a_uint32_t * buf,
     fflush(stdout);
 
 }
-
+/*qca808x_end*/
 sw_error_t
 cmd_data_check_fdbentry(char *info, void *val, a_uint32_t size)
 {
@@ -3181,6 +3188,7 @@ cmd_data_print_maclimit_ctrl(a_uint8_t * param_name, a_uint32_t * buf,
 
     return;
 }
+/*qca808x_start*/
 
 #define cmd_data_check_element(info, defval, usage, chk_func, param) \
 {\
@@ -3250,7 +3258,7 @@ cmd_data_check_integer(char *cmd_str, a_uint32_t * arg_val, a_uint32_t max_val,
     *arg_val = tmp;
     return SW_OK;
 }
-
+/*qca808x_end*/
 sw_error_t
 cmd_data_check_ruletype(char *cmd_str, fal_acl_rule_type_t * arg_val,
                         a_uint32_t size)
@@ -8874,7 +8882,7 @@ cmd_data_print_qinq_role(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t si
         dprintf("UNKNOWN VALUE");
     }
 }
-
+/*qca808x_start*/
 void
 cmd_data_print_cable_status(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
@@ -9028,9 +9036,10 @@ _cmd_collect_shell_cfg(ssdk_cfg_t *shell_cfg)
 }
 
 #define BOOL2STR(val_bool) (((val_bool)==A_TRUE)?"true":"false" )
+/*qca808x_end*/
 #define BOOL2NAME(val_bool) (((feature->in_##val_bool)==A_TRUE)?(#val_bool):"" )
 #define DEFINED2STR(name) (((init->reg_func.name))?"y":"n" )
-
+/*qca808x_start*/
 static void
 _cmd_data_print_cfg(ssdk_cfg_t *entry)
 {
@@ -9044,10 +9053,10 @@ _cmd_data_print_cfg(ssdk_cfg_t *entry)
     dprintf("[cpu mode]:%-15s [reg access]:%-6s [ioctl minor]:%d\n",
             cmd_cpu_mode(init->cpu_mode), cmd_access_mode(init->reg_mode),
             init->nl_prot);
-
+/*qca808x_end*/
     dprintf("[inf defined]:mdio_set(%s) mdio_get(%s) header_reg_set(%s) header_reg_get(%s)\n",
             DEFINED2STR(mdio_set), DEFINED2STR(mdio_get), DEFINED2STR(header_reg_set), DEFINED2STR(header_reg_get));
-
+/*qca808x_start*/
 }
 
 void
@@ -9063,6 +9072,7 @@ cmd_data_print_ssdk_cfg(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t siz
     _cmd_data_print_cfg(&shell_cfg);
 
     dprintf("\n3.SSDK FEATURES LIST:\n");
+/*qca808x_end*/
     ssdk_features *feature = &(ssdk_cfg->features);
     dprintf("%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s\n",
             BOOL2NAME(acl), BOOL2NAME(fdb), BOOL2NAME(igmp), BOOL2NAME(leaky),
@@ -9070,9 +9080,10 @@ cmd_data_print_ssdk_cfg(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t siz
             BOOL2NAME(portcontrol), BOOL2NAME(portvlan), BOOL2NAME(qos), BOOL2NAME(rate),
             BOOL2NAME(stp), BOOL2NAME(vlan), BOOL2NAME(reduced_acl),
             BOOL2NAME(cosmap), BOOL2NAME(ip), BOOL2NAME(nat), BOOL2NAME(sec), BOOL2NAME(trunk), BOOL2NAME(interfacectrl));
+/*qca808x_start*/
 
 }
-
+/*qca808x_end*/
 sw_error_t
 cmd_data_check_hdrmode(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
 {

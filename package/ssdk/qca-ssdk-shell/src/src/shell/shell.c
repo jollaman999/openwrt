@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, 2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2014, 2017-2018, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -11,7 +11,7 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
  * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-
+/*qca808x_start*/
 #include <stdio.h>
 #include <stdarg.h>
 #include <pthread.h>
@@ -198,10 +198,12 @@ cmd_api_output(sw_api_param_t *pp, a_uint32_t nr_param, a_ulong_t * args)
                 if (data_type->show_func)
                 {
                     data_type->show_func(pptmp->param_name, pbuf, pptmp->data_size);
+/*qca808x_end*/
                     if(strcmp(pptmp->param_name, "Function bitmap") == 0)
                     {
 			cmd_data_print_module_func_ctrl(args[3], (fal_func_ctrl_t *)pbuf);
                     }
+/*qca808x_start*/
                 }
                 else
                 {
@@ -588,9 +590,10 @@ cmd_socket_init(int dev_id)
     init_cfg.nl_prot  = 30;
 #endif
     init_cfg.chip_type=CHIP_UNSPECIFIED;
+/*qca808x_end*/
     init_cfg.reg_func.mdio_set = NULL;
     init_cfg.reg_func.mdio_get = NULL;
-
+/*qca808x_start*/
     rv = ssdk_init(dev_id, &init_cfg);
     if (SW_OK == rv)
     {
@@ -617,7 +620,6 @@ cmd_init(void)
     ioctl_argp = (a_ulong_t *) malloc(CMDSTR_ARGS_MAX * sizeof (a_ulong_t));
     FILE *dev_id_fd = NULL;
     int dev_id_value = 0;
-
     if((dev_id_fd = fopen(dev_id_path, "r")) != NULL)
     {
         fscanf(dev_id_fd, "%d", &dev_id_value);
@@ -809,7 +811,6 @@ int
 main(int argc, const char *argv[])
 {
     char cmd_str[CMDSTR_BUF_SIZE];
-
     cmd_init();
 
     if(argc > 1)
@@ -847,4 +848,4 @@ main(int argc, const char *argv[])
     cmd_exit();
     return 0;
 }
-
+/*qca808x_end*/
