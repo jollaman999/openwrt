@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, 2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2014, 2017-2018, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -34,6 +34,10 @@ sw_uk_if(unsigned long arg_val[SW_MAX_API_PARAM])
     return SW_OK;
 }
 
+#ifndef SHELL_DEV
+#define SHELL_DEV "/dev/switch_ssdk"
+#endif
+
 sw_error_t
 sw_uk_init(a_uint32_t nl_prot)
 {
@@ -41,11 +45,11 @@ sw_uk_init(a_uint32_t nl_prot)
     {
         /* even mknod fail we not quit, perhaps the device node exist already */
 #if defined UK_MINOR_DEV
-        mknod("/dev/switch_ssdk", S_IFCHR, makedev(MISC_CHR_DEV, UK_MINOR_DEV));
+        mknod(SHELL_DEV, S_IFCHR, makedev(MISC_CHR_DEV, UK_MINOR_DEV));
 #else
-        mknod("/dev/switch_ssdk", S_IFCHR, makedev(MISC_CHR_DEV, nl_prot));
+        mknod(SHELL_DEV, S_IFCHR, makedev(MISC_CHR_DEV, nl_prot));
 #endif
-        if ((glb_socket_fd = open("/dev/switch_ssdk", O_RDWR)) < 0)
+        if ((glb_socket_fd = open(SHELL_DEV, O_RDWR)) < 0)
         {
             return SW_INIT_ERROR;
         }

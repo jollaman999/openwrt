@@ -19,8 +19,10 @@
 #include "shell.h"
 
 #define printc(isPrint, fmt, args...) if(isPrint == 1) printf(fmt, ##args)
-
-static char *cmd_promptp = "dev0@qca>";       /*command prompt pointer */
+#ifndef PROMPT_STR
+#define PROMPT_STR "dev0@qca>"
+#endif
+static char *cmd_promptp = PROMPT_STR;       /*command prompt pointer */
 static struct termios term_save;    /* terminal setting saved */
 static int term_cursor;         /*terminal position */
 static int cmd_cursor;          /*command position */

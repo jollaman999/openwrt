@@ -791,8 +791,10 @@ void cmd_welcome()
 #ifdef BUILD_DATE
     date = BUILD_DATE;
 #endif
-
-    dprintf("\n Welcome to SSDK Shell version: %s, at %s.\n", ver, date);
+#ifndef WELCOME_STR
+	#define WELCOME_STR  "Welcome to SSDK Shell"
+#endif
+    dprintf("\n %s version: %s, at %s.\n", WELCOME_STR, ver, date);
 }
 
 /* Dummy function to avoid linker complaints */

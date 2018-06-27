@@ -870,7 +870,6 @@ cmd_data_print_phy_register_info(a_uint8_t * param_name, a_uint32_t * buf, a_uin
 
 	a_uint32_t n[8]={0,1,2,3,4,5,6,7};
 
-	a_uint32_t i;
 	a_uint32_t dump_addr, reg_count;
 
 	dprintf("\n%s. ", phy_dump->phy_name);
