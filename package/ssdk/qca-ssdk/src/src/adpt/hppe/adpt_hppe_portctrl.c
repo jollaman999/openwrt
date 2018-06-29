@@ -2698,10 +2698,12 @@ adpt_hppe_port_mac_uniphy_phy_config(a_uint32_t dev_id, a_uint32_t mode_index,
 	}
 
 	/*configure the uniphy*/
+#ifdef HAWKEYE_CHIP
 	rv = adpt_hppe_uniphy_mode_set(dev_id, mode_index, mode[mode_index]);
 	SSDK_DEBUG("configure uniphy mode_index:%x, mode:%x, rv:%x\n",
 		mode_index, mode[mode_index], rv);
 	SW_RTN_ON_ERROR(rv);
+#endif
 
 	/*configure the mac*/
 	for(port_id = port_id_from; port_id <= port_id_end; port_id++)
