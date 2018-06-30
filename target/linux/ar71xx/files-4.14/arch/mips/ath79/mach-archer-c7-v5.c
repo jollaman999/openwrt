@@ -155,7 +155,8 @@ static struct ar8327_platform_data archer_c7_v5_ar8337_data = {
 static struct mdio_board_info archer_c7_v5_mdio0_info[] = {
 	{
 		.bus_id = "ag71xx-mdio.0",
-		.phy_addr = 0,
+		.modalias = "archer_c7_v5"
+		.mdio_addr = 0,
 		.platform_data = &archer_c7_v5_ar8337_data,
 	},
 };
