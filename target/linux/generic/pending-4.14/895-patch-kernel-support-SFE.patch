@@ -131,39 +131,41 @@
 +			dev_queue_xmit_nit(skb, dev);
 +	}
  
- 	len = skb->len;
- 	trace_net_dev_start_xmit(skb, dev);
-@@ -4282,6 +4288,9 @@ void netdev_rx_handler_unregister(struct net_device *dev)
+ #ifdef CONFIG_ETHERNET_PACKET_MANGLE
+ 	if (!dev->eth_mangle_tx ||
+@@ -4292,6 +4298,9 @@ void netdev_rx_handler_unregister(struct net_device *dev)
  }
  EXPORT_SYMBOL_GPL(netdev_rx_handler_unregister);
  
-+int (*fast_nat_recv)(struct sk_buff *skb) __rcu __read_mostly;
-+EXPORT_SYMBOL_GPL(fast_nat_recv);
++int (*athrs_fast_nat_recv)(struct sk_buff *skb) __rcu __read_mostly;
++EXPORT_SYMBOL_GPL(athrs_fast_nat_recv);
 +
  /*
   * Limit the use of PFMEMALLOC reserves to those protocols that implement
   * the special handling of PFMEMALLOC skbs.
-@@ -4329,6 +4338,7 @@ static int __netif_receive_skb_core(struct sk_buff *skb, bool pfmemalloc)
+@@ -4339,6 +4348,7 @@ static int __netif_receive_skb_core(struct sk_buff *skb, bool pfmemalloc)
  	bool deliver_exact = false;
+
  	int ret = NET_RX_DROP;
  	__be16 type;
 +	int (*fast_recv)(struct sk_buff *skb);
  
  	net_timestamp_check(!netdev_tstamp_prequeue, skb);
  
-@@ -4355,6 +4365,12 @@ another_round:
- 			goto out;
- 	}
+@@ -4351,6 +4361,13 @@ static int __netif_receive_skb_core(struct sk_buff *skb, bool pfmemalloc)
+ 		skb_reset_transport_header(skb);
+ 	skb_reset_mac_len(skb);
  
-+	fast_recv = rcu_dereference(fast_nat_recv);
-+	if (fast_recv && fast_recv(skb)) {
-+		ret = NET_RX_SUCCESS;
-+		goto out;
++	fast_recv = rcu_dereference(athrs_fast_nat_recv);
++	if (fast_recv) {
++		if (fast_recv(skb)) {
++			return NET_RX_SUCCESS;
++		}
 +	}
 +
- 	if (skb_skip_tc_classify(skb))
- 		goto skip_classify;
+ 	pt_prev = NULL;
  
+ another_round:
 --- a/net/netfilter/nf_conntrack_core.c
 +++ b/net/netfilter/nf_conntrack_core.c
 @@ -2187,6 +2187,7 @@ int nf_conntrack_init_net(struct net *net)
