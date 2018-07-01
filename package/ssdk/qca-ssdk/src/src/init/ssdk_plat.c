@@ -91,7 +91,7 @@
 #if defined(CONFIG_VLAN_8021Q) || defined(CONFIG_VLAN_8021Q_MODULE)
 #include <linux/if_vlan.h>
 #endif
-#include <qca-rfs/rfs_dev.h>
+#include "rfs_dev.h"
 #ifdef IN_IP
 #include "fal_rfs.h"
 #endif

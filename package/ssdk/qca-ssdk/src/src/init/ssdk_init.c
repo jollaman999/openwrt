@@ -101,7 +101,7 @@
 #if defined (CONFIG_NF_FLOW_COOKIE)
 #include "fal_flowcookie.h"
 #ifdef IN_SFE
-#include <shortcut-fe/sfe.h>
+#include "sfe.h"
 #endif
 #endif
 #endif
@@ -110,7 +110,7 @@
 #if defined(CONFIG_VLAN_8021Q) || defined(CONFIG_VLAN_8021Q_MODULE)
 #include <linux/if_vlan.h>
 #endif
-#include <qca-rfs/rfs_dev.h>
+#include "rfs_dev.h"
 #ifdef IN_IP
 #include "fal_rfs.h"
 #endif
@@ -1366,7 +1366,7 @@ qca_mac_sw_sync_port_status_init(a_uint32_t dev_id)
 	a_uint32_t port_id;
 
 	for (port_id = SSDK_PHYSICAL_PORT1; port_id < SW_MAX_NR_PORT; port_id ++) {
-		qca_mac_port_status_init(dev_id, port_id);	for (port_id = 1; port_id < SW_MAX_NR_PORT; port_id ++) {
+		qca_mac_port_status_init(dev_id, port_id);
 	}
 }
 void
