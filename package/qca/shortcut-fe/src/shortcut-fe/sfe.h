@@ -18,7 +18,7 @@
 /*
  * Debug output verbosity level.
  */
-#define DEBUG_LEVEL 2
+#define DEBUG_LEVEL 0
 
 #if (DEBUG_LEVEL < 1)
 #define DEBUG_ERROR(s, ...)
@@ -59,47 +59,3 @@ do { \
 	printk(s, ##__VA_ARGS__); \
 } while (0)
 #endif
-
-#ifdef CONFIG_NF_FLOW_COOKIE
-typedef int (*flow_cookie_set_func_t)(u32 protocol, __be32 src_ip, __be16 src_port,
-				      __be32 dst_ip, __be16 dst_port, u16 flow_cookie);
-/*
- * sfe_register_flow_cookie_cb
- *	register a function in SFE to let SFE use this function to configure flow cookie for a flow
- *
- * Hardware driver which support flow cookie should register a callback function in SFE. Then SFE
- * can use this function to configure flow cookie for a flow.
- * return: 0, success; !=0, fail
- */
-int sfe_register_flow_cookie_cb(flow_cookie_set_func_t cb);
-
-/*
- * sfe_unregister_flow_cookie_cb
- *	unregister function which is used to configure flow cookie for a flow
- *
- * return: 0, success; !=0, fail
- */
-int sfe_unregister_flow_cookie_cb(flow_cookie_set_func_t cb);
-
-typedef int (*sfe_ipv6_flow_cookie_set_func_t)(u32 protocol, __be32 src_ip[4], __be16 src_port,
-						__be32 dst_ip[4], __be16 dst_port, u16 flow_cookie);
-
-/*
- * sfe_ipv6_register_flow_cookie_cb
- *	register a function in SFE to let SFE use this function to configure flow cookie for a flow
- *
- * Hardware driver which support flow cookie should register a callback function in SFE. Then SFE
- * can use this function to configure flow cookie for a flow.
- * return: 0, success; !=0, fail
- */
-int sfe_ipv6_register_flow_cookie_cb(sfe_ipv6_flow_cookie_set_func_t cb);
-
-/*
- * sfe_ipv6_unregister_flow_cookie_cb
- *	unregister function which is used to configure flow cookie for a flow
- *
- * return: 0, success; !=0, fail
- */
-int sfe_ipv6_unregister_flow_cookie_cb(sfe_ipv6_flow_cookie_set_func_t cb);
-
-#endif /*CONFIG_NF_FLOW_COOKIE*/
