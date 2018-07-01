@@ -76,12 +76,6 @@ QCASSDK_CONFIG_OPTS+= TOOL_PATH=$(TOOLCHAIN_BIN_PATH) \
 
 ifeq ($(LOCAL_VARIANT),hnat)
     QCASSDK_CONFIG_OPTS+= HNAT_FEATURE=enable
-ifeq ($(CONFIG_TARGET_ar71xx),)
-    QCASSDK_CONFIG_OPTS+= SFE_FEATURE=enable
-endif
-ifeq ($(CONFIG_TARGET_ath79),)
-    QCASSDK_CONFIG_OPTS+= SFE_FEATURE=enable
-endif
 endif
 
 ifeq ($(CONFIG_TARGET_ipq806x_QSDK_Standard),)
