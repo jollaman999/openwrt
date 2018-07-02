@@ -51,7 +51,11 @@
 #include "ref_port_ctrl.h"
 
 #if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
+#ifdef BOARD_AR71XX
+struct reset_control *ess_mac_clock_disable[5] = {NULL,NULL,NULL,NULL,NULL};
+#else
 extern struct reset_control *ess_mac_clock_disable[5];
+#endif
 #endif
 
 #if defined(IN_SWCONFIG)
