@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -13,7 +13,7 @@
  */
 #ifndef REF_VSI_H
 #define REF_VSI_H
-#include "common/sw.h"
+#include "sw.h"
 #include "fal/fal_type.h"
 #include "fal/fal_vsi.h"
 

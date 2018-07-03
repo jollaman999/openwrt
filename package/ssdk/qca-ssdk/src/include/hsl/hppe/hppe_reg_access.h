@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2014-2018, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -21,7 +21,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#include "common/sw.h"
+#include "sw.h"
 
 #define IPE_L3_BASE_ADDR             0x200000
 #define QUEUE_MANAGER_BASE_ADDR      0x800000

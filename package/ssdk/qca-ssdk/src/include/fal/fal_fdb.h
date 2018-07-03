@@ -24,7 +24,7 @@
 extern "C" {
 #endif                          /* __cplusplus */
 
-#include "common/sw.h"
+#include "sw.h"
 #include "fal/fal_type.h"
 
     /**

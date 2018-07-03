@@ -238,6 +238,7 @@ MODULE_INC += -I$(PRJ_PATH)/include \
                    -I$(PRJ_PATH)/include/hsl \
                    -I$(PRJ_PATH)/include/hsl/phy \
                    -I$(PRJ_PATH)/include/sal/os \
+		   -I$(PRJ_PATH)/include/sal/os/linux \
                    -I$(PRJ_PATH)/include/sal/sd \
                    -I$(PRJ_PATH)/include/sal/sd/linux/hydra_howl \
                    -I$(PRJ_PATH)/include/sal/sd/linux/uk_interface \

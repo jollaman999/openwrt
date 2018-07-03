@@ -15,7 +15,7 @@
 #ifndef __SSDK_PLAT_H
 #define __SSDK_PLAT_H
 
-#include "common/sw.h"
+#include "sw.h"
 #include <linux/kconfig.h>
 #include <linux/version.h>
 #include <linux/kernel.h>
