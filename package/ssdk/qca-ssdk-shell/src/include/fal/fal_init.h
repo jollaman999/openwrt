@@ -24,7 +24,7 @@
 extern "C" {
 #endif                          /* __cplusplus */
 
-#include "init/ssdk_init.h"
+#include "ssdk_init.h"
 
 enum{
 	FAL_MODULE_ACL,

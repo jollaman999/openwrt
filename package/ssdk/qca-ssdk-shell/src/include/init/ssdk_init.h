@@ -21,7 +21,7 @@
 extern "C" {
 #endif                          /* __cplusplus */
 
-#include "common/sw.h"
+#include "sw.h"
 #include "fal_led.h"
 
 

@@ -24,8 +24,8 @@
 extern "c" {
 #endif
 
-#include "common/sw.h"
-#include "fal/fal_type.h"
+#include "sw.h"
+#include "fal_type.h"
 
     typedef enum {
         FAL_HALF_DUPLEX = 0,

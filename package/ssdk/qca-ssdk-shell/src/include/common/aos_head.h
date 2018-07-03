@@ -12,10 +12,7 @@
  * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-
-
-#include "sal/os/aos_mem.h"
-#include "sal/os/aos_timer.h"
-#include "sal/os/aos_lock.h"
-#include "sal/os/aos_types.h"
-
+#include "aos_mem.h"
+#include "aos_types.h"
+#include "aos_timer.h"
+#include "aos_lock.h"

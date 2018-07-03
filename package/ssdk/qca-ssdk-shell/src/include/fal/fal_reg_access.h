@@ -24,8 +24,8 @@
 extern "C" {
 #endif                          /* __cplusplus */
 
-#include "common/sw.h"
-#include "fal/fal_type.h"
+#include "sw.h"
+#include "fal_type.h"
 
     sw_error_t
     fal_phy_get(a_uint32_t dev_id, a_uint32_t phy_addr,
