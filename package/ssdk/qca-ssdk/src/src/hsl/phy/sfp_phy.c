@@ -105,7 +105,6 @@ int sfp_phy_device_setup(a_uint32_t dev_id, a_uint32_t port, a_uint32_t phy_id)
 {
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0))
 	struct phy_device *phydev;
-#endif
 	struct qca_phy_priv *priv;
 	a_uint32_t addr = 0;
 	struct mii_bus *bus;
@@ -121,7 +120,6 @@ int sfp_phy_device_setup(a_uint32_t dev_id, a_uint32_t port, a_uint32_t phy_id)
 		addr = qca_ssdk_port_to_phy_addr(dev_id, port);
 	}
 	bus = ssdk_miibus_get_by_device(dev_id);
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0))
 	phydev = phy_device_create(bus, addr, phy_id, false, NULL);
 	if (IS_ERR(phydev) || phydev == NULL) {
 		SSDK_ERROR("Failed to create phy device!\n");
@@ -139,7 +137,6 @@ void sfp_phy_device_remove(a_uint32_t dev_id, a_uint32_t port)
 {
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0))
 	struct phy_device *phydev = NULL;
-#endif
 	a_uint32_t addr = 0;
 	struct mii_bus *bus;
 
@@ -152,7 +149,6 @@ void sfp_phy_device_remove(a_uint32_t dev_id, a_uint32_t port)
 	{
 		addr = qca_ssdk_port_to_phy_addr(dev_id, port);
 	}
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0))
 	if (addr < PHY_MAX_ADDR) {
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
 		phydev = bus->phy_map[addr];
