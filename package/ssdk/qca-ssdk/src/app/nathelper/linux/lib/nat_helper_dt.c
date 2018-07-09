@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2015, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012, 2015, 2018, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -39,7 +39,9 @@
 
 extern int nat_sockopts_init;
 extern uint32_t napt_set_default_route(fal_ip4_addr_t dst_addr, fal_ip4_addr_t src_addr);
+#ifdef CONFIG_IPV6_HWACCEL
 extern uint32_t napt_set_ipv6_default_route(void);
+#endif
 extern void nat_ipt_sockopts_replace(void);
 extern void qcaswitch_hostentry_flush(void);
 
@@ -1289,7 +1291,9 @@ napt_ct_scan_thread(void *param)
 		}
 
 #ifdef ISISC /* only for S17c */
+#ifdef CONFIG_IPV6_HWACCEL
 		napt_set_ipv6_default_route();
+#endif
 #endif
         
 		if (NAPT_CT_TASK_SHOULD_STOP()) {

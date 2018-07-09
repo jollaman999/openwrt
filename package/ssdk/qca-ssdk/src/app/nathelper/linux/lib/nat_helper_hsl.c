@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2015, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012, 2015, 2018, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -910,6 +910,20 @@ napt_hw_get_by_index(napt_entry_t *napt, a_uint16_t hw_index)
     }
 
     return 0;
+}
+
+a_int32_t napt_hw_get_by_sip(a_uint32_t sip)
+{
+	fal_napt_entry_t napt;
+
+	memset(&napt, 0, sizeof(fal_napt_entry_t));
+	napt.entry_id = FAL_NEXT_ENTRY_FIRST_ID;
+	napt.src_addr = sip;
+	if (fal_napt_next(0, FAL_NAT_ENTRY_SOURCE_IP_EN, &napt) == SW_OK) {
+		return 0;
+	}
+
+	return -1;
 }
 
 a_uint32_t

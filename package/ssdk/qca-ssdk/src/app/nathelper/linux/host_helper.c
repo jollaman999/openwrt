@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2015, 2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012, 2015, 2017-2018, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -63,11 +63,9 @@
 #include "hsl_shared_api.h"
 #include <net/addrconf.h>
 
-#ifdef ISISC
-#define CONFIG_IPV6_HWACCEL 1
-#else
+
 #undef CONFIG_IPV6_HWACCEL
-#endif
+
 
 #ifdef CONFIG_IPV6_HWACCEL
 #include <net/ndisc.h>
@@ -115,8 +113,10 @@ static fal_pppoe_session_t pppoetbl = {0};
 static uint32_t pppoe_gwid = 0;
 static char nat_bridge_dev[IFNAMSIZ*4] = "br-lan";
 static uint8_t lanip[4] = {0}, lanipmask[4] = {0}, wanip[4] = {0};
+#ifdef CONFIG_IPV6_HWACCEL
 static struct in6_addr wan6ip = IN6ADDR_ANY_INIT;
 static struct in6_addr lan6ip = IN6ADDR_ANY_INIT;
+#endif
 
 extern int nat_chip_ver;
 
@@ -164,12 +164,15 @@ struct bg_task_cb {
 };
 
 enum{
-	NAT_HELPER_ARP_IN_MSG = 0,
+	NAT_HELPER_ARP_ADD_MSG = 0,
+	NAT_HELPER_ARP_DEL_MSG,
 	NAT_HELPER_IPV6_MSG
 };
 
 struct arp_in_msg {
-	struct sk_buff *skb;
+	uint8_t mac[ETH_ALEN];
+	char name[IFNAMSIZ]; /* device name */
+	uint32_t ip;
 	struct net_device *in;
 };
 
@@ -1204,30 +1207,6 @@ static int add_pppoe_host_entry(uint32_t sport, a_int32_t arp_entry_id)
 }
 
 static int
-arp_is_reply(struct sk_buff *skb)
-{
-    struct arphdr *arp = arp_hdr(skb);
-
-    if (!arp)
-    {
-        HNAT_PRINTK("%s: Packet has no ARP data\n", __func__);
-        return 0;
-    }
-
-    if (skb->len < sizeof(struct arphdr))
-    {
-        HNAT_PRINTK("%s: Packet is too small to be an ARP\n", __func__);
-        return 0;
-    }
-
-    if (arp->ar_op != htons(ARPOP_REPLY))
-    {
-        return 0;
-    }
-    return 1;
-}
-
-static int
 dev_check(char *in_dev, char *dev_list)
 {
     char *list_dev;
@@ -1276,75 +1255,117 @@ static uint32_t get_netmask_from_netdevice(const struct net_device *in_net_dev)
 }
 #endif
 
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,4,0))
-static unsigned int
-arp_in(unsigned int hook,
-       struct sk_buff *skb,
-       const struct net_device *in,
-       const struct net_device *out,
-       int (*okfn) (struct sk_buff *))
+
+static void hnat_add_neigh(struct neighbour *neigh) 
 {
-	struct sk_buff *new_skb = NULL;
 	struct nat_helper_bg_msg msg;
-	/*unsigned long flags = 0;*/
+	struct net_device *dev = NULL;
 
-	new_skb = skb_clone(skb, GFP_ATOMIC);
-	if(new_skb) {
-		memset(&msg, 0, sizeof(msg));
-		msg.msg_type = NAT_HELPER_ARP_IN_MSG;
-		msg.arp_in.skb = new_skb;
-		msg.arp_in.in = (struct net_device *)in;
+	memset(&msg, 0, sizeof(msg));
+	msg.arp_in.ip = ntohl(*((uint32_t *)neigh->primary_key));
+	memcpy(msg.arp_in.mac, neigh->ha, ETH_ALEN);
+	strlcpy(msg.arp_in.name, neigh->dev->name, IFNAMSIZ);
+	msg.arp_in.in = neigh->dev;
 
-		/*send msg to background task*/
-		if(bg_ring_buf_write(msg))
-			kfree_skb(new_skb);
-	}
-	
-	return NF_ACCEPT;
-	
-}
-#else
-static unsigned int
-arp_in(void *priv,
-       struct sk_buff *skb,
-       struct nf_hook_state *state)
-{
-	struct sk_buff *new_skb = NULL;
-	struct nat_helper_bg_msg msg;
-	/*unsigned long flags = 0;*/
-
-	new_skb = skb_clone(skb, GFP_ATOMIC);
-	if(new_skb) {
-		memset(&msg, 0, sizeof(msg));
-		msg.msg_type = NAT_HELPER_ARP_IN_MSG;
-		msg.arp_in.skb = new_skb;
-		msg.arp_in.in = state->in;
-
-		/*send msg to background task*/
-		if(bg_ring_buf_write(msg))
-			kfree_skb(new_skb);
+	if (neigh->dev->priv_flags & IFF_EBRIDGE) {
+		if (!(dev = br_port_dev_get(neigh->dev, neigh->ha, NULL, 0))) {
+			HNAT_ERR_PRINTK("Failed to find bridge port by [%pM]\n",
+				neigh->ha);
+			return ;
+		}
+	} else {
+		dev = neigh->dev;
+		dev_hold(dev);
 	}
 
-	return NF_ACCEPT;
-}
-#endif
+	if (strncmp(dev->name, "eth", strlen("eth")) &&
+	     strncmp(dev->name, "erouter", strlen("erouter"))) {
+		dev_put(dev);
+		return ;
+	}
 
+	dev_put(dev);
+
+	msg.msg_type = NAT_HELPER_ARP_ADD_MSG;
+	bg_ring_buf_write(msg);
+}
+
+static void hnat_del_neigh(struct neighbour *neigh)
+{
+	struct nat_helper_bg_msg msg;
+
+	memset(&msg, 0, sizeof(msg));
+	msg.arp_in.ip  = ntohl(*((uint32_t *)neigh->primary_key));
+
+	msg.msg_type = NAT_HELPER_ARP_DEL_MSG;
+	bg_ring_buf_write(msg);
+}
+
+static int hnat_netevent_event(struct notifier_block *unused, unsigned long event, void *ptr)
+{
+	struct neigh_table *tbl;
+	struct neighbour *neigh;
+
+	if (event != NETEVENT_NEIGH_UPDATE)
+		return NOTIFY_DONE;
+
+	neigh = ptr;
+	tbl = neigh->tbl;
+
+	if (tbl->family != AF_INET)
+		return NOTIFY_DONE;
+
+	HNAT_PRINTK("netevent state %d for ip[%pI4]\n",
+		neigh->nud_state, (uint32_t *)neigh->primary_key);
+
+	if (neigh->nud_state & NUD_VALID) {
+		if (neigh->nud_state & NUD_NOARP) {
+			return NOTIFY_DONE;
+		}
+
+		HNAT_PRINTK("New ARP entry ip[%pI4] mac[%pM]\n",
+			(uint32_t *)neigh->primary_key, neigh->ha);
+		hnat_add_neigh(neigh);
+	} else {
+		HNAT_PRINTK("Del ARP entry ip[%pI4] mac[%pM] with status[%d]\n",
+			(uint32_t *)neigh->primary_key, neigh->ha, neigh->nud_state);
+		hnat_del_neigh(neigh);
+	}
+
+	return NOTIFY_DONE;	
+}
 
 #ifdef NAT_BACKGROUND_TASK
 static unsigned int
-arp_in_bg_handle(struct nat_helper_bg_msg *msg)
+arp_del(struct nat_helper_bg_msg *msg)
 {
-    struct arphdr *arp = NULL;
-    uint8_t *sip, *dip, *smac, *dmac;
+	fal_host_entry_t host;
+
+	memset(&host, 0, sizeof(host));
+
+	if (!nat_hw_prv_base_is_match(msg->arp_in.ip))
+		return 0;
+
+	if (napt_hw_get_by_sip(msg->arp_in.ip)) {
+		host.flags |= FAL_IP_IP4_ADDR;
+		host.ip4_addr = msg->arp_in.ip;
+		IP_HOST_DEL(0, FAL_IP_ENTRY_IPADDR_EN, &host);
+	}
+
+	return 0;
+}
+
+static unsigned int
+arp_add(struct nat_helper_bg_msg *msg)
+{
+    uint8_t *smac;
     uint8_t dev_is_lan = 0;
     uint32_t sport = 0, vid = 0;
     a_bool_t prvbasemode = 1;
     sw_error_t rv = SW_OK;
-
+    struct arp_in_msg *arp_info = &msg->arp_in;
     a_int32_t arp_entry_id = -1;
-	struct net_device *in = msg->arp_in.in;
-	struct sk_buff *skb = msg->arp_in.skb;
-	fal_fdb_entry_t entry;
+    fal_fdb_entry_t entry;
 
 
     /* check for PPPoE redial here, to reduce overheads */
@@ -1356,42 +1377,31 @@ arp_in_bg_handle(struct nat_helper_bg_msg *msg)
 
     setup_all_interface_entry();
 
-    if(dev_check((char *)in->name, (char *)nat_wan_dev_list))
+    if(dev_check((char *)arp_info->name, (char *)nat_wan_dev_list))
     {
 
     }
-    else if (dev_check((char *)in->name, (char *)nat_lan_dev_list))
+    else if (dev_check((char *)arp_info->name, (char *)nat_lan_dev_list))
     {
         dev_is_lan = 1;
     }
     else
     {
-        HNAT_INFO_PRINTK("Not Support device: %s\n",  (char *)in->name);
+        HNAT_INFO_PRINTK("Not Support device: %s\n",  (char *)arp_info->name);
         return 0;
     }
 
-    if(!arp_is_reply(skb))
-    {
-        return 0;
-    }
-#ifdef AP136_QCA_HEADER_EN
-    if(arp_if_info_get((void *)(skb->head), &sport, &vid) != 0)
-    {
-        printk("Cannot get header info!!\n");
-        return 0;
-    }
-#else
     if(dev_is_lan) {
          vid = nat_lan_vid;
     } else {
          vid = nat_wan_vid;
     }
 
-	memset(&entry, 0, sizeof(entry));
+    memset(&entry, 0, sizeof(entry));
 
     entry.fid = vid;
 
-	smac = skb_mac_header(skb) + MAC_LEN;
+    smac = arp_info->mac;
     aos_mem_copy(&(entry.addr), smac, sizeof(fal_mac_addr_t));
     if(fal_fdb_entry_search(0, &entry) == SW_OK) {
         vid  = entry.fid;
@@ -1405,20 +1415,14 @@ arp_in_bg_handle(struct nat_helper_bg_msg *msg)
     } else {
         HNAT_PRINTK("not find the FDB entry\n");
     }
-#endif
+
 
     if (sport == 0) {
         HNAT_PRINTK("Not the expected arp, ignore it!\n");
         return 0;
     }
 
-    arp = arp_hdr(skb);
-    smac = ((uint8_t *) arp) + ARP_HEADER_LEN;
-    sip = smac + MAC_LEN;
-    dmac = sip + IP_LEN;
-    dip = dmac + MAC_LEN;
-
-    arp_entry_id = arp_hw_add(sport, vid, sip, smac, 0);
+    arp_entry_id = arp_hw_add(sport, vid, (a_uint8_t *)&arp_info->ip, smac, 0);
     if(arp_entry_id < 0)
     {
         HNAT_ERR_PRINTK("ARP entry error!!\n");
@@ -1427,9 +1431,16 @@ arp_in_bg_handle(struct nat_helper_bg_msg *msg)
 
     if (0 == dev_is_lan)
     {
-        memcpy(&wanip, dip, 4);
+        struct in_device *in_dev;
+
+        in_dev = __in_dev_get_rtnl(arp_info->in);
+        if (in_dev) {
+            if (in_dev->ifa_list) {
+                *(uint32_t *)&wanip = ntohl(in_dev->ifa_list->ifa_local);
+            }
+        }
 #ifdef MULTIROUTE_WR
-        wan_nh_add(sip, smac, arp_entry_id);
+        wan_nh_add((u_int8_t *)&arp_info->ip, smac, arp_entry_id);
 #endif
     }
 
@@ -1441,7 +1452,7 @@ arp_in_bg_handle(struct nat_helper_bg_msg *msg)
         //multi_route_indev = in;
 #endif
     }
-    multi_route_indev = in;
+    multi_route_indev = arp_info->in;
 
     if ((nf_athrs17_hnat_wan_type == NF_S17_WAN_TYPE_PPPOE) ||
             (nf_athrs17_hnat_wan_type == NF_S17_WAN_TYPE_PPPOEV6))
@@ -1493,17 +1504,8 @@ arp_in_bg_handle(struct nat_helper_bg_msg *msg)
 }
 #endif
 
-
-static struct
-        nf_hook_ops arpinhook =
-{
-    .hook = (nf_hookfn *)arp_in,
-    .hooknum = NF_ARP_IN,
-    #if (LINUX_VERSION_CODE < KERNEL_VERSION(4,4,0))
-    .owner = THIS_MODULE,
-    #endif
-    .pf = NFPROTO_ARP,
-    .priority = NF_IP_PRI_FILTER,
+static struct notifier_block hnat_netevent_notifier = {
+	.notifier_call = hnat_netevent_event,
 };
 
 #ifdef AUTO_UPDATE_PPPOE_INFO
@@ -2062,18 +2064,18 @@ static void nat_task_entry(struct work_struct *wq)
 	bg_ring_buf_read(NULL);
 	/*spin_unlock_irqrestore(&task_cb.bg_lock, flags);*/
 
-	HNAT_PRINTK("handle msg: %d\n", msg.msg_type);
-	
-	if(msg.msg_type == NAT_HELPER_ARP_IN_MSG) {
-		result =  arp_in_bg_handle(&msg);
-		kfree_skb(msg.arp_in.skb);
-	} 
+	if(msg.msg_type == NAT_HELPER_ARP_ADD_MSG) {
+		result =  arp_add(&msg);
+	} else if (msg.msg_type == NAT_HELPER_ARP_DEL_MSG) {
+		result =  arp_del(&msg);
+	}
 	#ifdef CONFIG_IPV6_HWACCEL
 	else if(msg.msg_type == NAT_HELPER_IPV6_MSG) {
 		result = ipv6_bg_handle(&msg);
-		kfree_skb(msg.ipv6.skb);
 	}
 	#endif
+
+	HNAT_PRINTK("handle msg: %d, result: %d\n", msg.msg_type, result);
 	
 }
 
@@ -2167,11 +2169,7 @@ void host_helper_init(a_uint32_t portbmp)
     napt_procfs_init();
     memcpy(nat_bridge_dev, nat_lan_dev_list, strlen(nat_lan_dev_list)+1);
 
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,14,0))
-    nf_register_hook(&arpinhook);
-#else
-    nf_register_net_hook(&init_net, &arpinhook);
-#endif
+    register_netevent_notifier(&hnat_netevent_notifier);
 /*hnat not upport ipv6*/
 #if 0
 #ifdef CONFIG_IPV6_HWACCEL
@@ -2181,6 +2179,7 @@ void host_helper_init(a_uint32_t portbmp)
 #else
     nf_register_net_hook(&init_net, &ipv6_inhook);
 #endif
+
 #endif
 #endif
 
@@ -2203,11 +2202,7 @@ void host_helper_exit(void)
 {
     napt_procfs_exit();
 
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,14,0))
-    nf_unregister_hook(&arpinhook);
-#else
-    nf_unregister_net_hook(&init_net, &arpinhook);
-#endif
+    unregister_netevent_notifier(&hnat_netevent_notifier);
 #if 0
 #ifdef CONFIG_IPV6_HWACCEL
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(4,14,0))
