@@ -1262,7 +1262,7 @@ static void hnat_add_neigh(struct neighbour *neigh)
 	struct net_device *dev = NULL;
 
 	memset(&msg, 0, sizeof(msg));
-	msg.arp_in.ip = ntohl(*((uint32_t *)neigh->primary_key));
+	msg.arp_in.ip = *((uint32_t *)neigh->primary_key);
 	memcpy(msg.arp_in.mac, neigh->ha, ETH_ALEN);
 	strlcpy(msg.arp_in.name, neigh->dev->name, IFNAMSIZ);
 	msg.arp_in.in = neigh->dev;
