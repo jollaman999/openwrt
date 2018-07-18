@@ -295,7 +295,7 @@ typedef struct {
 mode to access qca808x phy, PHY_I2C_ACCESS is I2C mode to access
 qca808x phy*/
 static qca808x_phy_info_t qca808x_phy_info[] = {
-	{5,0x1c,PHY_MDIO_ACCESS}
+	{5,0x7c,PHY_I2C_ACCESS}
 };
 static int qca_ssdk_qca808x_phy_info_init(a_uint32_t dev_id)
 {
@@ -309,7 +309,7 @@ static int qca_ssdk_qca808x_phy_info_init(a_uint32_t dev_id)
 		phy_info[dev_id]->phy_address[port_id] =
 			qca808x_phy_info[port_index].phy_address;
 		/*qca808x access mode, 1:i2c, 0:mdio*/
-		phy_info[dev_id]->phy_access_type[port_index] =
+		phy_info[dev_id]->phy_access_type[port_id] =
 			qca808x_phy_info[port_index].phy_access_type;
 	}
 	qca_ssdk_port_bmp_set(dev_id, port_bmp);
