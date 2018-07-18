@@ -237,8 +237,14 @@ sw_error_t hsl_phydriver_update(a_uint32_t dev_id, a_uint32_t port_id,
 	{
 		return SW_NOT_SUPPORTED;
 	}
-	cfg.reg_func.mdio_get = reduce_hsl_phy_get;
-
+	if (hsl_port_phy_access_type_get(dev_id, port_id) == PHY_I2C_ACCESS)
+	{
+		cfg.reg_func.i2c_get = hsl_phy_i2c_get;
+	}
+	else
+	{
+		cfg.reg_func.mdio_get = reduce_hsl_phy_get;
+	}
 	phy_id = hsl_phyid_get(dev_id, port_id, &cfg);
 	phytype = hsl_phytype_get_by_phyid(dev_id, phy_id);
 	SSDK_DEBUG("port_id is %x, phy_id is %x, phy_type is:%x\n",
