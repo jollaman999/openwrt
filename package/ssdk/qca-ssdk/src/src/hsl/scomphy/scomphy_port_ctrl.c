@@ -102,11 +102,6 @@ _scomphy_port_speed_set (a_uint32_t dev_id, fal_port_t port_id,
 	if (NULL == phy_drv->phy_speed_set)
 		return SW_NOT_SUPPORTED;
 
-	if (FAL_SPEED_1000 < speed)
-	{
-		return SW_BAD_PARAM;
-	}
-
 	rv = hsl_port_prop_get_phyid (dev_id, port_id, &phy_id);
 	SW_RTN_ON_ERROR (rv);
 
