@@ -3241,6 +3241,9 @@ static int ssdk_alloc_priv(a_uint32_t dev_num)
 	return rev;
 }
 
+#ifndef SSDK_STR
+#define SSDK_STR "ssdk"
+#endif
 static int __init regi_init(void)
 {
 	a_uint32_t num = 0, dev_id = 0, dev_num = 1;
@@ -3358,13 +3361,13 @@ static int __init regi_init(void)
 
 out:
 	if (rv == 0)
-		SSDK_INFO("qca-ssdk module init succeeded!\n");
+		SSDK_INFO("qca-%s module init succeeded!\n", SSDK_STR);
 	else {
 		if (rv == -ENODEV) {
 			rv = 0;
-			SSDK_INFO("qca-ssdk module init, no device found!\n");
+			SSDK_INFO("qca-%s module init, no device found!\n", SSDK_STR);
 		} else {
-			SSDK_INFO("qca-ssdk module init failed! (code: %d)\n", rv);
+			SSDK_INFO("qca-%s module init failed! (code: %d)\n", SSDK_STR, rv);
 			ssdk_free_priv();
 		}
 	}
@@ -3390,9 +3393,9 @@ regi_exit(void)
 	rv = ssdk_cleanup();
 
 	if (rv == 0)
-		SSDK_INFO("qca-ssdk module exit  done!\n");
+		SSDK_INFO("qca-%s module exit  done!\n", SSDK_STR);
 	else
-		SSDK_ERROR("qca-ssdk module exit failed! (code: %d)\n", rv);
+		SSDK_ERROR("qca-%s module exit failed! (code: %d)\n", SSDK_STR, rv);
 /*qca808x_end*/
 
 	#ifdef DESS
