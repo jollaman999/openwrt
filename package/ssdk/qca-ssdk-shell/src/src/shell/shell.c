@@ -31,6 +31,9 @@ static a_uint32_t flag = 0;
 static a_ulong_t *ioctl_argp;
 static FILE * out_fd;
 char dev_id_path[] = "/sys/ssdk/dev_id";
+#ifndef SSDK_STR
+#define SSDK_STR  "SSDK"
+#endif
 static char *err_info[] =
 {
     "Operation succeeded",                 /*SW_OK*/
@@ -597,11 +600,11 @@ cmd_socket_init(int dev_id)
     rv = ssdk_init(dev_id, &init_cfg);
     if (SW_OK == rv)
     {
-        dprintf("\n SSDK Init OK!");
+        dprintf("\n %s Init OK!", SSDK_STR);
     }
     else
     {
-        dprintf("\n SSDK Init Fail! RV[%d]", rv);
+        dprintf("\n %s Init Fail! RV[%d]", SSDK_STR, rv);
     }
 
     if (flag == 0)
@@ -793,10 +796,7 @@ void cmd_welcome()
 #ifdef BUILD_DATE
     date = BUILD_DATE;
 #endif
-#ifndef WELCOME_STR
-	#define WELCOME_STR  "Welcome to SSDK Shell"
-#endif
-    dprintf("\n %s version: %s, at %s.\n", WELCOME_STR, ver, date);
+    dprintf("\n Welcome to %s Shell version: %s, at %s.\n", SSDK_STR, ver, date);
 }
 
 /* Dummy function to avoid linker complaints */
