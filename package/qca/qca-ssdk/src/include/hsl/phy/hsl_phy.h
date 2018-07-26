@@ -437,6 +437,7 @@ hsl_ssdk_phy_serdes_reset(a_uint32_t dev_id);
 
 sw_error_t
 hsl_ssdk_phy_mode_set(a_uint32_t dev_id, fal_port_interface_mode_t mode);
+phy_type_t hsl_phy_type_get(a_uint32_t dev_id, a_uint32_t port_id);
 /*qca808x_start*/
 sw_error_t ssdk_phy_driver_cleanup(void);
 /*qca808x_end*/

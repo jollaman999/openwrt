@@ -2245,6 +2245,41 @@ adpt_hppe_port_speed_change_mac_reset(a_uint32_t dev_id, a_uint32_t port_id)
 	}
 	return rv;
 }
+static sw_error_t
+adpt_hppe_port_interface_mode_switch_mac_reset(a_uint32_t dev_id,
+	a_uint32_t port_id)
+{
+	a_uint32_t uniphy_index = 0, mode = 0;
+	sw_error_t rv = 0;
+	phy_type_t phy_type;
+	a_uint32_t port_mac_type;
+
+	phy_type = hsl_phy_type_get(dev_id, port_id);
+	if (phy_type != AQUANTIA_PHY_CHIP) {
+		return SW_OK;
+	}
+
+	if (port_id == HPPE_MUX_PORT1) {
+		uniphy_index = SSDK_UNIPHY_INSTANCE1;
+	} else if (port_id == HPPE_MUX_PORT2) {
+		uniphy_index = SSDK_UNIPHY_INSTANCE2;
+	} else {
+		return SW_OK;
+	}
+
+	mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
+	if ((mode == PORT_WRAPPER_USXGMII) || (mode == PORT_WRAPPER_SGMII_CHANNEL0)
+			|| (mode == PORT_WRAPPER_SGMII0_RGMII4)) {
+		ssdk_port_mac_clock_reset(dev_id, port_id);
+		port_mac_type = qca_hppe_port_mac_type_get(dev_id, port_id);
+		if (port_mac_type == PORT_XGMAC_TYPE) {
+			/*restore xgmac's pr and pcf setting after reset operation*/
+			rv = adpt_hppe_port_xgmac_promiscuous_mode_set(dev_id,
+			port_id);
+		}
+	}
+	return rv;
+}
 #endif
 sw_error_t
 adpt_hppe_port_mac_speed_set(a_uint32_t dev_id, a_uint32_t port_id,
@@ -2308,7 +2343,24 @@ _adpt_hppe_port_mux_set(a_uint32_t dev_id, fal_port_t port_id,
 			rv = _adpt_cppe_port_mux_mac_set(dev_id, port_id, port_type);
 		}
 	}
-
+#ifdef HAWKEYE_CHIP
+	if (port_id >= HPPE_MUX_PORT1) {
+		if (port_type == PORT_GMAC_TYPE) {
+			rv = _adpt_xgmac_port_txfc_status_set( dev_id, port_id, A_FALSE);
+			SW_RTN_ON_ERROR(rv);
+			rv = _adpt_xgmac_port_rxfc_status_set( dev_id, port_id, A_FALSE);
+			SW_RTN_ON_ERROR(rv);
+		} else if (port_type == PORT_XGMAC_TYPE) {
+			rv = _adpt_gmac_port_txfc_status_set( dev_id, port_id, A_FALSE);
+			SW_RTN_ON_ERROR(rv);
+			rv = _adpt_gmac_port_rxfc_status_set( dev_id, port_id, A_FALSE);
+			SW_RTN_ON_ERROR(rv);
+		} else {
+			return SW_NOT_SUPPORTED;
+		}
+		rv = adpt_hppe_port_interface_mode_switch_mac_reset(dev_id, port_id);
+	}
+#endif
 	return rv;
 }
 
@@ -2742,7 +2794,7 @@ _adpt_hppe_port_phy_config(a_uint32_t dev_id, a_uint32_t index, a_uint32_t mode)
 
 static sw_error_t
 adpt_hppe_port_mac_uniphy_phy_config(a_uint32_t dev_id, a_uint32_t mode_index,
-	a_uint32_t mode[])
+	a_uint32_t mode[], a_bool_t force_switch)
 {
 	sw_error_t rv = SW_OK;
 	a_uint32_t port_id = 0, port_id_from = 0, port_id_end = 0;
@@ -2834,9 +2886,11 @@ adpt_hppe_port_mac_uniphy_phy_config(a_uint32_t dev_id, a_uint32_t mode_index,
 			mode[SSDK_UNIPHY_INSTANCE1]);
 	}
 	SW_RTN_ON_ERROR(rv);
-	rv = _adpt_hppe_port_phy_config(dev_id, mode_index, mode[mode_index]);
-	SSDK_DEBUG("configure phy, mode_index:%x,interface_mode:%x, rv:%x\n",
-		mode_index, mode[mode_index], rv);
+	if (force_switch != A_FALSE) {
+		rv = _adpt_hppe_port_phy_config(dev_id, mode_index, mode[mode_index]);
+		SSDK_DEBUG("configure phy, mode_index:%x,interface_mode:%x, rv:%x\n",
+			mode_index, mode[mode_index], rv);
+	}
 
 	/*init port status for special ports to triger polling*/
 	for(port_id = port_id_from; port_id <= port_id_end; port_id++)
@@ -2848,7 +2902,7 @@ adpt_hppe_port_mac_uniphy_phy_config(a_uint32_t dev_id, a_uint32_t mode_index,
 }
 
 sw_error_t
-_adpt_hppe_port_interface_mode_apply(a_uint32_t dev_id)
+_adpt_hppe_port_interface_mode_apply(a_uint32_t dev_id, a_bool_t force_switch)
 {
 	sw_error_t rv = SW_OK;
 	a_uint32_t mode_index = 0, mode_old[3] = {0};
@@ -2884,7 +2938,8 @@ _adpt_hppe_port_interface_mode_apply(a_uint32_t dev_id)
 		if(mode_new[mode_index] != mode_old[mode_index])
 		{
 			SSDK_DEBUG("need to configure instance%x\n", mode_index);
-			rv = adpt_hppe_port_mac_uniphy_phy_config(dev_id, mode_index, mode_new);
+			rv = adpt_hppe_port_mac_uniphy_phy_config(dev_id,
+				mode_index, mode_new, force_switch);
 			if(rv)
 			{
 				SSDK_ERROR("config instance%x, rv:%x faild\n", mode_index,rv);
@@ -2910,7 +2965,7 @@ adpt_hppe_port_interface_mode_apply(a_uint32_t dev_id)
 	}
 
 	mutex_lock(&priv->mac_sw_sync_lock);
-	rv = _adpt_hppe_port_interface_mode_apply(dev_id);
+	rv = _adpt_hppe_port_interface_mode_apply(dev_id, A_TRUE);
 	mutex_unlock(&priv->mac_sw_sync_lock);
 	return rv;
 }
@@ -3120,7 +3175,7 @@ adpt_hppe_port_interface_mode_status_get(a_uint32_t dev_id, fal_port_t port_id,
 			      fal_port_interface_mode_t * mode)
 {
 
-	sw_error_t rv;
+	sw_error_t rv = SW_OK;
 	a_uint32_t phy_id = 0;
 	hsl_phy_ops_t *phy_drv;
 
@@ -3132,17 +3187,21 @@ adpt_hppe_port_interface_mode_status_get(a_uint32_t dev_id, fal_port_t port_id,
 		return SW_BAD_PARAM;
 	  }
 
-	SW_RTN_ON_NULL (phy_drv = hsl_phy_api_ops_get (dev_id, port_id));
-	if (NULL == phy_drv->phy_interface_mode_status_get)
-		return SW_NOT_SUPPORTED;
+	/* for those ports without PHY device should be sfp port */
+	if (A_FALSE == _adpt_hppe_port_phy_connected (dev_id, port_id)) {
+		rv = sfp_phy_interface_get_mode_status(dev_id, port_id, mode);
+		SW_RTN_ON_ERROR (rv);
+	} else {
+		SW_RTN_ON_NULL(phy_drv = hsl_phy_api_ops_get (dev_id, port_id));
+		if (NULL == phy_drv->phy_interface_mode_status_get)
+			return SW_NOT_SUPPORTED;
 
-	rv = hsl_port_prop_get_phyid (dev_id, port_id, &phy_id);
-	SW_RTN_ON_ERROR (rv);
+		rv = hsl_port_prop_get_phyid (dev_id, port_id, &phy_id);
+		SW_RTN_ON_ERROR (rv);
 
-	rv = phy_drv->phy_interface_mode_status_get (dev_id, phy_id,mode);
-
+		rv = phy_drv->phy_interface_mode_status_get (dev_id, phy_id,mode);
+	}
 	return rv;
-
 }
 
 sw_error_t
@@ -4244,13 +4303,12 @@ adpt_hppe_sfp_interface_mode_switch(a_uint32_t dev_id,
 	sw_error_t rv = SW_OK;
 	fal_port_interface_mode_t port_mode_old = PORT_INTERFACE_MODE_MAX,
 		port_mode_new= PORT_INTERFACE_MODE_MAX;
-	a_uint32_t phy_addr = 0;
 
 	if (A_FALSE == _adpt_hppe_port_phy_connected(dev_id, port_id))
 	{
 		rv = adpt_hppe_port_interface_mode_get(dev_id, port_id, &port_mode_old);
 		SW_RTN_ON_ERROR(rv);
-		rv = sfp_phy_interface_get_mode_status(dev_id, phy_addr,
+		rv = adpt_hppe_port_interface_mode_status_get(dev_id, port_id,
 			&port_mode_new);
 		SW_RTN_ON_ERROR (rv);
 		if(port_mode_old != port_mode_new)
@@ -4259,7 +4317,7 @@ adpt_hppe_sfp_interface_mode_switch(a_uint32_t dev_id,
 				port_mode_new, port_mode_old);
 			rv = adpt_hppe_port_interface_mode_set(dev_id, port_id, port_mode_new);
 			SW_RTN_ON_ERROR(rv);
-			rv = _adpt_hppe_port_interface_mode_apply(dev_id);
+			rv = _adpt_hppe_port_interface_mode_apply(dev_id, A_FALSE);
 			SW_RTN_ON_ERROR(rv);
 		}
 	}
@@ -4268,39 +4326,25 @@ adpt_hppe_sfp_interface_mode_switch(a_uint32_t dev_id,
 }
 
 static sw_error_t
-adpt_hppe_mux_port_speed_change_event(a_uint32_t dev_id,
-		a_uint32_t port_id, fal_port_speed_t phy_speed)
+adpt_hppe_port_interface_mode_switch(a_uint32_t dev_id, a_uint32_t port_id)
 {
 	sw_error_t rv = SW_OK;
-	fal_port_interface_mode_t port_mode = PORT_INTERFACE_MODE_MAX;
+	fal_port_interface_mode_t port_mode_old = PORT_INTERFACE_MODE_MAX;
 	fal_port_interface_mode_t port_mode_new = PORT_INTERFACE_MODE_MAX;
-	a_uint32_t port_mac_type = qca_hppe_port_mac_type_get(dev_id, port_id);
 
-	if ((port_id != HPPE_MUX_PORT1 && port_id != HPPE_MUX_PORT2) ||
-			port_mac_type != PORT_GMAC_TYPE) {
-		return SW_NO_CHANGE;
-	}
-
-	rv = adpt_hppe_port_interface_mode_get(dev_id, port_id, &port_mode);
+	rv = adpt_hppe_port_interface_mode_status_get(dev_id,
+		port_id, &port_mode_new);
 	SW_RTN_ON_ERROR(rv);
 
-	if (phy_speed == FAL_SPEED_2500 && port_mode == PHY_SGMII_BASET) {
-		port_mode_new = PORT_SGMII_PLUS;
-	}
-	else if (phy_speed <= FAL_SPEED_1000 && port_mode == PORT_SGMII_PLUS) {
-		port_mode_new = PHY_SGMII_BASET;
-	}
-	else {
-		return SW_NO_CHANGE;
-	}
-
-	rv = adpt_hppe_port_interface_mode_set(dev_id, port_id, port_mode_new);
+	rv = adpt_hppe_port_interface_mode_get(dev_id, port_id, &port_mode_old);
 	SW_RTN_ON_ERROR(rv);
 
-	adpt_hppe_gcc_uniphy_clock_status_set(dev_id, port_id, A_TRUE);
-	rv = _adpt_hppe_port_interface_mode_apply(dev_id);
-	adpt_hppe_gcc_uniphy_clock_status_set(dev_id, port_id, A_FALSE);
-
+	if (port_mode_new != port_mode_old) {
+		rv = adpt_hppe_port_interface_mode_set(dev_id,
+			port_id, port_mode_new);
+		SW_RTN_ON_ERROR(rv);
+		rv = _adpt_hppe_port_interface_mode_apply(dev_id, A_FALSE);
+	}
 	return rv;
 }
 
@@ -4368,6 +4412,12 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 			/* disable rx mac */
 			adpt_hppe_port_rxmac_status_set(priv->device_id, port_id, A_FALSE);
 			priv->port_old_link[port_id - 1] = phy_status.link_status;
+			/* switch interface mode if necessary */
+			if (adpt_hppe_port_interface_mode_switch(priv->device_id,
+					port_id) == SW_OK) {
+				SSDK_DEBUG("Port %d the interface mode switched\n",
+						port_id);
+			}
 			continue;
 		}
 		/* link status from down to up*/
@@ -4378,6 +4428,12 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 			status = adpt_hppe_port_phy_status_change(priv, port_id, phy_status);
 			/*disable tx mac*/
 			adpt_hppe_port_txmac_status_set(priv->device_id, port_id, A_FALSE);
+			/* switch interface mode if necessary */
+			if (adpt_hppe_port_interface_mode_switch(priv->device_id,
+					port_id) == SW_OK) {
+				SSDK_DEBUG("Port %d the interface mode switched\n",
+						port_id);
+			}
 			if (status == A_TRUE)
 			{
 				adpt_hppe_gcc_uniphy_clock_status_set(priv->device_id,
@@ -4385,13 +4441,6 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 				if ((a_uint32_t)phy_status.speed !=
 						priv->port_old_speed[port_id - 1])
 				{
-					/* switch interface mode if necessary */
-					if (adpt_hppe_mux_port_speed_change_event(priv->device_id,
-							port_id, phy_status.speed) == SW_OK) {
-						SSDK_DEBUG("Port %d the interface mode switched\n",
-								port_id);
-					}
-
 					/* configure gcc speed clock according to current speed */
 					adpt_hppe_gcc_port_speed_clock_set(priv->device_id, port_id,
 							phy_status.speed);

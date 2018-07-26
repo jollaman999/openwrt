@@ -438,6 +438,14 @@ qca_ssdk_phy_mdio_fake_addr_to_port(a_uint32_t dev_id, a_uint32_t phy_mdio_fake_
 	SSDK_ERROR("doesn't match port_id to specified phy_mdio_fake_addr !\n");
 	return 0;
 }
+phy_type_t hsl_phy_type_get(a_uint32_t dev_id, a_uint32_t port_id)
+{
+
+	if (dev_id >= SW_MAX_NR_DEV)
+		return MAX_PHY_CHIP;
+
+	return phy_info[dev_id]->phy_type[port_id];
+}
 /*qca808x_start*/
 a_uint32_t
 qca_ssdk_port_to_phy_addr(a_uint32_t dev_id, a_uint32_t port_id)

@@ -1376,6 +1376,7 @@ qca803x_phy_interface_get_mode(a_uint32_t dev_id, a_uint32_t phy_id, fal_port_in
 			break;
 		default:
 			*interface_mode = PORT_INTERFACE_MODE_MAX;
+			break;
 	}
 
 	return SW_OK;
@@ -1413,6 +1414,7 @@ qca803x_phy_interface_get_mode_status(a_uint32_t dev_id, a_uint32_t phy_id, fal_
 			break;
 		default:
 			*interface_mode_status = PORT_INTERFACE_MODE_MAX;
+			break;
 	}
 
 	return SW_OK;
