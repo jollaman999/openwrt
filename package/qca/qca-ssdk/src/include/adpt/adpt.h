@@ -111,10 +111,6 @@ typedef sw_error_t (*adpt_fdb_age_ctrl_get_func)(a_uint32_t dev_id, a_bool_t * e
 typedef sw_error_t (*adpt_fdb_port_maclimit_ctrl_set_func)(a_uint32_t dev_id, fal_port_t port_id, fal_maclimit_ctrl_t * maclimit_ctrl);
 typedef sw_error_t (*adpt_fdb_port_maclimit_ctrl_get_func)(a_uint32_t dev_id, fal_port_t port_id, fal_maclimit_ctrl_t * maclimit_ctrl);
 typedef sw_error_t (*adpt_fdb_del_by_fid_func)(a_uint32_t dev_id, a_uint16_t fid, a_uint32_t flag);
-typedef sw_error_t (*adpt_fdb_port_promisc_mode_set_func)(a_uint32_t dev_id,
-			fal_port_t port_id, a_bool_t enable);
-typedef sw_error_t (*adpt_fdb_port_promisc_mode_get_func)(a_uint32_t dev_id,
-			fal_port_t port_id, a_bool_t *enable);
 
 typedef sw_error_t (*adpt_mib_cpukeep_get_func)(a_uint32_t dev_id, a_bool_t * enable);
 typedef sw_error_t (*adpt_mib_cpukeep_set_func)(a_uint32_t dev_id, a_bool_t  enable);
@@ -306,6 +302,11 @@ typedef sw_error_t (*adpt_port_flowctrl_forcemode_set_func) (a_uint32_t dev_id,
 		fal_port_t port_id, a_bool_t enable);
 typedef sw_error_t (*adpt_port_flowctrl_forcemode_get_func) (a_uint32_t dev_id,
 		fal_port_t port_id, a_bool_t * enable);
+typedef sw_error_t (*adpt_port_promisc_mode_set_func)(a_uint32_t dev_id,
+			fal_port_t port_id, a_bool_t enable);
+typedef sw_error_t (*adpt_port_promisc_mode_get_func)(a_uint32_t dev_id,
+			fal_port_t port_id, a_bool_t *enable);
+
 
 // mirror
 typedef sw_error_t (*adpt_mirr_port_in_set_func)(a_uint32_t dev_id, fal_port_t port_id,
@@ -918,8 +919,6 @@ typedef struct
 	adpt_fdb_port_maclimit_ctrl_set_func adpt_fdb_port_maclimit_ctrl_set;
 	adpt_fdb_port_maclimit_ctrl_get_func adpt_fdb_port_maclimit_ctrl_get;
 	adpt_fdb_del_by_fid_func adpt_fdb_del_by_fid;
-	adpt_fdb_port_promisc_mode_set_func adpt_fdb_port_promisc_mode_set;
-	adpt_fdb_port_promisc_mode_get_func adpt_fdb_port_promisc_mode_get;
 	/*mib*/
 	a_uint32_t adpt_mib_func_bitmap;
 	adpt_mib_cpukeep_get_func adpt_mib_cpukeep_get;
@@ -1031,6 +1030,8 @@ typedef struct
 	adpt_port_interface_3az_status_get_func adpt_port_interface_3az_status_get;
 	adpt_port_flowctrl_forcemode_set_func adpt_port_flowctrl_forcemode_set;
 	adpt_port_flowctrl_forcemode_get_func adpt_port_flowctrl_forcemode_get;
+	adpt_port_promisc_mode_set_func adpt_port_promisc_mode_set;
+	adpt_port_promisc_mode_get_func adpt_port_promisc_mode_get;
 
 // mirror
 	a_uint32_t adpt_mirror_func_bitmap;

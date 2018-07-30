@@ -32,7 +32,6 @@ static sw_error_t qca_hppe_fdb_hw_init(a_uint32_t dev_id)
 
 	SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
 	SW_RTN_ON_NULL(p_api->adpt_port_bridge_txmac_set);
-	SW_RTN_ON_NULL(p_api->adpt_fdb_port_promisc_mode_set);
 
 	for(port = SSDK_PHYSICAL_PORT0; port <= SSDK_PHYSICAL_PORT7; port++) {
 		fal_fdb_port_learning_ctrl_set(dev_id, port, A_TRUE, FAL_MAC_FRWRD);
@@ -47,7 +46,7 @@ static sw_error_t qca_hppe_fdb_hw_init(a_uint32_t dev_id)
 			p_api->adpt_port_bridge_txmac_set(dev_id, port, A_TRUE);
 #endif
 		}
-		p_api->adpt_fdb_port_promisc_mode_set(dev_id, port, A_TRUE);
+		fal_port_promisc_mode_set(dev_id, port, A_TRUE);
 	}
 
 	fal_fdb_aging_ctrl_set(dev_id, A_TRUE);

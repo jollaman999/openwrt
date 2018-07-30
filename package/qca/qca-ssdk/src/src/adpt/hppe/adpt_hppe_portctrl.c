@@ -3341,6 +3341,43 @@ adpt_hppe_port_interface_3az_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t
 	return SW_OK;
 }
 
+sw_error_t
+adpt_hppe_port_promisc_mode_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
+{
+	sw_error_t rv = SW_OK;
+	union port_bridge_ctrl_u port_bridge_ctrl = {0};
+
+	ADPT_DEV_ID_CHECK(dev_id);
+
+	rv = hppe_port_bridge_ctrl_get(dev_id, port_id, &port_bridge_ctrl);
+
+	if( rv != SW_OK )
+		return rv;
+
+	port_bridge_ctrl.bf.promisc_en = enable;
+
+	return hppe_port_bridge_ctrl_set(dev_id, port_id, &port_bridge_ctrl);
+}
+
+sw_error_t
+adpt_hppe_port_promisc_mode_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_t *enable)
+{
+	sw_error_t rv = SW_OK;
+	union port_bridge_ctrl_u port_bridge_ctrl = {0};
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(enable);
+
+	rv = hppe_port_bridge_ctrl_get(dev_id, port_id, &port_bridge_ctrl);
+
+	if( rv != SW_OK )
+		return rv;
+
+	*enable = port_bridge_ctrl.bf.promisc_en;
+
+	return SW_OK;
+}
+
 static sw_error_t
 adpt_hppe_port_bridge_txmac_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
 {
@@ -4173,77 +4210,82 @@ void adpt_hppe_port_ctrl_func_bitmap_init(a_uint32_t dev_id)
 	if(p_adpt_api == NULL)
 		return;
 
-	p_adpt_api->adpt_port_ctrl_func_bitmap[0] = ((1 << FUNC_ADPT_PORT_LOCAL_LOOPBACK_GET)|
-						(1 << FUNC_ADPT_PORT_AUTONEG_RESTART)|
-						(1 << FUNC_ADPT_PORT_DUPLEX_SET)|
-						(1 << FUNC_ADPT_PORT_RXMAC_STATUS_GET)|
-						(1 << FUNC_ADPT_PORT_CDT)|
-						(1 << FUNC_ADPT_PORT_TXMAC_STATUS_SET)|
-						(1 << FUNC_ADPT_PORT_COMBO_FIBER_MODE_SET)|
-						(1 << FUNC_ADPT_PORT_COMBO_MEDIUM_STATUS_GET)|
-						(1 << FUNC_ADPT_PORT_MAGIC_FRAME_MAC_SET)|
-						(1 << FUNC_ADPT_PORT_POWERSAVE_SET)|
-						(1 << FUNC_ADPT_PORT_HIBERNATE_SET)|
-						(1 << FUNC_ADPT_PORT_8023AZ_GET)|
-						(1 << FUNC_ADPT_PORT_RXFC_STATUS_GET)|
-						(1 << FUNC_ADPT_PORT_TXFC_STATUS_GET)|
-						(1 << FUNC_ADPT_PORT_REMOTE_LOOPBACK_SET)|
-						(1 << FUNC_ADPT_PORT_FLOWCTRL_SET)|
-						(1 << FUNC_ADPT_PORT_MRU_SET)|
-						(1 << FUNC_ADPT_PORT_AUTONEG_STATUS_GET)|
-						(1 << FUNC_ADPT_PORT_TXMAC_STATUS_GET)|
-						(1 << FUNC_ADPT_PORT_MDIX_GET)|
-						(1 << FUNC_ADPT_PORTS_LINK_STATUS_GET)|
-						(1 << FUNC_ADPT_PORT_MAC_LOOPBACK_SET)|
-						(1 << FUNC_ADPT_PORT_PHY_ID_GET)|
-						(1 << FUNC_ADPT_PORT_MRU_GET)|
-						(1 << FUNC_ADPT_PORT_POWER_ON)|
-						(1 << FUNC_ADPT_PORT_SPEED_SET)|
-						(1 << FUNC_ADPT_PORT_INTERFACE_MODE_GET)|
-						(1 << FUNC_ADPT_PORT_DUPLEX_GET)|
-						(1 << FUNC_ADPT_PORT_AUTONEG_ADV_GET)|
-						(1 << FUNC_ADPT_PORT_MDIX_STATUS_GET)|
-						(1 << FUNC_ADPT_PORT_MTU_SET)|
-						(1 << FUNC_ADPT_PORT_LINK_STATUS_GET));
+	p_adpt_api->adpt_port_ctrl_func_bitmap[0] = \
+		((1 << FUNC_ADPT_PORT_LOCAL_LOOPBACK_GET)|
+		(1 << FUNC_ADPT_PORT_AUTONEG_RESTART)|
+		(1 << FUNC_ADPT_PORT_DUPLEX_SET)|
+		(1 << FUNC_ADPT_PORT_RXMAC_STATUS_GET)|
+		(1 << FUNC_ADPT_PORT_CDT)|
+		(1 << FUNC_ADPT_PORT_TXMAC_STATUS_SET)|
+		(1 << FUNC_ADPT_PORT_COMBO_FIBER_MODE_SET)|
+		(1 << FUNC_ADPT_PORT_COMBO_MEDIUM_STATUS_GET)|
+		(1 << FUNC_ADPT_PORT_MAGIC_FRAME_MAC_SET)|
+		(1 << FUNC_ADPT_PORT_POWERSAVE_SET)|
+		(1 << FUNC_ADPT_PORT_HIBERNATE_SET)|
+		(1 << FUNC_ADPT_PORT_8023AZ_GET)|
+		(1 << FUNC_ADPT_PORT_RXFC_STATUS_GET)|
+		(1 << FUNC_ADPT_PORT_TXFC_STATUS_GET)|
+		(1 << FUNC_ADPT_PORT_REMOTE_LOOPBACK_SET)|
+		(1 << FUNC_ADPT_PORT_FLOWCTRL_SET)|
+		(1 << FUNC_ADPT_PORT_MRU_SET)|
+		(1 << FUNC_ADPT_PORT_AUTONEG_STATUS_GET)|
+		(1 << FUNC_ADPT_PORT_TXMAC_STATUS_GET)|
+		(1 << FUNC_ADPT_PORT_MDIX_GET)|
+		(1 << FUNC_ADPT_PORTS_LINK_STATUS_GET)|
+		(1 << FUNC_ADPT_PORT_MAC_LOOPBACK_SET)|
+		(1 << FUNC_ADPT_PORT_PHY_ID_GET)|
+		(1 << FUNC_ADPT_PORT_MRU_GET)|
+		(1 << FUNC_ADPT_PORT_POWER_ON)|
+		(1 << FUNC_ADPT_PORT_SPEED_SET)|
+		(1 << FUNC_ADPT_PORT_INTERFACE_MODE_GET)|
+		(1 << FUNC_ADPT_PORT_DUPLEX_GET)|
+		(1 << FUNC_ADPT_PORT_AUTONEG_ADV_GET)|
+		(1 << FUNC_ADPT_PORT_MDIX_STATUS_GET)|
+		(1 << FUNC_ADPT_PORT_MTU_SET)|
+		(1 << FUNC_ADPT_PORT_LINK_STATUS_GET));
 
-	p_adpt_api->adpt_port_ctrl_func_bitmap[1] = ((1 << (FUNC_ADPT_PORT_8023AZ_SET % 32))|
-						(1 << (FUNC_ADPT_PORT_POWERSAVE_GET % 32))|
-						(1 << (FUNC_ADPT_PORT_COMBO_PREFER_MEDIUM_GET % 32))|
-						(1 << (FUNC_ADPT_PORT_COMBO_PREFER_MEDIUM_SET % 32))|
-						(1 << (FUNC_ADPT_PORT_POWER_OFF % 32))|
-						(1 << (FUNC_ADPT_PORT_TXFC_STATUS_SET % 32))|
-						(1 << (FUNC_ADPT_PORT_COUNTER_SET % 32))|
-						(1 << (FUNC_ADPT_PORT_COMBO_FIBER_MODE_GET % 32))|
-						(1 << (FUNC_ADPT_PORT_LOCAL_LOOPBACK_SET % 32))|
-						(1 << (FUNC_ADPT_PORT_WOL_STATUS_SET % 32))|
-						(1 << (FUNC_ADPT_PORT_MAGIC_FRAME_MAC_GET % 32))|
-						(1 << (FUNC_ADPT_PORT_FLOWCTRL_GET % 32))|
-						(1 << (FUNC_ADPT_PORT_RXMAC_STATUS_SET % 32))|
-						(1 << (FUNC_ADPT_PORT_COUNTER_GET % 32))|
-						(1 << (FUNC_ADPT_PORT_INTERFACE_MODE_SET % 32))|
-						(1 << (FUNC_ADPT_PORT_MAC_LOOPBACK_GET % 32))|
-						(1 << (FUNC_ADPT_PORT_HIBERNATE_GET % 32))|
-						(1 << (FUNC_ADPT_PORT_AUTONEG_ADV_SET % 32))|
-						(1 << (FUNC_ADPT_PORT_REMOTE_LOOPBACK_GET % 32))|
-						(1 << (FUNC_ADPT_PORT_COUNTER_SHOW % 32))|
-						(1 << (FUNC_ADPT_PORT_AUTONEG_ENABLE % 32))|
-						(1 << (FUNC_ADPT_PORT_MTU_GET % 32))|
-						(1 << (FUNC_ADPT_PORT_INTERFACE_MODE_STATUS_GET % 32))|
-						(1 << (FUNC_ADPT_PORT_RESET % 32))|
-						(1 << (FUNC_ADPT_PORT_RXFC_STATUS_SET % 32))|
-						(1 << (FUNC_ADPT_PORT_SPEED_GET % 32))|
-						(1 << (FUNC_ADPT_PORT_MDIX_SET % 32))|
-						(1 << (FUNC_ADPT_PORT_WOL_STATUS_GET % 32))|
-						(1 << (FUNC_ADPT_PORT_MAX_FRAME_SIZE_SET % 32))|
-						(1 << (FUNC_ADPT_PORT_MAX_FRAME_SIZE_GET % 32))|
-						(1 << (FUNC_ADPT_PORT_SOURCE_FILTER_GET % 32))|
-						(1 << (FUNC_ADPT_PORT_SOURCE_FILTER_SET % 32)));
+	p_adpt_api->adpt_port_ctrl_func_bitmap[1] = \
+		((1 << (FUNC_ADPT_PORT_8023AZ_SET % 32))|
+		(1 << (FUNC_ADPT_PORT_POWERSAVE_GET % 32))|
+		(1 << (FUNC_ADPT_PORT_COMBO_PREFER_MEDIUM_GET % 32))|
+		(1 << (FUNC_ADPT_PORT_COMBO_PREFER_MEDIUM_SET % 32))|
+		(1 << (FUNC_ADPT_PORT_POWER_OFF % 32))|
+		(1 << (FUNC_ADPT_PORT_TXFC_STATUS_SET % 32))|
+		(1 << (FUNC_ADPT_PORT_COUNTER_SET % 32))|
+		(1 << (FUNC_ADPT_PORT_COMBO_FIBER_MODE_GET % 32))|
+		(1 << (FUNC_ADPT_PORT_LOCAL_LOOPBACK_SET % 32))|
+		(1 << (FUNC_ADPT_PORT_WOL_STATUS_SET % 32))|
+		(1 << (FUNC_ADPT_PORT_MAGIC_FRAME_MAC_GET % 32))|
+		(1 << (FUNC_ADPT_PORT_FLOWCTRL_GET % 32))|
+		(1 << (FUNC_ADPT_PORT_RXMAC_STATUS_SET % 32))|
+		(1 << (FUNC_ADPT_PORT_COUNTER_GET % 32))|
+		(1 << (FUNC_ADPT_PORT_INTERFACE_MODE_SET % 32))|
+		(1 << (FUNC_ADPT_PORT_MAC_LOOPBACK_GET % 32))|
+		(1 << (FUNC_ADPT_PORT_HIBERNATE_GET % 32))|
+		(1 << (FUNC_ADPT_PORT_AUTONEG_ADV_SET % 32))|
+		(1 << (FUNC_ADPT_PORT_REMOTE_LOOPBACK_GET % 32))|
+		(1 << (FUNC_ADPT_PORT_COUNTER_SHOW % 32))|
+		(1 << (FUNC_ADPT_PORT_AUTONEG_ENABLE % 32))|
+		(1 << (FUNC_ADPT_PORT_MTU_GET % 32))|
+		(1 << (FUNC_ADPT_PORT_INTERFACE_MODE_STATUS_GET % 32))|
+		(1 << (FUNC_ADPT_PORT_RESET % 32))|
+		(1 << (FUNC_ADPT_PORT_RXFC_STATUS_SET % 32))|
+		(1 << (FUNC_ADPT_PORT_SPEED_GET % 32))|
+		(1 << (FUNC_ADPT_PORT_MDIX_SET % 32))|
+		(1 << (FUNC_ADPT_PORT_WOL_STATUS_GET % 32))|
+		(1 << (FUNC_ADPT_PORT_MAX_FRAME_SIZE_SET % 32))|
+		(1 << (FUNC_ADPT_PORT_MAX_FRAME_SIZE_GET % 32))|
+		(1 << (FUNC_ADPT_PORT_SOURCE_FILTER_GET % 32))|
+		(1 << (FUNC_ADPT_PORT_SOURCE_FILTER_SET % 32)));
 
-	p_adpt_api->adpt_port_ctrl_func_bitmap[2] = ((1 << (FUNC_ADPT_PORT_INTERFACE_MODE_APPLY% 32))|
-						(1 << (FUNC_ADPT_PORT_INTERFACE_3AZ_STATUS_SET% 32))|
-						(1 << (FUNC_ADPT_PORT_INTERFACE_3AZ_STATUS_GET% 32))|
-						(1 << (FUNC_ADPT_PORT_FLOWCTRL_FORCEMODE_SET% 32))|
-						(1 << (FUNC_ADPT_PORT_FLOWCTRL_FORCEMODE_GET% 32)));
+	p_adpt_api->adpt_port_ctrl_func_bitmap[2] = \
+		((1 << (FUNC_ADPT_PORT_INTERFACE_MODE_APPLY% 32))|
+		(1 << (FUNC_ADPT_PORT_INTERFACE_3AZ_STATUS_SET% 32))|
+		(1 << (FUNC_ADPT_PORT_INTERFACE_3AZ_STATUS_GET% 32))|
+		(1 << (FUNC_ADPT_PORT_PROMISC_MODE_SET% 32))|
+		(1 << (FUNC_ADPT_PORT_PROMISC_MODE_GET% 32))|
+		(1 << (FUNC_ADPT_PORT_FLOWCTRL_FORCEMODE_SET% 32))|
+		(1 << (FUNC_ADPT_PORT_FLOWCTRL_FORCEMODE_GET% 32)));
 
 	return;
 
@@ -4321,6 +4363,8 @@ static void adpt_hppe_port_ctrl_func_unregister(a_uint32_t dev_id, adpt_api_t *p
 	p_adpt_api->adpt_port_source_filter_set = NULL;
 	p_adpt_api->adpt_port_interface_3az_status_set = NULL;
 	p_adpt_api->adpt_port_interface_3az_status_get = NULL;
+	p_adpt_api->adpt_port_promisc_mode_set = NULL;
+	p_adpt_api->adpt_port_promisc_mode_get = NULL;
 	p_adpt_api->adpt_port_flowctrl_forcemode_set = NULL;
 	p_adpt_api->adpt_port_flowctrl_forcemode_get = NULL;
 
@@ -4367,9 +4411,11 @@ sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id)
 	{
 		p_adpt_api->adpt_port_combo_fiber_mode_set = adpt_hppe_port_combo_fiber_mode_set;
 	}
-	if(p_adpt_api->adpt_port_ctrl_func_bitmap[0] & (1 << FUNC_ADPT_PORT_COMBO_MEDIUM_STATUS_GET))
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[0] &
+		(1 << FUNC_ADPT_PORT_COMBO_MEDIUM_STATUS_GET))
 	{
-		p_adpt_api->adpt_port_combo_medium_status_get = adpt_hppe_port_combo_medium_status_get;
+		p_adpt_api->adpt_port_combo_medium_status_get =
+			adpt_hppe_port_combo_medium_status_get;
 	}
 	if(p_adpt_api->adpt_port_ctrl_func_bitmap[0] & (1 << FUNC_ADPT_PORT_MAGIC_FRAME_MAC_SET))
 	{
@@ -4476,19 +4522,24 @@ sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id)
 	{
 		p_adpt_api->adpt_port_powersave_get = adpt_hppe_port_powersave_get;
 	}
-	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] & (1 <<  (FUNC_ADPT_PORT_COMBO_PREFER_MEDIUM_GET % 32)))
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] &
+		(1 <<  (FUNC_ADPT_PORT_COMBO_PREFER_MEDIUM_GET % 32)))
 	{
-		p_adpt_api->adpt_port_combo_prefer_medium_get = adpt_hppe_port_combo_prefer_medium_get;
+		p_adpt_api->adpt_port_combo_prefer_medium_get =
+			adpt_hppe_port_combo_prefer_medium_get;
 	}
-	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] & (1 <<  (FUNC_ADPT_PORT_COMBO_PREFER_MEDIUM_SET % 32)))
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] &
+		(1 <<  (FUNC_ADPT_PORT_COMBO_PREFER_MEDIUM_SET % 32)))
 	{
-		p_adpt_api->adpt_port_combo_prefer_medium_set = adpt_hppe_port_combo_prefer_medium_set;
+		p_adpt_api->adpt_port_combo_prefer_medium_set =
+			adpt_hppe_port_combo_prefer_medium_set;
 	}
 	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] & (1 <<  (FUNC_ADPT_PORT_POWER_OFF % 32)))
 	{
 		p_adpt_api->adpt_port_power_off = adpt_hppe_port_power_off;
 	}
-	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] & (1 <<  (FUNC_ADPT_PORT_TXFC_STATUS_SET  % 32)))
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] &
+		(1 <<  (FUNC_ADPT_PORT_TXFC_STATUS_SET  % 32)))
 	{
 		p_adpt_api->adpt_port_txfc_status_set = adpt_hppe_port_txfc_status_set;
 	}
@@ -4496,11 +4547,13 @@ sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id)
 	{
 		p_adpt_api->adpt_port_counter_set = adpt_hppe_port_counter_set;
 	}
-	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] & (1 <<  (FUNC_ADPT_PORT_COMBO_FIBER_MODE_GET % 32)))
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] &
+		(1 <<  (FUNC_ADPT_PORT_COMBO_FIBER_MODE_GET % 32)))
 	{
 		p_adpt_api->adpt_port_combo_fiber_mode_get = adpt_hppe_port_combo_fiber_mode_get;
 	}
-	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] & (1 <<  (FUNC_ADPT_PORT_LOCAL_LOOPBACK_SET % 32)))
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] &
+		(1 <<  (FUNC_ADPT_PORT_LOCAL_LOOPBACK_SET % 32)))
 	{
 		p_adpt_api->adpt_port_local_loopback_set = adpt_hppe_port_local_loopback_set;
 	}
@@ -4508,7 +4561,8 @@ sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id)
 	{
 		p_adpt_api->adpt_port_wol_status_set = adpt_hppe_port_wol_status_set;
 	}
-	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] & (1 <<  (FUNC_ADPT_PORT_MAGIC_FRAME_MAC_GET % 32)))
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] &
+		(1 <<  (FUNC_ADPT_PORT_MAGIC_FRAME_MAC_GET % 32)))
 	{
 		p_adpt_api->adpt_port_magic_frame_mac_get = adpt_hppe_port_magic_frame_mac_get;
 	}
@@ -4516,7 +4570,8 @@ sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id)
 	{
 		p_adpt_api->adpt_port_flowctrl_get = adpt_hppe_port_flowctrl_get;
 	}
-	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] & (1 <<  (FUNC_ADPT_PORT_RXMAC_STATUS_SET % 32)))
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] &
+		(1 <<  (FUNC_ADPT_PORT_RXMAC_STATUS_SET % 32)))
 	{
 		p_adpt_api->adpt_port_rxmac_status_set = adpt_hppe_port_rxmac_status_set;
 	}
@@ -4524,11 +4579,13 @@ sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id)
 	{
 		p_adpt_api->adpt_port_counter_get = adpt_hppe_port_counter_get;
 	}
-	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] & (1 <<  (FUNC_ADPT_PORT_INTERFACE_MODE_SET % 32)))
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] &
+		(1 <<  (FUNC_ADPT_PORT_INTERFACE_MODE_SET % 32)))
 	{
 		p_adpt_api->adpt_port_interface_mode_set = adpt_hppe_port_interface_mode_set;
 	}
-	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] & (1 <<  (FUNC_ADPT_PORT_MAC_LOOPBACK_GET % 32)))
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] &
+		(1 <<  (FUNC_ADPT_PORT_MAC_LOOPBACK_GET % 32)))
 	{
 		p_adpt_api->adpt_port_mac_loopback_get = adpt_hppe_port_mac_loopback_get;
 	}
@@ -4536,11 +4593,13 @@ sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id)
 	{
 		p_adpt_api->adpt_port_hibernate_get = adpt_hppe_port_hibernate_get;
 	}
-	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] & (1 <<  (FUNC_ADPT_PORT_AUTONEG_ADV_SET % 32)))
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] &
+		(1 <<  (FUNC_ADPT_PORT_AUTONEG_ADV_SET % 32)))
 	{
 		p_adpt_api->adpt_port_autoneg_adv_set = adpt_hppe_port_autoneg_adv_set;
 	}
-	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] & (1 <<  (FUNC_ADPT_PORT_REMOTE_LOOPBACK_GET % 32)))
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] &
+		(1 <<  (FUNC_ADPT_PORT_REMOTE_LOOPBACK_GET % 32)))
 	{
 		p_adpt_api->adpt_port_remote_loopback_get = adpt_hppe_port_remote_loopback_get;
 	}
@@ -4556,15 +4615,18 @@ sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id)
 	{
 		p_adpt_api->adpt_port_mtu_get = adpt_hppe_port_mtu_get;
 	}
-	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] & (1 <<  (FUNC_ADPT_PORT_INTERFACE_MODE_STATUS_GET % 32)))
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] &
+		(1 <<  (FUNC_ADPT_PORT_INTERFACE_MODE_STATUS_GET % 32)))
 	{
-		p_adpt_api->adpt_port_interface_mode_status_get = adpt_hppe_port_interface_mode_status_get;
+		p_adpt_api->adpt_port_interface_mode_status_get =
+			adpt_hppe_port_interface_mode_status_get;
 	}
 	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] & (1 <<  (FUNC_ADPT_PORT_RESET % 32)))
 	{
 		p_adpt_api->adpt_port_reset = adpt_hppe_port_reset;
 	}
-	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] & (1 <<  (FUNC_ADPT_PORT_RXFC_STATUS_SET % 32)))
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] &
+		(1 <<  (FUNC_ADPT_PORT_RXFC_STATUS_SET % 32)))
 	{
 		p_adpt_api->adpt_port_rxfc_status_set = adpt_hppe_port_rxfc_status_set;
 	}
@@ -4580,44 +4642,64 @@ sw_error_t adpt_hppe_port_ctrl_init(a_uint32_t dev_id)
 	{
 		p_adpt_api->adpt_port_wol_status_get = adpt_hppe_port_wol_status_get;
 	}
-	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] & (1 <<  (FUNC_ADPT_PORT_MAX_FRAME_SIZE_SET % 32)))
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] &
+		(1 <<  (FUNC_ADPT_PORT_MAX_FRAME_SIZE_SET % 32)))
 	{
 		p_adpt_api->adpt_port_max_frame_size_set = adpt_hppe_port_max_frame_size_set;
 	}
-	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] & (1 <<  (FUNC_ADPT_PORT_MAX_FRAME_SIZE_GET % 32)))
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] &
+		(1 <<  (FUNC_ADPT_PORT_MAX_FRAME_SIZE_GET % 32)))
 	{
 		p_adpt_api->adpt_port_max_frame_size_get = adpt_hppe_port_max_frame_size_get;
 	}
-	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] & (1 <<  (FUNC_ADPT_PORT_SOURCE_FILTER_GET % 32)))
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] &
+		(1 <<  (FUNC_ADPT_PORT_SOURCE_FILTER_GET % 32)))
 	{
 		p_adpt_api->adpt_port_source_filter_get = adpt_hppe_port_source_filter_get;
 	}
-	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] & (1 <<  (FUNC_ADPT_PORT_SOURCE_FILTER_SET % 32)))
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[1] &
+		(1 <<  (FUNC_ADPT_PORT_SOURCE_FILTER_SET % 32)))
 	{
 		p_adpt_api->adpt_port_source_filter_set = adpt_hppe_port_source_filter_set;
 	}
 
-	if(p_adpt_api->adpt_port_ctrl_func_bitmap[2] & (1 <<  (FUNC_ADPT_PORT_INTERFACE_MODE_APPLY% 32)))
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[2] &
+		(1 <<  (FUNC_ADPT_PORT_INTERFACE_MODE_APPLY% 32)))
 	{
 		p_adpt_api->adpt_port_interface_mode_apply = adpt_hppe_port_interface_mode_apply;
 	}
-	if(p_adpt_api->adpt_port_ctrl_func_bitmap[2] & (1 <<  (FUNC_ADPT_PORT_INTERFACE_3AZ_STATUS_SET% 32)))
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[2] &
+		(1 <<  (FUNC_ADPT_PORT_INTERFACE_3AZ_STATUS_SET% 32)))
 	{
 		p_adpt_api->adpt_port_interface_3az_status_set = adpt_hppe_port_interface_3az_set;
 	}
-	if(p_adpt_api->adpt_port_ctrl_func_bitmap[2] & (1 <<  (FUNC_ADPT_PORT_INTERFACE_3AZ_STATUS_GET% 32)))
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[2] &
+		(1 <<  (FUNC_ADPT_PORT_INTERFACE_3AZ_STATUS_GET% 32)))
 	{
 		p_adpt_api->adpt_port_interface_3az_status_get = adpt_hppe_port_interface_3az_get;
 	}
-	if(p_adpt_api->adpt_port_ctrl_func_bitmap[2] & (1 <<  (FUNC_ADPT_PORT_FLOWCTRL_FORCEMODE_SET% 32)))
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[2] &
+		(1 <<  (FUNC_ADPT_PORT_PROMISC_MODE_SET% 32)))
 	{
-		p_adpt_api->adpt_port_flowctrl_forcemode_set = adpt_hppe_port_flowctrl_forcemode_set;
+		p_adpt_api->adpt_port_promisc_mode_set = adpt_hppe_port_promisc_mode_set;
 	}
-	if(p_adpt_api->adpt_port_ctrl_func_bitmap[2] & (1 <<  (FUNC_ADPT_PORT_FLOWCTRL_FORCEMODE_GET% 32)))
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[2] &
+		(1 <<  (FUNC_ADPT_PORT_PROMISC_MODE_GET% 32)))
 	{
-		p_adpt_api->adpt_port_flowctrl_forcemode_get = adpt_hppe_port_flowctrl_forcemode_get;
+		p_adpt_api->adpt_port_promisc_mode_get = adpt_hppe_port_promisc_mode_get;
 	}
-
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[2] &
+		(1 <<  (FUNC_ADPT_PORT_FLOWCTRL_FORCEMODE_SET% 32)))
+	{
+		p_adpt_api->adpt_port_flowctrl_forcemode_set =
+			adpt_hppe_port_flowctrl_forcemode_set;
+	}
+	if(p_adpt_api->adpt_port_ctrl_func_bitmap[2] &
+		(1 <<  (FUNC_ADPT_PORT_FLOWCTRL_FORCEMODE_GET% 32)))
+	{
+		p_adpt_api->adpt_port_flowctrl_forcemode_get =
+			adpt_hppe_port_flowctrl_forcemode_get;
+	}
 	p_adpt_api->adpt_port_mux_mac_type_set = adpt_hppe_port_mux_mac_type_set;
 	p_adpt_api->adpt_port_mac_speed_set = adpt_hppe_port_mac_speed_set;
 	p_adpt_api->adpt_port_mac_duplex_set = adpt_hppe_port_mac_duplex_set;

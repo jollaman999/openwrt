@@ -355,6 +355,8 @@ enum
 	FUNC_ADPT_PORT_INTERFACE_MODE_APPLY,
 	FUNC_ADPT_PORT_INTERFACE_3AZ_STATUS_SET,
 	FUNC_ADPT_PORT_INTERFACE_3AZ_STATUS_GET,
+	FUNC_ADPT_PORT_PROMISC_MODE_SET,
+	FUNC_ADPT_PORT_PROMISC_MODE_GET,
 	FUNC_ADPT_PORT_FLOWCTRL_FORCEMODE_SET,
 	FUNC_ADPT_PORT_FLOWCTRL_FORCEMODE_GET,
 };
@@ -714,6 +716,11 @@ fal_port_interface_3az_status_set(a_uint32_t dev_id, fal_port_t port_id,
 sw_error_t
 fal_port_interface_3az_status_get(a_uint32_t dev_id, fal_port_t port_id,
 		a_bool_t * enable);
+sw_error_t
+fal_port_promisc_mode_set(a_uint32_t dev_id,fal_port_t port_id,a_bool_t enable);
+sw_error_t
+fal_port_promisc_mode_get(a_uint32_t dev_id,fal_port_t port_id,a_bool_t *enable);
+
 /*qca808x_start*/
 #ifdef __cplusplus
 }
