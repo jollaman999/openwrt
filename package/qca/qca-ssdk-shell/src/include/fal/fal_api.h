@@ -118,7 +118,9 @@ extern "C" {
     SW_API_DEF(SW_API_PT_FRAME_MAX_SIZE_GET, fal_port_max_frame_size_get), \
     SW_API_DEF(SW_API_PT_FRAME_MAX_SIZE_SET, fal_port_max_frame_size_set), \
     SW_API_DEF(SW_API_PT_INTERFACE_3AZ_STATUS_SET, fal_port_interface_3az_status_set), \
-    SW_API_DEF(SW_API_PT_INTERFACE_3AZ_STATUS_GET, fal_port_interface_3az_status_get),
+    SW_API_DEF(SW_API_PT_INTERFACE_3AZ_STATUS_GET, fal_port_interface_3az_status_get), \
+    SW_API_DEF(SW_API_PT_PROMISC_MODE_SET, fal_port_promisc_mode_set),  \
+    SW_API_DEF(SW_API_PT_PROMISC_MODE_GET, fal_port_promisc_mode_get),
 /*qca808x_start*/\
 /*end of PORTCONTROL_API*/
 #define PORTCONTROL_API_PARAM \
@@ -218,6 +220,8 @@ extern "C" {
     SW_API_DESC(SW_API_PT_FRAME_MAX_SIZE_SET) \
     SW_API_DESC(SW_API_PT_INTERFACE_3AZ_STATUS_SET)  \
     SW_API_DESC(SW_API_PT_INTERFACE_3AZ_STATUS_GET)\
+    SW_API_DESC(SW_API_PT_PROMISC_MODE_SET)  \
+    SW_API_DESC(SW_API_PT_PROMISC_MODE_GET)  \
 /*qca808x_start*/\
 /*end of PORTCONTROL_API_PARAM*/
 #else

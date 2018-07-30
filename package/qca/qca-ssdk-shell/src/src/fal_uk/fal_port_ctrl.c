@@ -861,4 +861,24 @@ fal_port_interface_3az_status_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_
 
     return rv;
 }
+sw_error_t
+fal_port_promisc_mode_set(a_uint32_t dev_id, fal_port_t port_id,
+	a_bool_t enable)
+{
+	sw_error_t rv;
 
+ 	rv = sw_uk_exec(SW_API_PT_PROMISC_MODE_SET, dev_id, port_id, enable);
+
+	return rv;
+}
+
+sw_error_t
+fal_port_promisc_mode_get(a_uint32_t dev_id, fal_port_t port_id,
+	a_bool_t *enable)
+{
+	sw_error_t rv;
+
+	rv = sw_uk_exec(SW_API_PT_PROMISC_MODE_GET, dev_id, port_id, enable);
+
+	return rv;
+}
