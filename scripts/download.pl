@@ -195,11 +195,11 @@ foreach my $mirror (@ARGV) {
 		}
 	} elsif ($mirror =~ /^\@APACHE\/(.+)$/) {
 		push @mirrors, "http://mirror.kakao.com/apache/$1";
+		push @mirrors, "http://mirror.navercorp.com/apache/$1";
 		push @mirrors, "https://mirror.netcologne.de/apache.org/$1";
 		push @mirrors, "https://mirror.aarnet.edu.au/pub/apache/$1";
 		push @mirrors, "https://mirror.csclub.uwaterloo.ca/apache/$1";
 		push @mirrors, "http://mirror.cogentco.com/pub/apache/$1";
-		push @mirrors, "http://mirror.navercorp.com/apache/$1";
 		push @mirrors, "http://ftp.jaist.ac.jp/pub/apache/$1";
 		push @mirrors, "ftp://apache.cs.utah.edu/apache.org/$1";
 		push @mirrors, "ftp://apache.mirrors.ovh.net/ftp.apache.org/dist/$1";
@@ -210,12 +210,12 @@ foreach my $mirror (@ARGV) {
 		}
 	} elsif ($mirror =~ /^\@GNU\/(.+)$/) {
 		push @mirrors, "http://mirror.kakao.com/gnu/$1";
+		push @mirrors, "http://mirror.navercorp.com/gnu/$1";
 		push @mirrors, "https://mirror.csclub.uwaterloo.ca/gnu/$1";
 		push @mirrors, "https://mirror.netcologne.de/gnu/$1";
 		push @mirrors, "http://ftp.kddilabs.jp/GNU/gnu/$1";
 		push @mirrors, "http://www.nic.funet.fi/pub/gnu/gnu/$1";
 		push @mirrors, "http://mirror.internode.on.net/pub/gnu/$1";
-		push @mirrors, "http://mirror.navercorp.com/gnu/$1";
 		push @mirrors, "ftp://mirrors.rit.edu/gnu/$1";
 		push @mirrors, "ftp://download.xs4all.nl/pub/gnu/";
 	} elsif ($mirror =~ /^\@SAVANNAH\/(.+)$/) {
@@ -245,9 +245,9 @@ foreach my $mirror (@ARGV) {
 			push @mirrors, "ftp://www.mirrorservice.org/sites/ftp.kernel.org/pub/$dir";
 		}
     } elsif ($mirror =~ /^\@GNOME\/(.+)$/) {
+		push @mirrors, "http://ftp.kaist.ac.kr/gnome/sources/$1";
 		push @mirrors, "https://mirror.csclub.uwaterloo.ca/gnome/sources/$1";
 		push @mirrors, "http://ftp.acc.umu.se/pub/GNOME/sources/$1";
-		push @mirrors, "http://ftp.kaist.ac.kr/gnome/sources/$1";
 		push @mirrors, "http://www.mirrorservice.org/sites/ftp.gnome.org/pub/GNOME/sources/$1";
 		push @mirrors, "http://mirror.internode.on.net/pub/gnome/sources/$1";
 		push @mirrors, "http://ftp.belnet.be/ftp.gnome.org/sources/$1";
