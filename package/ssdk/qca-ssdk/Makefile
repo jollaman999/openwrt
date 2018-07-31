@@ -78,6 +78,10 @@ ifeq ($(LOCAL_VARIANT),hnat)
     QCASSDK_CONFIG_OPTS+= HNAT_FEATURE=enable
 endif
 
+ifeq ($(CONFIG_TARGET_ath79),)
+    QCASSDK_CONFIG_OPTS+= ATH79_FIX=enable
+endif
+
 ifeq ($(CONFIG_TARGET_ipq806x_QSDK_Standard),)
     QCASSDK_CONFIG_OPTS+= HK_CHIP=enable
 endif

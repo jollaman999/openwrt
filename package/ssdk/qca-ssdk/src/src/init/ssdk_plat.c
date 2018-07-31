@@ -133,9 +133,18 @@ a_uint32_t ssdk_log_level = SSDK_LOG_LEVEL_DEFAULT;
 
 #ifdef BOARD_AR71XX
 struct ag71xx_mdio {
+#ifdef IN_ATH79
+	struct reset_control *mdio_reset;
 	struct mii_bus		*mii_bus;
+	struct regmap		*mii_regmap;
+#else
+	struct mii_bus		*mii_bus;
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,5,0)
 	int			mii_irq[PHY_MAX_ADDR];
+#endif
 	void __iomem		*mdio_base;
+	struct ag71xx_mdio_platform_data *pdata;
+#endif
 };
 #endif
 
@@ -606,29 +615,6 @@ static int miibus_get(a_uint32_t dev_id)
 {
 	struct ag71xx_mdio *am;
 	struct qca_phy_priv *priv = qca_phy_priv_global[dev_id];
-#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
-	struct device_node *mdio_node = NULL;
-	struct platform_device *mdio_plat = NULL;
-
-	mdio_node = of_find_compatible_node(NULL, NULL, "qca,ag71xx-mdio");
-	if (!mdio_node) {
-		SSDK_ERROR("No MDIO node found in DTS!\n");
-		return 1;
-	}
-	mdio_plat = of_find_device_by_node(mdio_node);
-	if (!mdio_plat) {
-		SSDK_ERROR("cannot find platform device from mdio node\n");
-		return 1;
-	}
-	am = dev_get_drvdata(&mdio_plat->dev);
-	if (!am) {
-                	SSDK_ERROR("cannot get mdio_data reference from device data\n");
-                	return 1;
-	}
-	priv->miibus = am->mii_bus;
-
-	switch_chip_id_adjuest(dev_id);
-#else
 	struct device *miidev;
 	char busid[MII_BUS_ID_SIZE];
 
@@ -662,7 +648,6 @@ static int miibus_get(a_uint32_t dev_id)
 		SSDK_ERROR("mdio bus '%s' get FAIL\n", busid);
 		return 1;
 	}
-#endif
 
 	return 0;
 }
