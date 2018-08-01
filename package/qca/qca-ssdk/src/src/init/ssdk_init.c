@@ -2468,9 +2468,11 @@ static int chip_is_scomphy(a_uint32_t dev_id, ssdk_init_cfg* cfg)
 		if (port_bmp & 0x1) {
 			phy_id = hsl_phyid_get(dev_id, port_id, cfg);
 			switch (phy_id) {
+/*qca808x_end*/
 				case QCA8030_PHY:
 				case QCA8033_PHY:
 				case QCA8035_PHY:
+/*qca808x_start*/
 				case QCA8081_PHY:
 					cfg->chip_type = CHIP_SCOMPHY;
 					rv = SW_OK;
@@ -3231,8 +3233,8 @@ static int ssdk_alloc_priv(a_uint32_t dev_num)
 		qca_phy_priv_global[dev_id]->qca_ssdk_sw_dev_registered = A_FALSE;
 		qca_phy_priv_global[dev_id]->ess_switch_flag = A_FALSE;
 /*qca808x_start*/
-		qca_ssdk_phy_info_init(dev_id);
 		qca_ssdk_port_bmp_init(dev_id);
+		qca_ssdk_phy_info_init(dev_id);
 	}
 
 	return rev;

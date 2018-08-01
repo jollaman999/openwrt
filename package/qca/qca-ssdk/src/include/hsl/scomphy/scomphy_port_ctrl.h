@@ -28,13 +28,15 @@ sw_error_t scomphy_port_ctrl_init (a_uint32_t dev_id);
 sw_error_t
 scomphy_port_reset (a_uint32_t dev_id, fal_port_t port_id);
 
-
+/*qca808x_end*/
 #ifdef IN_PORTCONTROL
+/*qca808x_start*/
 #define SCOMPHY_PORT_CTRL_INIT(rv, dev_id) \
     { \
         rv = scomphy_port_ctrl_init(dev_id); \
         SW_RTN_ON_ERROR(rv); \
     }
+/*qca808x_end*/
 #else
 #define SCOMPHY_PORT_CTRL_INIT(rv, dev_id)
 #endif
@@ -133,7 +135,7 @@ scomphy_port_mdix_get (a_uint32_t dev_id, fal_port_t port_id,
 HSL_LOCAL sw_error_t
 scomphy_port_mdix_status_get (a_uint32_t dev_id, fal_port_t port_id,
 		fal_port_mdix_status_t * mode);
-/*qca808x_end*/
+
 HSL_LOCAL sw_error_t
 scomphy_port_combo_prefer_medium_set (a_uint32_t dev_id, a_uint32_t phy_id,
 		fal_port_medium_t phy_medium);
@@ -153,7 +155,7 @@ scomphy_port_combo_fiber_mode_set (a_uint32_t dev_id, a_uint32_t phy_id,
 HSL_LOCAL sw_error_t
 scomphy_port_combo_fiber_mode_get (a_uint32_t dev_id, a_uint32_t phy_id,
 		fal_port_fiber_mode_t * fiber_mode);
-/*qca808x_start*/
+
 HSL_LOCAL sw_error_t
 scomphy_port_local_loopback_set (a_uint32_t dev_id, fal_port_t port_id,
 		a_bool_t enable);
@@ -195,7 +197,7 @@ scomphy_port_power_off (a_uint32_t dev_id, fal_port_t port_id);
 
 HSL_LOCAL sw_error_t
 scomphy_port_power_on (a_uint32_t dev_id, fal_port_t port_id);
-/*qca808x_end*/
+
 HSL_LOCAL sw_error_t
 scomphy_port_interface_mode_set (a_uint32_t dev_id, fal_port_t port_id,
 			fal_port_interface_mode_t mode);
@@ -203,7 +205,7 @@ scomphy_port_interface_mode_set (a_uint32_t dev_id, fal_port_t port_id,
 HSL_LOCAL sw_error_t
 scomphy_port_interface_mode_get (a_uint32_t dev_id, fal_port_t port_id,
 		fal_port_interface_mode_t * mode);
-/*qca808x_start*/
+
 HSL_LOCAL sw_error_t
 scomphy_port_interface_mode_status_get (a_uint32_t dev_id, fal_port_t port_id,
 		fal_port_interface_mode_t * mode);
@@ -220,7 +222,7 @@ HSL_LOCAL sw_error_t
 scomphy_port_counter_show (a_uint32_t dev_id, fal_port_t port_id,
 		fal_port_counter_info_t * counter_info);
 #endif
-
+/*qca808x_start*/
 #ifdef __cplusplus
 }
 #endif				/* __cplusplus */

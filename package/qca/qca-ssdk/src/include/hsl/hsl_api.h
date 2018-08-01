@@ -1955,7 +1955,7 @@ typedef sw_error_t
   typedef sw_error_t
     (*hsl_phy_set) (a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t reg,
 		    a_uint16_t value);
-
+/*qca808x_end*/
   typedef sw_error_t
     (*hsl_reg_get) (a_uint32_t dev_id, a_uint32_t reg_addr,
 		    a_uint8_t value[], a_uint32_t value_len);
@@ -1963,7 +1963,7 @@ typedef sw_error_t
   typedef sw_error_t
     (*hsl_reg_set) (a_uint32_t dev_id, a_uint32_t reg_addr,
 		    a_uint8_t value[], a_uint32_t value_len);
-/*qca808x_end*/
+
   typedef sw_error_t
     (*hsl_psgmii_reg_get) (a_uint32_t dev_id, a_uint32_t reg_addr,
 		    a_uint8_t *value, a_uint32_t value_len);
@@ -1971,7 +1971,6 @@ typedef sw_error_t
   typedef sw_error_t
     (*hsl_psgmii_reg_set) (a_uint32_t dev_id, a_uint32_t reg_addr,
 		    a_uint8_t *value, a_uint32_t value_len);
-/*qca808x_start*/
 
   typedef sw_error_t
     (*hsl_reg_field_get) (a_uint32_t dev_id, a_uint32_t reg_addr,
@@ -1992,7 +1991,6 @@ typedef sw_error_t
     (*hsl_reg_entries_set) (a_uint32_t dev_id, a_uint32_t reg_addr,
 			    a_uint32_t entry_len, const a_uint8_t value[],
 			    a_uint32_t value_len);
-/*qca808x_end*/
 
   typedef sw_error_t
     (*hsl_debug_psgmii_self_test) (a_uint32_t dev_id, a_bool_t enable,
@@ -2012,9 +2010,10 @@ typedef sw_error_t
 
   typedef struct
   {
+/*qca808x_end*/
 #if (!(defined(USER_MODE) && defined(KERNEL_MODULE)))
 #ifndef HSL_STANDALONG
-/*qca808x_end*/
+
     /* Misc */
     hsl_arp_status_set arp_status_set;
     hsl_arp_status_get arp_status_get;
@@ -2093,18 +2092,23 @@ typedef sw_error_t
     hsl_port_autoneg_restart port_autoneg_restart;
     hsl_port_autoneg_adv_get port_autoneg_adv_get;
     hsl_port_autoneg_adv_set port_autoneg_adv_set;
+/*qca808x_end*/
     hsl_port_hdr_status_set port_hdr_status_set;
     hsl_port_hdr_status_get port_hdr_status_get;
+/*qca808x_start*/
     hsl_port_flowctrl_set port_flowctrl_set;
     hsl_port_flowctrl_get port_flowctrl_get;
+/*qca808x_end*/
 	hsl_port_flowctrl_thresh_set port_flowctrl_thresh_set;
     hsl_port_flowctrl_forcemode_set port_flowctrl_forcemode_set;
     hsl_port_flowctrl_forcemode_get port_flowctrl_forcemode_get;
+/*qca808x_start*/
     hsl_port_powersave_set port_powersave_set;
     hsl_port_powersave_get port_powersave_get;
     hsl_port_hibernate_set port_hibernate_set;
     hsl_port_hibernate_get port_hibernate_get;
     hsl_port_cdt port_cdt;
+/*qca808x_end*/
     hsl_port_rxhdr_mode_set port_rxhdr_mode_set;
     hsl_port_rxhdr_mode_get port_rxhdr_mode_get;
     hsl_port_txhdr_mode_set port_txhdr_mode_set;
@@ -2123,24 +2127,29 @@ typedef sw_error_t
     hsl_port_bp_status_get port_bp_status_get;
     hsl_port_link_forcemode_set port_link_forcemode_set;
     hsl_port_link_forcemode_get port_link_forcemode_get;
+/*qca808x_start*/
     hsl_port_link_status_get port_link_status_get;
     hsl_ports_link_status_get ports_link_status_get;
+/*qca808x_end*/
     hsl_port_mac_loopback_set port_mac_loopback_set;
     hsl_port_mac_loopback_get port_mac_loopback_get;
     hsl_port_congestion_drop_set port_congestion_drop_set;
     hsl_port_congestion_drop_get port_congestion_drop_get;
     hsl_ring_flow_ctrl_thres_set ring_flow_ctrl_thres_set;
     hsl_ring_flow_ctrl_thres_get ring_flow_ctrl_thres_get;
+/*qca808x_start*/
     hsl_port_8023az_set port_8023az_set;
     hsl_port_8023az_get port_8023az_get;
     hsl_port_mdix_set port_mdix_set;
     hsl_port_mdix_get port_mdix_get;
     hsl_port_mdix_status_get port_mdix_status_get;
+/*qca808x_end*/
     hsl_port_combo_prefer_medium_set port_combo_prefer_medium_set;
     hsl_port_combo_prefer_medium_get port_combo_prefer_medium_get;
     hsl_port_combo_medium_status_get port_combo_medium_status_get;
     hsl_port_combo_fiber_mode_set port_combo_fiber_mode_set;
     hsl_port_combo_fiber_mode_get port_combo_fiber_mode_get;
+/*qca808x_start*/
     hsl_port_local_loopback_set port_local_loopback_set;
     hsl_port_local_loopback_get port_local_loopback_get;
     hsl_port_remote_loopback_set port_remote_loopback_set;
@@ -2153,9 +2162,11 @@ typedef sw_error_t
     hsl_port_wol_status_get port_wol_status_get;
     hsl_port_magic_frame_mac_set port_magic_frame_mac_set;
     hsl_port_magic_frame_mac_get port_magic_frame_mac_get;
+/*qca808x_end*/
     hsl_port_interface_mode_set port_interface_mode_set;
     hsl_port_interface_mode_get port_interface_mode_get;
     hsl_port_interface_mode_apply port_interface_mode_apply;
+/*qca808x_start*/
     hsl_port_interface_mode_status_get port_interface_mode_status_get;
     hsl_port_counter_set port_counter_set;
     hsl_port_counter_get port_counter_get;
@@ -2557,20 +2568,19 @@ typedef sw_error_t
     hsl_interface_pad_set	interface_mac_pad_set;
     hsl_interface_sgmii_get	interface_mac_sgmii_get;
     hsl_interface_sgmii_set	interface_mac_sgmii_set;
+#endif
+#endif
 /*qca808x_start*/
-#endif
-#endif
-
     /* REG Access */
     hsl_phy_get phy_get;
     hsl_phy_set phy_set;
+/*qca808x_end*/
     hsl_reg_get reg_get;
     hsl_reg_set reg_set;
     hsl_reg_field_get reg_field_get;
     hsl_reg_field_set reg_field_set;
     hsl_reg_entries_get reg_entries_get;
     hsl_reg_entries_set reg_entries_set;
-/*qca808x_end*/
     hsl_psgmii_reg_get psgmii_reg_get;
     hsl_psgmii_reg_set psgmii_reg_set;
 	hsl_register_dump	register_dump;

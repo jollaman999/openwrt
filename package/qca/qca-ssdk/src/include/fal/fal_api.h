@@ -20,9 +20,10 @@
 #ifdef __cplusplus
 extern "C" {
 #endif                          /* __cplusplus */
-
+/*qca808x_end*/
 #ifdef IN_PORTCONTROL
 #ifndef IN_PORTCONTROL_MINI
+/*qca808x_start*/
 #define PORTCONTROL_API \
     SW_API_DEF(SW_API_PT_DUPLEX_GET, fal_port_duplex_get), \
     SW_API_DEF(SW_API_PT_DUPLEX_SET, fal_port_duplex_set), \
@@ -221,6 +222,7 @@ extern "C" {
     SW_API_DESC(SW_API_PT_INTERFACE_3AZ_STATUS_GET)
 /*qca808x_start*/
 /*end of PORTCONTROL_API_PARAM*/
+/*qca808x_end*/
 #else
 #define PORTCONTROL_API \
     SW_API_DEF(SW_API_PT_DUPLEX_SET, fal_port_duplex_set), \
@@ -228,20 +230,16 @@ extern "C" {
     SW_API_DEF(SW_API_PT_AN_ENABLE, fal_port_autoneg_enable), \
     SW_API_DEF(SW_API_PT_AN_RESTART, fal_port_autoneg_restart), \
     SW_API_DEF(SW_API_PT_AN_ADV_SET, fal_port_autoneg_adv_set), \
-/*qca808x_end*/\
     SW_API_DEF(SW_API_PT_LINK_MODE_SET, fal_port_link_forcemode_set),   \
     SW_API_DEF(SW_API_PT_TXHDR_SET, fal_port_txhdr_mode_set), \
     SW_API_DEF(SW_API_PT_RXHDR_SET, fal_port_rxhdr_mode_set), \
     SW_API_DEF(SW_API_HEADER_TYPE_SET, fal_header_type_set),  \
     SW_API_DEF(SW_API_TXMAC_STATUS_SET, fal_port_txmac_status_set), \
     SW_API_DEF(SW_API_RXMAC_STATUS_SET, fal_port_rxmac_status_set), \
-/*qca808x_start*/\
     SW_API_DEF(SW_API_PT_POWER_OFF, fal_port_power_off), \
     SW_API_DEF(SW_API_PT_POWER_ON, fal_port_power_on), \
-/*qca808x_end*/\
     SW_API_DEF(SW_API_TXFC_STATUS_SET, fal_port_txfc_status_set),   \
     SW_API_DEF(SW_API_RXFC_STATUS_SET, fal_port_rxfc_status_set),
-/*qca808x_start*/
 /*end of PORTCONTROL_API*/
 #define PORTCONTROL_API_PARAM \
     SW_API_DESC(SW_API_PT_DUPLEX_SET) \
@@ -249,20 +247,16 @@ extern "C" {
     SW_API_DESC(SW_API_PT_AN_ENABLE) \
     SW_API_DESC(SW_API_PT_AN_RESTART) \
     SW_API_DESC(SW_API_PT_AN_ADV_SET) \
-/*qca808x_end*/\
     SW_API_DESC(SW_API_PT_LINK_MODE_SET) \
     SW_API_DESC(SW_API_PT_TXHDR_SET) \
     SW_API_DESC(SW_API_PT_RXHDR_SET) \
     SW_API_DESC(SW_API_HEADER_TYPE_SET) \
     SW_API_DESC(SW_API_TXMAC_STATUS_SET) \
     SW_API_DESC(SW_API_RXMAC_STATUS_SET) \
-/*qca808x_start*/\
     SW_API_DESC(SW_API_PT_POWER_OFF) \
     SW_API_DESC(SW_API_PT_POWER_ON) \
-/*qca808x_end*/\
     SW_API_DESC(SW_API_TXFC_STATUS_SET) \
     SW_API_DESC(SW_API_RXFC_STATUS_SET)
-/*qca808x_start*/\
 /*end of PORTCONTROL_API_PARAM*/
 #endif
 
@@ -270,7 +264,6 @@ extern "C" {
 #define PORTCONTROL_API
 #define PORTCONTROL_API_PARAM
 #endif
-/*qca808x_end*/
 #ifdef IN_VLAN
 #define VLAN_API \
     SW_API_DEF(SW_API_VLAN_ADD, fal_vlan_create), \

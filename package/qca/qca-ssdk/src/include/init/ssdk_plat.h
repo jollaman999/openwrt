@@ -21,12 +21,12 @@
 #include <linux/version.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
-/*qca808x_start*/
-#include <linux/phy.h>
 
 #if defined(IN_SWCONFIG)
 #include <linux/switch.h>
 #endif
+/*qca808x_start*/
+#include <linux/phy.h>
 
 #ifndef BIT
 #define BIT(_n)			(1UL << (_n))

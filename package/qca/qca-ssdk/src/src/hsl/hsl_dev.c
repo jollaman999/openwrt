@@ -44,10 +44,12 @@
 #if defined HPPE
 #include "hppe_init.h"
 #endif
-/*qca808x_start*/
 #if defined SCOMPHY
+/*qca808x_start*/
 #include "scomphy_init.h"
+/*qca808x_end*/
 #endif
+/*qca808x_start*/
 #include "sw_api.h"
 /*qca808x_end*/
 #ifdef KERNEL_MODULE
@@ -70,6 +72,7 @@ static sw_error_t hsl_set_current_chip_type(ssdk_chip_type chip_type)
 
     if (SSDK_CURRENT_CHIP_TYPE == CHIP_UNSPECIFIED)
     {
+/*qca808x_end*/
 #if defined ATHENA
         SSDK_CURRENT_CHIP_TYPE = CHIP_ATHENA;
 #elif defined GARUDA
@@ -87,10 +90,13 @@ static sw_error_t hsl_set_current_chip_type(ssdk_chip_type chip_type)
 #elif defined HPPE
         SSDK_CURRENT_CHIP_TYPE = CHIP_HPPE;
 #elif defined SCOMPHY
+/*qca808x_start*/
         SSDK_CURRENT_CHIP_TYPE = CHIP_SCOMPHY;
+/*qca808x_end*/
 #else
         rv = SW_FAIL;
 #endif
+/*qca808x_start*/
     }
     return rv;
 }
@@ -198,9 +204,13 @@ hsl_dev_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
             break;
 /*qca808x_start*/
 	case CHIP_SCOMPHY:
+/*qca808x_end*/
 #if defined SCOMPHY
+/*qca808x_start*/
 	    rv = scomphy_init(dev_id, cfg);
+/*qca808x_end*/
 #endif
+/*qca808x_start*/
 	    break;
 /*qca808x_end*/
         case CHIP_UNSPECIFIED:
