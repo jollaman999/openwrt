@@ -1,7 +1,179 @@
+diff --git a/drivers/net/phy/swconfig.c b/drivers/net/phy/swconfig.c
+--- a/drivers/net/phy/swconfig.c
++++ b/drivers/net/phy/swconfig.c
+@@ -128,6 +128,30 @@ swconfig_get_pvid(struct switch_dev *dev, const struct switch_attr *attr,
+ 	return dev->ops->get_port_pvid(dev, val->port_vlan, &val->value.i);
+ }
+ 
++static int
++swconfig_set_reg(struct switch_dev *dev, const struct switch_attr *attr, struct switch_val *val)
++{
++	if (val->port_vlan < 0)
++		return -EINVAL;
++
++	if (!dev->ops->set_reg_val)
++		return -EOPNOTSUPP;
++
++	return dev->ops->set_reg_val(dev, val->port_vlan, val->value.i);
++}
++
++static int
++swconfig_get_reg(struct switch_dev *dev, const struct switch_attr *attr, struct switch_val *val)
++{
++	if (val->port_vlan < 0)
++		return -EINVAL;
++
++	if (!dev->ops->get_reg_val)
++		return -EOPNOTSUPP;
++
++	return dev->ops->get_reg_val(dev, val->port_vlan, &val->value.i);
++}
++
+ static int
+ swconfig_set_link(struct switch_dev *dev, const struct switch_attr *attr,
+ 			struct switch_val *val)
+@@ -190,6 +214,10 @@ enum port_defaults {
+ 	PORT_LINK,
+ };
+ 
++enum reg_defaults {
++	REG_VAL,
++};
++
+ static struct switch_attr default_global[] = {
+ 	[GLOBAL_APPLY] = {
+ 		.type = SWITCH_TYPE_NOVAL,
+@@ -232,6 +260,16 @@ static struct switch_attr default_vlan[] = {
+ 	},
+ };
+ 
++static struct switch_attr default_reg[] = {
++	[REG_VAL] = {
++		.type = SWITCH_TYPE_INT,
++		.name = "val",
++		.description = "read/write value of switch register(debug use only)",
++		.set = swconfig_set_reg,
++		.get = swconfig_get_reg,
++	}
++};
++
+ static const struct switch_attr *
+ swconfig_find_attr_by_name(const struct switch_attrlist *alist,
+ 				const char *name)
+@@ -252,6 +290,7 @@ static void swconfig_defaults_init(struct switch_dev *dev)
+ 	dev->def_global = 0;
+ 	dev->def_vlan = 0;
+ 	dev->def_port = 0;
++	dev->def_reg = 0;
+ 
+ 	if (ops->get_vlan_ports || ops->set_vlan_ports)
+ 		set_bit(VLAN_PORTS, &dev->def_vlan);
+@@ -259,6 +298,9 @@ static void swconfig_defaults_init(struct switch_dev *dev)
+ 	if (ops->get_port_pvid || ops->set_port_pvid)
+ 		set_bit(PORT_PVID, &dev->def_port);
+ 
++	if (ops->get_reg_val || ops->set_reg_val)
++		set_bit(REG_VAL, &dev->def_reg);
++
+ 	if (ops->get_port_link &&
+ 	    !swconfig_find_attr_by_name(&ops->attr_port, "link"))
+ 		set_bit(PORT_LINK, &dev->def_port);
+@@ -452,6 +494,12 @@ swconfig_list_attrs(struct sk_buff *skb, struct genl_info *info)
+ 		def_active = &dev->def_port;
+ 		n_def = ARRAY_SIZE(default_port);
+ 		break;
++	case SWITCH_CMD_LIST_REG:
++		alist = &dev->ops->attr_reg;
++		def_list = default_reg;
++		def_active = &dev->def_reg;
++		n_def = ARRAY_SIZE(default_reg);
++		break;
+ 	default:
+ 		WARN_ON(1);
+ 		goto out;
+@@ -542,6 +590,18 @@ swconfig_lookup_attr(struct switch_dev *dev, struct genl_info *info,
+ 		if (val->port_vlan >= dev->ports)
+ 			goto done;
+ 		break;
++		case SWITCH_CMD_SET_REG:
++		case SWITCH_CMD_GET_REG:
++			alist = &dev->ops->attr_reg;
++			def_list = default_reg;
++			def_active = &dev->def_reg;
++			n_def = ARRAY_SIZE(default_reg);
++			if (!info->attrs[SWITCH_ATTR_OP_REG])
++				goto done;
++			val->port_vlan = nla_get_u32(info->attrs[SWITCH_ATTR_OP_REG]);
++			if (val->port_vlan < 0)
++				goto done;
++		break;
+ 	default:
+ 		WARN_ON(1);
+ 		goto done;
+@@ -1013,6 +1073,11 @@ static struct genl_ops swconfig_ops[] = {
+ 		.doit = swconfig_list_attrs,
+ 		.policy = switch_policy,
+ 	},
++	{
++		.cmd = SWITCH_CMD_LIST_REG,
++		.doit = swconfig_list_attrs,
++		.policy = switch_policy,
++	},
+ 	{
+ 		.cmd = SWITCH_CMD_GET_GLOBAL,
+ 		.doit = swconfig_get_attr,
+@@ -1028,6 +1093,11 @@ static struct genl_ops swconfig_ops[] = {
+ 		.doit = swconfig_get_attr,
+ 		.policy = switch_policy,
+ 	},
++	{
++		.cmd = SWITCH_CMD_GET_REG,
++		.doit = swconfig_get_attr,
++		.policy = switch_policy,
++	},
+ 	{
+ 		.cmd = SWITCH_CMD_SET_GLOBAL,
+ 		.flags = GENL_ADMIN_PERM,
+@@ -1046,6 +1116,11 @@ static struct genl_ops swconfig_ops[] = {
+ 		.doit = swconfig_set_attr,
+ 		.policy = switch_policy,
+ 	},
++	{
++		.cmd = SWITCH_CMD_SET_REG,
++		.doit = swconfig_set_attr,
++		.policy = switch_policy,
++	},
+ 	{
+ 		.cmd = SWITCH_CMD_GET_SWITCH,
+ 		.dumpit = swconfig_dump_switches,
+diff --git a/include/linux/switch.h b/include/linux/switch.h
 --- a/include/linux/switch.h
 +++ b/include/linux/switch.h
-@@ -66,6 +66,11 @@ struct switch_port_stats {
- 	unsigned long long rx_bytes;
+@@ -86,6 +86,10 @@ struct switch_port_stats {
+  */
+ struct switch_dev_ops {
+ 	struct switch_attrlist attr_global, attr_port, attr_vlan;
++	struct switch_attrlist attr_reg;
++
++	int (*get_reg_val)(struct switch_dev *dev, int reg, int *val);
++	int (*set_reg_val)(struct switch_dev *dev, int reg, int val);
+ 
+ 	int (*get_vlan_ports)(struct switch_dev *dev, struct switch_val *val);
+ 	int (*set_vlan_ports)(struct switch_dev *dev, struct switch_val *val);
+@@ -126,6 +130,7 @@ struct switch_dev {
+ 	unsigned int id;
+ 	struct list_head dev_list;
+ 	unsigned long def_global, def_port, def_vlan;
++	unsigned long def_reg;
+ 
+ 	struct mutex sw_mutex;
+ 	struct switch_port *portbuf;
+@@ -158,9 +163,16 @@ struct switch_val {
+ 		u32 i;
+ 		struct switch_port *ports;
+ 		struct switch_port_link *link;
++		struct switch_ext *ext_val;
+ 	} value;
  };
  
 +struct switch_ext {
@@ -9,24 +181,38 @@
 +	const char *option_value;
 +	struct switch_ext *next;
 +};
- /**
-  * struct switch_dev_ops - switch driver operations
-  *
-@@ -157,6 +162,7 @@ struct switch_val {
- 		const char *s;
- 		u32 i;
- 		struct switch_port *ports;
-+		struct switch_ext *ext_val;
- 		struct switch_port_link *link;
- 	} value;
- };
++
+ struct switch_attr {
+ 	int disabled;
+ 	int type;
+diff --git a/include/uapi/linux/switch.h b/include/uapi/linux/switch.h
 --- a/include/uapi/linux/switch.h
 +++ b/include/uapi/linux/switch.h
-@@ -89,6 +89,7 @@ enum switch_val_type {
- 	SWITCH_TYPE_PORTS,
- 	SWITCH_TYPE_LINK,
- 	SWITCH_TYPE_NOVAL,
-+	SWITCH_TYPE_EXT,
+@@ -47,6 +47,7 @@ enum {
+ 	SWITCH_ATTR_OP_NAME,
+ 	SWITCH_ATTR_OP_PORT,
+ 	SWITCH_ATTR_OP_VLAN,
++	SWITCH_ATTR_OP_REG,
+ 	SWITCH_ATTR_OP_VALUE_INT,
+ 	SWITCH_ATTR_OP_VALUE_STR,
+ 	SWITCH_ATTR_OP_VALUE_PORTS,
+@@ -78,7 +79,10 @@ enum {
+ 	SWITCH_CMD_SET_PORT,
+ 	SWITCH_CMD_LIST_VLAN,
+ 	SWITCH_CMD_GET_VLAN,
+-	SWITCH_CMD_SET_VLAN
++	SWITCH_CMD_SET_VLAN,
++	SWITCH_CMD_LIST_REG,
++	SWITCH_CMD_SET_REG,
++	SWITCH_CMD_GET_REG
  };
  
- /* port nested attributes */
+ /* data types */
+@@ -88,6 +92,7 @@ enum switch_val_type {
+ 	SWITCH_TYPE_STRING,
+ 	SWITCH_TYPE_PORTS,
+ 	SWITCH_TYPE_LINK,
++	SWITCH_TYPE_EXT,
+ 	SWITCH_TYPE_NOVAL,
+ };
+ 
