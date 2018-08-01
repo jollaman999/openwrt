@@ -12,7 +12,7 @@
  * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-
+/*qca808x_start*/
 /**
  * @defgroup fal_init FAL_INIT
  * @{
@@ -25,7 +25,7 @@ extern "C" {
 #endif                          /* __cplusplus */
 
 #include "ssdk_init.h"
-
+/*qca808x_end*/
 enum{
 	FAL_MODULE_ACL,
 	FAL_MODULE_VSI,
@@ -60,17 +60,21 @@ typedef struct
 
 sw_error_t fal_init(a_uint32_t dev_id, ssdk_init_cfg * cfg);
 sw_error_t fal_reset(a_uint32_t dev_id);
+/*qca808x_start*/
 sw_error_t fal_ssdk_cfg(a_uint32_t dev_id, ssdk_cfg_t *ssdk_cfg);
+/*qca808x_end*/
 sw_error_t fal_cleanup(void);
 sw_error_t fal_module_func_ctrl_set(a_uint32_t dev_id,
 		a_uint32_t module, fal_func_ctrl_t *func_ctrl);
 sw_error_t fal_module_func_ctrl_get(a_uint32_t dev_id,
 		a_uint32_t module, fal_func_ctrl_t *func_ctrl);
-
+/*qca808x_start*/
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */
+
 #endif                          /* _FAL_INIT_H_ */
 /**
  * @}
  */
+ /*qca808x_end*/

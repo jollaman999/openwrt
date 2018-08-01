@@ -20,7 +20,9 @@
 struct cmd_des_t gcmd_des[] =
 {
     /*port ctrl*/
+/*qca808x_end*/
 #ifdef IN_PORTCONTROL
+/*qca808x_start*/
     {
         "port", "config port control",
         {
@@ -119,12 +121,12 @@ struct cmd_des_t gcmd_des[] =
             {"srcfilter", "get", "get port source filter bypass", "<port_id>", SW_API_PT_SOURCE_FILTER_GET, NULL},
             {"frameMaxSize", "get", "get port frame max size", "<port_id>", SW_API_PT_FRAME_MAX_SIZE_GET},
             {"frameMaxSize", "set", "set port frame max size", "<port_id> <frame_max_size>", SW_API_PT_FRAME_MAX_SIZE_SET},
-            /*qca808x_start*/
+/*qca808x_start*/
             {NULL, NULL, NULL, NULL, (int)NULL, NULL},/*end of desc*/
         },
     },
-#endif
 /*qca808x_end*/
+#endif
 
     /*vlan*/
 #ifdef IN_VLAN

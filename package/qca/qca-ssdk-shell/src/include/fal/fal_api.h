@@ -20,8 +20,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif                          /* __cplusplus */
-
+/*qca808x_end*/
 #ifdef IN_PORTCONTROL
+/*qca808x_start*/
 #define PORTCONTROL_API \
     SW_API_DEF(SW_API_PT_DUPLEX_GET, fal_port_duplex_get), \
     SW_API_DEF(SW_API_PT_DUPLEX_SET, fal_port_duplex_set), \
@@ -224,11 +225,12 @@ extern "C" {
     SW_API_DESC(SW_API_PT_PROMISC_MODE_GET)  \
 /*qca808x_start*/\
 /*end of PORTCONTROL_API_PARAM*/
+/*qca808x_end*/
 #else
 #define PORTCONTROL_API
 #define PORTCONTROL_API_PARAM
 #endif
-/*qca808x_end*/
+
 #ifdef IN_VLAN
 #define VLAN_API \
     SW_API_DEF(SW_API_VLAN_ADD, fal_vlan_create), \
