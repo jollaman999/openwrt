@@ -435,7 +435,6 @@ ifeq (KSLIB, $(MODULE_TYPE))
 	    else ifeq ($(ARCH), arm)
 	    MODULE_INC += -I$(SYS_PATH) \
               -I$(TOOL_PATH)/../lib/gcc/$(TARGET_NAME)/$(GCC_VERSION)/include/ \
-              -I$(TOOL_PATH)/../../lib/armv7a-vfp-neon-rdk-linux-gnueabi/gcc/arm-rdk-linux-gnueabi/4.8.4/include/ \
               -I$(SYS_PATH)/include \
               -I$(SYS_PATH)/source/include \
               -I$(SYS_PATH)/source/arch/arm/mach-msm/include \
