@@ -25,7 +25,18 @@ diff --git a/include/linux/if_bridge.h b/include/linux/if_bridge.h
 +typedef void (br_notify_hook_t)(int group, int event, const void *ptr);
 +extern br_notify_hook_t __rcu *br_notify_hook;
  #endif
-diff --git a/net/bridge/br_if.c b/net/bridge/br_if.c
+diff --git a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
+--- a/net/bridge/br_fdb.c
++++ b/net/bridge/br_fdb.c
+@@ -100,7 +100,7 @@ static struct net_bridge_fdb_entry *fdb_find_rcu(struct hlist_head *head,
+ }
+ 
+ /* requires bridge hash_lock */
+-static struct net_bridge_fdb_entry *br_fdb_find(struct net_bridge *br,
++struct net_bridge_fdb_entry *br_fdb_find(struct net_bridge *br,
+ 						const unsigned char *addr,
+ 						__u16 vid)
+ {
 --- a/net/bridge/br_if.c
 +++ b/net/bridge/br_if.c
 @@ -1,3 +1,9 @@
@@ -101,7 +112,7 @@ diff --git a/net/bridge/br_if.c b/net/bridge/br_if.c
 +	br = netdev_priv(dev);
 +
 +	/* Lookup the fdb entry and get reference to the port dev */
-+	fdbe = __br_fdb_get(br, addr, 0);
++	fdbe = br_fdb_find(br, addr, 0);
 +	if (fdbe && fdbe->dst) {
 +		netdev = fdbe->dst->dev; /* port device */
 +		dev_hold(netdev);
@@ -111,8 +122,23 @@ diff --git a/net/bridge/br_if.c b/net/bridge/br_if.c
 +
 +	return netdev;
 +}
-+EXPORT_SYMBOL_GPL(br_port_dev_get);
++EXPORT_SYMBOL(br_port_dev_get);
 +
  /* Update bridge statistics for bridge packets processed by offload engines */
  void br_dev_update_stats(struct net_device *dev, struct rtnl_link_stats64 *nlstats)
  {
+diff --git a/net/bridge/br_private.h b/net/bridge/br_private.h
+--- a/net/bridge/br_private.h
++++ b/net/bridge/br_private.h
+@@ -1139,4 +1139,11 @@ static inline void br_switchdev_frame_unmark(struct sk_buff *skb)
+ }
+ #endif /* CONFIG_NET_SWITCHDEV */
+ 
++struct net_bridge_fdb_entry *br_fdb_find(struct net_bridge *br,
++						const unsigned char *addr,
++						__u16 vid);
++
++#define __br_get( __hook, __default, __args ... ) \
++		(__hook ? (__hook( __args )) : (__default))
++
+ #endif
