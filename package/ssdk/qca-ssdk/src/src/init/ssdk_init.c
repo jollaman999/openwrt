@@ -934,9 +934,6 @@ qca_ar8327_port_init(struct qca_phy_priv *priv, a_uint32_t port)
 		        case 0:
 		            port_cfg = &plat_data->port0_cfg;
 		            break;
-		        case 5:
-		            port_cfg = &plat_data->port5_cfg;
-		            break;
 		        case 6:
 		            port_cfg = &plat_data->port6_cfg;
 		            break;
