@@ -1255,6 +1255,23 @@ static uint32_t get_netmask_from_netdevice(const struct net_device *in_net_dev)
 }
 #endif
 
+static inline struct net_device *br_dev_get_master(struct net_device *dev)
+{
+	struct net_device *master;
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 9, 0))
+	rcu_read_lock();
+	master = netdev_master_upper_dev_get_rcu(dev);
+	if (master)
+		dev_hold(master);
+
+	rcu_read_unlock();
+#else
+	master = dev->master;
+	if (master)
+		dev_hold(master);
+#endif
+	return master;
+}
 
 static void hnat_add_neigh(struct neighbour *neigh) 
 {
@@ -1267,10 +1284,10 @@ static void hnat_add_neigh(struct neighbour *neigh)
 	strlcpy(msg.arp_in.name, neigh->dev->name, IFNAMSIZ);
 	msg.arp_in.in = neigh->dev;
 
-	if (neigh->dev->priv_flags & IFF_EBRIDGE) {
-		if (!(dev = br_port_dev_get(neigh->dev, neigh->ha, NULL, 0))) {
-			HNAT_ERR_PRINTK("Failed to find bridge port by [%pM]\n",
-				neigh->ha);
+	if (neigh->dev->priv_flags & IFF_BRIDGE_PORT) {
+		if (!(dev = br_dev_get_master(neigh->dev))) {
+			HNAT_ERR_PRINTK("Failed to find bridge for [%s]\n",
+				neigh->dev->name);
 			return ;
 		}
 	} else {
