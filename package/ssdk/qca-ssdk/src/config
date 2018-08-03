@@ -96,7 +96,7 @@ CPU_CFLAG=-Wstrict-prototypes -fomit-frame-pointer -G 0 -mno-abicalls -fno-stric
 endif
 
 ifeq ($(ARCH), arm)
-  CPU_CFLAG=-D__LINUX_ARM_ARCH__=7 -DMODULE -O2 -pipe -march=armv7-a -mcpu=cortex-a15 -mfpu=neon-vfpv4 -mfloat-abi=softfp -D$(BOARD_NAME) -fno-common -fshort-wchar
+  CPU_CFLAG=-D__LINUX_ARM_ARCH__=7 -DMODULE -Os -pipe -mcpu=cortex-a15 -D$(BOARD_NAME) -fno-common -msoft-float
 endif
 
 ifeq ($(ARCH), arm64)
