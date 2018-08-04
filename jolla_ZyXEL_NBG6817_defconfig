@@ -4508,12 +4508,7 @@ CONFIG_OPENVPN_openssl_ENABLE_SMALL=y
 # CONFIG_PACKAGE_haproxy is not set
 # CONFIG_PACKAGE_haproxy-nossl is not set
 # CONFIG_PACKAGE_lighttpd is not set
-CONFIG_PACKAGE_nginx=y
-
-#
-# Configuration
-#
-CONFIG_NGINX_SSL=y
+# CONFIG_PACKAGE_nginx is not set
 # CONFIG_NGINX_DAV is not set
 # CONFIG_NGINX_FLV is not set
 # CONFIG_NGINX_STUB_STATUS is not set
