@@ -5088,7 +5088,7 @@ CONFIG_PACKAGE_bash=y
 # Zoneinfo
 #
 # CONFIG_PACKAGE_zoneinfo-africa is not set
-# CONFIG_PACKAGE_zoneinfo-asia is not set
+CONFIG_PACKAGE_zoneinfo-asia=y
 # CONFIG_PACKAGE_zoneinfo-atlantic is not set
 # CONFIG_PACKAGE_zoneinfo-australia-nz is not set
 CONFIG_PACKAGE_zoneinfo-core=y
@@ -5097,7 +5097,7 @@ CONFIG_PACKAGE_zoneinfo-core=y
 # CONFIG_PACKAGE_zoneinfo-northamerica is not set
 # CONFIG_PACKAGE_zoneinfo-pacific is not set
 # CONFIG_PACKAGE_zoneinfo-poles is not set
-# CONFIG_PACKAGE_zoneinfo-simple is not set
+CONFIG_PACKAGE_zoneinfo-simple=y
 # CONFIG_PACKAGE_zoneinfo-southamerica is not set
 
 #
