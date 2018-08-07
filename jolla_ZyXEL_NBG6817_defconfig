@@ -2473,6 +2473,7 @@ CONFIG_PACKAGE_php7-mod-xml=y
 CONFIG_PACKAGE_php7-mod-xmlreader=y
 CONFIG_PACKAGE_php7-mod-xmlwriter=y
 CONFIG_PACKAGE_php7-mod-zip=y
+CONFIG_PACKAGE_php7-pecl-apcu=y
 # CONFIG_PACKAGE_php7-pecl-dio is not set
 # CONFIG_PACKAGE_php7-pecl-http is not set
 # CONFIG_PACKAGE_php7-pecl-krb5 is not set
