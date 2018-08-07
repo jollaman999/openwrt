@@ -744,6 +744,7 @@ static sw_error_t setup_interface_entry(char *list_if, int is_wan)
     list_all = temp;
 
     setup_error = SW_FAIL;
+    rcu_read_lock();
     while ((dev_name = strsep(&list_all, " ")) != NULL)
     {
         nat_dev = dev_get_by_name(&init_net, dev_name);
@@ -869,6 +870,7 @@ static sw_error_t setup_interface_entry(char *list_if, int is_wan)
         }
     }
 
+    rcu_read_unlock();
     return setup_error;
 }
 
