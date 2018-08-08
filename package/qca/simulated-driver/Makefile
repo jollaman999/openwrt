@@ -21,7 +21,7 @@ PKG_BRANCH:=master
 PKG_RELEASE:=1
 
 LOCAL_SRC:=$(TOPDIR)/package/qca/shortcut-fe/src/
-include $(INCLUDE_DIR)/local-development_qca-sfe.mk
+include $(INCLUDE_DIR)/local-development.mk
 ifeq ($(DUMP)$(PKG_VERSION),)
   PKG_REV:=$(shell git ls-remote $(PKG_SOURCE_URL) $(PKG_BRANCH) | cut -b -7)
   PKG_VERSION:=g$(PKG_REV)
