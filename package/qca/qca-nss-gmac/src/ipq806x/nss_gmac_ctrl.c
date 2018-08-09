@@ -1043,7 +1043,7 @@ static int32_t nss_gmac_do_common_init(struct platform_device *pdev)
 	/*
 	 * Enable clock control for MSM Boards with DT support
 	 */
-	ctx.msm_clk_ctl_enabled = !!of_machine_is_compatible("qcom,ipq8064");
+	ctx.msm_clk_ctl_enabled = !!(of_machine_is_compatible("qcom,ipq8064") || of_machine_is_compatible("qcom,ipq8065"));
 #else
 	res_nss_base.start = NSS_REG_BASE;
 	res_nss_base.end = NSS_REG_BASE + NSS_REG_LEN - 1;

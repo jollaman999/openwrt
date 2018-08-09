@@ -330,7 +330,7 @@ int32_t nss_gmac_get_phy_profile(void)
 	common_device_node = of_find_node_by_name(NULL, NSS_GMAC_COMMON_DEVICE_NODE);
 
 	if (of_property_read_u32(common_device_node, "qcom,gmac-phy-profile", &gmac_phy_profile)) {
-		if (of_machine_is_compatible("qcom,ipq8064"))
+		if (of_machine_is_compatible("qcom,ipq8064") || of_machine_is_compatible("qcom,ipq8065"))
 			return NSS_GMAC_PHY_PROFILE_2R_2S;
 
 		return NSS_GMAC_PHY_PROFILE_1R_3S;
