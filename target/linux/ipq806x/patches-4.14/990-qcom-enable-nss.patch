@@ -87,7 +87,23 @@ diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
  
  static struct clk_pll pll0 = {
  	.l_reg = 0x30c4,
-@@ -2764,6 +2765,148 @@ static struct clk_dyn_rcg ubi32_core2_src_clk = {
+@@ -2270,6 +2271,7 @@ static struct clk_branch usb_fs1_h_clk = {
+ 	},
+ };
+ 
++#if 0
+ static struct clk_branch ebi2_clk = {
+ 	.hwcg_reg = 0x3b00,
+ 	.hwcg_bit = 6,
+@@ -2297,6 +2299,7 @@ static struct clk_branch ebi2_aon_clk = {
+ 		},
+ 	},
+ };
++#endif
+ 
+ static const struct freq_tbl clk_tbl_gmac[] = {
+ 	{ 133000000, P_PLL0, 1,  50, 301 },
+@@ -2764,6 +2767,148 @@ static struct clk_dyn_rcg ubi32_core2_src_clk = {
  	},
  };
  
@@ -236,7 +252,18 @@ diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
  static struct clk_regmap *gcc_ipq806x_clks[] = {
  	[PLL0] = &pll0.clkr,
  	[PLL0_VOTE] = &pll0_vote,
-@@ -2882,6 +3025,7 @@ static struct clk_regmap *gcc_ipq806x_clks[] = {
+@@ -2868,8 +3013,10 @@ static struct clk_regmap *gcc_ipq806x_clks[] = {
+ 	[USB_FS1_XCVR_SRC] = &usb_fs1_xcvr_clk_src.clkr,
+ 	[USB_FS1_XCVR_CLK] = &usb_fs1_xcvr_clk.clkr,
+ 	[USB_FS1_SYSTEM_CLK] = &usb_fs1_sys_clk.clkr,
++#if 0
+ 	[EBI2_CLK] = &ebi2_clk.clkr,
+ 	[EBI2_AON_CLK] = &ebi2_aon_clk.clkr,
++#endif
+ 	[GMAC_CORE1_CLK_SRC] = &gmac_core1_src.clkr,
+ 	[GMAC_CORE1_CLK] = &gmac_core1_clk.clkr,
+ 	[GMAC_CORE2_CLK_SRC] = &gmac_core2_src.clkr,
+@@ -2882,6 +3029,7 @@ static struct clk_regmap *gcc_ipq806x_clks[] = {
  	[UBI32_CORE2_CLK_SRC] = &ubi32_core2_src_clk.clkr,
  	[NSSTCM_CLK_SRC] = &nss_tcm_src.clkr,
  	[NSSTCM_CLK] = &nss_tcm_clk.clkr,
@@ -244,13 +271,3 @@ diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
  	[PLL9] = &hfpll0.clkr,
  	[PLL10] = &hfpll1.clkr,
  	[PLL12] = &hfpll_l2.clkr,
-diff --git a/include/dt-bindings/clock/qcom,gcc-ipq806x.h b/include/dt-bindings/clock/qcom,gcc-ipq806x.h
---- a/include/dt-bindings/clock/qcom,gcc-ipq806x.h
-+++ b/include/dt-bindings/clock/qcom,gcc-ipq806x.h
-@@ -291,5 +291,6 @@
- #define EBI2_AON_CLK				281
- #define NSSTCM_CLK_SRC				282
- #define NSSTCM_CLK				283
-+#define NSS_CORE_CLK				284 /* Virtual */
- 
- #endif
