@@ -40,7 +40,6 @@
 #include "nss_oam.h"
 #include "nss_data_plane.h"
 #include "nss_stats.h"
-#include "nss_meminfo.h"
 
 /*
  * XXX:can't add this to api_if.h till the deprecated
@@ -487,7 +486,12 @@ struct nss_ctx_instance {
 	uint32_t vphys;			/* Phys mem pointer to virtual register map */
 	uint32_t qgic_phys;		/* Phys mem pointer to QGIC register map */
 	uint32_t load;			/* Load address for this core */
-	struct nss_meminfo_ctx meminfo_ctx;	/* Meminfo context */
+	unsigned long n2h_ring;		/* Allocated n2h ring buffer */
+	unsigned long h2n_ring;		/* Allocated h2n ring buffer */
+	uint32_t n2h_ring_dma;		/* DMA Address of the n2h_ring */
+	uint32_t h2n_ring_dma;		/* DMA Address of the h2n_ring */
+	uint32_t n2h_ring_total_size;	/* Total size of the n2h_ring */
+	uint32_t h2n_ring_total_size;	/* Total size of the h2n_ring */
 	enum nss_core_state state;	/* State of NSS core */
 	uint32_t c2c_start;		/* C2C start address */
 	struct int_ctx_instance int_ctx[NSS_MAX_IRQ_PER_CORE];

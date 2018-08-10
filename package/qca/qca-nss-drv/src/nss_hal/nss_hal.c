@@ -214,6 +214,110 @@ static int nss_hal_register_netdevice(struct nss_ctx_instance *nss_ctx, struct n
 }
 
 /*
+ * nss_hal_free_rings()
+ *	Free n2h/h2n rings
+ */
+static void nss_hal_free_rings(struct nss_ctx_instance *nss_ctx)
+{
+	if (nss_ctx->n2h_ring) {
+		if (!dma_mapping_error(nss_ctx->dev, nss_ctx->n2h_ring_dma)) {
+			dma_unmap_single(nss_ctx->dev, nss_ctx->n2h_ring_dma, nss_ctx->n2h_ring_total_size, DMA_FROM_DEVICE);
+		}
+		free_pages(nss_ctx->n2h_ring, get_order(nss_ctx->n2h_ring_total_size));
+		nss_ctx->n2h_ring = 0;
+	}
+
+	if (nss_ctx->h2n_ring) {
+		if (!dma_mapping_error(nss_ctx->dev, nss_ctx->h2n_ring_dma)) {
+			dma_unmap_single(nss_ctx->dev, nss_ctx->h2n_ring_dma, nss_ctx->h2n_ring_total_size, DMA_FROM_DEVICE);
+		}
+		free_pages(nss_ctx->h2n_ring, get_order(nss_ctx->h2n_ring_total_size));
+		nss_ctx->h2n_ring = 0;
+	}
+}
+
+/*
+ * nss_hal_alloc_rings()
+ *	Allocate n2h/h2n rings
+ */
+static int nss_hal_alloc_rings(struct nss_ctx_instance *nss_ctx)
+{
+	struct nss_if_mem_map *if_map = (struct nss_if_mem_map *)(nss_ctx->vmap);
+	int i;
+
+	/*
+	 * TODO: We are purposely reserving 2 descriptor size between each ring
+	 * to avoid unexpected cache behavior. This needs to be investigated
+	 * further.
+	 */
+	nss_ctx->n2h_ring_total_size = sizeof(struct n2h_descriptor) * NSS_N2H_RING_COUNT * (NSS_RING_SIZE + 2);
+	nss_ctx->h2n_ring_total_size = sizeof(struct h2n_descriptor) * NSS_H2N_RING_COUNT * (NSS_RING_SIZE + 2);
+
+	nss_ctx->n2h_ring = __get_free_pages(GFP_KERNEL | __GFP_NOWARN | __GFP_ZERO, get_order(nss_ctx->n2h_ring_total_size));
+	if (!nss_ctx->n2h_ring) {
+		nss_info_always("%p: failed to alloc n2h_rings\n", nss_ctx);
+		return -ENOMEM;
+	}
+
+	nss_ctx->n2h_ring_dma = dma_map_single(nss_ctx->dev, (void *)nss_ctx->n2h_ring, nss_ctx->n2h_ring_total_size, DMA_TO_DEVICE);
+	if (dma_mapping_error(nss_ctx->dev, nss_ctx->n2h_ring_dma)) {
+		nss_info_always("%p: failed to map n2h_rings\n", nss_ctx);
+		goto clean_up;
+	}
+
+	nss_ctx->h2n_ring = __get_free_pages(GFP_KERNEL | __GFP_NOWARN | __GFP_ZERO, get_order(nss_ctx->h2n_ring_total_size));
+	if (!nss_ctx->h2n_ring) {
+		nss_info_always("%p: failed to alloc h2n_rings\n", nss_ctx);
+		goto clean_up;
+	}
+
+	nss_ctx->h2n_ring_dma = dma_map_single(nss_ctx->dev, (void *)nss_ctx->h2n_ring, nss_ctx->h2n_ring_total_size, DMA_TO_DEVICE);
+	if (dma_mapping_error(nss_ctx->dev, nss_ctx->h2n_ring_dma)) {
+		nss_info_always("%p: failed to map h2n_rings\n", nss_ctx);
+		goto clean_up;
+	}
+
+	/*
+	 * N2H ring settings
+	 */
+	if_map->n2h_rings = NSS_N2H_RING_COUNT;
+	for (i = 0; i < NSS_N2H_RING_COUNT; i++) {
+		struct hlos_n2h_desc_ring *n2h_desc_ring = &nss_ctx->n2h_desc_ring[i];
+		n2h_desc_ring->desc_ring.desc = (struct n2h_descriptor *)(nss_ctx->n2h_ring + i * sizeof(struct n2h_descriptor) * (NSS_RING_SIZE + 2));
+		n2h_desc_ring->desc_ring.size = NSS_RING_SIZE;
+		n2h_desc_ring->hlos_index = if_map->n2h_hlos_index[i];
+
+		if_map->n2h_desc_if[i].size = NSS_RING_SIZE;
+		if_map->n2h_desc_if[i].desc_addr = nss_ctx->n2h_ring_dma + i * sizeof(struct n2h_descriptor) * (NSS_RING_SIZE + 2);
+		nss_info("%p: N2H ring %d, size %d, addr = %x\n", nss_ctx, i, if_map->n2h_desc_if[i].size, if_map->n2h_desc_if[i].desc_addr);
+	}
+
+	/*
+	 * H2N ring settings
+	 */
+	if_map->h2n_rings = NSS_H2N_RING_COUNT;
+	for (i = 0; i < NSS_H2N_RING_COUNT; i++) {
+		struct hlos_h2n_desc_rings *h2n_desc_ring = &nss_ctx->h2n_desc_rings[i];
+		h2n_desc_ring->desc_ring.desc = (struct h2n_descriptor *)(nss_ctx->h2n_ring + i * sizeof(struct h2n_descriptor) * (NSS_RING_SIZE + 2));
+		h2n_desc_ring->desc_ring.size = NSS_RING_SIZE;
+		h2n_desc_ring->hlos_index = if_map->h2n_hlos_index[i];
+		spin_lock_init(&h2n_desc_ring->lock);
+
+		if_map->h2n_desc_if[i].size = NSS_RING_SIZE;
+		if_map->h2n_desc_if[i].desc_addr = nss_ctx->h2n_ring_dma + i * sizeof(struct h2n_descriptor) * (NSS_RING_SIZE + 2);
+		nss_info("%p: H2N ring %d, size %d, addr = %x\n", nss_ctx, i, if_map->h2n_desc_if[i].size, if_map->h2n_desc_if[i].desc_addr);
+	}
+
+	NSS_CORE_DMA_CACHE_MAINT(if_map, sizeof(struct nss_if_mem_map), DMA_TO_DEVICE);
+	NSS_CORE_DSB();
+
+	return 0;
+clean_up:
+	nss_hal_free_rings(nss_ctx);
+	return -ENOMEM;
+}
+
+/*
  * nss_hal_probe()
  *	HLOS device probe callback
  */
@@ -315,8 +419,9 @@ int nss_hal_probe(struct platform_device *nss_dev)
 	nss_info("%d:ctx=%p, vphys=%x, vmap=%p, nphys=%x, nmap=%p", nss_ctx->id,
 			nss_ctx, nss_ctx->vphys, nss_ctx->vmap, nss_ctx->nphys, nss_ctx->nmap);
 
-	if (!nss_meminfo_init(nss_ctx)) {
-		nss_info_always("%p: meminfo init failed\n", nss_ctx);
+	err = nss_hal_alloc_rings(nss_ctx);
+	if (err) {
+		nss_warning("%p: failed to allocate data/cmd rings\n", nss_ctx);
 		goto err_init;
 	}
 
@@ -593,6 +698,8 @@ err_register_netdevice:
 		nss_hal_clean_up_netdevice(&nss_ctx->int_ctx[i]);
 	}
 
+	nss_hal_free_rings(nss_ctx);
+
 err_init:
 	if (nss_dev->dev.of_node) {
 		if (npd->nmap) {
@@ -648,6 +755,8 @@ int nss_hal_remove(struct platform_device *nss_dev)
 #if (NSS_FABRIC_SCALING_SUPPORT == 1)
 	fab_scaling_unregister(nss_core0_clk);
 #endif
+
+	nss_hal_free_rings(nss_ctx);
 
 	if (nss_dev->dev.of_node) {
 		if (nss_ctx->nmap) {
