@@ -465,18 +465,6 @@
 			clock-frequency = <25000000>;
 		};
 
-		nss_fabric0_clk: nss-fabric0-clk {
-			compatible = "fixed-clock";
-			#clock-cells = <0>;
-			clock-frequency = <533000000>;
-		};
-
-		nss_fabric1_clk: nss-fabric1-clk {
-			compatible = "fixed-clock";
-			#clock-cells = <0>;
-			clock-frequency = <266500000>;
-		};
-
 		sleep_clk: sleep_clk {
 			compatible = "fixed-clock";
 			clock-frequency = <32768>;
@@ -647,6 +635,24 @@
 
 					qcom,switch-mode-frequency = <1200000>;
 				};
+			};
+
+			nss_fabric0_clk: nss-fabric0-clk {
+				#clock-cells = <0>;
+				compatible = "qcom,rpm-clk";
+				reg = <QCOM_RPM_NSS_FABRIC_0_CLK>;
+				qcom,rpm-clk-name = "nss-fabric0";
+				qcom,rpm-clk-freq = <533000000>;
+				qcom,rpm-clk-active-only;
+			};
+
+			nss_fabric1_clk: nss-fabric1-clk {
+				#clock-cells = <0>;
+				compatible = "qcom,rpm-clk";
+				reg = <QCOM_RPM_NSS_FABRIC_1_CLK>;
+				qcom,rpm-clk-name = "nss-fabric1";
+				qcom,rpm-clk-freq = <266500000>;
+				qcom,rpm-clk-active-only;
 			};
 		};
 
