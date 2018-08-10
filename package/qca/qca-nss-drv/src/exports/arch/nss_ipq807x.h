@@ -34,6 +34,9 @@
 #define NSS_H2N_RING_COUNT 11		/**< Number of H2N rings. */
 #define NSS_RING_SIZE	128		/**< Ring size. */
 
+#define NSS_IMEM_START	0x38000000	/**< NSS IMEM start address. */
+#define NSS_IMEM_SIZE	0x30000		/**< NSS IMEM size per core. */
+
 /**
  * @}
  */

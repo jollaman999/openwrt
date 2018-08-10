@@ -1274,7 +1274,8 @@ static int32_t nss_core_handle_cause_queue(struct int_ctx_instance *int_ctx, uin
 	struct n2h_descriptor *desc;
 	struct n2h_descriptor *next_cache_desc;
 	struct nss_ctx_instance *nss_ctx = int_ctx->nss_ctx;
-	struct nss_if_mem_map *if_map = (struct nss_if_mem_map *)nss_ctx->vmap;
+	struct nss_meminfo_ctx *mem_ctx = &nss_ctx->meminfo_ctx;
+	struct nss_if_mem_map *if_map = mem_ctx->if_map;
 
 	qid = nss_core_cause_to_queue(cause);
 
@@ -1879,7 +1880,8 @@ static inline void nss_core_handle_tx_unblocked(struct nss_ctx_instance *nss_ctx
 static void nss_core_handle_cause_nonqueue(struct int_ctx_instance *int_ctx, uint32_t cause, int16_t weight)
 {
 	struct nss_ctx_instance *nss_ctx = int_ctx->nss_ctx;
-	struct nss_if_mem_map *if_map = (struct nss_if_mem_map *)(nss_ctx->vmap);
+	struct nss_meminfo_ctx *mem_ctx = &nss_ctx->meminfo_ctx;
+	struct nss_if_mem_map *if_map = mem_ctx->if_map;
 	uint16_t max_buf_size = (uint16_t) nss_ctx->max_buf_size;
 	uint32_t c2c_intr_addr1, c2c_intr_addr2;
 	int32_t i;
@@ -2635,7 +2637,8 @@ int32_t nss_core_send_buffer(struct nss_ctx_instance *nss_ctx, uint32_t if_num,
 	struct h2n_desc_if_instance *desc_if = &h2n_desc_ring->desc_ring;
 	struct h2n_descriptor *desc_ring;
 	struct h2n_descriptor *desc;
-	struct nss_if_mem_map *if_map = (struct nss_if_mem_map *)nss_ctx->vmap;
+	struct nss_meminfo_ctx *mem_ctx = &nss_ctx->meminfo_ctx;
+	struct nss_if_mem_map *if_map = mem_ctx->if_map;
 	uint16_t mss = 0;
 	bool is_bounce = ((buffer_type == H2N_BUFFER_SHAPER_BOUNCE_INTERFACE) || (buffer_type == H2N_BUFFER_SHAPER_BOUNCE_BRIDGE));
 
