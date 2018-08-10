@@ -518,20 +518,6 @@
 			 < 384000000  800000 >;
 	};
 
-	nss-common {
-		compatible = "qcom,nss-common";
-		reg = <0x03000000 0x00001000>;
-		reg-names = "nss_fpb_base";
-		clocks = <&gcc NSS_CORE_CLK>, <&gcc NSSTCM_CLK>,
-			 <&nss_fabric0_clk>, <&nss_fabric1_clk>;
-		clock-names = "nss-core-clk", "nss-tcm-clk", "nss-fab0-clk",
-			      "nss-fab0-clk";
-		nss_core-supply = <&smb208_s1b>;
-		nss_core_vdd_nominal = <1100000>;
-		nss_core_vdd_high = <1150000>;
-		nss_core_threshold_freq = <733000000>;
-	};
-
 	soc: soc {
 		#address-cells = <1>;
 		#size-cells = <1>;
@@ -565,20 +551,6 @@
 			tsens_backup: backup@410 {
 				reg = <0x410 0x10>;
 			};
-		};
-
-		nss0: nss@40000000 {
-			compatible = "qcom,nss";
-			qcom,low-frequency = <110000000>;
-			qcom,mid-frequency = <550000000>;
-			qcom,max-frequency = <733000000>;
-		};
-
-		nss1: nss@40800000 {
-			compatible = "qcom,nss";
-			qcom,low-frequency = <110000000>;
-			qcom,mid-frequency = <550000000>;
-			qcom,max-frequency = <733000000>;
 		};
 
 		rpm@108000 {
@@ -635,24 +607,6 @@
 
 					qcom,switch-mode-frequency = <1200000>;
 				};
-			};
-
-			nss_fabric0_clk: nss-fabric0-clk {
-				#clock-cells = <0>;
-				compatible = "qcom,rpm-clk";
-				reg = <QCOM_RPM_NSS_FABRIC_0_CLK>;
-				qcom,rpm-clk-name = "nss-fabric0";
-				qcom,rpm-clk-freq = <533000000>;
-				qcom,rpm-clk-active-only;
-			};
-
-			nss_fabric1_clk: nss-fabric1-clk {
-				#clock-cells = <0>;
-				compatible = "qcom,rpm-clk";
-				reg = <QCOM_RPM_NSS_FABRIC_1_CLK>;
-				qcom,rpm-clk-name = "nss-fabric1";
-				qcom,rpm-clk-freq = <266500000>;
-				qcom,rpm-clk-active-only;
 			};
 		};
 
