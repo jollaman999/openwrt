@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=qca-nss-firmware
-PKG_SOURCE_DATE:=2018-08-10
-PKG_SOURCE_VERSION:=f3aacfa095cb1bde03e595e5481286bedf13a017
+PKG_SOURCE_DATE:=2016-05-26
+PKG_SOURCE_VERSION:=c570b28133795c62938ba65ae5bcd03cc156729c
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/jollaman999/qca-nss-fw.git
+PKG_SOURCE_URL:=https://github.com/qca/nss-firmware.git
 
 PKG_MAINTAINER:=QStuff <razzlefratz@gmail.com>
 
@@ -38,10 +38,10 @@ endef
 define Package/qca-nss-firmware/install
 	$(INSTALL_DIR) $(1)/lib/firmware/
 	$(INSTALL_DATA) \
-		$(PKG_BUILD_DIR)/qca-nss0-retail.bin \
+		$(PKG_BUILD_DIR)/R/retail_router0.bin \
 		$(1)/lib/firmware/qca-nss0.bin
 	$(INSTALL_DATA) \
-		$(PKG_BUILD_DIR)/qca-nss1-retail.bin \
+		$(PKG_BUILD_DIR)/R/retail_router1.bin \
 		$(1)/lib/firmware/qca-nss1.bin
 endef
 
