@@ -85,6 +85,7 @@
 #define ARP_ENTRY_MAX 128
 
 #define DESS_CHIP_VER	0x14
+#define HOST_PREFIX_MAX	31
 
 /* P6 is used by loop dev. */
 #define S17_P6PAD_MODE_REG_VALUE 0x01000000
@@ -728,6 +729,29 @@ uint32_t napt_set_ipv6_default_route(void)
 }
 #endif /* ifdef CONFIG_IPV6_HWACCEL */
 
+static sw_error_t hnat_add_host_route(
+		fal_ip4_addr_t ip_addr,
+		uint32_t prefix_len)
+{
+	fal_host_route_t host_route;
+
+	memset(&host_route, 0, sizeof(fal_host_route_t));
+
+	fal_ip_host_route_get(0, 0, &host_route);
+	if ((host_route.route_addr.ip4_addr == ip_addr) &&
+	    (host_route.prefix_length == prefix_len) &&
+	    host_route.valid)
+	    return SW_OK;
+
+	host_route.valid = A_TRUE;
+	host_route.vrf_id = 0;
+	host_route.ip_version = 0;
+	host_route.route_addr.ip4_addr = ip_addr;
+	host_route.prefix_length = prefix_len;
+
+	return fal_ip_host_route_set(0, 0, &host_route);
+}
+
 static sw_error_t setup_interface_entry(char *list_if, int is_wan)
 {
     char temp[IFNAMSIZ*4]; /* Max 4 interface entries right now. */
@@ -839,22 +863,34 @@ static sw_error_t setup_interface_entry(char *list_if, int is_wan)
             }
 
             if(setup_lan_if) {
-			dev_put(nat_dev);
+                dev_put(nat_dev);
+                rcu_read_unlock();
                 return SW_OK;
             } else {
                 setup_lan_if = 1;
             }
         }
 #endif
-		if (1 == is_wan) {
-			in_device_wan = (struct in_device *) nat_dev->ip_ptr;
-			if((in_device_wan) && (in_device_wan->ifa_list))
-			{
-				a_uint32_t index;
-				nat_hw_pub_ip_add(ntohl((a_uint32_t)(in_device_wan->ifa_list->ifa_address)), &index);
-				HNAT_PRINTK("pubip add 0x%x\n", (a_uint32_t)(in_device_wan->ifa_list->ifa_address));
-			}
-		}
+        if (1 == is_wan) {
+            in_device_wan = (struct in_device *) nat_dev->ip_ptr;
+            if((nf_athrs17_hnat_wan_type == NF_S17_WAN_TYPE_IP) &&
+               (in_device_wan) && (in_device_wan->ifa_list))
+            {
+                a_uint32_t index;
+
+                if (((nat_chip_ver&0xffff) >> 8) == DESS_CHIP_VER) {
+                    a_uint32_t ip, len;
+
+                    ip = in_device_wan->ifa_list->ifa_address & in_device_wan->ifa_list->ifa_mask;
+                    ip = ntohl(ip);
+                    len = 32 - ffs(ntohl(in_device_wan->ifa_list->ifa_mask));
+                    hnat_add_host_route(ip, len);
+                }
+                nat_hw_pub_ip_add(ntohl((a_uint32_t)(in_device_wan->ifa_list->ifa_address)),
+                                                &index);
+                HNAT_PRINTK("pubip add 0x%x\n", (a_uint32_t)(in_device_wan->ifa_list->ifa_address));
+                }
+        }
         memcpy(if_mac_addr, devmac, MAC_LEN);
         devmac = if_mac_addr;
         dev_put(nat_dev);
@@ -867,6 +903,7 @@ static sw_error_t setup_interface_entry(char *list_if, int is_wan)
         else
         {
             setup_error = SW_OK;
+            break;
         }
     }
 
@@ -1139,6 +1176,11 @@ static int add_pppoe_host_entry(uint32_t sport, a_int32_t arp_entry_id)
 
             PPPOE_SESSION_ID_SET(0, pppoetbl.entry_id, pppoetbl.session_id);
             aos_printk("pppoe session: %d, entry_id: %d\n", pppoetbl.session_id, pppoetbl.entry_id);
+
+            if (((nat_chip_ver&0xffff)>>8) == DESS_CHIP_VER) {
+                hnat_add_host_route(ntohl(nf_athrs17_hnat_wan_ip),
+				HOST_PREFIX_MAX);
+            }
 
             /* create the peer host ARP entry */
             memcpy(ibuf, (void *)&nf_athrs17_hnat_ppp_peer_ip, 4);
