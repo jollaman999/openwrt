@@ -279,7 +279,7 @@ static struct dsa_switch_ops mv88e6063_switch_ops = {
 	.phy_write	= mv88e6063_phy_write,
 };
 
-#if LINUX_VERSION_CODE > KERNEL_VERSION(4,9,0)
+#if LINUX_VERSION_CODE > KERNEL_VERSION(4,13,0)
 static struct dsa_switch_driver mv88e6063_switch_drv = {
 	.ops		= &mv88e6063_switch_ops,
 };
