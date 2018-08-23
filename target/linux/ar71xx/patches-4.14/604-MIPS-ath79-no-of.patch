@@ -8,24 +8,9 @@
  	help
  	  Support for the Atheros AR71XX/AR724X/AR913X SoCs.
  
---- a/arch/mips/ath79/clock.c
-+++ b/arch/mips/ath79/clock.c
-@@ -32,10 +32,12 @@
- #define AR724X_BASE_FREQ	40000000
- 
- static struct clk *clks[ATH79_CLK_END];
-+#ifdef CONFIG_OF
- static struct clk_onecell_data clk_data = {
- 	.clks = clks,
- 	.clk_num = ARRAY_SIZE(clks),
- };
-+#endif
- 
- static struct clk *__init ath79_add_sys_clkdev(
- 	const char *id, unsigned long rate)
 --- a/arch/mips/ath79/setup.c
 +++ b/arch/mips/ath79/setup.c
-@@ -224,16 +224,20 @@ unsigned int get_c0_compare_int(void)
+@@ -196,16 +196,20 @@ unsigned int get_c0_compare_int(void)
  
  void __init plat_mem_setup(void)
  {
@@ -46,7 +31,7 @@
  
  	if (mips_machtype != ATH79_MACH_GENERIC_OF) {
  		ath79_reset_base = ioremap_nocache(AR71XX_RESET_BASE,
-@@ -329,17 +333,21 @@ static int __init ath79_setup(void)
+@@ -301,17 +305,21 @@ static int __init ath79_setup(void)
  
  arch_initcall(ath79_setup);
  
@@ -68,3 +53,18 @@
  	     "Generic AR71XX/AR724X/AR913X based board (DT)",
  	     NULL);
 +#endif
+--- a/arch/mips/ath79/clock.c
++++ b/arch/mips/ath79/clock.c
+@@ -32,10 +32,12 @@
+ #define AR724X_BASE_FREQ	40000000
+ 
+ static struct clk *clks[ATH79_CLK_END];
++#ifdef CONFIG_OF
+ static struct clk_onecell_data clk_data = {
+ 	.clks = clks,
+ 	.clk_num = ARRAY_SIZE(clks),
+ };
++#endif
+ 
+ static struct clk *__init ath79_add_sys_clkdev(
+ 	const char *id, unsigned long rate)
