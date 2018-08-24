@@ -250,13 +250,13 @@ enum{
     typedef a_uint32_t fal_acl_field_map_t[2];
 
 #define FAL_FIELD_FLG_SET(flag, field) \
-    (flag[(field) / 32]) |= (0x1UL << ((field) % 32))
+    ((flag[(field) / 32]) |= (0x1UL << ((field) % 32)))
 
 #define FAL_FIELD_FLG_CLR(flag, field) \
-    (flag[(field) / 32]) &= (~(0x1UL << ((field) % 32)))
+    ((flag[(field) / 32]) &= (~(0x1UL << ((field) % 32))))
 
 #define FAL_FIELD_FLG_TST(flag, field) \
-    ((flag[(field) / 32]) & (0x1UL << ((field) % 32))) ? 1 : 0
+    (((flag[(field) / 32]) & (0x1UL << ((field) % 32))) ? 1 : 0)
 
 #define FAL_ACL_UDF_MAX_LENGTH 16
 
