@@ -116,6 +116,7 @@ typedef struct{
 	a_uint32_t svid:12;/*it is min svid when range is enable*/
 	a_uint32_t reserved:4;
 	a_uint32_t l2prot:16;
+	a_uint32_t pppoe_sessionid:16;
 	a_uint32_t is_ip:1;
 	a_uint32_t is_ipv6:1;
 	a_uint32_t is_ethernet:1;
@@ -127,6 +128,7 @@ typedef struct{
 	a_uint32_t svid_mask:12;/*it is max svid when range is enable*/
 	a_uint32_t reserved:4;
 	a_uint32_t l2prot_mask:16;
+	a_uint32_t pppoe_sessionid_mask:16;
 	a_uint32_t is_ip_mask:1;
 	a_uint32_t is_ipv6_mask:1;
 	a_uint32_t is_ethernet_mask:1;
@@ -832,6 +834,13 @@ static sw_error_t _adpt_hppe_acl_l2_misc_rule_hw_2_sw(union ipo_rule_reg_u *hw_r
 		FAL_FIELD_FLG_SET(rule->field_flg, FAL_ACL_FIELD_MAC_ETHTYPE);
 		rule->ethtype_val = l2misc_rule->l2prot;
 		rule->ethtype_mask = l2misc_mask->l2prot_mask;
+	}
+
+	if(l2misc_mask->pppoe_sessionid_mask)
+	{
+		FAL_FIELD_FLG_SET(rule->field_flg, FAL_ACL_FIELD_PPPOE_SESSIONID);
+		rule->pppoe_sessionid = l2misc_rule->pppoe_sessionid;
+		rule->pppoe_sessionid_mask = l2misc_mask->pppoe_sessionid_mask;
 	}
 
 	if(l2misc_mask->is_ip_mask)
@@ -2210,6 +2219,11 @@ static sw_error_t _adpt_hppe_acl_l2_misc_rule_sw_2_hw(fal_acl_rule_t *rule,
 	{
 		l2misc_rule->l2prot = rule->ethtype_val;
 		l2misc_mask->l2prot_mask = rule->ethtype_mask;
+	}
+	if(FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_PPPOE_SESSIONID))
+	{
+		l2misc_rule->pppoe_sessionid = rule->pppoe_sessionid;
+		l2misc_mask->pppoe_sessionid_mask = rule->pppoe_sessionid_mask;
 	}
 	if(FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_IP))
 	{
