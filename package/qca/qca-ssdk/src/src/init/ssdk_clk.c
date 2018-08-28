@@ -35,6 +35,7 @@ static struct clk *uniphy_port_clks[UNIPHYT_CLK_MAX] = {0};
 
 struct device_node *rst_node = NULL;
 struct reset_control *uniphy_rsts[UNIPHY_RST_MAX] = {0};
+struct reset_control *port_rsts[SSDK_MAX_PORT_NUM] = {0};
 
 /* below 3 routines to be used as common */
 void ssdk_clock_rate_set_and_enable(
@@ -72,6 +73,28 @@ void ssdk_uniphy_reset(
 	rst = uniphy_rsts[rst_type];
 	if (IS_ERR(rst)) {
 		SSDK_ERROR("reset(%d) nof exist!\n", rst_type);
+		return;
+	}
+
+	ssdk_gcc_reset(rst, action);
+#endif
+
+}
+
+void ssdk_port_reset(
+	a_uint32_t dev_id,
+	a_uint32_t port_id,
+	a_uint32_t action)
+{
+#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0))
+	struct reset_control *rst;
+
+	if ((port_id < SSDK_PHYSICAL_PORT1) || (port_id > SSDK_PHYSICAL_PORT6))
+		return;
+
+	rst = port_rsts[port_id-1];
+	if (IS_ERR(rst)) {
+		SSDK_ERROR("reset(%d) not exist!\n", port_id);
 		return;
 	}
 
@@ -682,6 +705,15 @@ static char *ppe_rst_ids[UNIPHY_RST_MAX] = {
 	UNIPHY2_SOFT_RESET_ID,
 	UNIPHY2_XPCS_RESET_ID
 };
+static char *port_rst_ids[SSDK_MAX_PORT_NUM] = {
+	SSDK_PORT1_RESET_ID,
+	SSDK_PORT2_RESET_ID,
+	SSDK_PORT3_RESET_ID,
+	SSDK_PORT4_RESET_ID,
+	SSDK_PORT5_RESET_ID,
+	SSDK_PORT6_RESET_ID,
+	NULL, NULL
+};
 #endif
 
 void ssdk_ppe_reset_init(void)
@@ -706,6 +738,10 @@ void ssdk_ppe_reset_init(void)
 	for (i = UNIPHY0_SOFT_RESET_E; i < UNIPHY_RST_MAX; i++)
 		uniphy_rsts[i] = of_reset_control_get(rst_node,
 							ppe_rst_ids[i]);
+
+	for (i = SSDK_PHYSICAL_PORT1; i < SSDK_PHYSICAL_PORT7; i++)
+		port_rsts[i-1] = of_reset_control_get(rst_node,
+							port_rst_ids[i-1]);
 #endif
 }
 #endif

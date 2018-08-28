@@ -27,6 +27,13 @@ extern "C" {
 #define UNIPHY2_SOFT_RESET_ID	"uniphy2_soft_rst"
 #define UNIPHY2_XPCS_RESET_ID	"uniphy2_xpcs_rst"
 
+#define SSDK_PORT1_RESET_ID	"nss_port1_rst"
+#define SSDK_PORT2_RESET_ID	"nss_port2_rst"
+#define SSDK_PORT3_RESET_ID	"nss_port3_rst"
+#define SSDK_PORT4_RESET_ID	"nss_port4_rst"
+#define SSDK_PORT5_RESET_ID	"nss_port5_rst"
+#define SSDK_PORT6_RESET_ID	"nss_port6_rst"
+
 enum ssdk_rst_action {
         SSDK_RESET_DEASSERT      = 0,
         SSDK_RESET_ASSERT        = 1
@@ -174,6 +181,11 @@ enum {
 void ssdk_uniphy_reset(
 	a_uint32_t dev_id,
 	enum unphy_rst_type rst_type,
+	a_uint32_t action);
+
+void ssdk_port_reset(
+	a_uint32_t dev_id,
+	a_uint32_t port_id,
 	a_uint32_t action);
 
 #if defined(HPPE)
