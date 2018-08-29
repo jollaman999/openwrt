@@ -72,6 +72,8 @@ extern int napt_need_clean;
 extern int wan_switch;
 extern char nat_wan_port;
 extern a_uint32_t packet_thres_base;
+extern a_uint32_t polling_quota;
+extern a_bool_t napt_add_bypass_check;
 extern void napt_wan_switch_prehandle(void);
 /* for IPv6 over PPPoE (only for S17c)*/
 int nf_athrs17_hnat_ppp_id2 = 0;
@@ -1001,6 +1003,67 @@ static ssize_t napt_thresh_base_set(struct device *dev,
 	return count;
 }
 
+static ssize_t napt_polling_quota_get(struct device *dev,
+		  struct device_attribute *attr,
+		  char *buf)
+{
+	ssize_t count;
+	a_uint32_t num;
+
+	num = polling_quota;
+
+	count = snprintf(buf, (ssize_t)PAGE_SIZE, "%u", num);
+	return count;
+}
+
+static ssize_t napt_polling_quota_set(struct device *dev,
+		  struct device_attribute *attr,
+		  const char *buf, size_t count)
+{
+	char num_buf[12];
+	a_uint32_t num;
+
+
+	if (count >= sizeof(num_buf)) return 0;
+	memcpy(num_buf, buf, count);
+	num_buf[count] = '\0';
+	sscanf(num_buf, "%u", &num);
+
+	polling_quota = num;
+
+	return count;
+}
+
+static ssize_t napt_bypass_check_get(struct device *dev,
+		  struct device_attribute *attr,
+		  char *buf)
+{
+	ssize_t count;
+	a_uint32_t num;
+
+	num = napt_add_bypass_check;
+
+	count = snprintf(buf, (ssize_t)PAGE_SIZE, "%u", num);
+	return count;
+}
+
+static ssize_t napt_bypass_check_set(struct device *dev,
+		  struct device_attribute *attr,
+		  const char *buf, size_t count)
+{
+	char num_buf[12];
+	a_uint32_t num;
+
+
+	if (count >= sizeof(num_buf)) return 0;
+	memcpy(num_buf, buf, count);
+	num_buf[count] = '\0';
+	sscanf(num_buf, "%u", &num);
+
+	napt_add_bypass_check = num;
+
+	return count;
+}
 
 extern void napt_helper_show(void);
 static ssize_t napt_log_show_get(struct device *dev,
@@ -1050,7 +1113,10 @@ static const struct device_attribute napt_wan_port_attr =
 	__ATTR(wan_port, 0660, napt_wan_port_get, napt_wan_port_set);
 static const struct device_attribute napt_thresh_base_attr =
 	__ATTR(thresh_base, 0660, napt_thresh_base_get, napt_thresh_base_set);
-
+static const struct device_attribute napt_polling_quota_attr =
+	__ATTR(ct_quota, 0660, napt_polling_quota_get, napt_polling_quota_set);
+static const struct device_attribute napt_bypass_check_attr =
+	__ATTR(bypass_check, 0660, napt_bypass_check_get, napt_bypass_check_set);
 
 int napt_procfs_init(void)
 {
@@ -1159,7 +1225,21 @@ int napt_procfs_init(void)
 		printk("Failed to register napt thresh base SysFS file\n");
 		goto CLEANUP_19;
 	}
+	ret = sysfs_create_file(napt_sys, &napt_polling_quota_attr.attr);
+	if (ret) {
+		printk("Failed to register napt polling quota SysFS file\n");
+		goto CLEANUP_20;
+	}
+	ret = sysfs_create_file(napt_sys, &napt_bypass_check_attr.attr);
+	if (ret) {
+		printk("Failed to register napt add check bypass SysFS file\n");
+		goto CLEANUP_21;
+	}
 	return 0;
+CLEANUP_21:
+	sysfs_remove_file(napt_sys, &napt_polling_quota_attr.attr);
+CLEANUP_20:
+	sysfs_remove_file(napt_sys, &napt_thresh_base_attr.attr);
 CLEANUP_19:
 	sysfs_remove_file(napt_sys, &napt_wan_port_attr.attr);
 CLEANUP_18:
@@ -1206,6 +1286,8 @@ void napt_procfs_exit(void)
 {
 	printk("napt procfs exit\n");
 
+	sysfs_remove_file(napt_sys, &napt_bypass_check_attr.attr);
+	sysfs_remove_file(napt_sys, &napt_polling_quota_attr.attr);
 	sysfs_remove_file(napt_sys, &napt_thresh_base_attr.attr);
 	sysfs_remove_file(napt_sys, &napt_wan_port_attr.attr);
 	sysfs_remove_file(napt_sys, &napt_wan_switch_attr.attr);

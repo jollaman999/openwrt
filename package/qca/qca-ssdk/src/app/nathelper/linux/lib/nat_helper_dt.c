@@ -36,8 +36,8 @@
 #include "nat_helper_hsl.h"
 
 #define NAPT_CT_POLLING_SEC         5
+#define NPAT_CT_POLLING_QUOTA	256
 
-extern int nat_sockopts_init;
 extern uint32_t napt_set_default_route(fal_ip4_addr_t dst_addr, fal_ip4_addr_t src_addr);
 #ifdef CONFIG_IPV6_HWACCEL
 extern uint32_t napt_set_ipv6_default_route(void);
@@ -52,6 +52,8 @@ static a_uint32_t napt_buffer_hash_size = NAPT_TABLE_SIZE;
 static a_uint32_t napt_buffer_size = (NAPT_BUFFER_HASH_SIZE)*8;
 static a_uint32_t napt_ct_hw_cnt = 0;
 static a_uint8_t napt_thread_pending = 0;
+
+a_uint32_t polling_quota = NPAT_CT_POLLING_QUOTA;
 
 extern int nat_chip_ver;
 
@@ -641,7 +643,7 @@ napt_ct_hw_aging(void)
 {
 #define NAPT_AGEOUT_STATUS 1
 
-    a_uint32_t ct_addr;
+    a_uint32_t ct_addr, cnt= 0;
     napt_entry_t napt = {0};
 
 
@@ -677,6 +679,11 @@ napt_ct_hw_aging(void)
         }
 
         napt_ct_del(napt_ct, &napt);
+        HNAT_INFO_PRINTK("ct:%x aged!\n", ct_addr);
+        cnt++;
+        if ((cnt % polling_quota) == 0) {
+            NAPT_CT_TASK_SLEEP(1);
+        }
 
     }
     while(napt_hw_next_by_age(&napt, NAPT_AGEOUT_STATUS) != -1);
@@ -821,10 +828,6 @@ napt_ct_hw_sync(a_uint8_t napt_ct_valid[])
                                 hw_index);
             }
         }
-	if (nf_athrs17_hnat_sync_counter_en)
-		napt_ct_counter_sync(hw_index);
-	else
-		napt_ct_timer_update(hw_index);
 
         if(napt_ct_valid[hw_index])
         {
@@ -1040,36 +1043,49 @@ a_uint8_t napt_ct_valid_tbl[NAPT_TABLE_SIZE] = {0};
 static a_int32_t
 napt_ct_check_add(void)
 {
-    a_uint32_t ct_addr = 0;
-    a_uint32_t ct_buf_valid_cnt = 0, care_cnt = 0, ct_cnt = 0;
-    a_uint32_t hash = 0, iterate = 0;
+	a_uint32_t ct_addr = 0;
+	a_uint32_t ct_buf_valid_cnt = 0, care_cnt = 0, ct_cnt = 0;
+	static a_uint32_t hash = 0;
+	a_uint32_t iterate = 0;
 	a_uint32_t napt_ct_offload_cnt = 0;
+	a_uint16_t hw_index;
 
-	memset(napt_ct_valid_tbl, 0, NAPT_TABLE_SIZE);
-    napt_ct_pkts_thres_calc_init();
+	napt_ct_pkts_thres_calc_init();
 
-    NAPT_CT_LIST_LOCK();
-    while((ct_addr = NAPT_CT_LIST_ITERATE(&hash, &iterate)))
-    {
+	NAPT_CT_LIST_LOCK();
+	while((ct_addr = NAPT_CT_LIST_ITERATE(&hash, &iterate)))
+	{
 		ct_cnt++;
-        if (NAPT_CT_SHOULD_CARE(ct_addr))
-        {
+		if (NAPT_CT_SHOULD_CARE(ct_addr))
+		{
+			if(napt_ct_check_add_one(ct_addr, napt_ct_valid_tbl) != -1)
+			{
+				ct_buf_valid_cnt++;
+			}
 			care_cnt++;
-            if(napt_ct_check_add_one(ct_addr, napt_ct_valid_tbl) != -1)
-            {
-                ct_buf_valid_cnt++;
-            }
-        }
-    }
+			if (care_cnt >= polling_quota) {
+				break;
+			}
+		}
+	}
 
-    NAPT_CT_LIST_UNLOCK();
+	NAPT_CT_LIST_UNLOCK();
 	HNAT_INFO_PRINTK("ct_cnt=0x%x, care_cnt=0x%x\n", ct_cnt, care_cnt);
 
-	napt_ct_offload_cnt = napt_ct_hw_sync(napt_ct_valid_tbl);
+	if (!ct_addr) {
+		napt_ct_offload_cnt = napt_ct_hw_sync(napt_ct_valid_tbl);
+		napt_ct_pkts_thres_calc(ct_buf_valid_cnt, napt_ct_offload_cnt);
+		memset(napt_ct_valid_tbl, 0, NAPT_TABLE_SIZE);
+	}
 
-    napt_ct_pkts_thres_calc(ct_buf_valid_cnt, napt_ct_offload_cnt);
+	for(hw_index = 0; hw_index < NAPT_TABLE_SIZE; hw_index++) {
+		if (nf_athrs17_hnat_sync_counter_en)
+			napt_ct_counter_sync(hw_index);
+		else
+			napt_ct_timer_update(hw_index);
+	}
 
-    return ct_buf_valid_cnt;
+	return ct_buf_valid_cnt;
 }
 
 static a_int32_t
@@ -1266,10 +1282,6 @@ napt_ct_scan_thread(void *param)
 		}
 
 		if (scan_enable) {
-			HNAT_PRINTK("[ct scan start]\n");
-			napt_ct_scan();
-			HNAT_PRINTK("[ct scan end]\n");
-
 			if((--times) == 0)
 			{
 				HNAT_PRINTK("[ct hw aging start]\n");
@@ -1282,6 +1294,12 @@ napt_ct_scan_thread(void *param)
 			{
 				host_check_aging();
 				arp_check_time = (ARP_CHECK_AGING_SEC/scan_period);
+			}
+
+			if (times != NAPT_CT_AGING_SEC/scan_period) {
+				HNAT_PRINTK("[ct scan start]\n");
+				napt_ct_scan();
+				HNAT_PRINTK("[ct scan end]\n");
 			}
 		} else {
 			if (napt_need_clean) {

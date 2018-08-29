@@ -712,7 +712,8 @@ nat_ipt_get_ctl(struct sock *sk, int cmd, void __user * user, int *len)
 void
 nat_ipt_sockopts_replace(void)
 {
-	int ret = 0;
+    int ret = 0;
+
     /*register an temp sockopts to find ipt_sockopts*/
     if((ret = nf_register_sockopt(&tmp_ipt_sockopts)) < 0) {
 		return;

@@ -347,35 +347,36 @@ napt_ct_list_unlock(void)
 uint32_t
 napt_ct_list_iterate(uint32_t *hash, uint32_t *iterate)
 {
-    struct net *net = &init_net;
-    struct nf_conntrack_tuple_hash *h = NULL;
-    struct nf_conn *ct = NULL;
-    struct hlist_nulls_node *pos = (struct hlist_nulls_node *) (*iterate);
+	struct net *net = &init_net;
+	struct nf_conntrack_tuple_hash *h = NULL;
+	struct nf_conn *ct = NULL;
+	struct hlist_nulls_node *pos = (struct hlist_nulls_node *) (*iterate);
 
-    while(*hash < nf_conntrack_htable_size)
-    {
-        if(pos == 0)
-        {
-            /*get head for list*/
+	while(*hash < nf_conntrack_htable_size)
+	{
+		if(pos == 0)
+		{
+			/*get head for list*/
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
-            pos = rcu_dereference((&net->ct.hash[*hash])->first);
+			pos = rcu_dereference((&net->ct.hash[*hash])->first);
 #else
-            pos = rcu_dereference((&nf_conntrack_hash[*hash])->first);
+			pos = rcu_dereference((&nf_conntrack_hash[*hash])->first);
 #endif
-        }
+		}
 
-        hlist_nulls_for_each_entry_from(h, pos, hnnode)
-        {
-            (*iterate) = (uint32_t)(pos->next);
-            ct = nf_ct_tuplehash_to_ctrack(h);
-            return (uint32_t) ct;
-        }
+		hlist_nulls_for_each_entry_from(h, pos, hnnode)
+		{
+			(*iterate) = (uint32_t)(pos->next);
+			ct = nf_ct_tuplehash_to_ctrack(h);
+			return (uint32_t) ct;
+		}
 
-        ++(*hash);
-        pos = 0;
-    }
+		++(*hash);
+		pos = 0;
+	}
 
-    return 0;
+	*hash = 0;
+	return 0;
 }
 
 int
