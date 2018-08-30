@@ -572,10 +572,54 @@ fal_get_xgmib_info(a_uint32_t dev_id, fal_port_t port_id,
                  fal_xgmib_info_t * mib_Info)
 {
     sw_error_t rv;
+    fal_mib_counter_t gmac_mib = { 0 };
 
     FAL_API_LOCK;
     rv = _fal_get_xgmib_info(dev_id, port_id, mib_Info);
     FAL_API_UNLOCK;
+    SW_RTN_ON_ERROR(rv);
+
+    rv = fal_mib_counter_get(dev_id, port_id, &gmac_mib);
+    SW_RTN_ON_ERROR(rv);
+
+    mib_Info->RxFrame += (gmac_mib.RxBroad +
+				gmac_mib.RxMulti + gmac_mib.RxUniCast);
+    mib_Info->RxByte += (gmac_mib.RxGoodByte+gmac_mib.RxBadByte);
+    mib_Info->RxByteGood += gmac_mib.RxGoodByte;
+    mib_Info->RxBroadGood += gmac_mib.RxBroad;
+    mib_Info->RxMultiGood += gmac_mib.RxMulti;
+    mib_Info->RxFcsErr += gmac_mib.RxFcsErr;
+    mib_Info->RxRuntErr += gmac_mib.RxRunt;
+    mib_Info->Rx64Byte += gmac_mib.Rx64Byte;
+    mib_Info->Rx128Byte += gmac_mib.Rx128Byte;
+    mib_Info->Rx256Byte += gmac_mib.Rx256Byte;
+    mib_Info->Rx512Byte += gmac_mib.Rx512Byte;
+    mib_Info->Rx1024Byte += gmac_mib.Rx1024Byte;
+    mib_Info->RxMaxByte += (gmac_mib.Rx1518Byte + gmac_mib.RxMaxByte);
+    mib_Info->RxUnicastGood += gmac_mib.RxUniCast;
+    mib_Info->RxLengthError += gmac_mib.RxTooLong;
+    mib_Info->RxPause += gmac_mib.RxPause;
+    mib_Info->RxOverFlow += gmac_mib.RxOverFlow;
+
+    mib_Info->TxByte += gmac_mib.TxByte;
+    mib_Info->TxFrame += (gmac_mib.TxBroad +
+				gmac_mib.TxMulti + gmac_mib.TxUniCast);
+    mib_Info->TxBroadGood += gmac_mib.TxBroad;
+    mib_Info->TxMultiGood += gmac_mib.TxMulti;
+    mib_Info->Tx64Byte += gmac_mib.Tx64Byte;
+    mib_Info->Tx128Byte += gmac_mib.Tx128Byte;
+    mib_Info->Tx256Byte += gmac_mib.Tx256Byte;
+    mib_Info->Tx512Byte += gmac_mib.Tx512Byte;
+    mib_Info->Tx1024Byte += gmac_mib.Tx1024Byte;
+    mib_Info->TxMaxByte += (gmac_mib.Tx1518Byte + gmac_mib.TxMaxByte);
+    mib_Info->TxUnicast += gmac_mib.TxUniCast;
+    mib_Info->TxMulti += gmac_mib.TxMulti;
+    mib_Info->TxBroad += gmac_mib.TxBroad;
+    mib_Info->TxByteGood += gmac_mib.TxByte;
+    mib_Info->TxFrameGood += (gmac_mib.TxBroad +
+				gmac_mib.TxMulti + gmac_mib.TxUniCast);
+    mib_Info->TxPause += gmac_mib.TxPause;
+
     return rv;
 }
 
