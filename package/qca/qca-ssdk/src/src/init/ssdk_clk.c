@@ -699,3 +699,28 @@ void ssdk_ppe_reset_init(void)
 }
 #endif
 #endif
+
+#ifndef HAWKEYE_CHIP
+#if defined(HPPE)
+sw_error_t
+qca_cppe_fpga_xgmac_clock_enable(a_uint32_t dev_id)
+{
+	void __iomem *cppe_xgmac_clock_base;
+
+	cppe_xgmac_clock_base = ioremap_nocache(CPPE_XGMAC_CLK_REG,
+		CPPE_XGMAC_CLK_SIZE);
+	if (!cppe_xgmac_clock_base) {
+		SSDK_INFO("can't get cppe xgmac clock address!\n");
+		return -1;
+	}
+	/* RUMI specific clock configuration for enabling XGMAC */
+	writel(CPPE_XGMAC_CLK_ENABLE, cppe_xgmac_clock_base + 0);
+	iounmap(cppe_xgmac_clock_base);
+	SSDK_INFO("set cppe clock to enable XGMAC successfully!\n");
+
+	msleep(100);
+
+	return SW_OK;
+}
+#endif
+#endif

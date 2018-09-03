@@ -162,6 +162,10 @@ enum unphy_clk_type {
 #define SGMII_SPEED_100M_CLK	25000000
 #define SGMII_SPEED_1000M_CLK	125000000
 
+#define CPPE_XGMAC_CLK_REG	0x0194900c
+#define CPPE_XGMAC_CLK_SIZE	0x10
+#define CPPE_XGMAC_CLK_ENABLE	0x20
+
 enum {
 	UNIPHY_RX = 0,
 	UNIPHY_TX,
@@ -193,6 +197,8 @@ ssdk_port_speed_clock_set(
 	a_uint32_t rate);
 
 void ssdk_ppe_reset_init(void);
+sw_error_t
+qca_cppe_fpga_xgmac_clock_enable(a_uint32_t dev_id);
 #endif
 
 #ifdef __cplusplus
