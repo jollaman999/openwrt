@@ -19,7 +19,8 @@
 #endif
 
 adpt_api_t *g_adpt_api[SW_MAX_NR_DEV] = {NULL};
-ssdk_chip_type  g_chip_type = 0;
+
+adpt_chip_ver_t g_chip_ver[SW_MAX_NR_DEV] = {0};
 
 adpt_api_t *adpt_api_ptr_get(a_uint32_t dev_id)
 {
@@ -30,6 +31,11 @@ adpt_api_t *adpt_api_ptr_get(a_uint32_t dev_id)
 }
 
 #if defined(HPPE)
+a_uint32_t adpt_hppe_chip_revision_get(a_uint32_t dev_id)
+{
+	return g_chip_ver[dev_id].chip_revision;
+}
+
 static sw_error_t adpt_hppe_module_func_register(a_uint32_t dev_id, a_uint32_t module)
 {
 	sw_error_t rv= SW_OK;
@@ -173,7 +179,7 @@ sw_error_t adpt_module_func_ctrl_set(a_uint32_t dev_id,
 	}
 
 
-	switch (g_chip_type)
+	switch (g_chip_ver[dev_id].chip_type)
 	{
 		#if defined(HPPE)
 		case CHIP_HPPE:
@@ -254,8 +260,6 @@ sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 {
 	sw_error_t rv= SW_OK;
 
-	g_chip_type = cfg->chip_type;
-
 	switch (cfg->chip_type)
 	{
 		#if defined(HPPE)
@@ -267,6 +271,8 @@ sw_error_t adpt_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 				return SW_FAIL;
 			}
 
+			g_chip_ver[dev_id].chip_type = cfg->chip_type;
+			g_chip_ver[dev_id].chip_revision = cfg->chip_revision;
 			g_adpt_api[dev_id]->adpt_mirror_func_bitmap = 0xffffffff;
 			rv = adpt_hppe_module_func_register(dev_id, FAL_MODULE_MIRROR);
 			SW_RTN_ON_ERROR(rv);

@@ -85,14 +85,21 @@ qca_hppe_fpga_ports_enable(a_uint32_t dev_id)
 {
 	a_uint32_t i = 0;
 	a_uint32_t val, addr = 0x4000;
+	a_uint32_t port_max = SSDK_PHYSICAL_PORT7;
+	a_uint32_t xgmac_max = 2;
 
-	for(i = SSDK_PHYSICAL_PORT1; i < SSDK_PHYSICAL_PORT7; i++) {
+	if(adpt_hppe_chip_revision_get(dev_id) == CPPE_REVISION) {
+		port_max = SSDK_PHYSICAL_PORT6;
+		xgmac_max = 1;
+	}
+
+	for(i = SSDK_PHYSICAL_PORT1; i < port_max; i++) {
 		fal_port_rxfc_status_set(dev_id, i, A_TRUE);
 		fal_port_txfc_status_set(dev_id, i, A_TRUE);
 		fal_port_txmac_status_set (dev_id, i, A_TRUE);
 		fal_port_rxmac_status_set (dev_id, i, A_TRUE);
 	}
-	for (i = 0; i < 2; i ++) {
+	for (i = 0; i < xgmac_max; i ++) {
 		val = 0x00000081;
 		qca_switch_reg_write(0, 0x00003008 + (addr * i), (a_uint8_t *)&val, 4);
 	}
@@ -105,11 +112,22 @@ static sw_error_t
 qca_hppe_portctrl_hw_init(a_uint32_t dev_id)
 {
 	a_uint32_t i = 0;
+	a_uint32_t port_max = SSDK_PHYSICAL_PORT7;
 
+	if(adpt_hppe_chip_revision_get(dev_id) == CPPE_REVISION) {
+		SSDK_INFO("Cypress PPE port initializing\n");
+		port_max = SSDK_PHYSICAL_PORT6;
 #ifndef HAWKEYE_CHIP
-	qca_hppe_fpga_xgmac_gpio_enable(dev_id);
+		qca_cppe_fpga_xgmac_clock_enable(dev_id);
 #endif
-	for(i = SSDK_PHYSICAL_PORT1; i < SSDK_PHYSICAL_PORT7; i++) {
+	} else {
+		SSDK_INFO("Hawkeye PPE port initializing\n");
+		port_max = SSDK_PHYSICAL_PORT7;
+#ifndef HAWKEYE_CHIP
+		qca_hppe_fpga_xgmac_gpio_enable(dev_id);
+#endif
+	}
+	for(i = SSDK_PHYSICAL_PORT1; i < port_max; i++) {
 		qca_hppe_port_mac_type_set(dev_id, i, PORT_GMAC_TYPE);
 		fal_port_txmac_status_set (dev_id, i, A_FALSE);
 		fal_port_rxmac_status_set (dev_id, i, A_FALSE);
@@ -118,7 +136,7 @@ qca_hppe_portctrl_hw_init(a_uint32_t dev_id)
 		fal_port_max_frame_size_set(dev_id, i, SSDK_MAX_FRAME_SIZE);
 	}
 
-	for(i = SSDK_PHYSICAL_PORT5; i < SSDK_PHYSICAL_PORT7; i++) {
+	for(i = SSDK_PHYSICAL_PORT5; i < port_max; i++) {
 		qca_hppe_port_mac_type_set(dev_id, i, PORT_XGMAC_TYPE);
 		fal_port_txmac_status_set (dev_id, i, A_FALSE);
 		fal_port_rxmac_status_set (dev_id, i, A_FALSE);

@@ -92,6 +92,11 @@ sw_error_t adpt_hppe_uniphy_init(a_uint32_t dev_id);
 #define HPPE_BM_PORT_NUM 15
 #define HPPE_BM_PHY_PORT_OFFSET 8
 
+#define HPPE_REVISION 0x0
+#define CPPE_REVISION 0x1
+#define UNKNOWN_REVISION 0xff
+a_uint32_t adpt_hppe_chip_revision_get(a_uint32_t dev_id);
+
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

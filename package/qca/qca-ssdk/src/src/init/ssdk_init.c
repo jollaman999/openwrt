@@ -2493,6 +2493,7 @@ static int chip_ver_get(a_uint32_t dev_id, ssdk_init_cfg* cfg)
 {
 	int rv = SW_OK;
 	a_uint8_t chip_ver = 0;
+	a_uint8_t chip_revision = 0;
 /*qca808x_end*/
 	hsl_reg_mode reg_mode;
 
@@ -2505,6 +2506,7 @@ static int chip_ver_get(a_uint32_t dev_id, ssdk_init_cfg* cfg)
 		a_uint32_t reg_val = 0;
 		qca_switch_reg_read(dev_id,0,(a_uint8_t *)&reg_val, 4);
 		chip_ver = (reg_val&0xff00)>>8;
+		chip_revision = reg_val&0xff;
 	}
 /*qca808x_start*/
 	if(chip_ver == QCA_VER_AR8227)
@@ -2515,8 +2517,15 @@ static int chip_ver_get(a_uint32_t dev_id, ssdk_init_cfg* cfg)
 		cfg->chip_type = CHIP_ISIS;
 	else if(chip_ver == QCA_VER_DESS)
 		cfg->chip_type = CHIP_DESS;
-	else if(chip_ver == QCA_VER_HPPE)
+	else if(chip_ver == QCA_VER_HPPE) {
 		cfg->chip_type = CHIP_HPPE;
+		#ifdef HAWKEYE_CHIP
+		cfg->chip_revision = chip_revision;
+		#else
+		cfg->chip_revision = 1;/*cypress for debug*/
+		#endif
+
+	}
 	else {
 		/* try single phy without switch connected */
 		rv = chip_is_scomphy(dev_id, cfg);

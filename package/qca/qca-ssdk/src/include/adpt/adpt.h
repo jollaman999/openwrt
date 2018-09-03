@@ -888,6 +888,12 @@ typedef sw_error_t (*adpt_uniphy_mode_set_func)(a_uint32_t dev_id, a_uint32_t in
 
 typedef struct
 {
+	ssdk_chip_type chip_type;
+	a_uint32_t chip_revision;
+}adpt_chip_ver_t;
+
+typedef struct
+{
 	a_uint32_t adpt_fdb_func_bitmap[2];
 	adpt_fdb_first_func adpt_fdb_first;
 	adpt_fdb_next_func adpt_fdb_next;
