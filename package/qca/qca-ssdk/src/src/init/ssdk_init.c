@@ -2474,6 +2474,7 @@ static int chip_is_scomphy(a_uint32_t dev_id, ssdk_init_cfg* cfg)
 				case QCA8035_PHY:
 /*qca808x_start*/
 				case QCA8081_PHY:
+				case QCA8081_PHY_V1_1:
 					cfg->chip_type = CHIP_SCOMPHY;
 					rv = SW_OK;
 					break;

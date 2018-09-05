@@ -218,6 +218,7 @@ phy_type_t hsl_phytype_get_by_phyid(a_uint32_t dev_id, a_uint32_t phy_id)
 			break;
 /*qca808x_start*/
 		case QCA8081_PHY:
+		case QCA8081_PHY_V1_1:
 			phytype = QCA808X_PHY_CHIP;
 			break;
 		default:
