@@ -144,6 +144,7 @@ typedef struct
 	hsl_reg_func    reg_func;
 
 	ssdk_chip_type  chip_type;
+	a_uint32_t      chip_revision;
 	/* os specific parameter */
 	/* when uk_if based on netlink, it's netlink protocol type*/
 	/* when uk_if based on ioctl, it's minor device number, major number
