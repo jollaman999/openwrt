@@ -1817,6 +1817,142 @@ qca803x_phy_get_status(a_uint32_t dev_id, a_uint32_t phy_id,
 
 	return SW_OK;
 }
+/******************************************************************************
+*
+* qca803x_phy_set_eee_advertisement
+*
+* set eee advertisement
+*/
+sw_error_t
+qca803x_phy_set_eee_adv(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_uint32_t adv)
+{
+	a_uint16_t phy_data = 0;
+	sw_error_t rv = SW_OK;
+
+	phy_data = qca803x_phy_mmd_read(dev_id, phy_id, QCA803X_PHY_MMD7_NUM,
+				       QCA803X_PHY_MMD7_ADDR_8023AZ_EEE_CTRL);
+	phy_data &= ~(QCA803X_PHY_EEE_ADV_100M | QCA803X_PHY_EEE_ADV_1000M);
+
+	if (adv & FAL_PHY_EEE_100BASE_T) {
+		phy_data |= QCA803X_PHY_EEE_ADV_100M;
+	}
+	if (adv & FAL_PHY_EEE_1000BASE_T) {
+		phy_data |= QCA803X_PHY_EEE_ADV_1000M;
+	}
+
+	rv = qca803x_phy_mmd_write(dev_id, phy_id, QCA803X_PHY_MMD7_NUM,
+		     QCA803X_PHY_MMD7_ADDR_8023AZ_EEE_CTRL, phy_data);
+
+	rv = qca803x_phy_restart_autoneg(dev_id, phy_id);
+
+	return rv;
+}
+
+/******************************************************************************
+*
+* qca803x_phy_get_eee_advertisement
+*
+* get eee advertisement
+*/
+sw_error_t
+qca803x_phy_get_eee_adv(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_uint32_t *adv)
+{
+	a_uint16_t phy_data = 0;
+	sw_error_t rv = SW_OK;
+
+	*adv = 0;
+	phy_data = qca803x_phy_mmd_read(dev_id, phy_id, QCA803X_PHY_MMD7_NUM,
+				       QCA803X_PHY_MMD7_ADDR_8023AZ_EEE_CTRL);
+
+	if (phy_data & QCA803X_PHY_EEE_ADV_100M) {
+		*adv |= FAL_PHY_EEE_100BASE_T;
+	}
+	if (phy_data & QCA803X_PHY_EEE_ADV_1000M) {
+		*adv |= FAL_PHY_EEE_1000BASE_T;
+	}
+
+	return rv;
+}
+/******************************************************************************
+*
+* qca803x_phy_get_eee_partner_advertisement
+*
+* get eee partner advertisement
+*/
+sw_error_t
+qca803x_phy_get_eee_partner_adv(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_uint32_t *adv)
+{
+	a_uint16_t phy_data = 0;
+	sw_error_t rv = SW_OK;
+
+	*adv = 0;
+	phy_data = qca803x_phy_mmd_read(dev_id, phy_id, QCA803X_PHY_MMD7_NUM,
+				       QCA803X_PHY_MMD7_ADDR_8023AZ_EEE_PARTNER);
+
+	if (phy_data & QCA803X_PHY_EEE_PARTNER_ADV_100M) {
+		*adv |= FAL_PHY_EEE_100BASE_T;
+	}
+	if (phy_data & QCA803X_PHY_EEE_PARTNER_ADV_1000M) {
+		*adv |= FAL_PHY_EEE_1000BASE_T;
+	}
+
+	return rv;
+}
+/******************************************************************************
+*
+* qca803x_phy_get_eee_capability
+*
+* get eee capability
+*/
+sw_error_t
+qca803x_phy_get_eee_cap(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_uint32_t *cap)
+{
+	a_uint16_t phy_data = 0;
+	sw_error_t rv = SW_OK;
+
+	*cap = 0;
+	phy_data = qca803x_phy_mmd_read(dev_id, phy_id, QCA803X_PHY_MMD3_NUM,
+				       QCA803X_PHY_MMD3_ADDR_8023AZ_EEE_CAPABILITY);
+
+	if (phy_data & QCA803X_PHY_EEE_CAPABILITY_100M) {
+		*cap |= FAL_PHY_EEE_100BASE_T;
+	}
+	if (phy_data & QCA803X_PHY_EEE_CAPABILITY_1000M) {
+		*cap |= FAL_PHY_EEE_1000BASE_T;
+	}
+
+	return rv;
+}
+/******************************************************************************
+*
+* qca803x_phy_get_eee_status
+*
+* get eee status
+*/
+sw_error_t
+qca803x_phy_get_eee_status(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_uint32_t *status)
+{
+	a_uint16_t phy_data = 0;
+	sw_error_t rv = SW_OK;
+
+	*status = 0;
+	phy_data = qca803x_phy_mmd_read(dev_id, phy_id, QCA803X_PHY_MMD7_NUM,
+				       QCA803X_PHY_MMD7_ADDR_8023AZ_EEE_STATUS);
+
+	if (phy_data & QCA803X_PHY_EEE_STATUS_100M) {
+		*status |= FAL_PHY_EEE_100BASE_T;
+	}
+	if (phy_data & QCA803X_PHY_EEE_STATUS_1000M) {
+		*status |= FAL_PHY_EEE_1000BASE_T;
+	}
+
+	return rv;
+}
 
 static sw_error_t qca803x_phy_api_ops_init(void)
 {
@@ -1881,6 +2017,11 @@ static sw_error_t qca803x_phy_api_ops_init(void)
 	qca803x_phy_api_ops->phy_combo_fiber_mode_set = qca803x_phy_set_combo_fiber_mode;
 	qca803x_phy_api_ops->phy_combo_fiber_mode_get = qca803x_phy_get_combo_fiber_mode;
 	qca803x_phy_api_ops->phy_get_status = qca803x_phy_get_status;
+	qca803x_phy_api_ops->phy_eee_adv_set = qca803x_phy_set_eee_adv;
+	qca803x_phy_api_ops->phy_eee_adv_get = qca803x_phy_get_eee_adv;
+	qca803x_phy_api_ops->phy_eee_partner_adv_get = qca803x_phy_get_eee_partner_adv;
+	qca803x_phy_api_ops->phy_eee_cap_get = qca803x_phy_get_eee_cap;
+	qca803x_phy_api_ops->phy_eee_status_get = qca803x_phy_get_eee_status;
 
 	ret = hsl_phy_api_ops_register(QCA803X_PHY_CHIP, qca803x_phy_api_ops);
 

@@ -146,6 +146,13 @@ FAL_PHY_ADV_PAUSE | FAL_PHY_ADV_ASY_PAUSE)
 #define FAL_PHY_INTR_WOL_STATUS   0x80
 #define FAL_PHY_INTR_POE_STATUS   0x100
 
+/* phy eee */
+#define FAL_PHY_EEE_10BASE_T  0x1
+#define FAL_PHY_EEE_100BASE_T  0x2
+#define FAL_PHY_EEE_1000BASE_T  0x4
+#define FAL_PHY_EEE_2500BASE_T  0x8
+#define FAL_PHY_EEE_5000BASE_T  0x10
+#define FAL_PHY_EEE_10000BASE_T  0x20
 	typedef enum {
 		FAL_NO_HEADER_EN = 0,
 		FAL_ONLY_MANAGE_FRAME_EN,
@@ -282,6 +289,18 @@ typedef struct {
 } fal_port_counter_info_t;
 
 /*above is new add for malibu phy*/
+
+typedef struct {
+	a_bool_t enable;
+	a_uint32_t capability;
+	a_uint32_t lpi_sleep_timer; /* unit is us*/
+	a_uint32_t advertisement;
+	a_uint32_t lpi_tx_enable;
+	a_uint32_t eee_status;
+	a_uint32_t lpi_wakeup_timer; /* unit is us*/
+	a_uint32_t link_partner_advertisement;
+} fal_port_eee_cfg_t;
+
 /*qca808x_end*/
 enum
 {
@@ -720,6 +739,13 @@ sw_error_t
 fal_port_promisc_mode_set(a_uint32_t dev_id,fal_port_t port_id,a_bool_t enable);
 sw_error_t
 fal_port_promisc_mode_get(a_uint32_t dev_id,fal_port_t port_id,a_bool_t *enable);
+
+sw_error_t
+fal_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_eee_cfg_t *port_eee_cfg);
+sw_error_t
+fal_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_eee_cfg_t *port_eee_cfg);
 
 /*qca808x_start*/
 #ifdef __cplusplus

@@ -212,6 +212,22 @@ extern "C" {
 
 	typedef sw_error_t(*hsl_phy_get_status) (a_uint32_t dev_id,
 				a_uint32_t phy_id, struct port_phy_status *phy_status);
+
+	typedef sw_error_t(*hsl_phy_eee_adv_set) (a_uint32_t dev_id,
+					      a_uint32_t phy_id,
+					      a_uint32_t adv);
+	typedef sw_error_t(*hsl_phy_eee_adv_get) (a_uint32_t dev_id,
+					      a_uint32_t phy_id,
+					      a_uint32_t * adv);
+	typedef sw_error_t(*hsl_phy_eee_partner_adv_get) (a_uint32_t dev_id,
+					      a_uint32_t phy_id,
+					      a_uint32_t * adv);
+	typedef sw_error_t(*hsl_phy_eee_cap_get) (a_uint32_t dev_id,
+					      a_uint32_t phy_id,
+					      a_uint32_t * cap);
+	typedef sw_error_t(*hsl_phy_eee_status_get) (a_uint32_t dev_id,
+					      a_uint32_t phy_id,
+					      a_uint32_t * status);
 	typedef struct hsl_phy_ops_s {
 
 		hsl_phy_init phy_init;
@@ -276,6 +292,11 @@ extern "C" {
 		hsl_phy_counter_show  phy_counter_show;
 		hsl_phy_serdes_reset phy_serdes_reset;
 		hsl_phy_get_status phy_get_status;
+		hsl_phy_eee_adv_set phy_eee_adv_set;
+		hsl_phy_eee_adv_get phy_eee_adv_get;
+		hsl_phy_eee_partner_adv_get phy_eee_partner_adv_get;
+		hsl_phy_eee_cap_get phy_eee_cap_get;
+		hsl_phy_eee_status_get phy_eee_status_get;
 	} hsl_phy_ops_t;
 
 typedef struct phy_driver_instance {

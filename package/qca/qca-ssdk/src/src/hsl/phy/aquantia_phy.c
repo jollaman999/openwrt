@@ -1793,6 +1793,191 @@ aquantia_phy_get_status(a_uint32_t dev_id, a_uint32_t phy_id,
 
 /******************************************************************************
 *
+* aquantia_phy_set_eee_advertisement
+*
+* set eee advertisement
+*/
+sw_error_t
+aquantia_phy_set_eee_adv(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_uint32_t adv)
+{
+	a_uint16_t phy_data = 0, phy_data1 = 0;
+	sw_error_t rv = SW_OK;
+
+	rv = aquantia_phy_reg_read(dev_id, phy_id, AQUANTIA_MMD_AUTONEG,
+		AQUANTIA_EEE_ADVERTISTMENT_REGISTER, &phy_data);
+	SW_RTN_ON_ERROR(rv);
+	rv = aquantia_phy_reg_read(dev_id, phy_id, AQUANTIA_MMD_AUTONEG,
+		AQUANTIA_EEE_ADVERTISTMENT_REGISTER1, &phy_data1);
+	SW_RTN_ON_ERROR(rv);
+
+	phy_data &= ~(AQUANTIA_EEE_ADV_1000M | AQUANTIA_EEE_ADV_10000M);
+	if (adv & FAL_PHY_EEE_1000BASE_T) {
+		phy_data |= AQUANTIA_EEE_ADV_1000M;
+	}
+	if (adv & FAL_PHY_EEE_10000BASE_T) {
+		phy_data |= AQUANTIA_EEE_ADV_10000M;
+	}
+
+	phy_data1 &= ~(AQUANTIA_EEE_ADV_2500M | AQUANTIA_EEE_ADV_5000M);
+	if (adv & FAL_PHY_EEE_2500BASE_T) {
+		phy_data1 |= AQUANTIA_EEE_ADV_2500M;
+	}
+	if (adv & FAL_PHY_EEE_5000BASE_T) {
+		phy_data1 |= AQUANTIA_EEE_ADV_5000M;
+	}
+
+	rv = aquantia_phy_reg_write(dev_id, phy_id, AQUANTIA_MMD_AUTONEG,
+		AQUANTIA_EEE_ADVERTISTMENT_REGISTER, phy_data);
+	SW_RTN_ON_ERROR(rv);
+	rv = aquantia_phy_reg_write(dev_id, phy_id, AQUANTIA_MMD_AUTONEG,
+		AQUANTIA_EEE_ADVERTISTMENT_REGISTER1, phy_data1);
+	SW_RTN_ON_ERROR(rv);
+	rv = aquantia_phy_restart_autoneg(dev_id, phy_id);
+
+	return rv;
+}
+
+/******************************************************************************
+*
+* aquantia_phy_get_eee_advertisement
+*
+* get eee advertisement
+*/
+sw_error_t
+aquantia_phy_get_eee_adv(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_uint32_t *adv)
+{
+	a_uint16_t phy_data = 0;
+	sw_error_t rv = SW_OK;
+
+	*adv = 0;
+	rv = aquantia_phy_reg_read(dev_id, phy_id, AQUANTIA_MMD_AUTONEG,
+		AQUANTIA_EEE_ADVERTISTMENT_REGISTER, &phy_data);
+	SW_RTN_ON_ERROR(rv);
+
+	if (phy_data & AQUANTIA_EEE_ADV_1000M) {
+		*adv |= FAL_PHY_EEE_1000BASE_T;
+	}
+	if (phy_data & AQUANTIA_EEE_ADV_10000M){
+		*adv |= FAL_PHY_EEE_10000BASE_T;
+	}
+	phy_data = 0;
+	rv = aquantia_phy_reg_read(dev_id, phy_id, AQUANTIA_MMD_AUTONEG,
+		AQUANTIA_EEE_ADVERTISTMENT_REGISTER1, &phy_data);
+	SW_RTN_ON_ERROR(rv);
+
+	if (phy_data & AQUANTIA_EEE_ADV_2500M) {
+		*adv |= FAL_PHY_EEE_2500BASE_T;
+	}
+	if (phy_data & AQUANTIA_EEE_ADV_5000M) {
+		*adv |= FAL_PHY_EEE_5000BASE_T;
+	}
+
+	return rv;
+}
+/******************************************************************************
+*
+* aquantia_phy_get_eee_partner_advertisement
+*
+* get eee partner advertisement
+*/
+sw_error_t
+aquantia_phy_get_eee_partner_adv(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_uint32_t *adv)
+{
+	a_uint16_t phy_data = 0;
+	sw_error_t rv = SW_OK;
+
+	*adv = 0;
+	rv = aquantia_phy_reg_read(dev_id, phy_id, AQUANTIA_MMD_AUTONEG,
+		AQUANTIA_EEE_PARTNER_ADVERTISTMENT_REGISTER, &phy_data);
+	SW_RTN_ON_ERROR(rv);
+
+	if (phy_data & AQUANTIA_EEE_PARTNER_ADV_1000M) {
+		*adv |= FAL_PHY_EEE_1000BASE_T;
+	}
+	if (phy_data & AQUANTIA_EEE_PARTNER_ADV_10000M){
+		*adv |= FAL_PHY_EEE_10000BASE_T;
+	}
+	phy_data = 0;
+	rv = aquantia_phy_reg_read(dev_id, phy_id, AQUANTIA_MMD_AUTONEG,
+		AQUANTIA_EEE_PARTNER_ADVERTISTMENT_REGISTER1, &phy_data);
+	SW_RTN_ON_ERROR(rv);
+
+	if (phy_data & AQUANTIA_EEE_PARTNER_ADV_2500M) {
+		*adv |= FAL_PHY_EEE_2500BASE_T;
+	}
+	if (phy_data & AQUANTIA_EEE_PARTNER_ADV_5000M) {
+		*adv |= FAL_PHY_EEE_5000BASE_T;
+	}
+
+	return rv;
+}
+/******************************************************************************
+*
+* aquantia_phy_get_eee_capability
+*
+* get eee capability
+*/
+sw_error_t
+aquantia_phy_get_eee_cap(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_uint32_t *cap)
+{
+	a_uint16_t phy_data = 0;
+	sw_error_t rv = SW_OK;
+
+	*cap = 0;
+	rv = aquantia_phy_reg_read(dev_id, phy_id, AQUANTIA_MMD_PCS_REGISTERS,
+		AQUANTIA_EEE_CAPABILITY_REGISTER, &phy_data);
+	SW_RTN_ON_ERROR(rv);
+
+	if (phy_data & AQUANTIA_EEE_CAPABILITY_1000M) {
+		*cap |= FAL_PHY_EEE_1000BASE_T;
+	}
+	if (phy_data & AQUANTIA_EEE_CAPABILITY_10000M){
+		*cap |= FAL_PHY_EEE_10000BASE_T;
+	}
+	phy_data = 0;
+	rv = aquantia_phy_reg_read(dev_id, phy_id, AQUANTIA_MMD_PCS_REGISTERS,
+		AQUANTIA_EEE_CAPABILITY_REGISTER1, &phy_data);
+	SW_RTN_ON_ERROR(rv);
+
+	if (phy_data & AQUANTIA_EEE_CAPABILITY_2500M) {
+		*cap |= FAL_PHY_EEE_2500BASE_T;
+	}
+	if (phy_data & AQUANTIA_EEE_CAPABILITY_5000M) {
+		*cap |= FAL_PHY_EEE_5000BASE_T;
+	}
+
+	return rv;
+}
+/******************************************************************************
+*
+* aquantia_phy_get_eee_status
+*
+* get eee status
+*/
+sw_error_t
+aquantia_phy_get_eee_status(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_uint32_t *status)
+{
+	a_uint32_t adv = 0, lp_adv = 0;
+	sw_error_t rv = SW_OK;
+
+	rv = aquantia_phy_get_eee_adv(dev_id, phy_id, &adv);
+	SW_RTN_ON_ERROR(rv);
+
+	rv = aquantia_phy_get_eee_partner_adv(dev_id, phy_id, &lp_adv);
+	SW_RTN_ON_ERROR(rv);
+
+	*status = (adv & lp_adv);
+
+	return rv;
+}
+
+/******************************************************************************
+*
 * aquantia_phy_hw_register init to avoid packet loss
 *
 */
@@ -1853,6 +2038,10 @@ aquantia_phy_hw_init(a_uint32_t dev_id,  a_uint32_t port_bmp)
 				FAL_PHY_ADV_XGE_SPEED_ALL | FAL_PHY_ADV_100TX_FD |
 				FAL_PHY_ADV_1000T_FD);
 			SW_RTN_ON_ERROR(rv);
+			rv = aquantia_phy_set_eee_adv(dev_id, phy_addr, FAL_PHY_EEE_1000BASE_T
+				| FAL_PHY_EEE_2500BASE_T | FAL_PHY_EEE_5000BASE_T |
+				FAL_PHY_EEE_10000BASE_T);
+			SW_RTN_ON_ERROR(rv);
 		}
 	}
 
@@ -1907,6 +2096,11 @@ static int aquantia_phy_api_ops_init(void)
 	aquantia_phy_api_ops->phy_interface_mode_set = aquantia_phy_interface_set_mode;
 	aquantia_phy_api_ops->phy_get_status = aquantia_phy_get_status;
 	aquantia_phy_api_ops->phy_counter_show = aquantia_phy_show_counter;
+	aquantia_phy_api_ops->phy_eee_adv_set = aquantia_phy_set_eee_adv;
+	aquantia_phy_api_ops->phy_eee_adv_get = aquantia_phy_get_eee_adv;
+	aquantia_phy_api_ops->phy_eee_partner_adv_get = aquantia_phy_get_eee_partner_adv;
+	aquantia_phy_api_ops->phy_eee_cap_get = aquantia_phy_get_eee_cap;
+	aquantia_phy_api_ops->phy_eee_status_get = aquantia_phy_get_eee_status;
 	ret = hsl_phy_api_ops_register(AQUANTIA_PHY_CHIP, aquantia_phy_api_ops);
 	if (ret == 0)
 		SSDK_INFO("qca probe aquantia phy driver succeeded!\n");

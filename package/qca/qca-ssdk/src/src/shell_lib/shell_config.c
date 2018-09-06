@@ -660,6 +660,7 @@ struct sub_cmd_des_t g_port_des[] =
 	{"frameMaxSize", "set",   SW_API_PT_FRAME_MAX_SIZE_SET, NULL},
 	{"interface3az", "set", SW_API_PT_INTERFACE_3AZ_STATUS_SET, NULL},
 	{"promiscmode", "set",   SW_API_PT_PROMISC_MODE_SET, NULL},
+	{"eeecfg", "set", SW_API_PT_INTERFACE_EEE_CFG_SET, NULL},
 	#endif
 	{NULL, NULL,  (int)NULL, NULL},/*end of desc*/
 };

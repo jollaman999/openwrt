@@ -209,6 +209,7 @@ extern "C" {
 	SW_POLICER_GLOBAL_COUNTER,
 	SW_PHY_DUMP,
 	SW_RESOURCE_SCHE,
+	SW_PORT_EEE_CONFIG,
     } sw_data_type_e;
 
     typedef struct

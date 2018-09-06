@@ -2431,7 +2431,173 @@ malibu_phy_get_status(a_uint32_t dev_id, a_uint32_t phy_id,
 
 	return SW_OK;
 }
+/******************************************************************************
+*
+* malibu_phy_set_eee_advertisement
+*
+* set eee advertisement
+*/
+sw_error_t
+malibu_phy_set_eee_adv(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_uint32_t adv)
+{
+	a_uint16_t phy_data = 0;
+	sw_error_t rv = SW_OK;
 
+	if (phy_id == COMBO_PHY_ID) {
+		if (MALIBU_PHY_MEDIUM_COPPER !=
+		    __phy_active_medium_get(dev_id, phy_id))
+			return SW_NOT_SUPPORTED;
+	}
+
+	phy_data = malibu_phy_mmd_read(dev_id, phy_id, MALIBU_PHY_MMD7_NUM,
+				       MALIBU_PHY_MMD7_ADDR_8023AZ_EEE_CTRL);
+	phy_data &= ~(MALIBU_PHY_EEE_ADV_100M | MALIBU_PHY_EEE_ADV_1000M);
+
+	if (adv & FAL_PHY_EEE_100BASE_T) {
+		phy_data |= MALIBU_PHY_EEE_ADV_100M;
+	}
+	if (adv & FAL_PHY_EEE_1000BASE_T) {
+		phy_data |= MALIBU_PHY_EEE_ADV_1000M;
+	}
+
+	rv = malibu_phy_mmd_write(dev_id, phy_id, MALIBU_PHY_MMD7_NUM,
+		     MALIBU_PHY_MMD7_ADDR_8023AZ_EEE_CTRL, phy_data);
+
+	rv = malibu_phy_restart_autoneg(dev_id, phy_id);
+
+	return rv;
+
+}
+
+/******************************************************************************
+*
+* malibu_phy_get_eee_advertisement
+*
+* get eee advertisement
+*/
+sw_error_t
+malibu_phy_get_eee_adv(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_uint32_t *adv)
+{
+	a_uint16_t phy_data = 0;
+	sw_error_t rv = SW_OK;
+
+	if (phy_id == COMBO_PHY_ID) {
+		if (MALIBU_PHY_MEDIUM_COPPER !=
+		    __phy_active_medium_get(dev_id, phy_id))
+			return SW_NOT_SUPPORTED;
+	}
+
+	*adv = 0;
+	phy_data = malibu_phy_mmd_read(dev_id, phy_id, MALIBU_PHY_MMD7_NUM,
+				       MALIBU_PHY_MMD7_ADDR_8023AZ_EEE_CTRL);
+
+	if (phy_data & MALIBU_PHY_EEE_ADV_100M) {
+		*adv |= FAL_PHY_EEE_100BASE_T;
+	}
+	if (phy_data & MALIBU_PHY_EEE_ADV_1000M) {
+		*adv |= FAL_PHY_EEE_1000BASE_T;
+	}
+
+	return rv;
+}
+/******************************************************************************
+*
+* malibu_phy_get_eee_partner_advertisement
+*
+* get eee partner advertisement
+*/
+sw_error_t
+malibu_phy_get_eee_partner_adv(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_uint32_t *adv)
+{
+	a_uint16_t phy_data = 0;
+	sw_error_t rv = SW_OK;
+
+	if (phy_id == COMBO_PHY_ID) {
+		if (MALIBU_PHY_MEDIUM_COPPER !=
+		    __phy_active_medium_get(dev_id, phy_id))
+			return SW_NOT_SUPPORTED;
+	}
+
+	*adv = 0;
+	phy_data = malibu_phy_mmd_read(dev_id, phy_id, MALIBU_PHY_MMD7_NUM,
+				       MALIBU_PHY_MMD7_ADDR_8023AZ_EEE_PARTNER);
+
+	if (phy_data & MALIBU_PHY_EEE_PARTNER_ADV_100M) {
+		*adv |= FAL_PHY_EEE_100BASE_T;
+	}
+	if (phy_data & MALIBU_PHY_EEE_PARTNER_ADV_1000M) {
+		*adv |= FAL_PHY_EEE_1000BASE_T;
+	}
+
+	return rv;
+}
+/******************************************************************************
+*
+* malibu_phy_get_eee_capability
+*
+* get eee capability
+*/
+sw_error_t
+malibu_phy_get_eee_cap(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_uint32_t *cap)
+{
+	a_uint16_t phy_data = 0;
+	sw_error_t rv = SW_OK;
+
+	if (phy_id == COMBO_PHY_ID) {
+		if (MALIBU_PHY_MEDIUM_COPPER !=
+		    __phy_active_medium_get(dev_id, phy_id))
+			return SW_NOT_SUPPORTED;
+	}
+
+	*cap = 0;
+	phy_data = malibu_phy_mmd_read(dev_id, phy_id, MALIBU_PHY_MMD3_NUM,
+				       MALIBU_PHY_MMD3_ADDR_8023AZ_EEE_CAPABILITY);
+
+	if (phy_data & MALIBU_PHY_EEE_CAPABILITY_100M) {
+		*cap |= FAL_PHY_EEE_100BASE_T;
+	}
+	if (phy_data & MALIBU_PHY_EEE_CAPABILITY_1000M) {
+		*cap |= FAL_PHY_EEE_1000BASE_T;
+	}
+
+	return rv;
+}
+/******************************************************************************
+*
+* malibu_phy_get_eee_status
+*
+* get eee status
+*/
+sw_error_t
+malibu_phy_get_eee_status(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_uint32_t *status)
+{
+	a_uint16_t phy_data = 0;
+	sw_error_t rv = SW_OK;
+
+	if (phy_id == COMBO_PHY_ID) {
+		if (MALIBU_PHY_MEDIUM_COPPER !=
+		    __phy_active_medium_get(dev_id, phy_id))
+			return SW_NOT_SUPPORTED;
+	}
+
+	*status = 0;
+	phy_data = malibu_phy_mmd_read(dev_id, phy_id, MALIBU_PHY_MMD7_NUM,
+				       MALIBU_PHY_MMD7_ADDR_8023AZ_EEE_STATUS);
+
+	if (phy_data & MALIBU_PHY_EEE_STATUS_100M) {
+		*status |= FAL_PHY_EEE_100BASE_T;
+	}
+	if (phy_data & MALIBU_PHY_EEE_STATUS_1000M) {
+		*status |= FAL_PHY_EEE_1000BASE_T;
+	}
+
+	return rv;
+}
 /******************************************************************************
 *
 * malibu_phy_hw_register init
@@ -2571,6 +2737,11 @@ static int malibu_phy_api_ops_init(void)
 	malibu_phy_api_ops->phy_counter_show = malibu_phy_show_counter;
 	malibu_phy_api_ops->phy_serdes_reset = malibu_phy_serdes_reset;
 	malibu_phy_api_ops->phy_get_status = malibu_phy_get_status;
+	malibu_phy_api_ops->phy_eee_adv_set = malibu_phy_set_eee_adv;
+	malibu_phy_api_ops->phy_eee_adv_get = malibu_phy_get_eee_adv;
+	malibu_phy_api_ops->phy_eee_partner_adv_get = malibu_phy_get_eee_partner_adv;
+	malibu_phy_api_ops->phy_eee_cap_get = malibu_phy_get_eee_cap;
+	malibu_phy_api_ops->phy_eee_status_get = malibu_phy_get_eee_status;
 
 	ret = hsl_phy_api_ops_register(MALIBU_PHY_CHIP, malibu_phy_api_ops);
 

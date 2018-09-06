@@ -1703,6 +1703,143 @@ qca808x_phy_show_counter(a_uint32_t dev_id, a_uint32_t phy_id,
 	return SW_OK;
 }
 
+/******************************************************************************
+*
+* qca808x_phy_set_eee_advertisement
+*
+* set eee advertisement
+*/
+sw_error_t
+qca808x_phy_set_eee_adv(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_uint32_t adv)
+{
+	a_uint16_t phy_data = 0;
+	sw_error_t rv = SW_OK;
+
+	phy_data = qca808x_phy_mmd_read(dev_id, phy_id, QCA808X_PHY_MMD7_NUM,
+				       QCA808X_PHY_MMD7_ADDR_8023AZ_EEE_CTRL);
+	phy_data &= ~(QCA808X_PHY_EEE_ADV_100M | QCA808X_PHY_EEE_ADV_1000M);
+
+	if (adv & FAL_PHY_EEE_100BASE_T) {
+		phy_data |= QCA808X_PHY_EEE_ADV_100M;
+	}
+	if (adv & FAL_PHY_EEE_1000BASE_T) {
+		phy_data |= QCA808X_PHY_EEE_ADV_1000M;
+	}
+
+	rv = qca808x_phy_mmd_write(dev_id, phy_id, QCA808X_PHY_MMD7_NUM,
+		     QCA808X_PHY_MMD7_ADDR_8023AZ_EEE_CTRL, phy_data);
+
+	rv = qca808x_phy_restart_autoneg(dev_id, phy_id);
+
+	return rv;
+}
+
+/******************************************************************************
+*
+* qca808x_phy_get_eee_advertisement
+*
+* get eee advertisement
+*/
+sw_error_t
+qca808x_phy_get_eee_adv(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_uint32_t *adv)
+{
+	a_uint16_t phy_data = 0;
+	sw_error_t rv = SW_OK;
+
+	*adv = 0;
+	phy_data = qca808x_phy_mmd_read(dev_id, phy_id, QCA808X_PHY_MMD7_NUM,
+				       QCA808X_PHY_MMD7_ADDR_8023AZ_EEE_CTRL);
+
+	if (phy_data & QCA808X_PHY_EEE_ADV_100M) {
+		*adv |= FAL_PHY_EEE_100BASE_T;
+	}
+	if (phy_data & QCA808X_PHY_EEE_ADV_1000M) {
+		*adv |= FAL_PHY_EEE_1000BASE_T;
+	}
+
+	return rv;
+}
+/******************************************************************************
+*
+* qca808x_phy_get_eee_partner_advertisement
+*
+* get eee partner advertisement
+*/
+sw_error_t
+qca808x_phy_get_eee_partner_adv(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_uint32_t *adv)
+{
+	a_uint16_t phy_data = 0;
+	sw_error_t rv = SW_OK;
+
+	*adv = 0;
+	phy_data = qca808x_phy_mmd_read(dev_id, phy_id, QCA808X_PHY_MMD7_NUM,
+				       QCA808X_PHY_MMD7_ADDR_8023AZ_EEE_PARTNER);
+
+	if (phy_data & QCA808X_PHY_EEE_PARTNER_ADV_100M) {
+		*adv |= FAL_PHY_EEE_100BASE_T;
+	}
+	if (phy_data & QCA808X_PHY_EEE_PARTNER_ADV_1000M) {
+		*adv |= FAL_PHY_EEE_1000BASE_T;
+	}
+
+	return rv;
+}
+/******************************************************************************
+*
+* qca808x_phy_get_eee_capability
+*
+* get eee capability
+*/
+sw_error_t
+qca808x_phy_get_eee_cap(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_uint32_t *cap)
+{
+	a_uint16_t phy_data = 0;
+	sw_error_t rv = SW_OK;
+
+	*cap = 0;
+	phy_data = qca808x_phy_mmd_read(dev_id, phy_id, QCA808X_PHY_MMD3_NUM,
+				       QCA808X_PHY_MMD3_ADDR_8023AZ_EEE_CAPABILITY);
+
+	if (phy_data & QCA808X_PHY_EEE_CAPABILITY_100M) {
+		*cap |= FAL_PHY_EEE_100BASE_T;
+	}
+	if (phy_data & QCA808X_PHY_EEE_CAPABILITY_1000M) {
+		*cap |= FAL_PHY_EEE_1000BASE_T;
+	}
+
+	return rv;
+}
+/******************************************************************************
+*
+* qca808x_phy_get_eee_status
+*
+* get eee status
+*/
+sw_error_t
+qca808x_phy_get_eee_status(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_uint32_t *status)
+{
+	a_uint16_t phy_data = 0;
+	sw_error_t rv = SW_OK;
+
+	*status = 0;
+	phy_data = qca808x_phy_mmd_read(dev_id, phy_id, QCA808X_PHY_MMD7_NUM,
+				       QCA808X_PHY_MMD7_ADDR_8023AZ_EEE_STATUS);
+
+	if (phy_data & QCA808X_PHY_EEE_STATUS_100M) {
+		*status |= FAL_PHY_EEE_100BASE_T;
+	}
+	if (phy_data & QCA808X_PHY_EEE_STATUS_1000M) {
+		*status |= FAL_PHY_EEE_1000BASE_T;
+	}
+
+	return rv;
+}
+
 static sw_error_t
 qca808x_phy_hw_init(a_uint32_t dev_id,  a_uint32_t port_bmp)
 {
@@ -1788,6 +1925,11 @@ static sw_error_t qca808x_phy_api_ops_init(void)
 	qca808x_phy_api_ops->phy_counter_set = qca808x_phy_set_counter;
 	qca808x_phy_api_ops->phy_counter_get = qca808x_phy_get_counter;
 	qca808x_phy_api_ops->phy_counter_show = qca808x_phy_show_counter;
+	qca808x_phy_api_ops->phy_eee_adv_set = qca808x_phy_set_eee_adv;
+	qca808x_phy_api_ops->phy_eee_adv_get = qca808x_phy_get_eee_adv;
+	qca808x_phy_api_ops->phy_eee_partner_adv_get = qca808x_phy_get_eee_partner_adv;
+	qca808x_phy_api_ops->phy_eee_cap_get = qca808x_phy_get_eee_cap;
+	qca808x_phy_api_ops->phy_eee_status_get = qca808x_phy_get_eee_status;
 
 	ret = hsl_phy_api_ops_register(QCA808X_PHY_CHIP, qca808x_phy_api_ops);
 
