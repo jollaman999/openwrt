@@ -121,6 +121,8 @@ struct cmd_des_t gcmd_des[] =
             {"srcfilter", "get", "get port source filter bypass", "<port_id>", SW_API_PT_SOURCE_FILTER_GET, NULL},
             {"frameMaxSize", "get", "get port frame max size", "<port_id>", SW_API_PT_FRAME_MAX_SIZE_GET},
             {"frameMaxSize", "set", "set port frame max size", "<port_id> <frame_max_size>", SW_API_PT_FRAME_MAX_SIZE_SET},
+            {"eeecfg", "set", "set interface eee info", "<port_id>", SW_API_PT_INTERFACE_EEE_CFG_SET, NULL},
+            {"eeecfg", "get", "get interface eee info", "<port_id>", SW_API_PT_INTERFACE_EEE_CFG_GET, NULL},
 /*qca808x_start*/
             {NULL, NULL, NULL, NULL, (int)NULL, NULL},/*end of desc*/
         },

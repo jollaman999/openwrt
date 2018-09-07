@@ -882,3 +882,26 @@ fal_port_promisc_mode_get(a_uint32_t dev_id, fal_port_t port_id,
 
 	return rv;
 }
+sw_error_t
+fal_port_interface_eee_cfg_set(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_eee_cfg_t *port_eee_cfg)
+{
+	sw_error_t rv;
+
+	rv = sw_uk_exec(SW_API_PT_INTERFACE_EEE_CFG_SET, dev_id, port_id, port_eee_cfg);
+
+	return rv;
+}
+sw_error_t
+fal_port_interface_eee_cfg_get(a_uint32_t dev_id, fal_port_t port_id,
+	fal_port_eee_cfg_t *port_eee_cfg)
+
+{
+	sw_error_t rv;
+
+	rv = sw_uk_exec(SW_API_PT_INTERFACE_EEE_CFG_GET, dev_id, port_id, port_eee_cfg);
+
+	return rv;
+
+    return rv;
+}

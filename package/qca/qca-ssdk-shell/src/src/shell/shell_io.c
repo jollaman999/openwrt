@@ -245,6 +245,7 @@ static sw_data_type_t sw_data_type[] =
 /*qca808x_start*/
 	SW_TYPE_DEF(SW_CROSSOVER_MODE, cmd_data_check_crossover_mode, cmd_data_print_crossover_mode),
     SW_TYPE_DEF(SW_CROSSOVER_STATUS, cmd_data_check_crossover_status, cmd_data_print_crossover_status),
+	SW_TYPE_DEF(SW_PORT_EEE_CONFIG, cmd_data_check_port_eee_config, cmd_data_print_port_eee_config),
 /*qca808x_end*/
     SW_TYPE_DEF(SW_PREFER_MEDIUM, cmd_data_check_prefer_medium, cmd_data_print_prefer_medium),
     SW_TYPE_DEF(SW_FIBER_MODE, cmd_data_check_fiber_mode, cmd_data_print_fiber_mode),
@@ -8938,6 +8939,228 @@ void
 cmd_data_print_cable_len(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
     dprintf("[%s]:%d", param_name, *(a_uint32_t *) buf);
+}
+sw_error_t
+cmd_data_check_port_eee_config(char *cmd_str, void * val, a_uint32_t size)
+{
+    char *cmd;
+    sw_error_t rv;
+    fal_port_eee_cfg_t cfg;
+
+    aos_mem_zero(&cfg, sizeof (fal_port_eee_cfg_t));
+
+    do
+    {
+        cmd = get_sub_cmd("eee_enable", "yes");
+        SW_RTN_ON_NULL_PARAM(cmd);
+
+        if (!strncasecmp(cmd, "quit", 4))
+        {
+
+            return SW_BAD_VALUE;
+        }
+        else if (!strncasecmp(cmd, "help", 4))
+        {
+            dprintf("usage: <yes/no/y/n>\n");
+            rv = SW_BAD_VALUE;
+        }
+        else
+        {
+            rv = cmd_data_check_confirm(cmd, A_FALSE, &(cfg.enable),
+                                        sizeof (a_bool_t));
+            if (SW_OK != rv)
+                dprintf("usage: <yes/no/y/n>\n");
+        }
+    }
+    while (talk_mode && (SW_OK != rv));
+    do
+    {
+        cmd = get_sub_cmd("eee_capability", "0-0xffff");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+        if (!strncasecmp(cmd, "quit", 4))
+        {
+            return SW_BAD_VALUE;
+        }
+        else if (!strncasecmp(cmd, "help", 4))
+        {
+            dprintf("usage: integer\n");
+            rv = SW_BAD_VALUE;
+        }
+        else
+        {
+            rv = cmd_data_check_uint32(cmd, &(cfg.capability), sizeof (a_uint32_t));
+            if (SW_OK != rv)
+                dprintf("usage: integer\n");
+        }
+    }
+    while (talk_mode && (SW_OK != rv));
+
+    do
+    {
+        cmd = get_sub_cmd("lpi_sleep_timer", "0-0xffff");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+        if (!strncasecmp(cmd, "quit", 4))
+        {
+            return SW_BAD_VALUE;
+        }
+        else if (!strncasecmp(cmd, "help", 4))
+        {
+            dprintf("usage: integer\n");
+            rv = SW_BAD_VALUE;
+        }
+        else
+        {
+            rv = cmd_data_check_uint32(cmd, &(cfg.lpi_sleep_timer), sizeof (a_uint32_t));
+            if (SW_OK != rv)
+                dprintf("usage: integer\n");
+        }
+    }
+    while (talk_mode && (SW_OK != rv));
+
+    do
+    {
+        cmd = get_sub_cmd("advertisement", "0-0xffff");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+        if (!strncasecmp(cmd, "quit", 4))
+        {
+            return SW_BAD_VALUE;
+        }
+        else if (!strncasecmp(cmd, "help", 4))
+        {
+            dprintf("usage: integer\n");
+            rv = SW_BAD_VALUE;
+        }
+        else
+        {
+            rv = cmd_data_check_uint32(cmd, &(cfg.advertisement), sizeof (a_uint32_t));
+            if (SW_OK != rv)
+                dprintf("usage: integer\n");
+        }
+    }
+    while (talk_mode && (SW_OK != rv));
+
+    do
+    {
+        cmd = get_sub_cmd("lpi_tx_enable", "0x1");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+        if (!strncasecmp(cmd, "quit", 4))
+        {
+            return SW_BAD_VALUE;
+        }
+        else if (!strncasecmp(cmd, "help", 4))
+        {
+            dprintf("usage: integer\n");
+            rv = SW_BAD_VALUE;
+        }
+        else
+        {
+            rv = cmd_data_check_uint32(cmd, &(cfg.lpi_tx_enable), sizeof (a_uint32_t));
+            if (SW_OK != rv)
+                dprintf("usage: integer\n");
+        }
+    }
+    while (talk_mode && (SW_OK != rv));
+
+    do
+    {
+        cmd = get_sub_cmd("eee_status", "0-0xffff");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+        if (!strncasecmp(cmd, "quit", 4))
+        {
+            return SW_BAD_VALUE;
+        }
+        else if (!strncasecmp(cmd, "help", 4))
+        {
+            dprintf("usage: integer\n");
+            rv = SW_BAD_VALUE;
+        }
+        else
+        {
+            rv = cmd_data_check_uint32(cmd, &(cfg.eee_status), sizeof (a_uint32_t));
+            if (SW_OK != rv)
+                dprintf("usage: integer\n");
+        }
+    }
+    while (talk_mode && (SW_OK != rv));
+
+    do
+    {
+        cmd = get_sub_cmd("lpi_wakeup_timer", "0-0xffff");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+        if (!strncasecmp(cmd, "quit", 4))
+        {
+            return SW_BAD_VALUE;
+        }
+        else if (!strncasecmp(cmd, "help", 4))
+        {
+            dprintf("usage: integer\n");
+            rv = SW_BAD_VALUE;
+        }
+        else
+        {
+            rv = cmd_data_check_uint32(cmd, &(cfg.lpi_wakeup_timer), sizeof (a_uint32_t));
+            if (SW_OK != rv)
+                dprintf("usage: integer\n");
+        }
+    }
+    while (talk_mode && (SW_OK != rv));
+
+    do
+    {
+        cmd = get_sub_cmd("link_partner_advertisement", "0-0xffff");
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+        if (!strncasecmp(cmd, "quit", 4))
+        {
+            return SW_BAD_VALUE;
+        }
+        else if (!strncasecmp(cmd, "help", 4))
+        {
+            dprintf("usage: integer\n");
+            rv = SW_BAD_VALUE;
+        }
+        else
+        {
+            rv = cmd_data_check_uint32(cmd, &(cfg.link_partner_advertisement), sizeof (a_uint32_t));
+            if (SW_OK != rv)
+                dprintf("usage: integer\n");
+        }
+    }
+    while (talk_mode && (SW_OK != rv));
+
+    *(fal_port_eee_cfg_t *)val = cfg;
+    return SW_OK;
+}
+void
+cmd_data_print_port_eee_config(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+{
+    fal_port_eee_cfg_t *cfg;
+
+    cfg = (fal_port_eee_cfg_t *) buf;
+
+    if (A_TRUE == cfg->enable)
+    {
+        dprintf("\n[eee_enable]:yes  ");
+    }
+    else
+    {
+        dprintf("\n[eee_enable]:no  ");
+    }
+    dprintf("\n[eee_capability]:0x%x", cfg->capability);
+    dprintf("\n[eee_lpi_sleep_timer]:0x%x", cfg->lpi_sleep_timer);
+    dprintf("\n[eee_advertisement]:0x%x", cfg->advertisement);
+    dprintf("\n[eee_lpi_tx_enable]:0x%x", cfg->lpi_tx_enable);
+    dprintf("\n[eee_status]:0x%x  ", cfg->eee_status);
+    dprintf("\n[eee_lpi_wakeup_timer]:0x%x  ", cfg->lpi_wakeup_timer);
+    dprintf("\n[eee_link_partner_advertisement]:0x%x  ", cfg->link_partner_advertisement);
+
+    return;
 }
 
 char*
