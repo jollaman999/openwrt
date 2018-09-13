@@ -769,13 +769,13 @@ static sw_error_t _adpt_hppe_acl_vlan_rule_hw_2_sw(union ipo_rule_reg_u *hw_reg,
 	if(vlanrule_mask->is_ipv6_mask)
 	{
 		FAL_FIELD_FLG_SET(rule->field_flg, FAL_ACL_FIELD_IPV6);
-		rule->is_ipv6_val = vlanrule->is_ip;
+		rule->is_ipv6_val = vlanrule->is_ipv6;
 	}
 
 	if(vlanrule_mask->is_ethernet_mask)
 	{
 		FAL_FIELD_FLG_SET(rule->field_flg, FAL_ACL_FIELD_ETHERNET);
-		rule->is_ipv6_val = vlanrule->is_ethernet;
+		rule->is_ethernet_val = vlanrule->is_ethernet;
 	}
 
 	if(vlanrule_mask->is_snap_mask)
@@ -852,13 +852,13 @@ static sw_error_t _adpt_hppe_acl_l2_misc_rule_hw_2_sw(union ipo_rule_reg_u *hw_r
 	if(l2misc_mask->is_ipv6_mask)
 	{
 		FAL_FIELD_FLG_SET(rule->field_flg, FAL_ACL_FIELD_IPV6);
-		rule->is_ipv6_val = l2misc_rule->is_ip;
+		rule->is_ipv6_val = l2misc_rule->is_ipv6;
 	}
 
 	if(l2misc_mask->is_ethernet_mask)
 	{
 		FAL_FIELD_FLG_SET(rule->field_flg, FAL_ACL_FIELD_ETHERNET);
-		rule->is_ipv6_val = l2misc_rule->is_ethernet;
+		rule->is_ethernet_val = l2misc_rule->is_ethernet;
 	}
 
 	if(l2misc_mask->is_snap_mask)
@@ -2151,12 +2151,12 @@ static sw_error_t _adpt_hppe_acl_vlan_rule_sw_2_hw(fal_acl_rule_t *rule,
 	}
 	if(FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_IPV6))
 	{
-		vlanrule->is_ip = rule->is_ipv6_val;
+		vlanrule->is_ipv6 = rule->is_ipv6_val;
 		vlanrule_mask->is_ipv6_mask = 1;
 	}
 	if(FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_ETHERNET))
 	{
-		vlanrule->is_ethernet = rule->is_ipv6_val;
+		vlanrule->is_ethernet = rule->is_ethernet_val;
 		vlanrule_mask->is_ethernet_mask = 1;
 	}
 	if(FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_SNAP))
@@ -2232,12 +2232,12 @@ static sw_error_t _adpt_hppe_acl_l2_misc_rule_sw_2_hw(fal_acl_rule_t *rule,
 	}
 	if(FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_IPV6))
 	{
-		l2misc_rule->is_ip = rule->is_ipv6_val;
+		l2misc_rule->is_ipv6 = rule->is_ipv6_val;
 		l2misc_mask->is_ipv6_mask = 1;
 	}
 	if(FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_ETHERNET))
 	{
-		l2misc_rule->is_ethernet = rule->is_ipv6_val;
+		l2misc_rule->is_ethernet = rule->is_ethernet_val;
 		l2misc_mask->is_ethernet_mask = 1;
 	}
 	if(FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_SNAP))
