@@ -112,6 +112,26 @@ hppe_port_mux_ctrl_set(
 }
 
 sw_error_t
+cppe_port_mux_ctrl_get(
+		a_uint32_t dev_id,
+		union cppe_port_mux_ctrl_u *value)
+{
+	return hppe_reg_get(
+				dev_id,
+				NSS_GLOBAL_BASE_ADDR + PORT_MUX_CTRL_ADDRESS,
+				&value->val);
+}
+sw_error_t
+cppe_port_mux_ctrl_set(
+		a_uint32_t dev_id,
+		union cppe_port_mux_ctrl_u *value)
+{
+	return hppe_reg_set(
+				dev_id,
+				NSS_GLOBAL_BASE_ADDR + PORT_MUX_CTRL_ADDRESS,
+				value->val);
+}
+sw_error_t
 hppe_module_ini_done_int_get(
 		a_uint32_t dev_id,
 		union module_ini_done_int_u *value)

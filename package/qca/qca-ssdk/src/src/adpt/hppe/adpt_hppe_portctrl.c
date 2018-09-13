@@ -37,6 +37,8 @@
 #include "ssdk_init.h"
 #include "ssdk_dts.h"
 #include "ssdk_clk.h"
+#include "adpt_hppe.h"
+#include "adpt_cppe_portctrl.h"
 
 #define PORT4_PCS_SEL_GMII_FROM_PCS0 1
 #define PORT4_PCS_SEL_RGMII 0
@@ -2230,8 +2232,13 @@ _adpt_hppe_port_mux_set(a_uint32_t dev_id, fal_port_t port_id,
 			rv = adpt_hppe_port_mac_duplex_set(dev_id, port_id, FAL_FULL_DUPLEX);
 		}
 	}
-	if ((port_type == PORT_GMAC_TYPE) ||(port_type == PORT_XGMAC_TYPE))
-		 _adpt_hppe_port_mux_mac_set(dev_id, port_id, port_type);
+	if ((port_type == PORT_GMAC_TYPE) ||(port_type == PORT_XGMAC_TYPE)) {
+		if (adpt_hppe_chip_revision_get(dev_id) == HPPE_REVISION) {
+		 	rv = _adpt_hppe_port_mux_mac_set(dev_id, port_id, port_type);
+		} else if (adpt_hppe_chip_revision_get(dev_id) == CPPE_REVISION) {
+			rv = _adpt_cppe_port_mux_mac_set(dev_id, port_id, port_type);
+		}
+	}
 
 	return rv;
 }

@@ -139,6 +139,18 @@ union port_mux_ctrl_u {
 	a_uint32_t val;
 	struct port_mux_ctrl bf;
 };
+struct cppe_port_mux_ctrl {
+	a_uint32_t  port3_pcs_sel:2;
+	a_uint32_t  port4_pcs_sel:2;
+	a_uint32_t  port5_pcs_sel:2;
+	a_uint32_t  port5_gmac_sel:1;
+	a_uint32_t  _reserved0:25;
+};
+
+union cppe_port_mux_ctrl_u {
+	a_uint32_t val;
+	struct cppe_port_mux_ctrl bf;
+};
 
 /*[register] MODULE_INI_DONE_INT*/
 #define MODULE_INI_DONE_INT

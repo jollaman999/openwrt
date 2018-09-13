@@ -965,6 +965,7 @@ qca_hppe_interface_mode_init(a_uint32_t dev_id, a_uint32_t mode0, a_uint32_t mod
 	adpt_api_t *p_api;
 	sw_error_t rv = SW_OK;
 	fal_port_t port_id;
+	a_uint32_t port_max = SSDK_PHYSICAL_PORT7;
 
 	SW_RTN_ON_NULL(p_api = adpt_api_ptr_get(dev_id));
 	SW_RTN_ON_NULL(p_api->adpt_port_mux_mac_type_set);
@@ -981,7 +982,13 @@ qca_hppe_interface_mode_init(a_uint32_t dev_id, a_uint32_t mode0, a_uint32_t mod
 	rv = p_api->adpt_uniphy_mode_set(dev_id, SSDK_UNIPHY_INSTANCE2, mode2);
 	SW_RTN_ON_ERROR(rv);
 #endif
-	for(port_id = SSDK_PHYSICAL_PORT1; port_id <=SSDK_PHYSICAL_PORT6; port_id++) {
+
+	if(adpt_hppe_chip_revision_get(dev_id) == CPPE_REVISION) {
+		port_max = SSDK_PHYSICAL_PORT6;
+	} else {
+		port_max = SSDK_PHYSICAL_PORT7;
+	}
+	for(port_id = SSDK_PHYSICAL_PORT1; port_id < port_max; port_id++) {
 		rv = p_api->adpt_port_mux_mac_type_set(dev_id, port_id, mode0, mode1, mode2);
 		if(rv != SW_OK) {
 			SSDK_ERROR("port_id:%d, mode0:%d, mode1:%d, mode2:%d\n", port_id, mode0, mode1, mode2);

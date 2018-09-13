@@ -61,6 +61,16 @@ hppe_port_mux_ctrl_set(
 		union port_mux_ctrl_u *value);
 
 sw_error_t
+cppe_port_mux_ctrl_get(
+		a_uint32_t dev_id,
+		union cppe_port_mux_ctrl_u *value);
+
+sw_error_t
+cppe_port_mux_ctrl_set(
+		a_uint32_t dev_id,
+		union cppe_port_mux_ctrl_u *value);
+
+sw_error_t
 hppe_module_ini_done_int_get(
 		a_uint32_t dev_id,
 		union module_ini_done_int_u *value);
