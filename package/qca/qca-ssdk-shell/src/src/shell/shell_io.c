@@ -5462,17 +5462,29 @@ cmd_data_check_udf_field(fal_acl_rule_t * entry)
     if(entry->rule_type == FAL_ACL_RULE_UDF)
     {
 	/* get IP/NON-IP field configuration */
-	entry->is_ip_mask = 1;
-	cmd_data_check_element("Is IP packet", "no", "usage: <yes/no/y/n>\n",
-	                   cmd_data_check_confirm, (cmd, A_FALSE, &entry->is_ip_val,
-	                           sizeof (a_bool_t)));
-	FAL_FIELD_FLG_SET(entry->field_flg, FAL_ACL_FIELD_IP);
+	cmd_data_check_element("IP/NON-IP field", "no", "usage: <yes/no/y/n>\n",
+                           cmd_data_check_confirm, (cmd, A_FALSE, &tmpdata,
+                                   sizeof (a_bool_t)));
+	if(tmpdata)
+	{
+		entry->is_ip_mask = 1;
+		cmd_data_check_element("Is IP packet", "no", "usage: <yes/no/y/n>\n",
+	                           cmd_data_check_confirm, (cmd, A_FALSE, &entry->is_ip_val,
+	                                   sizeof (a_bool_t)));
+		FAL_FIELD_FLG_SET(entry->field_flg, FAL_ACL_FIELD_IP);
+	}
 	/* get IPv4/IPv6 field configuration */
-	entry->is_ipv6_mask = 1;
-	cmd_data_check_element("Is IPv6 packet", "no", "usage: <yes/no/y/n>\n",
-	                   cmd_data_check_confirm, (cmd, A_FALSE, &entry->is_ipv6_val,
-	                           sizeof (a_bool_t)));
-	FAL_FIELD_FLG_SET(entry->field_flg, FAL_ACL_FIELD_IPV6);
+	cmd_data_check_element("IPv4/IPv6 field", "no", "usage: <yes/no/y/n>\n",
+                           cmd_data_check_confirm, (cmd, A_FALSE, &tmpdata,
+                                   sizeof (a_bool_t)));
+	if(tmpdata)
+	{
+		entry->is_ipv6_mask = 1;
+		cmd_data_check_element("Is IPv6 packet", "no", "usage: <yes/no/y/n>\n",
+	                           cmd_data_check_confirm, (cmd, A_FALSE, &entry->is_ipv6_val,
+	                                   sizeof (a_bool_t)));
+		FAL_FIELD_FLG_SET(entry->field_flg, FAL_ACL_FIELD_IPV6);
+	}
     }
 
     return SW_OK;
