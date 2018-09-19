@@ -103,7 +103,7 @@ struct cmd_des_t gcmd_des[] =
             {"wolstatus", "set", "set wol status of a port", "<port_id> <enable|disable>", SW_API_PT_WOL_STATUS_SET, NULL},
             {"wolstatus", "get", "get wol status of a port", "<port_id>", SW_API_PT_WOL_STATUS_GET, NULL},
 /*qca808x_end*/
-            {"interfaceMode", "set", "set interface mode of phy", "<port_id> <psgmii_baset|psgmii_bx1000|psgmii_fx100|psgmii_amdet|sgmii_baset|qsgmii|usxgmii|sgmii_plus|10gbase_r |interfacemode_max>", SW_API_PT_INTERFACE_MODE_SET, NULL},
+            {"interfaceMode", "set", "set interface mode of phy", "<port_id> <psgmii_baset|psgmii_bx1000|psgmii_fx100|psgmii_amdet|sgmii_baset|qsgmii|usxgmii|sgmii_plus|10gbase_r |sgmii_fiber|interfacemode_max>", SW_API_PT_INTERFACE_MODE_SET, NULL},
             {"interfaceMode", "get", "get interface mode of phy", "<port_id>", SW_API_PT_INTERFACE_MODE_GET, NULL},
             {"interfaceMode", "apply", "apply interface mode","", SW_API_PT_INTERFACE_MODE_APPLY, NULL},
 /*qca808x_start*/
