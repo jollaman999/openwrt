@@ -966,10 +966,14 @@ a_bool_t qca803x_phy_speed_duplex_resolved(a_uint32_t dev_id, a_uint32_t phy_id)
 */
 sw_error_t
 qca803x_phy_get_phy_id(a_uint32_t dev_id, a_uint32_t phy_id,
-		      a_uint16_t * org_id, a_uint16_t * rev_id)
+		a_uint32_t *phy_data)
 {
-	*org_id = qca803x_phy_reg_read(dev_id, phy_id, QCA803X_PHY_ID1);
-	*rev_id = qca803x_phy_reg_read(dev_id, phy_id, QCA803X_PHY_ID2);
+	a_uint16_t org_id, rev_id;
+
+	org_id = qca803x_phy_reg_read(dev_id, phy_id, QCA803X_PHY_ID1);
+	rev_id = qca803x_phy_reg_read(dev_id, phy_id, QCA803X_PHY_ID2);
+
+	*phy_data = ((org_id & 0xffff) << 16) | (rev_id & 0xffff);
 
 	return SW_OK;
 }

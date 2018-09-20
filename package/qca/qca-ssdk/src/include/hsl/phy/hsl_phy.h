@@ -134,8 +134,7 @@ extern "C" {
 					    a_uint32_t phy_id);
 	typedef sw_error_t(*hsl_phy_id_get) (a_uint32_t dev_id,
 					     a_uint32_t phy_id,
-					     a_uint16_t * org_id,
-					     a_uint16_t * rev_id);
+					     a_uint32_t *phy_chip_id);
 	typedef sw_error_t(*hsl_phy_autoneg_adv_set) (a_uint32_t dev_id,
 						      a_uint32_t phy_id,
 						      a_uint32_t autoneg);

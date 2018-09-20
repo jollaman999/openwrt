@@ -1881,10 +1881,14 @@ malibu_phy_set_duplex(a_uint32_t dev_id, a_uint32_t phy_id,
 */
 sw_error_t
 malibu_phy_get_phy_id(a_uint32_t dev_id, a_uint32_t phy_id,
-		      a_uint16_t * org_id, a_uint16_t * rev_id)
+		a_uint32_t *phy_data)
 {
-	*org_id = malibu_phy_reg_read(dev_id, phy_id, MALIBU_PHY_ID1);
-	*rev_id = malibu_phy_reg_read(dev_id, phy_id, MALIBU_PHY_ID2);
+	a_uint16_t org_id, rev_id;
+
+	org_id = malibu_phy_reg_read(dev_id, phy_id, MALIBU_PHY_ID1);
+	rev_id = malibu_phy_reg_read(dev_id, phy_id, MALIBU_PHY_ID2);
+
+	*phy_data = ((org_id & 0xffff) << 16) | (rev_id & 0xffff);
 
 	return SW_OK;
 }
@@ -2607,7 +2611,7 @@ sw_error_t
 malibu_phy_hw_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 {
 	a_uint32_t port_id = 0, phy_addr = 0, phy_cnt = 0;
-	a_uint16_t dac_value,led_status, phy_data, org_id = 0, rev_id = 0;
+	a_uint16_t dac_value,led_status, phy_data;
 	a_uint32_t phy_id = 0, mode;
 
 	for (port_id = 0; port_id < SW_MAX_NR_PORT; port_id ++)
@@ -2619,8 +2623,7 @@ malibu_phy_hw_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 			if (phy_cnt == 1)
 			{
 				first_phy_addr = phy_addr;
-				malibu_phy_get_phy_id(dev_id, first_phy_addr, &org_id, &rev_id);
-				phy_id = (org_id << MALIBU_ORG_ID_OFFSET_LEN) | rev_id;
+				malibu_phy_get_phy_id(dev_id, first_phy_addr, &phy_id);
 				/* software get 8072 phy chip's firstly address to init phy chip*/
 				if ((phy_id == MALIBU_1_1_2PORT) && (first_phy_addr >= 0x3))
 					first_phy_addr = first_phy_addr - 0x3;

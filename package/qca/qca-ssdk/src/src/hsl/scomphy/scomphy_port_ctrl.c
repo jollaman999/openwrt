@@ -1161,6 +1161,7 @@ _scomphy_port_phy_id_get (a_uint32_t dev_id, fal_port_t port_id,
 	sw_error_t rv;
 	a_uint32_t phy_id = 0;
 	hsl_phy_ops_t *phy_drv;
+	a_uint32_t phy_data;
 
 	HSL_DEV_ID_CHECK (dev_id);
 
@@ -1176,7 +1177,11 @@ _scomphy_port_phy_id_get (a_uint32_t dev_id, fal_port_t port_id,
 	rv = hsl_port_prop_get_phyid (dev_id, port_id, &phy_id);
 	SW_RTN_ON_ERROR (rv);
 
-	rv = phy_drv->phy_id_get (dev_id, phy_id,org_id,rev_id);
+	rv = phy_drv->phy_id_get (dev_id, phy_id, &phy_data);
+	SW_RTN_ON_ERROR (rv);
+
+	*org_id = (phy_data >> 16) & 0xffff;
+	*rev_id = phy_data & 0xffff;
 
 	return rv;
 }

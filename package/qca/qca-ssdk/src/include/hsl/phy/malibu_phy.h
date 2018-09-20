@@ -662,7 +662,7 @@ extern "C"
 
   sw_error_t
   malibu_phy_get_phy_id(a_uint32_t dev_id, a_uint32_t phy_id,
-			a_uint16_t * org_id, a_uint16_t * rev_id);
+		  a_uint32_t *phy_data);
 
   int malibu_phy_init(a_uint32_t dev_id, a_uint32_t port_bmp);
 

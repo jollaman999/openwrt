@@ -848,10 +848,13 @@ f2_phy_set_duplex(a_uint32_t dev_id, a_uint32_t phy_id,
 */
 static sw_error_t
 f2_phy_get_phy_id(a_uint32_t dev_id, a_uint32_t phy_id,
-                  a_uint16_t * org_id, a_uint16_t * rev_id)
+		a_uint32_t *phy_data)
 {
-    *org_id = f2_phy_reg_read(dev_id, phy_id, F2_PHY_ID1);
-    *rev_id = f2_phy_reg_read(dev_id, phy_id, F2_PHY_ID2);
+    a_uint16_t org_id, rev_id;
+
+    org_id = f2_phy_reg_read(dev_id, phy_id, F2_PHY_ID1);
+    rev_id = f2_phy_reg_read(dev_id, phy_id, F2_PHY_ID2);
+    *phy_data = ((org_id & 0xffff) << 16) | (rev_id & 0xffff);
 
     return SW_OK;
 }

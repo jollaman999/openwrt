@@ -753,6 +753,38 @@ _isisc_port_cdt(a_uint32_t dev_id, fal_port_t port_id, a_uint32_t mdi_pair,
 }
 
 static sw_error_t
+_isisc_port_phy_id_get (a_uint32_t dev_id, fal_port_t port_id,
+				a_uint16_t * org_id, a_uint16_t * rev_id)
+{
+  sw_error_t rv;
+  a_uint32_t phy_id = 0;
+  hsl_phy_ops_t *phy_drv;
+  a_uint32_t phy_data;
+
+  HSL_DEV_ID_CHECK (dev_id);
+
+  if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_PHY))
+    {
+      return SW_BAD_PARAM;
+    }
+
+  SW_RTN_ON_NULL (phy_drv = hsl_phy_api_ops_get (dev_id, port_id));
+  if (NULL == phy_drv->phy_id_get)
+    return SW_NOT_SUPPORTED;
+
+  rv = hsl_port_prop_get_phyid (dev_id, port_id, &phy_id);
+  SW_RTN_ON_ERROR (rv);
+
+  rv = phy_drv->phy_id_get (dev_id, phy_id, &phy_data);
+  SW_RTN_ON_ERROR (rv);
+
+  *org_id = (phy_data >> 16) & 0xffff;
+  *rev_id = phy_data & 0xffff;
+
+  return rv;
+}
+
+static sw_error_t
 _isisc_port_8023az_set (a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
 {
     sw_error_t rv;
@@ -2121,6 +2153,25 @@ isisc_port_cdt(a_uint32_t dev_id, fal_port_t port_id, a_uint32_t mdi_pair,
 }
 
 /**
+ * @brief Get phy id on a particular port.
+ * @param[in] dev_id device id
+ * @param[in] port_id port id
+ * @param[out] org_id and rev_id
+ * @return SW_OK or error code
+ */
+HSL_LOCAL sw_error_t
+isisc_port_phy_id_get (a_uint32_t dev_id, fal_port_t port_id,
+			       a_uint16_t * org_id, a_uint16_t * rev_id)
+{
+  sw_error_t rv;
+
+  HSL_API_LOCK;
+  rv = _isisc_port_phy_id_get (dev_id, port_id, org_id, rev_id);
+  HSL_API_UNLOCK;
+  return rv;
+}
+
+/**
  * @brief Set 802.3az status on a particular port.
  * @param[in] dev_id device id
  * @param[in] port_id port id
@@ -2699,6 +2750,7 @@ isisc_port_ctrl_init(a_uint32_t dev_id)
         p_api->port_hibernate_set = isisc_port_hibernate_set;
         p_api->port_hibernate_get = isisc_port_hibernate_get;
         p_api->port_cdt = isisc_port_cdt;
+	p_api->port_phy_id_get = isisc_port_phy_id_get;
         p_api->port_rxhdr_mode_get = isisc_port_rxhdr_mode_get;
         p_api->port_txhdr_mode_get = isisc_port_txhdr_mode_get;
         p_api->header_type_get = isisc_header_type_get;

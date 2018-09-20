@@ -1062,13 +1062,16 @@ sw_error_t qca808x_phy_enable_autoneg(a_uint32_t dev_id, a_uint32_t phy_id)
 */
 sw_error_t
 qca808x_phy_get_phy_id(a_uint32_t dev_id, a_uint32_t phy_id,
-		      a_uint16_t * org_id, a_uint16_t * rev_id)
+		      a_uint32_t *phy_data)
 {
-	*org_id = qca808x_phy_reg_read(dev_id, phy_id, QCA808X_PHY_ID1);
-	PHY_RTN_ON_READ_ERROR(*org_id);
+	a_uint16_t org_id, rev_id;
+	org_id = qca808x_phy_reg_read(dev_id, phy_id, QCA808X_PHY_ID1);
+	PHY_RTN_ON_READ_ERROR(org_id);
 
-	*rev_id = qca808x_phy_reg_read(dev_id, phy_id, QCA808X_PHY_ID2);
-	PHY_RTN_ON_READ_ERROR(*rev_id);
+	rev_id = qca808x_phy_reg_read(dev_id, phy_id, QCA808X_PHY_ID2);
+	PHY_RTN_ON_READ_ERROR(rev_id);
+
+	*phy_data = ((org_id & 0xffff) << 16) | (rev_id & 0xffff);
 
 	return SW_OK;
 }

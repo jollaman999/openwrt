@@ -140,6 +140,38 @@ _shiva_port_speed_set(a_uint32_t dev_id, fal_port_t port_id,
 }
 
 static sw_error_t
+_shiva_port_phy_id_get (a_uint32_t dev_id, fal_port_t port_id,
+				a_uint16_t * org_id, a_uint16_t * rev_id)
+{
+  sw_error_t rv;
+  a_uint32_t phy_id = 0;
+  hsl_phy_ops_t *phy_drv;
+  a_uint32_t phy_data;
+
+  HSL_DEV_ID_CHECK (dev_id);
+
+  if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_PHY))
+    {
+      return SW_BAD_PARAM;
+    }
+
+  SW_RTN_ON_NULL (phy_drv = hsl_phy_api_ops_get (dev_id, port_id));
+  if (NULL == phy_drv->phy_id_get)
+    return SW_NOT_SUPPORTED;
+
+  rv = hsl_port_prop_get_phyid (dev_id, port_id, &phy_id);
+  SW_RTN_ON_ERROR (rv);
+
+  rv = phy_drv->phy_id_get (dev_id, phy_id, &phy_data);
+  SW_RTN_ON_ERROR (rv);
+
+  *org_id = (phy_data >> 16) & 0xffff;
+  *rev_id = phy_data & 0xffff;
+
+  return rv;
+}
+
+static sw_error_t
 _shiva_port_speed_get(a_uint32_t dev_id, fal_port_t port_id,
                       fal_port_speed_t * pspeed)
 {
@@ -864,6 +896,25 @@ shiva_port_speed_set(a_uint32_t dev_id, fal_port_t port_id,
 }
 
 /**
+ * @brief Get phy id on a particular port.
+ * @param[in] dev_id device id
+ * @param[in] port_id port id
+ * @param[out] org_id and rev_id
+ * @return SW_OK or error code
+ */
+HSL_LOCAL sw_error_t
+shiva_port_phy_id_get (a_uint32_t dev_id, fal_port_t port_id,
+			       a_uint16_t * org_id, a_uint16_t * rev_id)
+{
+  sw_error_t rv;
+
+  HSL_API_LOCK;
+  rv = _shiva_port_phy_id_get (dev_id, port_id, org_id, rev_id);
+  HSL_API_UNLOCK;
+  return rv;
+}
+
+/**
  * @brief Get speed on a particular port.
  * @param[in] dev_id device id
  * @param[in] port_id port id
@@ -1299,6 +1350,7 @@ shiva_port_ctrl_init(a_uint32_t dev_id)
         p_api->port_duplex_set = shiva_port_duplex_set;
         p_api->port_speed_get = shiva_port_speed_get;
         p_api->port_speed_set = shiva_port_speed_set;
+	p_api->port_phy_id_get = shiva_port_phy_id_get;
         p_api->port_autoneg_status_get = shiva_port_autoneg_status_get;
         p_api->port_autoneg_enable = shiva_port_autoneg_enable;
         p_api->port_autoneg_restart = shiva_port_autoneg_restart;
