@@ -126,7 +126,7 @@ extern "C" {
 
 
     /*vlan*/
-#define SW_API_VLAN_OFFSET         110
+#define SW_API_VLAN_OFFSET         130
 #define SW_API_VLAN_ADD            (0 + SW_API_VLAN_OFFSET)
 #define SW_API_VLAN_DEL            (1 + SW_API_VLAN_OFFSET)
 #define SW_API_VLAN_MEM_UPDATE     (2 + SW_API_VLAN_OFFSET)
