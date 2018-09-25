@@ -1705,6 +1705,14 @@ static sw_error_t _adpt_hppe_acl_rule_range_match(a_uint32_t dev_id, a_uint32_t 
 		}
 	}
 
+	if(FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_ICMP_TYPE))
+	{
+		if (FAL_ACL_FIELD_MASK != rule->icmp_type_code_op)
+		{
+			rangecount++;
+		}
+	}
+
 	even_entry_count = _acl_bits_count(entries, 8, 2);
 
 	if(rangecount <= even_entry_count)
