@@ -139,9 +139,11 @@ a_bool_t hsl_port_is_sfp(a_uint32_t dev_id, a_uint32_t port_id, ssdk_init_cfg *c
 {
 	if ((cfg->chip_type == CHIP_HPPE) &&
 	    (((SSDK_PHYSICAL_PORT5 == port_id) &&
-	    	(cfg->mac_mode1 == PORT_WRAPPER_10GBASE_R)) ||
+			((cfg->mac_mode1 == PORT_WRAPPER_10GBASE_R) ||
+			(cfg->mac_mode1 == PORT_WRAPPER_SGMII_FIBER))) ||
 	    ((SSDK_PHYSICAL_PORT6 == port_id) &&
-	    	(cfg->mac_mode2 == PORT_WRAPPER_10GBASE_R))))
+			((cfg->mac_mode2 == PORT_WRAPPER_10GBASE_R) ||
+			(cfg->mac_mode2 == PORT_WRAPPER_SGMII_FIBER)))))
 		return A_TRUE;
 	else
 		return A_FALSE;

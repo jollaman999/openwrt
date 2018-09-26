@@ -24,6 +24,7 @@
 #include <linux/module.h>
 #include <linux/phy.h>
 #include "ssdk_plat.h"
+#include "ssdk_phy_i2c.h"
 
 /******************************************************************************
 *
@@ -74,6 +75,7 @@ sfp_read_status(struct phy_device *pdev)
 	a_bool_t status;
 	fal_port_t port;
 	a_uint32_t addr;
+	fal_port_speed_t speed = FAL_SPEED_BUTT;
 	struct qca_phy_priv *priv = pdev->priv;
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,9,0))
@@ -86,7 +88,9 @@ sfp_read_status(struct phy_device *pdev)
 	if (!rv) {
 		pdev->link = status;
 		if (pdev->link) {
-			pdev->speed = SPEED_10000;
+			rv = fal_port_speed_get(priv->device_id, port, &speed);
+			SW_RTN_ON_ERROR(rv);
+			pdev->speed = speed;
 			pdev->duplex = DUPLEX_FULL;
 		}
 	}
@@ -222,4 +226,31 @@ void sfp_phy_exit(a_uint32_t dev_id, a_uint32_t port_bmp)
 		}
 	}
 
+}
+sw_error_t sfp_phy_interface_get_mode_status(a_uint32_t dev_id,
+	a_uint32_t phy_id, fal_port_interface_mode_t *interface_mode_status)
+{
+	sw_error_t rv = SW_OK;
+	a_uint16_t reg_data = 0, sfp_speed = 0;
+
+	rv = qca_phy_i2c_mii_read(dev_id, SFP_E2PROM_ADDR, SFP_SPEED_ADDR,
+		&reg_data);
+	SW_RTN_ON_ERROR(rv);
+	sfp_speed = SFP_TO_SFP_SPEED(reg_data);
+	SSDK_DEBUG("sfp_speed:%d\n", sfp_speed);
+	if(sfp_speed >= SFP_SPEED_1000M &&
+		sfp_speed < SFP_SPEED_2500M)
+	{
+		*interface_mode_status =  PORT_SGMII_FIBER;
+	}
+	else if(sfp_speed >= SFP_SPEED_10000M)
+	{
+		*interface_mode_status =  PORT_10GBASE_R;
+	}
+	else
+	{
+		return SW_NOT_SUPPORTED;
+	}
+
+	return rv;
 }

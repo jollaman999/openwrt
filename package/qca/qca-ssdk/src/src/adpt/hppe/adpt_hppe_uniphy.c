@@ -329,7 +329,7 @@ __adpt_hppe_uniphy_sgmiiplus_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index
 static sw_error_t
 __adpt_hppe_uniphy_sgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index, a_uint32_t channel)
 {
-	a_uint32_t i, max_port;
+	a_uint32_t i, max_port, mode;
 	sw_error_t rv = SW_OK;
 
 	union uniphy_mode_ctrl_u uniphy_mode_ctrl;
@@ -353,11 +353,11 @@ __adpt_hppe_uniphy_sgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index, a_
 
 	/* disable instance clock */
 	if (uniphy_index == SSDK_UNIPHY_INSTANCE0)
-		max_port = 5;
+		max_port = SSDK_PHYSICAL_PORT5;
 	else
-		max_port = 1;
+		max_port = SSDK_PHYSICAL_PORT1;
 
-	for (i = 1; i <= max_port; i++)
+	for (i = SSDK_PHYSICAL_PORT1; i <= max_port; i++)
 	{
 		qca_gcc_uniphy_port_clock_set(dev_id, uniphy_index,
 			i, A_FALSE);
@@ -365,6 +365,11 @@ __adpt_hppe_uniphy_sgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index, a_
 
 	/* configure uniphy to Athr mode and sgmii mode */
 	hppe_uniphy_mode_ctrl_get(0, uniphy_index, &uniphy_mode_ctrl);
+	mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
+	if(mode == PORT_WRAPPER_SGMII_FIBER)
+	{
+		uniphy_mode_ctrl.bf.newaddedfromhere_ch0_mode_ctrl_25m = 0;
+	}
 	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_athr_csco_mode_25m = 0;
 	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_psgmii_qsgmii = 0;
 	uniphy_mode_ctrl.bf.newaddedfromhere_ch0_qsgmii_sgmii = 0;
@@ -404,11 +409,11 @@ __adpt_hppe_uniphy_sgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index, a_
 
 	/* enable instance clock */
 	if (uniphy_index == SSDK_UNIPHY_INSTANCE0)
-		max_port = 5;
+		max_port = SSDK_PHYSICAL_PORT5;
 	else
-		max_port = 1;
+		max_port = SSDK_PHYSICAL_PORT1;
 
-	for (i = 1; i <= max_port; i++)
+	for (i = SSDK_PHYSICAL_PORT1; i <= max_port; i++)
 	{
 		qca_gcc_uniphy_port_clock_set(dev_id, uniphy_index,
 			i, A_TRUE);
@@ -435,7 +440,7 @@ __adpt_hppe_uniphy_qsgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	__adpt_hppe_gcc_uniphy_xpcs_reset(dev_id, uniphy_index, A_TRUE);
 
 	/* disable instance0 clock */
-	for (i = 1; i < 6; i++)
+	for (i = SSDK_PHYSICAL_PORT1; i < SSDK_PHYSICAL_PORT6; i++)
 	{
 		qca_gcc_uniphy_port_clock_set(dev_id, uniphy_index,
 			i, A_FALSE);
@@ -460,7 +465,7 @@ __adpt_hppe_uniphy_qsgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	hsl_ssdk_phy_serdes_reset(dev_id);
 
 	/* enable instance0 clock */
-	for (i = 1; i < 6; i++)
+	for (i = SSDK_PHYSICAL_PORT1; i < SSDK_PHYSICAL_PORT6; i++)
 	{
 		qca_gcc_uniphy_port_clock_set(dev_id, uniphy_index,
 			i, A_TRUE);
@@ -484,7 +489,7 @@ __adpt_hppe_uniphy_psgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	__adpt_hppe_gcc_uniphy_xpcs_reset(dev_id, uniphy_index, A_TRUE);
 
 	/* disable instance0 clock */
-	for (i = 1; i < 6; i++)
+	for (i = SSDK_PHYSICAL_PORT1; i < SSDK_PHYSICAL_PORT6; i++)
 	{
 		qca_gcc_uniphy_port_clock_set(dev_id, uniphy_index,
 			i, A_FALSE);
@@ -509,7 +514,7 @@ __adpt_hppe_uniphy_psgmii_mode_set(a_uint32_t dev_id, a_uint32_t uniphy_index)
 	hsl_ssdk_phy_serdes_reset(dev_id);
 
 	/* enable instance0 clock */
-	for (i = 1; i < 6; i++)
+	for (i = SSDK_PHYSICAL_PORT1; i < SSDK_PHYSICAL_PORT6; i++)
 	{
 		qca_gcc_uniphy_port_clock_set(dev_id, uniphy_index,
 			i, A_TRUE);
@@ -541,6 +546,7 @@ adpt_hppe_uniphy_mode_set(a_uint32_t dev_id, a_uint32_t index, a_uint32_t mode)
 
 		case PORT_WRAPPER_SGMII0_RGMII4:
 		case PORT_WRAPPER_SGMII_CHANNEL0:
+		case PORT_WRAPPER_SGMII_FIBER:
 			rv = __adpt_hppe_uniphy_sgmii_mode_set(dev_id, index, 0);
 			break;
 

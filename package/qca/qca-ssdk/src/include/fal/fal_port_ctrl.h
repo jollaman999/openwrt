@@ -273,6 +273,8 @@ FAL_PHY_ADV_PAUSE | FAL_PHY_ADV_ASY_PAUSE)
 				/**< RGMII Auto mode */
 		PHY_PSGMII_FIBER,
 				/** <PHY_PSGMII_FIBER mode */
+		PORT_SGMII_FIBER,
+				/** <PORT SGMII_FIBER mode*/
 		PORT_INTERFACE_MODE_MAX = 0xFF
 	} fal_port_interface_mode_t;
 

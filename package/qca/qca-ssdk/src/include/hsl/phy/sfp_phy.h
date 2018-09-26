@@ -22,9 +22,20 @@ extern "C"
 
 
 #define SFP_ANEG_DONE	0x20
+ 
+#define SFP_E2PROM_ADDR 0x50
+#define SFP_SPEED_ADDR  0xc
+#define SFP_SPEED_1000M 10
+#define SFP_SPEED_2500M 25
+#define SFP_SPEED_10000M 100
+
+#define SFP_TO_SFP_SPEED(reg_data) ((reg_data >> 8) & 0xff)
 
 int sfp_phy_init(a_uint32_t dev_id, a_uint32_t port_bmp);
 void sfp_phy_exit(a_uint32_t dev_id, a_uint32_t port_bmp);
+
+sw_error_t sfp_phy_interface_get_mode_status(a_uint32_t dev_id, a_uint32_t phy_id,
+	fal_port_interface_mode_t *interface_mode);
 
 #ifdef __cplusplus
 }
