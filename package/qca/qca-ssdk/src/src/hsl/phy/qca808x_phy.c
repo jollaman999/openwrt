@@ -1840,6 +1840,37 @@ qca808x_phy_get_eee_status(a_uint32_t dev_id, a_uint32_t phy_id,
 	return rv;
 }
 
+/******************************************************************************
+*
+* qca808x_phy_led_init - set led behavior
+*
+* set led behavior
+*/
+static sw_error_t
+qca808x_phy_led_init(a_uint32_t dev_id, a_uint32_t phy_id)
+{
+	sw_error_t rv = SW_OK;
+
+	rv = qca808x_phy_mmd_write(dev_id, phy_id, QCA808X_PHY_MMD7_NUM,
+			QCA808X_PHY_MMD7_LED_POLARITY_CTRL,
+				QCA808X_PHY_MMD7_LED_POLARITY_ACTIVE_HIGH);
+	SW_RTN_ON_ERROR(rv);
+	rv = qca808x_phy_mmd_write(dev_id, phy_id, QCA808X_PHY_MMD7_NUM,
+			QCA808X_PHY_MMD7_LED0_CTRL,
+				QCA808X_PHY_MMD7_LED0_CTRL_ENABLE);
+	SW_RTN_ON_ERROR(rv);
+	rv = qca808x_phy_mmd_write(dev_id, phy_id, QCA808X_PHY_MMD7_NUM,
+			QCA808X_PHY_MMD7_LED1_CTRL,
+				QCA808X_PHY_MMD7_LED1_CTRL_DISABLE);
+	SW_RTN_ON_ERROR(rv);
+	rv = qca808x_phy_mmd_write(dev_id, phy_id, QCA808X_PHY_MMD7_NUM,
+			QCA808X_PHY_MMD7_LED2_CTRL,
+				QCA808X_PHY_MMD7_LED2_CTRL_DISABLE);
+	SW_RTN_ON_ERROR(rv);
+
+	return rv;
+}
+
 static sw_error_t
 qca808x_phy_hw_init(a_uint32_t dev_id,  a_uint32_t port_bmp)
 {
@@ -1859,6 +1890,9 @@ qca808x_phy_hw_init(a_uint32_t dev_id,  a_uint32_t port_bmp)
 			phy_data |= QCA808X_PHY_8023AZ_AFE_EN;
 			rv = qca808x_phy_mmd_write(dev_id, phy_addr, QCA808X_PHY_MMD3_NUM,
 				QCA808X_PHY_MMD3_ADDR_CLD_CTRL7, phy_data);
+			SW_RTN_ON_ERROR(rv);
+			/*set napa led pin behavior on HK board*/
+			rv = qca808x_phy_led_init(dev_id, phy_addr);
 			SW_RTN_ON_ERROR(rv);
 		}
 	}
