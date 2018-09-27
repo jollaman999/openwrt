@@ -419,7 +419,7 @@ qca808x_phy_mmd_read(a_uint32_t dev_id, a_uint32_t phy_id,
 		a_uint16_t mmd_num, a_uint16_t reg_id);
 
 #define QCA808X_PHY_8023AZ_AFE_CTRL_MASK        0x01f0
-#define QCA808X_PHY_8023AZ_AFE_EN               0x0190
+#define QCA808X_PHY_8023AZ_AFE_EN               0x0090
 
 sw_error_t
 qca808x_phy_set_duplex (a_uint32_t dev_id, a_uint32_t phy_id,
