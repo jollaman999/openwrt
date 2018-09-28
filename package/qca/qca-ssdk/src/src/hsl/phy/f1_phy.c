@@ -1356,24 +1356,25 @@ sw_error_t
 f1_phy_set_local_loopback(a_uint32_t dev_id, a_uint32_t phy_id, a_bool_t enable)
 {
 	a_uint16_t phy_data;
+	fal_port_speed_t old_speed;
 	sw_error_t rv = SW_OK;
 
-	phy_data = f1_phy_reg_read(dev_id, phy_id, F1_PHY_CONTROL);
-	if (enable == A_TRUE)
-	{
-		phy_data |= F1_LOCAL_LOOPBACK_ENABLE;
-		if(phy_data & F1_CTRL_SPEED_1000)
-		{
-			phy_data &= ~F1_CTRL_AUTONEGOTIATION_ENABLE;
+	if (enable == A_TRUE) {
+		rv = f1_phy_get_speed(dev_id, phy_id, &old_speed);
+		SW_RTN_ON_ERROR(rv);
+
+		if (old_speed == FAL_SPEED_1000) {
+			phy_data = F1_1000M_LOOPBACK;
+		} else if (old_speed == FAL_SPEED_100) {
+			phy_data = F1_100M_LOOPBACK;
+		} else if (old_speed == FAL_SPEED_10) {
+			phy_data = F1_10M_LOOPBACK;
+		} else {
+			return SW_FAIL;
 		}
-	}
-	else
-	{
-		phy_data &= ~F1_LOCAL_LOOPBACK_ENABLE;
-		if(phy_data & F1_CTRL_SPEED_1000)
-		{
-			phy_data |= F1_CTRL_AUTONEGOTIATION_ENABLE;
-		}
+		phy_data |= F1_CTRL_FULL_DUPLEX;
+	} else {
+		phy_data = F1_COMMON_CTRL;
 	}
 
 	rv = f1_phy_reg_write(dev_id, phy_id, F1_PHY_CONTROL, phy_data);

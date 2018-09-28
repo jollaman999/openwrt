@@ -87,6 +87,10 @@ extern "C" {
 
     /* 0 = normal, 1 = loopback */
 #define F1_LOCAL_LOOPBACK_ENABLE            0x4000
+#define F1_COMMON_CTRL                      0x1040
+#define F1_10M_LOOPBACK                     0x4100
+#define F1_100M_LOOPBACK                    0x6100
+#define F1_1000M_LOOPBACK                   0x4140
 
 #define F1_PHY_MMD3_NUM  3
 #define F1_PHY_MMD3_ADDR_REMOTE_LOOPBACK_CTRL       0x805a

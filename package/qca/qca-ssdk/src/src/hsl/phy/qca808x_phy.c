@@ -774,6 +774,7 @@ qca808x_phy_set_local_loopback(a_uint32_t dev_id, a_uint32_t phy_id,
 
 		phy_data &= ~QCA808X_CTRL_AUTONEGOTIATION_ENABLE;
 		phy_data |= QCA808X_LOCAL_LOOPBACK_ENABLE;
+		phy_data |= QCA808X_CTRL_FULL_DUPLEX;
 	} else {
 		phy_data = QCA808X_COMMON_CTRL;
 	}
