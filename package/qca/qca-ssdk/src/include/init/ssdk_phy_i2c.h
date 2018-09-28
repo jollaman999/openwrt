@@ -46,6 +46,7 @@ qca_phy_i2c_mii_read(a_uint32_t dev_id, a_uint32_t phy_addr,
 sw_error_t
 qca_phy_i2c_mii_write(a_uint32_t dev_id, a_uint32_t phy_addr,
                            a_uint32_t reg_addr, a_uint16_t reg_data);
+#ifdef IN_PHY_I2C_MODE
 sw_error_t
 qca_phy_i2c_mmd_read(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint16_t mmd_num,
                             a_uint32_t reg_addr, a_uint16_t *reg_data);
@@ -60,7 +61,7 @@ qca_phy_i2c_read(a_uint32_t dev_id, a_uint32_t phy_addr,
 sw_error_t
 qca_phy_i2c_write(a_uint32_t dev_id, a_uint32_t phy_addr,
                             a_uint32_t reg_addr_c45, a_uint16_t reg_data);
-
+#endif
 #ifdef __cplusplus
 }
 #endif				/* __cplusplus */
