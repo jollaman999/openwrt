@@ -5337,7 +5337,7 @@ CONFIG_PACKAGE_coreutils=y
 # CONFIG_PACKAGE_coreutils-sleep is not set
 # CONFIG_PACKAGE_coreutils-sort is not set
 # CONFIG_PACKAGE_coreutils-split is not set
-# CONFIG_PACKAGE_coreutils-stat is not set
+CONFIG_PACKAGE_coreutils-stat=y
 # CONFIG_PACKAGE_coreutils-stdbuf is not set
 # CONFIG_PACKAGE_coreutils-stty is not set
 # CONFIG_PACKAGE_coreutils-sum is not set
