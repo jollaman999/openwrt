@@ -449,7 +449,7 @@ define Package/ath10k-firmware-qca6174/install
 		$(PKG_BUILD_DIR)/QCA6174/hw3.0/board-2.bin \
 		$(1)/lib/firmware/ath10k/QCA6174/hw3.0/
 	$(INSTALL_DATA) \
-		$(PKG_BUILD_DIR)/QCA6174/hw3.0/4.4.1.c1/firmware-6.bin_RM.4.4.1.c1-00042-QCARMSWP-1 \
+		$(PKG_BUILD_DIR)/QCA6174/hw3.0/4.4.1.c2/firmware-6.bin_RM.4.4.1.c2-00057-QCARMSWP-1 \
 		$(1)/lib/firmware/ath10k/QCA6174/hw3.0/firmware-6.bin
 endef
 
