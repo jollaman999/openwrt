@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, 2015, 2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2013, 2015, 2017-2018, The Linux Foundation. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -2417,6 +2417,45 @@ parse_port_promiscmode(struct switch_val *val)
 			break;
 		}
 
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+static int
+parse_port_eeecfg(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+	switch_ext_p = val->value.ext_val;
+	while(switch_ext_p) {
+		ext_value_p = switch_ext_p;
+		if(!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else if(!strcmp(ext_value_p->option_name, "port_id")) {
+			val_ptr[0] = (char*)ext_value_p->option_value;
+		} else if(!strcmp(ext_value_p->option_name, "eee_en")) {
+			val_ptr[1] = (char*)ext_value_p->option_value;
+		} else if(!strcmp(ext_value_p->option_name, "eee_capability")) {
+			val_ptr[2] = (char*)ext_value_p->option_value;
+		} else if(!strcmp(ext_value_p->option_name, "lpi_sleep_timer")) {
+			val_ptr[3] = (char*)ext_value_p->option_value;
+		} else if(!strcmp(ext_value_p->option_name, "advertisement")) {
+			val_ptr[4] = (char*)ext_value_p->option_value;
+		} else if(!strcmp(ext_value_p->option_name, "lpi_tx_en")) {
+			val_ptr[5] = (char*)ext_value_p->option_value;
+		} else if(!strcmp(ext_value_p->option_name, "eee_status")) {
+			val_ptr[6] = (char*)ext_value_p->option_value;
+		} else if(!strcmp(ext_value_p->option_name, "lpi_wakeup_timer")) {
+			val_ptr[7] = (char*)ext_value_p->option_value;
+		} else if(!strcmp(ext_value_p->option_name, "link_partner_advertisement")) {
+			val_ptr[8] = (char*)ext_value_p->option_value;
+		} else {
+			rv = -1;
+			break;
+		}
 		parameter_length++;
 		switch_ext_p = switch_ext_p->next;
 	}
@@ -10539,7 +10578,7 @@ parse_port(const char *command_name, struct switch_val *val)
 		rv = parse_port_poweroff(val);
 	} else if(!strcmp(command_name, "Reset")) {
 		rv = parse_port_reset(val);
-	}else if(!strcmp(command_name, "FrameMaxSize")) {
+	} else if(!strcmp(command_name, "FrameMaxSize")) {
 		rv = parse_port_framemaxsize(val);
 	} else if(!strcmp(command_name, "Mtu")) {
 		rv = parse_port_mtu(val);
@@ -10549,8 +10588,10 @@ parse_port(const char *command_name, struct switch_val *val)
 		rv = parse_port_srcfilter(val);
 	} else if(!strcmp(command_name, "Interface3az")) {
 		rv = parse_port_interface8023az(val);
-	}else if(!strcmp(command_name, "Promiscmode")) {
+	} else if(!strcmp(command_name, "Promiscmode")) {
 		rv = parse_port_promiscmode(val);
+	} else if(!strcmp(command_name, "Eeecfg")) {
+		rv = parse_port_eeecfg(val);
 	}
 	#endif
 
