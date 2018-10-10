@@ -1897,6 +1897,11 @@ qca808x_phy_hw_init(a_uint32_t dev_id,  a_uint32_t port_bmp)
 			/*set napa led pin behavior on HK board*/
 			rv = qca808x_phy_led_init(dev_id, phy_addr);
 			SW_RTN_ON_ERROR(rv);
+			/*special configuration for AZ under 1G speed mode*/
+			phy_data = QCA808X_PHY_MMD3_AZ_TRAINING_VAL;
+			rv = qca808x_phy_mmd_write(dev_id, phy_addr, QCA808X_PHY_MMD3_NUM,
+				QCA808X_PHY_MMD3_AZ_TRAINING_CTRL, phy_data);
+			SW_RTN_ON_ERROR(rv);
 		}
 	}
 
