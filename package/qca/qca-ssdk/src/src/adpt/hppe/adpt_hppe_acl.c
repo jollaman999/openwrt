@@ -1065,9 +1065,9 @@ static sw_error_t _adpt_hppe_acl_ipv6_rule_hw_2_sw(a_uint32_t is_ip_da, a_uint32
 				FAL_FIELD_FLG_SET(rule->field_flg, FAL_ACL_FIELD_IP6_SIP);
 			}
 			rule->src_ip6_val.ul[3] = ipv6rule->ip_ext_1<<16|ipv6rule->ip_port;
-			rule->src_ip6_val.ul[2] |= (ipv6rule->ip_ext_2<<16)&0xffff0000;
+			rule->src_ip6_val.ul[2] |= (ipv6rule->ip_ext_2)&0xffff;
 			rule->src_ip6_mask.ul[3] = ipv6rule_mask->ip_ext_1_mask<<16|ipv6rule_mask->ip_port_mask;
-			rule->src_ip6_mask.ul[2] |= (ipv6rule_mask->ip_ext_2_mask<<16)&0xffff0000;
+			rule->src_ip6_mask.ul[2] |= (ipv6rule_mask->ip_ext_2_mask)&0xffff;
 		}
 		else if(ip_bit_range == 1)
 		{
@@ -1077,9 +1077,9 @@ static sw_error_t _adpt_hppe_acl_ipv6_rule_hw_2_sw(a_uint32_t is_ip_da, a_uint32
 			{
 				FAL_FIELD_FLG_SET(rule->field_flg, FAL_ACL_FIELD_IP6_SIP);
 			}
-			rule->src_ip6_val.ul[2] |= ipv6rule->ip_port;
+			rule->src_ip6_val.ul[2] |= (ipv6rule->ip_port<<16)&0xffff0000;
 			rule->src_ip6_val.ul[1] = ipv6rule->ip_ext_2<<16|ipv6rule->ip_ext_1;
-			rule->src_ip6_mask.ul[2] |= ipv6rule_mask->ip_port_mask;
+			rule->src_ip6_mask.ul[2] |= (ipv6rule_mask->ip_port_mask<<16)&0xffff0000;
 			rule->src_ip6_mask.ul[1] = ipv6rule_mask->ip_ext_2_mask<<16|ipv6rule_mask->ip_ext_1_mask;
 		}
 		else if(ip_bit_range == 2)
