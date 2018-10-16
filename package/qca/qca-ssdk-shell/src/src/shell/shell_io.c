@@ -245,8 +245,8 @@ static sw_data_type_t sw_data_type[] =
 /*qca808x_start*/
 	SW_TYPE_DEF(SW_CROSSOVER_MODE, cmd_data_check_crossover_mode, cmd_data_print_crossover_mode),
     SW_TYPE_DEF(SW_CROSSOVER_STATUS, cmd_data_check_crossover_status, cmd_data_print_crossover_status),
-	SW_TYPE_DEF(SW_PORT_EEE_CONFIG, cmd_data_check_port_eee_config, cmd_data_print_port_eee_config),
 /*qca808x_end*/
+	SW_TYPE_DEF(SW_PORT_EEE_CONFIG, cmd_data_check_port_eee_config, cmd_data_print_port_eee_config),
     SW_TYPE_DEF(SW_PREFER_MEDIUM, cmd_data_check_prefer_medium, cmd_data_print_prefer_medium),
     SW_TYPE_DEF(SW_FIBER_MODE, cmd_data_check_fiber_mode, cmd_data_print_fiber_mode),
 /*qca808x_start*/
@@ -8901,63 +8901,6 @@ cmd_data_print_qinq_role(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t si
         dprintf("UNKNOWN VALUE");
     }
 }
-/*qca808x_start*/
-void
-cmd_data_print_cable_status(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
-{
-    dprintf("[%s]:", param_name);
-
-    if (*(a_uint32_t *) buf == FAL_CABLE_STATUS_NORMAL)
-    {
-        dprintf("NORMAL");
-    }
-    else if (*(a_uint32_t *) buf == FAL_CABLE_STATUS_SHORT)
-    {
-        dprintf("SHORT");
-    }
-    else if (*(a_uint32_t *) buf == FAL_CABLE_STATUS_OPENED)
-    {
-        dprintf("OPENED");
-    }
-    else if (*(a_uint32_t *) buf == FAL_CABLE_STATUS_INVALID)
-    {
-        dprintf("INVALID");
-    }
-    else if (*(a_uint32_t *) buf == FAL_CABLE_STATUS_CROSSOVERA)
-    {
-        dprintf("CROSSOVERA");
-    }
-    else if (*(a_uint32_t *) buf == FAL_CABLE_STATUS_CROSSOVERB)
-    {
-        dprintf("CROSSOVERB");
-    }
-    else if (*(a_uint32_t *) buf == FAL_CABLE_STATUS_CROSSOVERC)
-    {
-        dprintf("CROSSOVERC");
-    }
-    else if (*(a_uint32_t *) buf == FAL_CABLE_STATUS_CROSSOVERD)
-    {
-        dprintf("CROSSOVERD");
-    }
-    else if (*(a_uint32_t *) buf == FAL_CABLE_STATUS_LOW_MISMATCH)
-    {
-        dprintf("LOW_MISMATCH");
-    }
-    else if (*(a_uint32_t *) buf == FAL_CABLE_STATUS_HIGH_MISMATCH)
-    {
-        dprintf("HIGH_MISMATCH");
-    }
-    else
-    {
-        dprintf("UNKNOWN VALUE");
-    }
-}
-
-void
-cmd_data_print_cable_len(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
-{
-    dprintf("[%s]:%d", param_name, *(a_uint32_t *) buf);
-}
 sw_error_t
 cmd_data_check_port_eee_config(char *cmd_str, void * val, a_uint32_t size)
 {
@@ -9179,6 +9122,63 @@ cmd_data_print_port_eee_config(a_uint8_t * param_name, a_uint32_t * buf, a_uint3
     dprintf("\n[eee_link_partner_advertisement]:0x%x  ", cfg->link_partner_advertisement);
 
     return;
+}
+/*qca808x_start*/
+void
+cmd_data_print_cable_status(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+{
+    dprintf("[%s]:", param_name);
+
+    if (*(a_uint32_t *) buf == FAL_CABLE_STATUS_NORMAL)
+    {
+        dprintf("NORMAL");
+    }
+    else if (*(a_uint32_t *) buf == FAL_CABLE_STATUS_SHORT)
+    {
+        dprintf("SHORT");
+    }
+    else if (*(a_uint32_t *) buf == FAL_CABLE_STATUS_OPENED)
+    {
+        dprintf("OPENED");
+    }
+    else if (*(a_uint32_t *) buf == FAL_CABLE_STATUS_INVALID)
+    {
+        dprintf("INVALID");
+    }
+    else if (*(a_uint32_t *) buf == FAL_CABLE_STATUS_CROSSOVERA)
+    {
+        dprintf("CROSSOVERA");
+    }
+    else if (*(a_uint32_t *) buf == FAL_CABLE_STATUS_CROSSOVERB)
+    {
+        dprintf("CROSSOVERB");
+    }
+    else if (*(a_uint32_t *) buf == FAL_CABLE_STATUS_CROSSOVERC)
+    {
+        dprintf("CROSSOVERC");
+    }
+    else if (*(a_uint32_t *) buf == FAL_CABLE_STATUS_CROSSOVERD)
+    {
+        dprintf("CROSSOVERD");
+    }
+    else if (*(a_uint32_t *) buf == FAL_CABLE_STATUS_LOW_MISMATCH)
+    {
+        dprintf("LOW_MISMATCH");
+    }
+    else if (*(a_uint32_t *) buf == FAL_CABLE_STATUS_HIGH_MISMATCH)
+    {
+        dprintf("HIGH_MISMATCH");
+    }
+    else
+    {
+        dprintf("UNKNOWN VALUE");
+    }
+}
+
+void
+cmd_data_print_cable_len(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+{
+    dprintf("[%s]:%d", param_name, *(a_uint32_t *) buf);
 }
 
 char*
