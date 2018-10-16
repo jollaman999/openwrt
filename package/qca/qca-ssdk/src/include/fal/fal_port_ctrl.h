@@ -291,7 +291,7 @@ typedef struct {
 } fal_port_counter_info_t;
 
 /*above is new add for malibu phy*/
-
+/*qca808x_end*/
 typedef struct {
 	a_bool_t enable;
 	a_uint32_t capability;
@@ -303,7 +303,6 @@ typedef struct {
 	a_uint32_t link_partner_advertisement;
 } fal_port_eee_cfg_t;
 
-/*qca808x_end*/
 enum
 {
 	/*port contorl*/
