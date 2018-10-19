@@ -2539,12 +2539,7 @@ static int chip_ver_get(a_uint32_t dev_id, ssdk_init_cfg* cfg)
 		cfg->chip_type = CHIP_DESS;
 	else if(chip_ver == QCA_VER_HPPE) {
 		cfg->chip_type = CHIP_HPPE;
-		#ifdef HAWKEYE_CHIP
 		cfg->chip_revision = chip_revision;
-		#else
-		cfg->chip_revision = 1;/*cypress for debug*/
-		#endif
-
 	}
 	else {
 		/* try single phy without switch connected */
