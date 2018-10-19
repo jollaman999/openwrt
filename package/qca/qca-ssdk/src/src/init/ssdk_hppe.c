@@ -724,8 +724,11 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 	fal_ac_dynamic_threshold_t  dthresh_cfg;
 	fal_ac_static_threshold_t sthresh_cfg;
 	a_uint32_t qbase = 0;
+	a_uint32_t chip_ver = 0;
 
 	memset(&queue_dst, 0, sizeof(queue_dst));
+
+	chip_ver = adpt_hppe_chip_revision_get(dev_id);
 
 	/*
 	 * Redirect service code 2 to queue 1
@@ -820,19 +823,31 @@ qca_hppe_qm_hw_init(a_uint32_t dev_id)
 	}
 
 	group_buff.prealloc_buffer = 0;
-	group_buff.total_buffer = 2000;
+	if (chip_ver == CPPE_REVISION) {
+		group_buff.total_buffer = 1506;
+	} else {
+		group_buff.total_buffer = 2000;
+	}
 	fal_ac_group_buffer_set(dev_id, 0, &group_buff);
 
 	memset(&dthresh_cfg, 0, sizeof(dthresh_cfg));
 	dthresh_cfg.shared_weight = 4;
-	dthresh_cfg.ceiling = 400;
+	if (chip_ver == CPPE_REVISION) {
+		dthresh_cfg.ceiling = 216;
+	} else {
+		dthresh_cfg.ceiling = 400;
+	}
 	dthresh_cfg.green_resume_off = 36;
 	for (i = 0; i < SSDK_L0SCHEDULER_UCASTQ_CFG_MAX; i++) {
 		fal_ac_dynamic_threshold_set(dev_id, i, &dthresh_cfg);
 	}
 
 	memset(&sthresh_cfg, 0, sizeof(sthresh_cfg));
-	sthresh_cfg.green_max = 250;
+	if (chip_ver == CPPE_REVISION) {
+		sthresh_cfg.green_max = 144;
+	} else {
+		sthresh_cfg.green_max = 250;
+	}
 	sthresh_cfg.green_resume_off = 36;
 	for (i = SSDK_L0SCHEDULER_UCASTQ_CFG_MAX; i < SSDK_L0SCHEDULER_CFG_MAX;
 			i++) {
