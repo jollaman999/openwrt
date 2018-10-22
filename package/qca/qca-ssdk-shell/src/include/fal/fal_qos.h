@@ -64,6 +64,9 @@ typedef struct {
 	a_int8_t preheader_pri;
 	a_uint8_t flow_pri;
 	a_uint8_t acl_pri;
+	a_uint8_t post_acl_pri;
+	a_bool_t pcp_pri_force;
+	a_bool_t dscp_pri_force;
 } fal_qos_pri_precedence_t;
 
 typedef struct {
@@ -78,6 +81,13 @@ typedef struct {
 	a_uint8_t internal_pri;
 	a_uint8_t internal_dscp;
 	a_uint8_t internal_dp;
+	a_uint8_t dscp_mask;
+	a_bool_t dscp_en;
+	a_bool_t pcp_en;
+	a_bool_t dei_en;
+	a_bool_t pri_en;
+	a_bool_t dp_en;
+	a_uint8_t qos_prec; /* resolution precedence */
 } fal_qos_cosmap_t;
 
 typedef enum {
