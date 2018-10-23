@@ -1411,14 +1411,7 @@ CONFIG_PACKAGE_ca-bundle=y
 CONFIG_PACKAGE_dnsmasq=y
 # CONFIG_PACKAGE_dnsmasq-dhcpv6 is not set
 # CONFIG_PACKAGE_dnsmasq-full is not set
-CONFIG_PACKAGE_dropbear=y
-
-#
-# Configuration
-#
-CONFIG_DROPBEAR_CURVE25519=y
-# CONFIG_DROPBEAR_ECC is not set
-CONFIG_DROPBEAR_ZLIB=y
+# CONFIG_PACKAGE_dropbear is not set
 # CONFIG_PACKAGE_ead is not set
 CONFIG_PACKAGE_firewall=y
 CONFIG_PACKAGE_fstools=y
@@ -4298,15 +4291,15 @@ CONFIG_PACKAGE_wsdd2=y
 # SSH
 #
 # CONFIG_PACKAGE_autossh is not set
-# CONFIG_PACKAGE_openssh-client is not set
-# CONFIG_PACKAGE_openssh-client-utils is not set
-# CONFIG_PACKAGE_openssh-keygen is not set
+CONFIG_PACKAGE_openssh-client=y
+CONFIG_PACKAGE_openssh-client-utils=y
+CONFIG_PACKAGE_openssh-keygen=y
 # CONFIG_PACKAGE_openssh-moduli is not set
-# CONFIG_PACKAGE_openssh-server is not set
+CONFIG_PACKAGE_openssh-server=y
 # CONFIG_PACKAGE_openssh-server-pam is not set
 # CONFIG_PACKAGE_openssh-sftp-avahi-service is not set
-# CONFIG_PACKAGE_openssh-sftp-client is not set
-# CONFIG_PACKAGE_openssh-sftp-server is not set
+CONFIG_PACKAGE_openssh-sftp-client=y
+CONFIG_PACKAGE_openssh-sftp-server=y
 # CONFIG_PACKAGE_sshtunnel is not set
 
 #
