@@ -2460,10 +2460,9 @@ _adpt_hppe_instance0_mode_get(a_uint32_t dev_id, a_uint32_t *mode0)
 			*mode0 = PORT_WRAPPER_PSGMII;
 		}
 
-		if(port_interface_mode[dev_id][port_id] == PHY_PSGMII_FIBER)
+		if(port_interface_mode[dev_id][port_id] == PHY_PSGMII_FIBER &&
+			port_id == SSDK_PHYSICAL_PORT5)
 		{
-			if(*mode0 != PORT_WRAPPER_MAX && *mode0 != PORT_WRAPPER_PSGMII_FIBER)
-				return SW_NOT_SUPPORTED;
 			*mode0 = PORT_WRAPPER_PSGMII_FIBER;
 		}
 
@@ -2538,7 +2537,8 @@ _adpt_hppe_instance1_mode_get(a_uint32_t dev_id, a_uint32_t port_id,  a_uint32_t
 		case PORT_SGMII_FIBER:
 			*mode = PORT_WRAPPER_SGMII_FIBER;
 			break;
-		case PORT_WRAPPER_PSGMII:
+		case PHY_PSGMII_BASET:
+		case PHY_PSGMII_FIBER:
 			if(port_id == SSDK_PHYSICAL_PORT6)
 			{
 				return SW_NOT_SUPPORTED;
