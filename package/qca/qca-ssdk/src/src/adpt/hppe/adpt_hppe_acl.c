@@ -1610,6 +1610,7 @@ _adpt_hppe_acl_rule_unbind(a_uint32_t dev_id, a_uint32_t list_id, a_uint32_t rul
 		}
 		else
 		{
+			hw_reg.bf.src_type = HPPE_ACL_TYPE_PORTBITMAP;
 			hw_reg.bf.src_0 = 0;
 			hw_reg.bf.src_1 = 0;
 		}
