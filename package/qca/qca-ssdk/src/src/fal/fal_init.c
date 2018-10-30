@@ -153,6 +153,23 @@ fal_ssdk_cfg(a_uint32_t dev_id, ssdk_cfg_t *ssdk_cfg)
 }
 
 sw_error_t
+fal_switch_devid_get(ssdk_chip_type chip_type, a_uint32_t *pdev_id)
+{
+	sw_error_t rv = SW_OK;
+	ssdk_cfg_t cfg = {0};
+	a_uint32_t dev_id = 0;
+
+	for(dev_id = 0; dev_id < SW_MAX_NR_DEV; dev_id++) {
+		rv = _fal_ssdk_cfg(dev_id, &cfg);
+		if(rv == SW_OK && cfg.init_cfg.chip_type == chip_type) {
+			*pdev_id = dev_id;
+			return rv;
+		}
+	}
+	return SW_FAIL;
+}
+
+sw_error_t
 fal_module_func_ctrl_set(a_uint32_t dev_id, a_uint32_t module, fal_func_ctrl_t *func_ctrl)
 {
     sw_error_t rv;
@@ -185,6 +202,8 @@ fal_module_func_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 
     return rv;
 }
+
+EXPORT_SYMBOL(fal_switch_devid_get);
 
 /**
  * @}

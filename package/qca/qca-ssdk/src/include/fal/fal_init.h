@@ -69,6 +69,8 @@ sw_error_t fal_module_func_ctrl_set(a_uint32_t dev_id,
 sw_error_t fal_module_func_ctrl_get(a_uint32_t dev_id,
 		a_uint32_t module, fal_func_ctrl_t *func_ctrl);
 sw_error_t fal_module_func_init(a_uint32_t dev_id, ssdk_init_cfg *cfg);
+sw_error_t fal_switch_devid_get(ssdk_chip_type chip_type, a_uint32_t *pdev_id);
+
 /*qca808x_start*/
 #ifdef __cplusplus
 }
