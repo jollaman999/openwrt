@@ -3225,18 +3225,22 @@ static void qca_dess_rfs_init(void)
 static void ssdk_free_priv(void)
 {
 	a_uint32_t dev_id, dev_num = 1;
+
+	if(!qca_phy_priv_global) {
+		return;
+	}
 /*qca808x_end*/
 	dev_num = ssdk_switch_device_num_get();
 /*qca808x_start*/
 	for (dev_id = 0; dev_id < dev_num; dev_id++) {
-		if (qca_phy_priv_global[dev_id])
+		if (qca_phy_priv_global[dev_id]) {
 			kfree(qca_phy_priv_global[dev_id]);
+		}
 
 		qca_phy_priv_global[dev_id] = NULL;
 	}
 
-	if (qca_phy_priv_global)
-		kfree(qca_phy_priv_global);
+	kfree(qca_phy_priv_global);
 
 	qca_phy_priv_global = NULL;
 /*qca808x_end*/
