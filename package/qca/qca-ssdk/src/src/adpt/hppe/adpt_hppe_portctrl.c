@@ -1362,7 +1362,10 @@ adpt_hppe_port_interface_mode_get(a_uint32_t dev_id, fal_port_t port_id,
 			      fal_port_interface_mode_t * mode)
 {
 	sw_error_t rv = 0;
-
+	if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_EXCL_CPU))
+	{
+		return SW_BAD_PARAM;
+	}
 	*mode = port_interface_mode[dev_id][port_id];
 
 	return rv;
@@ -1985,6 +1988,10 @@ adpt_hppe_port_interface_mode_set(a_uint32_t dev_id, fal_port_t port_id,
 {
 	sw_error_t rv = SW_OK;
 	ADPT_DEV_ID_CHECK(dev_id);
+	if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_EXCL_CPU))
+	{
+		return SW_BAD_PARAM;
+	}
 	port_interface_mode[dev_id][port_id] = mode;
 
 	return rv;
@@ -2504,6 +2511,10 @@ _adpt_hppe_instance0_mode_get(a_uint32_t dev_id, a_uint32_t *mode0)
 
 	for(port_id = SSDK_PHYSICAL_PORT1; port_id <= SSDK_PHYSICAL_PORT5; port_id++)
 	{
+		if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_EXCL_CPU))
+		{
+			continue;
+		}
 		SSDK_DEBUG("port_id:%x: %x\n", port_id, port_interface_mode[dev_id][port_id]);
 		if(port_interface_mode[dev_id][port_id] == PHY_PSGMII_BASET)
 		{
@@ -2571,6 +2582,10 @@ _adpt_hppe_instance0_mode_get(a_uint32_t dev_id, a_uint32_t *mode0)
 static sw_error_t
 _adpt_hppe_instance1_mode_get(a_uint32_t dev_id, a_uint32_t port_id,  a_uint32_t *mode)
 {
+	if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_EXCL_CPU))
+	{
+		return SW_OK;
+	}
 	SSDK_DEBUG("port_id:%x: %x\n", port_id, port_interface_mode[dev_id][port_id]);
 	switch(port_interface_mode[dev_id][port_id])
 	{
