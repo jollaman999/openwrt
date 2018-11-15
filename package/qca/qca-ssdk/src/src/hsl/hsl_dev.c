@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2017-2018, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012, 2017-2019, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -121,10 +121,20 @@ hsl_acl_ptr_get(a_uint32_t dev_id)
 
 a_uint32_t hsl_dev_wan_port_get(a_uint32_t dev_id)
 {
-	if(dev_ssdk_cfg[dev_id])
+	if(dev_ssdk_cfg[dev_id]) {
 		return dev_ssdk_cfg[dev_id]->port_cfg.wan_bmp;
+	}
 	return 0;
 }
+
+a_uint32_t hsl_dev_inner_ports_get(a_uint32_t dev_id)
+{
+	if(dev_ssdk_cfg[dev_id]) {
+		return dev_ssdk_cfg[dev_id]->port_cfg.inner_bmp;
+	}
+	return 0;
+}
+
 /*qca808x_start*/
 sw_error_t
 hsl_dev_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
@@ -153,6 +163,21 @@ hsl_dev_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
     }
     rv = hsl_set_current_chip_type(cfg->chip_type);
     SW_RTN_ON_ERROR(rv);
+
+    if (NULL == dev_ssdk_cfg[dev_id])
+    {
+        dev_ssdk_cfg[dev_id] = aos_mem_alloc(sizeof (ssdk_init_cfg));
+    }
+
+    if (NULL == dev_ssdk_cfg[dev_id])
+    {
+        return SW_OUT_OF_MEM;
+    }
+
+    aos_mem_copy(dev_ssdk_cfg[dev_id], cfg, sizeof (ssdk_init_cfg));
+#if defined UK_MINOR_DEV
+    dev_ssdk_cfg[dev_id]->nl_prot = UK_MINOR_DEV;
+#endif
 
     rv = SW_INIT_ERROR;
     switch (cfg->chip_type)
@@ -232,22 +257,6 @@ hsl_dev_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
         default:
             return SW_BAD_PARAM;
     }
-    SW_RTN_ON_ERROR(rv);
-
-    if (NULL == dev_ssdk_cfg[dev_id])
-    {
-        dev_ssdk_cfg[dev_id] = aos_mem_alloc(sizeof (ssdk_init_cfg));
-    }
-
-    if (NULL == dev_ssdk_cfg[dev_id])
-    {
-        return SW_OUT_OF_MEM;
-    }
-
-    aos_mem_copy(dev_ssdk_cfg[dev_id], cfg, sizeof (ssdk_init_cfg));
-#if defined UK_MINOR_DEV
-    dev_ssdk_cfg[dev_id]->nl_prot = UK_MINOR_DEV;
-#endif
 
     return rv;
 }

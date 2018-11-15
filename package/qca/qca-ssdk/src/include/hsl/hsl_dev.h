@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012, 2019, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -66,6 +66,9 @@ do { \
 
     sw_error_t
     hsl_access_mode_set(a_uint32_t dev_id, hsl_access_mode reg_mode);
+
+    a_uint32_t hsl_dev_inner_ports_get(a_uint32_t dev_id);
+
 /*qca808x_start*/
 #ifdef __cplusplus
 }

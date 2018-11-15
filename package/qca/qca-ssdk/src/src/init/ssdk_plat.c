@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2017-2019, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -928,6 +928,7 @@ static ssize_t ssdk_dts_dump(struct device *dev,
 		printk("        switch_cpu_bmp = <0x%x>\n", ssdk_cpu_bmp_get(dev_id));
 		printk("        switch_lan_bmp = <0x%x>\n", ssdk_lan_bmp_get(dev_id));
 		printk("        switch_wan_bmp = <0x%x>\n", ssdk_wan_bmp_get(dev_id));
+		printk("        switch_inner_bmp = <0x%x>\n", ssdk_inner_bmp_get(dev_id));
 		printk("        switch_mac_mode = <0x%x>\n", ssdk_dt_global_get_mac_mode(dev_id, 0));
 		printk("        switch_mac_mode1 = <0x%x>\n", ssdk_dt_global_get_mac_mode(dev_id, 1));
 		printk("        switch_mac_mode2 = <0x%x>\n", ssdk_dt_global_get_mac_mode(dev_id, 2));
@@ -1219,7 +1220,7 @@ ssdk_plat_init(ssdk_init_cfg *cfg, a_uint32_t dev_id)
 		cmn_clk = ssdk_dts_cmnclk_get(dev_id);
 		if (!IS_ERR(ess_clk)) {
 			/* Enable ess clock here */
-			SSDK_ERROR("enable ess clk\n");
+			SSDK_INFO("Enable ess clk\n");
 			clk_prepare_enable(ess_clk);
 		} else if (!IS_ERR(cmn_clk)) {
 #if defined(HPPE)

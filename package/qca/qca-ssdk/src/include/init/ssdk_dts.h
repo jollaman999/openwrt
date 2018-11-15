@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -133,6 +133,7 @@ a_uint32_t ssdk_dt_global_set_mac_mode(a_uint32_t dev_id, a_uint32_t index, a_ui
 a_uint32_t ssdk_cpu_bmp_get(a_uint32_t dev_id);
 a_uint32_t ssdk_lan_bmp_get(a_uint32_t dev_id);
 a_uint32_t ssdk_wan_bmp_get(a_uint32_t dev_id);
+a_uint32_t ssdk_inner_bmp_get(a_uint32_t dev_id);
 ssdk_port_phyinfo* ssdk_port_phyinfo_get(a_uint32_t dev_id, a_uint32_t port_id);
 struct mii_bus *
 ssdk_dts_miibus_get(a_uint32_t dev_id, a_uint32_t phy_addr);

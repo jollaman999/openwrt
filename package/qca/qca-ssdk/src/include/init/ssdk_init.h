@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2015-2018, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012, 2015-2019, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -175,6 +175,7 @@ enum ssdk_port_wrapper_cfg {
 		a_uint32_t cpu_bmp;
 		a_uint32_t lan_bmp;
 		a_uint32_t wan_bmp;
+		a_uint32_t inner_bmp;
 	} ssdk_port_cfg;
 
 	typedef struct

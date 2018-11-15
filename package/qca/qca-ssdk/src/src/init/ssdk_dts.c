@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -118,6 +118,13 @@ a_uint32_t ssdk_wan_bmp_get(a_uint32_t dev_id)
 	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
 
 	return cfg->port_cfg.wan_bmp;
+}
+
+a_uint32_t ssdk_inner_bmp_get(a_uint32_t dev_id)
+{
+	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
+
+	return cfg->port_cfg.inner_bmp;
 }
 
 ssdk_port_phyinfo* ssdk_port_phyinfo_get(a_uint32_t dev_id, a_uint32_t port_id)
@@ -637,6 +644,11 @@ static void ssdk_dt_parse_port_bmp(a_uint32_t dev_id,
 		|| of_property_read_u32(switch_node, "switch_wan_bmp", &cfg->port_cfg.wan_bmp)) {
 		SSDK_ERROR("port_bmp doesn't exist!\n");
 		return;
+	}
+
+	if (!of_property_read_u32(switch_node, "switch_inner_bmp", &cfg->port_cfg.inner_bmp)) {
+		ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->port_cfg.inner_bmp =
+				cfg->port_cfg.inner_bmp;
 	}
 
 	ssdk_dt_global.ssdk_dt_switch_nodes[dev_id]->port_cfg.cpu_bmp = cfg->port_cfg.cpu_bmp;

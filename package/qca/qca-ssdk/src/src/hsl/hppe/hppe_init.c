@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2016-2017, 2019, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -40,6 +40,7 @@ a_bool_t hppe_mac_port_valid_check(a_uint32_t dev_id, fal_port_t port_id)
 	return SW_IS_PBMP_MEMBER(bitmap, port_id);
 
 }
+
 static sw_error_t
 hppe_portproperty_init(a_uint32_t dev_id)
 {
@@ -47,17 +48,21 @@ hppe_portproperty_init(a_uint32_t dev_id)
 	hsl_dev_t *pdev = NULL;
 	fal_port_t port_id;
 	a_uint32_t bitmap = 0;
+	a_uint32_t inner_pbmp = 0;
 
 	pdev = hsl_dev_ptr_get(dev_id);
 	if (pdev == NULL)
 		return SW_NOT_INITIALIZED;
 
 	bitmap = qca_ssdk_port_bmp_get(dev_id);
+	inner_pbmp = hsl_dev_inner_ports_get(dev_id);
 
 	/* for port property set, SSDK should not generate some limitations */
 	for (port_id = 0; port_id < SW_MAX_NR_PORT; port_id++)
 	{
-		if ((port_id == pdev->cpu_port_nr) || (bitmap & (0x1 << port_id)))
+		if ((port_id == pdev->cpu_port_nr) ||
+			(bitmap & (0x1 << port_id)) ||
+			(inner_pbmp & (0x1 << port_id)))
 		{
 			hsl_port_prop_portmap_set(dev_id, port_id);
 
@@ -65,11 +70,20 @@ hppe_portproperty_init(a_uint32_t dev_id)
 			{
 				switch (p_type)
 				{
-					case HSL_PP_PHY:
-						/* Only port0 without PHY device */
-						if (port_id != pdev->cpu_port_nr)
+					case HSL_PP_PHY:/*front ports*/
+						if (SW_IS_PBMP_MEMBER(bitmap, port_id))
+						{
 							SW_RTN_ON_ERROR
 							(hsl_port_prop_set(dev_id, port_id, p_type));
+						}
+						break;
+
+					case HSL_PP_INNER:/*inner ports*/
+						if (SW_IS_PBMP_MEMBER(inner_pbmp, port_id))
+						{
+							SW_RTN_ON_ERROR
+							(hsl_port_prop_set(dev_id, port_id, p_type));
+						}
 						break;
 
 					case HSL_PP_INCL_CPU:
@@ -114,6 +128,13 @@ hppe_dev_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 		}
 	}
 	pdev->nr_phy = port_nr;
+
+	for(i = 0; i < SW_MAX_NR_PORT; i++) {
+		if(cfg->port_cfg.inner_bmp & (1 << i)) {
+			port_nr++;
+		}
+	}
+
 	for(i = 0; i < SW_MAX_NR_PORT; i++) {
 		if(cfg->port_cfg.cpu_bmp & (1 << i)) {
 			port_nr++;
