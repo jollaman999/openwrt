@@ -28,7 +28,7 @@ ifeq (ISISC, $(CHIP_TYPE))
 endif
 
 ifeq (TRUE, $(IN_MALIBU_PHY))
-  SRC_LIST = malibu_phy.c
+  SRC_LIST += malibu_phy.c
 endif
 
 ifeq (ALL_CHIP, $(CHIP_TYPE))

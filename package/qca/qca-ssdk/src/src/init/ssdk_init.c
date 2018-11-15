@@ -156,8 +156,9 @@ extern void qca_ar8327_sw_mib_task(struct qca_phy_priv *priv);
 #define QCA_QM_ITEM_NUMBER 41
 #define QCA_RGMII_WORK_DELAY	1000
 #define QCA_MAC_SW_SYNC_WORK_DELAY	1000
-
+#ifdef DESS
 static bool qca_dess_rfs_registered = false;
+#endif
 /*qca808x_start*/
 struct qca_phy_priv **qca_phy_priv_global;
 
@@ -362,73 +363,75 @@ static void ssdk_portvlan_init(a_uint32_t dev_id)
 sw_error_t
 qca_switch_init(a_uint32_t dev_id)
 {
+#if (defined(DESS) || defined(ISISC) || defined(ISIS)) && defined(IN_QOS)
 	a_uint32_t nr = 0;
+#endif
 	int i = 0;
 
 	/*fal_reset(dev_id);*/
 	/*enable cpu and disable mirror*/
-	#ifdef IN_MISC
+#ifdef IN_MISC
 	fal_cpu_port_status_set(dev_id, A_TRUE);
 	/* setup MTU */
 	fal_frame_max_size_set(dev_id, 1518);
-	#endif
-	#ifdef IN_MIB
+#endif
+#ifdef IN_MIB
 	/* Enable MIB counters */
 	fal_mib_status_set(dev_id, A_TRUE);
 	fal_mib_cpukeep_set(dev_id, A_FALSE);
-	#endif
-	#ifdef IN_IGMP
+#endif
+#ifdef IN_IGMP
 	fal_igmp_mld_rp_set(dev_id, 0);
-	#endif
+#endif
 
 	/*enable pppoe for dakota to support RSS*/
 	if (SSDK_CURRENT_CHIP_TYPE == CHIP_DESS) {
-		#ifdef DESS
-		#ifdef IN_MISC
+#ifdef DESS
+#ifdef IN_MISC
 		fal_pppoe_status_set(dev_id, A_TRUE);
-		#endif
-		#endif
+#endif
+#endif
 	}
 
 	for (i = 0; i < AR8327_NUM_PORTS; i++) {
 		/* forward multicast and broadcast frames to CPU */
-		#ifdef IN_MISC
+#ifdef IN_MISC
 		fal_port_unk_uc_filter_set(dev_id, i, A_FALSE);
 		fal_port_unk_mc_filter_set(dev_id, i, A_FALSE);
 		fal_port_bc_filter_set(dev_id, i, A_FALSE);
-		#endif
-		#ifdef IN_PORTVLAN
+#endif
+#ifdef IN_PORTVLAN
 		fal_port_default_svid_set(dev_id, i, 0);
 		fal_port_default_cvid_set(dev_id, i, 0);
 		fal_port_1qmode_set(dev_id, i, FAL_1Q_DISABLE);
 		fal_port_egvlanmode_set(dev_id, i, FAL_EG_UNMODIFIED);
-		#endif
+#endif
 
-		#ifdef IN_FDB
+#ifdef IN_FDB
 		fal_fdb_port_learn_set(dev_id, i, A_TRUE);
-		#endif
-		#ifdef IN_STP
+#endif
+#ifdef IN_STP
 		fal_stp_port_state_set(dev_id, 0, i, FAL_STP_FARWARDING);
-		#endif
-		#ifdef IN_PORTVLAN
+#endif
+#ifdef IN_PORTVLAN
 		fal_port_vlan_propagation_set(dev_id, i, FAL_VLAN_PROPAGATION_REPLACE);
-		#endif
-		#ifdef IN_IGMP
+#endif
+#ifdef IN_IGMP
 		fal_port_igmps_status_set(dev_id, i, A_FALSE);
 		fal_port_igmp_mld_join_set(dev_id, i, A_FALSE);
 		fal_port_igmp_mld_leave_set(dev_id, i, A_FALSE);
 		fal_igmp_mld_entry_creat_set(dev_id, A_FALSE);
 		fal_igmp_mld_entry_v3_set(dev_id, A_FALSE);
-		#endif
+#endif
 		if (SSDK_CURRENT_CHIP_TYPE == CHIP_SHIVA) {
 			return SW_OK;
 		} else if (SSDK_CURRENT_CHIP_TYPE == CHIP_DESS) {
-			#ifdef DESS
-			#ifdef IN_PORTCONTROL
+#ifdef DESS
+#ifdef IN_PORTCONTROL
 			fal_port_flowctrl_forcemode_set(dev_id, i, A_FALSE);
 			fal_port_link_forcemode_set(dev_id, i, A_TRUE);
-			#endif
-			#ifdef IN_QOS
+#endif
+#ifdef IN_QOS
 			nr = 240; /*30*8*/
 			fal_qos_port_tx_buf_nr_set(dev_id, i, &nr);
 			nr = 48; /*6*8*/
@@ -441,15 +444,15 @@ qca_switch_init(a_uint32_t dev_id)
 			fal_qos_queue_tx_buf_nr_set(dev_id, i, 2, &nr);
 			fal_qos_queue_tx_buf_nr_set(dev_id, i, 1, &nr);
 			fal_qos_queue_tx_buf_nr_set(dev_id, i, 0, &nr);
-			#endif
-			#endif
+#endif
+#endif
 		} else if (SSDK_CURRENT_CHIP_TYPE == CHIP_ISISC ||
 			SSDK_CURRENT_CHIP_TYPE == CHIP_ISIS) {
-			#if defined(ISISC) || defined(ISIS)
-			#ifdef IN_INTERFACECONTROL
+#if defined(ISISC) || defined(ISIS)
+#ifdef IN_INTERFACECONTROL
 			fal_port_3az_status_set(dev_id, i, A_FALSE);
-			#endif
-			#ifdef IN_PORTCONTROL
+#endif
+#ifdef IN_PORTCONTROL
 			fal_port_flowctrl_forcemode_set(dev_id, i, A_TRUE);
 			fal_port_flowctrl_set(dev_id, i, A_FALSE);
 
@@ -457,9 +460,9 @@ qca_switch_init(a_uint32_t dev_id)
 				fal_port_flowctrl_set(dev_id, i, A_TRUE);
 				fal_port_flowctrl_forcemode_set(dev_id, i, A_FALSE);
 			}
-			#endif
+#endif
 			if (i == 0 || i == 5 || i == 6) {
-				#ifdef IN_QOS
+#ifdef IN_QOS
 				nr = 240; /*30*8*/
 				fal_qos_port_tx_buf_nr_set(dev_id, i, &nr);
 				nr = 48; /*6*8*/
@@ -481,9 +484,9 @@ qca_switch_init(a_uint32_t dev_id)
 				fal_qos_queue_tx_buf_nr_set(dev_id, i, 1, &nr);
 				nr = 24; /*3*8*/
 				fal_qos_queue_tx_buf_nr_set(dev_id, i, 0, &nr);
-				#endif
+#endif
 			} else {
-				#ifdef IN_QOS
+#ifdef IN_QOS
 				nr = 200; /*25*8*/
 				fal_qos_port_tx_buf_nr_set(dev_id, i, &nr);
 				nr = 48; /*6*8*/
@@ -501,9 +504,9 @@ qca_switch_init(a_uint32_t dev_id)
 				fal_qos_queue_tx_buf_nr_set(dev_id, i, 1, &nr);
 				nr = 24; /*3*8*/
 				fal_qos_queue_tx_buf_nr_set(dev_id, i, 0, &nr);
-				#endif
+#endif
 			}
-			#endif
+#endif
 		}
 	}
 
@@ -3414,8 +3417,10 @@ regi_exit(void)
 	dev_num = ssdk_switch_device_num_get();
 	for (dev_id = 0; dev_id < dev_num; dev_id++) {
 		ssdk_driver_unregister(dev_id);
+#if defined(DESS) || defined(HPPE) || defined(ISISC) || defined(ISIS)
 		if (qca_phy_priv_global[dev_id]->qca_ssdk_sw_dev_registered == A_TRUE)
 			ssdk_switch_unregister(dev_id);
+#endif
 	}
 /*qca808x_start*/
 	rv = ssdk_cleanup();
@@ -3426,9 +3431,9 @@ regi_exit(void)
 		SSDK_ERROR("qca-%s module exit failed! (code: %d)\n", SSDK_STR, rv);
 /*qca808x_end*/
 
-	#ifdef DESS
+#ifdef DESS
 	qca_dess_rfs_remove();
-	#endif
+#endif
 
 	ssdk_sysfs_exit();
 	ssdk_miireg_ioctrl_unregister();

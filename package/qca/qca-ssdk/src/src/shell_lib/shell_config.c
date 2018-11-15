@@ -908,7 +908,7 @@ struct sub_cmd_des_t g_rate_des[] =
 	{"ptEgress", "set", SW_API_RATE_PT_EGRL_SET, NULL},
 	{"ptIngress", "set", SW_API_RATE_PT_INRL_SET, NULL},
 	{"stormCtrl", "set", SW_API_STORM_CTRL_FRAME_SET, NULL},
-	{"stormCtrlRate", SW_API_STORM_CTRL_RATE_SET, NULL},
+	{"stormCtrlRate", "set", SW_API_STORM_CTRL_RATE_SET, NULL},
 #endif
 	{"portpolicer", "set", SW_API_RATE_PORT_POLICER_SET, NULL},
 	{"portshaper", "set", SW_API_RATE_PORT_SHAPER_SET, NULL},
