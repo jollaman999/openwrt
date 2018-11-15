@@ -3875,45 +3875,45 @@ adpt_hppe_uniphy_psgmii_port_reset(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	memset(&uniphy_channel3_input_output_4, 0, sizeof(uniphy_channel3_input_output_4));
 	memset(&uniphy_channel4_input_output_4, 0, sizeof(uniphy_channel4_input_output_4));
 
-	if (port_id == 1)
+	if (port_id == SSDK_PHYSICAL_PORT1)
 	{
-		hppe_uniphy_channel0_input_output_4_get(0, uniphy_index, &uniphy_channel0_input_output_4);
+		hppe_uniphy_channel0_input_output_4_get(dev_id, uniphy_index, &uniphy_channel0_input_output_4);
 		uniphy_channel0_input_output_4.bf.newaddedfromhere_ch0_adp_sw_rstn = 0;
-		hppe_uniphy_channel0_input_output_4_set(0, uniphy_index, &uniphy_channel0_input_output_4);
+		hppe_uniphy_channel0_input_output_4_set(dev_id, uniphy_index, &uniphy_channel0_input_output_4);
 		uniphy_channel0_input_output_4.bf.newaddedfromhere_ch0_adp_sw_rstn = 1;
-		hppe_uniphy_channel0_input_output_4_set(0, uniphy_index, &uniphy_channel0_input_output_4);
+		hppe_uniphy_channel0_input_output_4_set(dev_id, uniphy_index, &uniphy_channel0_input_output_4);
 	}
-	else if (port_id == 2)
+	else if (port_id == SSDK_PHYSICAL_PORT2)
 	{
-		hppe_uniphy_channel1_input_output_4_get(0, uniphy_index, &uniphy_channel1_input_output_4);
+		hppe_uniphy_channel1_input_output_4_get(dev_id, uniphy_index, &uniphy_channel1_input_output_4);
 		uniphy_channel1_input_output_4.bf.newaddedfromhere_ch1_adp_sw_rstn = 0;
-		hppe_uniphy_channel1_input_output_4_set(0, uniphy_index, &uniphy_channel1_input_output_4);
+		hppe_uniphy_channel1_input_output_4_set(dev_id, uniphy_index, &uniphy_channel1_input_output_4);
 		uniphy_channel1_input_output_4.bf.newaddedfromhere_ch1_adp_sw_rstn = 1;
-		hppe_uniphy_channel1_input_output_4_set(0, uniphy_index, &uniphy_channel1_input_output_4);
+		hppe_uniphy_channel1_input_output_4_set(dev_id, uniphy_index, &uniphy_channel1_input_output_4);
 	}
-	else if (port_id == 3)
+	else if (port_id == SSDK_PHYSICAL_PORT3)
 	{
-		hppe_uniphy_channel2_input_output_4_get(0, uniphy_index, &uniphy_channel2_input_output_4);
+		hppe_uniphy_channel2_input_output_4_get(dev_id, uniphy_index, &uniphy_channel2_input_output_4);
 		uniphy_channel2_input_output_4.bf.newaddedfromhere_ch2_adp_sw_rstn = 0;
-		hppe_uniphy_channel2_input_output_4_set(0, uniphy_index, &uniphy_channel2_input_output_4);
+		hppe_uniphy_channel2_input_output_4_set(dev_id, uniphy_index, &uniphy_channel2_input_output_4);
 		uniphy_channel2_input_output_4.bf.newaddedfromhere_ch2_adp_sw_rstn = 1;
-		hppe_uniphy_channel2_input_output_4_set(0, uniphy_index, &uniphy_channel2_input_output_4);
+		hppe_uniphy_channel2_input_output_4_set(dev_id, uniphy_index, &uniphy_channel2_input_output_4);
 	}
-	else if (port_id == 4)
+	else if (port_id == SSDK_PHYSICAL_PORT4)
 	{
-		hppe_uniphy_channel3_input_output_4_get(0, uniphy_index, &uniphy_channel3_input_output_4);
+		hppe_uniphy_channel3_input_output_4_get(dev_id, uniphy_index, &uniphy_channel3_input_output_4);
 		uniphy_channel3_input_output_4.bf.newaddedfromhere_ch3_adp_sw_rstn = 0;
-		hppe_uniphy_channel3_input_output_4_set(0, uniphy_index, &uniphy_channel3_input_output_4);
+		hppe_uniphy_channel3_input_output_4_set(dev_id, uniphy_index, &uniphy_channel3_input_output_4);
 		uniphy_channel3_input_output_4.bf.newaddedfromhere_ch3_adp_sw_rstn = 1;
-		hppe_uniphy_channel3_input_output_4_set(0, uniphy_index, &uniphy_channel3_input_output_4);
+		hppe_uniphy_channel3_input_output_4_set(dev_id, uniphy_index, &uniphy_channel3_input_output_4);
 	}
-	else if (port_id == 5)
+	else if (port_id == SSDK_PHYSICAL_PORT5)
 	{
-		hppe_uniphy_channel4_input_output_4_get(0, uniphy_index, &uniphy_channel4_input_output_4);
+		hppe_uniphy_channel4_input_output_4_get(dev_id, uniphy_index, &uniphy_channel4_input_output_4);
 		uniphy_channel4_input_output_4.bf.newaddedfromhere_ch4_adp_sw_rstn = 0;
-		hppe_uniphy_channel4_input_output_4_set(0, uniphy_index, &uniphy_channel4_input_output_4);
+		hppe_uniphy_channel4_input_output_4_set(dev_id, uniphy_index, &uniphy_channel4_input_output_4);
 		uniphy_channel4_input_output_4.bf.newaddedfromhere_ch4_adp_sw_rstn = 1;
-		hppe_uniphy_channel4_input_output_4_set(0, uniphy_index, &uniphy_channel4_input_output_4);
+		hppe_uniphy_channel4_input_output_4_set(dev_id, uniphy_index, &uniphy_channel4_input_output_4);
 	}
 
 	return;
@@ -3926,9 +3926,9 @@ adpt_hppe_uniphy_usxgmii_port_reset(a_uint32_t dev_id, a_uint32_t uniphy_index,
 
 	memset(&vr_xs_pcs_dig_ctrl1, 0, sizeof(vr_xs_pcs_dig_ctrl1));
 
-	hppe_vr_xs_pcs_dig_ctrl1_get(0, uniphy_index, &vr_xs_pcs_dig_ctrl1);
+	hppe_vr_xs_pcs_dig_ctrl1_get(dev_id, uniphy_index, &vr_xs_pcs_dig_ctrl1);
 	vr_xs_pcs_dig_ctrl1.bf.usra_rst = 1;
-	hppe_vr_xs_pcs_dig_ctrl1_set(0, uniphy_index, &vr_xs_pcs_dig_ctrl1);
+	hppe_vr_xs_pcs_dig_ctrl1_set(dev_id, uniphy_index, &vr_xs_pcs_dig_ctrl1);
 
 	return;
 }
@@ -4039,14 +4039,14 @@ adpt_hppe_uniphy_usxgmii_duplex_set(a_uint32_t dev_id, a_uint32_t uniphy_index,
 	union sr_mii_ctrl_u sr_mii_ctrl;
 	memset(&sr_mii_ctrl, 0, sizeof(sr_mii_ctrl));
 
-	hppe_sr_mii_ctrl_get(0, uniphy_index, &sr_mii_ctrl);
+	hppe_sr_mii_ctrl_get(dev_id, uniphy_index, &sr_mii_ctrl);
 
 	if (duplex == FAL_FULL_DUPLEX)
 		sr_mii_ctrl.bf.duplex_mode = 1;
 	else
 		sr_mii_ctrl.bf.duplex_mode = 0;
 
-	hppe_sr_mii_ctrl_set(0, uniphy_index, &sr_mii_ctrl);
+	hppe_sr_mii_ctrl_set(dev_id, uniphy_index, &sr_mii_ctrl);
 
 	return;
 }
@@ -4067,12 +4067,12 @@ adpt_hppe_uniphy_usxgmii_autoneg_completed(a_uint32_t dev_id,
 			printk("uniphy autoneg time out!\n");
 			return SW_TIMEOUT;
 		}
-		hppe_vr_mii_an_intr_sts_get(0, uniphy_index, &vr_mii_an_intr_sts);
+		hppe_vr_mii_an_intr_sts_get(dev_id, uniphy_index, &vr_mii_an_intr_sts);
 		autoneg_complete = vr_mii_an_intr_sts.bf.cl37_ancmplt_intr;
 	}
 
 	vr_mii_an_intr_sts.bf.cl37_ancmplt_intr = 0;
-	hppe_vr_mii_an_intr_sts_set(0, uniphy_index, &vr_mii_an_intr_sts);
+	hppe_vr_mii_an_intr_sts_set(dev_id, uniphy_index, &vr_mii_an_intr_sts);
 
 	return SW_OK;
 }

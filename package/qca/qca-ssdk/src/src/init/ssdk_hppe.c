@@ -76,7 +76,7 @@ qca_hppe_fpga_xgmac_gpio_enable(a_uint32_t dev_id)
 	msleep(100);
 
 	val = 0;
-	qca_switch_reg_write(0, 0x000008, (a_uint8_t *)&val, 4);
+	qca_switch_reg_write(dev_id, 0x000008, (a_uint8_t *)&val, 4);
 
 	return SW_OK;
 }
@@ -101,7 +101,7 @@ qca_hppe_fpga_ports_enable(a_uint32_t dev_id)
 	}
 	for (i = 0; i < xgmac_max; i ++) {
 		val = 0x00000081;
-		qca_switch_reg_write(0, 0x00003008 + (addr * i), (a_uint8_t *)&val, 4);
+		qca_switch_reg_write(dev_id, 0x00003008 + (addr * i), (a_uint8_t *)&val, 4);
 	}
 
 	return SW_OK;
@@ -647,9 +647,9 @@ qca_hppe_tdm_hw_init(a_uint32_t dev_id)
 	}
 
 	for (i = 0; i < num; i++) {
-		p_api->adpt_port_scheduler_cfg_set(0, i, &scheduler_cfg[i]);
+		p_api->adpt_port_scheduler_cfg_set(dev_id, i, &scheduler_cfg[i]);
 	}
-	p_api->adpt_tdm_tick_num_set(0, num);
+	p_api->adpt_tdm_tick_num_set(dev_id, num);
 
 	SW_RTN_ON_NULL(p_api->adpt_port_tdm_tick_cfg_set);
 	SW_RTN_ON_NULL(p_api->adpt_port_tdm_ctrl_set);
@@ -668,12 +668,12 @@ qca_hppe_tdm_hw_init(a_uint32_t dev_id)
 		return SW_BAD_VALUE;
 	}
 	for (i = 0; i < num; i++) {
-		p_api->adpt_port_tdm_tick_cfg_set(0, i, &bm_cfg[i]);
+		p_api->adpt_port_tdm_tick_cfg_set(dev_id, i, &bm_cfg[i]);
 	}
 	tdm_ctrl.enable = A_TRUE;
 	tdm_ctrl.offset = A_FALSE;
 	tdm_ctrl.depth = num;
-	p_api->adpt_port_tdm_ctrl_set(0, &tdm_ctrl);
+	p_api->adpt_port_tdm_ctrl_set(dev_id, &tdm_ctrl);
 	SSDK_INFO("tdm setup num=%d\n", num);
 	return SW_OK;
 }
