@@ -21,6 +21,7 @@
 #include "adpt.h"
 #include "hppe_acl_reg.h"
 #include "hppe_acl.h"
+#include <linux/list.h>
 
 #define ADPT_ACL_HPPE_MAC_DA_RULE 0
 #define ADPT_ACL_HPPE_MAC_SA_RULE 1
@@ -40,22 +41,39 @@
 #define ADPT_ACL_HPPE_RULE_TYPE_NUM 15
 
 
-#define ADPT_ACL_LIST_NUM 64
-#define ADPT_ACL_RULE_NUM_PER_LIST 8
+#define ADPT_ACL_SW_LIST_NUM 512
+#define ADPT_ACL_HW_LIST_NUM 64
+#define ADPT_ACL_RULE_NUM_PER_LIST 8 /* can change this MACRO to support more rules per ACL list */
 #define ADPT_ACL_ENTRY_NUM_PER_LIST 8
 
+typedef struct{
+	struct list_head list;
+	a_uint16_t rule_id;
+	a_uint8_t rule_type;
+	a_uint8_t rule_hw_entry;
+	a_uint8_t rule_hw_list_id;
+	a_uint8_t ext1_val;
+	a_uint8_t ext2_val;
+	a_uint8_t ext4_val;
+}ADPT_HPPE_ACL_SW_RULE;
 
 typedef struct{
-	a_bool_t valid;
+	struct list_head list;
+	struct list_head list_sw_rule;
 	a_uint32_t list_pri;
+	a_uint16_t list_id;
+}ADPT_HPPE_ACL_SW_LIST;
+
+typedef struct{
+	struct list_head list_sw_list;
+}ADPT_HPPE_ACL_SW_LIST_HEAD;
+
+typedef struct{
+	a_bool_t hw_list_valid;
+	a_uint8_t hw_list_id;
 	a_uint8_t free_hw_entry_bitmap;
 	a_uint8_t free_hw_entry_count;
-	a_uint8_t rule_type[ADPT_ACL_RULE_NUM_PER_LIST];
-	a_uint8_t rule_hw_entry[ADPT_ACL_RULE_NUM_PER_LIST];
-	a_uint8_t ext1_val[ADPT_ACL_RULE_NUM_PER_LIST];
-	a_uint8_t ext2_val[ADPT_ACL_RULE_NUM_PER_LIST];
-	a_uint8_t ext4_val[ADPT_ACL_RULE_NUM_PER_LIST];
-}ADPT_HPPE_ACL_LIST;
+}ADPT_HPPE_ACL_HW_LIST;
 
 typedef struct{
 	a_uint8_t mac[6];
@@ -235,7 +253,9 @@ typedef struct{
 	a_uint32_t reserved1:3;
 }ADPT_HPPE_ACL_IPMISC_RULE_MASK;
 
-static ADPT_HPPE_ACL_LIST g_acl_list[SW_MAX_NR_DEV][ADPT_ACL_LIST_NUM];
+static ADPT_HPPE_ACL_SW_LIST_HEAD g_acl_sw_list[SW_MAX_NR_DEV];
+static ADPT_HPPE_ACL_HW_LIST g_acl_hw_list[SW_MAX_NR_DEV][ADPT_ACL_HW_LIST_NUM];
+static aos_lock_t hppe_acl_lock[SW_MAX_NR_DEV];
 
 const a_uint8_t s_acl_ext2[7][2] = {
 	{0,1},{2,3},{4,5},{6,7},{0,2},{4,6},{0,4}
@@ -502,21 +522,28 @@ static a_uint32_t _adpt_hppe_acl_srctype_to_hw(fal_acl_bind_obj_t obj_t)
 }
 
 static sw_error_t
-_adpt_hppe_acl_rule_bind(a_uint32_t dev_id, a_uint32_t list_id, a_uint32_t rule_id,
+_adpt_hppe_acl_rule_bind(a_uint32_t dev_id, a_uint32_t list_id, ADPT_HPPE_ACL_SW_RULE *rule_entry,
 	fal_acl_direc_t direc, fal_acl_bind_obj_t obj_t, a_uint32_t obj_idx)
 {
-	a_uint32_t hw_index = 0, hw_entries = 0, hw_srctype = 0;
+	a_uint32_t hw_index = 0, hw_entries = 0, hw_srctype = 0, hw_list_id = 0;
 	union ipo_rule_reg_u hw_reg = {0};
 
-	hw_entries = g_acl_list[dev_id][list_id].rule_hw_entry[rule_id];
+	hw_entries = rule_entry->rule_hw_entry;
+	hw_list_id = rule_entry->rule_hw_list_id;
+	/* msg for debug */
+	SSDK_DEBUG("ACL bind rule: list_id=%d, rule_id=%d, hw_entries=0x%x, hw_list_id=%d\n",
+		list_id, rule_entry->rule_id, hw_entries, hw_list_id);
 
 	while(hw_entries != 0)
 	{
-		hw_index = _acl_bit_index(hw_entries, 8, 0);
+		hw_index = _acl_bit_index(hw_entries, ADPT_ACL_ENTRY_NUM_PER_LIST, 0);
 		if(hw_index >= ADPT_ACL_ENTRY_NUM_PER_LIST)
+		{
 			break;
+		}
 
-		hppe_ipo_rule_reg_get(dev_id, list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index, &hw_reg);
+		hppe_ipo_rule_reg_get(dev_id, hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index,
+			&hw_reg);
 
 		if(obj_t == FAL_ACL_BIND_PORT && obj_idx < SSDK_MAX_PORT_NUM)
 		{
@@ -545,47 +572,80 @@ _adpt_hppe_acl_rule_bind(a_uint32_t dev_id, a_uint32_t list_id, a_uint32_t rule_
 		}
 		hw_reg.bf.src_type = hw_srctype;
 
-		hppe_ipo_rule_reg_set(dev_id, list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index, &hw_reg);
+		hppe_ipo_rule_reg_set(dev_id, hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index,
+			&hw_reg);
 		SSDK_DEBUG("ACL bind entry %d source type %d, source value 0x%x\n",
-			list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index, obj_t, obj_idx);
+			hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index, obj_t, obj_idx);
 		hw_entries &= (~(1<<hw_index));
 	}
 
 	return SW_OK;
 }
 
+static ADPT_HPPE_ACL_SW_LIST *
+_adpt_hppe_acl_list_entry_get(a_uint32_t dev_id, a_uint32_t list_id)
+{
+	ADPT_HPPE_ACL_SW_LIST *list_entry = NULL;
+	struct list_head *list_pos = NULL;
+
+	list_for_each(list_pos, &g_acl_sw_list[dev_id].list_sw_list)
+	{
+		list_entry = list_entry(list_pos, ADPT_HPPE_ACL_SW_LIST, list);
+		if(list_entry->list_id == list_id)
+		{
+			break;
+		}
+	}
+	if(list_pos == &g_acl_sw_list[dev_id].list_sw_list)
+	{
+		return NULL;
+	}
+	else
+	{
+		return list_entry;
+	}
+}
 
 sw_error_t
-adpt_hppe_acl_list_bind(a_uint32_t dev_id, a_uint32_t list_id, fal_acl_direc_t direc, fal_acl_bind_obj_t obj_t, a_uint32_t obj_idx)
+adpt_hppe_acl_list_bind(a_uint32_t dev_id, a_uint32_t list_id, fal_acl_direc_t direc,
+		fal_acl_bind_obj_t obj_t, a_uint32_t obj_idx)
 {
-	a_uint32_t rule_id = 0;
+	struct list_head *rule_pos = NULL;
+	ADPT_HPPE_ACL_SW_RULE *rule_bind_entry = NULL;
+	ADPT_HPPE_ACL_SW_LIST *list_bind_entry = NULL;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	if(list_id >= ADPT_ACL_LIST_NUM)
+	if(list_id >= ADPT_ACL_SW_LIST_NUM)
 	{
 		return SW_OUT_OF_RANGE;
 	}
 
-	if(g_acl_list[dev_id][list_id].valid == A_FALSE)
+	aos_lock_bh(&hppe_acl_lock[dev_id]);
+	list_bind_entry = _adpt_hppe_acl_list_entry_get(dev_id, list_id);
+	if(list_bind_entry == NULL)
 	{
+		aos_unlock_bh(&hppe_acl_lock[dev_id]);
 		return SW_NOT_FOUND;
 	}
 
-	for(rule_id = 0; rule_id < ADPT_ACL_RULE_NUM_PER_LIST; rule_id++)
+	list_for_each(rule_pos, &list_bind_entry->list_sw_rule)
 	{
-		if(g_acl_list[dev_id][list_id].rule_hw_entry[rule_id])
+		rule_bind_entry = list_entry(rule_pos, ADPT_HPPE_ACL_SW_RULE, list);
+		if(rule_bind_entry->rule_hw_entry)
 		{
 			sw_error_t rc;
-			rc = _adpt_hppe_acl_rule_bind(dev_id, list_id, rule_id,
+			rc = _adpt_hppe_acl_rule_bind(dev_id, list_id, rule_bind_entry,
 					direc, obj_t, obj_idx);
 			if(rc != SW_OK)
 			{
-				SSDK_ERROR("rule %d bind fail\n", rule_id);
+				SSDK_ERROR("rule %d bind fail\n", rule_bind_entry->rule_id);
+				aos_unlock_bh(&hppe_acl_lock[dev_id]);
 				return SW_FAIL;
 			}
 		}
 	}
+	aos_unlock_bh(&hppe_acl_lock[dev_id]);
 	return SW_OK;
 }
 
@@ -626,9 +686,13 @@ static sw_error_t _adpt_hppe_acl_mac_rule_hw_2_sw(a_uint32_t is_mac_da,
 		rule->src_mac_mask.uc[5] = macrule_mask->mac_mask[0];
 	}
 	if(A_FALSE == _adpt_acl_zero_addr(rule->dest_mac_mask))
+	{
 		FAL_FIELD_FLG_SET(rule->field_flg, FAL_ACL_FIELD_MAC_DA);
+	}
 	if(A_FALSE == _adpt_acl_zero_addr(rule->src_mac_mask))
+	{
 		FAL_FIELD_FLG_SET(rule->field_flg, FAL_ACL_FIELD_MAC_SA);
+	}
 
 	if(macrule_mask->is_ip_mask)
 	{
@@ -1491,80 +1555,144 @@ sw_error_t
 adpt_hppe_acl_rule_query(a_uint32_t dev_id, a_uint32_t list_id, a_uint32_t rule_id, fal_acl_rule_t * rule)
 {
 	sw_error_t rv = 0;
-	a_uint32_t hw_index = 0, hw_entries = 0;
+	a_uint32_t hw_index = 0, hw_entries = 0, hw_list_id = 0;
 	union ipo_rule_reg_u hw_reg = {0};
 	union ipo_mask_reg_u hw_mask = {0};
 	union ipo_action_u hw_act = {0};
 	union ipo_cnt_tbl_u hw_match = {0};
+	struct list_head *rule_pos = NULL;
+	ADPT_HPPE_ACL_SW_RULE *rule_query_entry = NULL;
+	ADPT_HPPE_ACL_SW_LIST *list_query_entry = NULL;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(rule);
 
-	if(list_id >= ADPT_ACL_LIST_NUM)
+	if(list_id >= ADPT_ACL_SW_LIST_NUM)
+	{
 		return SW_OUT_OF_RANGE;
+	}
 
 	if(rule_id >= ADPT_ACL_RULE_NUM_PER_LIST)
+	{
 		return SW_OUT_OF_RANGE;
+	}
 
-	hw_entries = g_acl_list[dev_id][list_id].rule_hw_entry[rule_id];
-
-	if(hw_entries == 0)
+	aos_lock_bh(&hppe_acl_lock[dev_id]);
+	list_query_entry = _adpt_hppe_acl_list_entry_get(dev_id, list_id);
+	if(list_query_entry == NULL)
+	{
+		aos_unlock_bh(&hppe_acl_lock[dev_id]);
 		return SW_NOT_FOUND;
+	}
 
-	rule->rule_type = g_acl_list[dev_id][list_id].rule_type[rule_id];
+	list_for_each(rule_pos, &list_query_entry->list_sw_rule)
+	{
+		rule_query_entry = list_entry(rule_pos, ADPT_HPPE_ACL_SW_RULE, list);
+		if((rule_query_entry->rule_id == rule_id) && (rule_query_entry->rule_hw_entry != 0))
+		{
+			rule->rule_type = rule_query_entry->rule_type;
+			hw_entries = rule_query_entry->rule_hw_entry;
+			hw_list_id = rule_query_entry->rule_hw_list_id;
+			break;
+		}
+	}
+	if(rule_pos == &list_query_entry->list_sw_rule)
+	{
+		aos_unlock_bh(&hppe_acl_lock[dev_id]);
+		return SW_NOT_FOUND;
+	}
+	aos_unlock_bh(&hppe_acl_lock[dev_id]);
 
-	hw_index = _acl_bit_index(hw_entries, 8, 0);
+	hw_index = _acl_bit_index(hw_entries, ADPT_ACL_ENTRY_NUM_PER_LIST, 0);
 	if(hw_index >= ADPT_ACL_ENTRY_NUM_PER_LIST)
+	{
 		return SW_FAIL;
-	hppe_ipo_cnt_tbl_get(dev_id, list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index, &hw_match);
+	}
+	hppe_ipo_cnt_tbl_get(dev_id, hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index, &hw_match);
 
 	rule->match_cnt = hw_match.bf.hit_pkt_cnt;
 	rule->match_bytes = hw_match.bf.hit_byte_cnt_1;
 	rule->match_bytes = rule->match_bytes<<32|hw_match.bf.hit_byte_cnt_0;
 	while(hw_entries != 0)
 	{
-		hw_index = _acl_bit_index(hw_entries, 8, 0);
+		hw_index = _acl_bit_index(hw_entries, ADPT_ACL_ENTRY_NUM_PER_LIST, 0);
 		if(hw_index >= ADPT_ACL_ENTRY_NUM_PER_LIST)
+		{
 			break;
-		rv |= hppe_ipo_rule_reg_get(dev_id, list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index, &hw_reg);
-		rv |= hppe_ipo_mask_reg_get(dev_id, list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index, &hw_mask);
-		rv |= hppe_ipo_action_get(dev_id, list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index, &hw_act);
+		}
+		rv |= hppe_ipo_rule_reg_get(dev_id, hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index,
+			&hw_reg);
+		rv |= hppe_ipo_mask_reg_get(dev_id, hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index,
+			&hw_mask);
+		rv |= hppe_ipo_action_get(dev_id, hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index,
+			&hw_act);
 		rule->post_routing = hw_reg.bf.post_routing_en;
 		rule->acl_pool = hw_reg.bf.res_chain;
 		rule->pri = hw_reg.bf.pri&0x7;
 
 		if(hw_reg.bf.rule_type == ADPT_ACL_HPPE_MAC_DA_RULE)
+		{
 			_adpt_hppe_acl_mac_rule_hw_2_sw(1, &hw_reg, &hw_mask, rule);
+		}
 		if(hw_reg.bf.rule_type == ADPT_ACL_HPPE_MAC_SA_RULE)
+		{
 			_adpt_hppe_acl_mac_rule_hw_2_sw(0, &hw_reg, &hw_mask, rule);
+		}
 		if(hw_reg.bf.rule_type == ADPT_ACL_HPPE_VLAN_RULE)
+		{
 			_adpt_hppe_acl_vlan_rule_hw_2_sw(&hw_reg, &hw_mask, rule);
+		}
 		if(hw_reg.bf.rule_type == ADPT_ACL_HPPE_L2_MISC_RULE)
+		{
 			_adpt_hppe_acl_l2_misc_rule_hw_2_sw(&hw_reg, &hw_mask, rule);
+		}
 		if(hw_reg.bf.rule_type == ADPT_ACL_HPPE_IPV4_DIP_RULE)
+		{
 			_adpt_hppe_acl_ipv4_rule_hw_2_sw(1, &hw_reg, &hw_mask, rule);
+		}
 		if(hw_reg.bf.rule_type == ADPT_ACL_HPPE_IPV4_SIP_RULE)
+		{
 			_adpt_hppe_acl_ipv4_rule_hw_2_sw(0, &hw_reg, &hw_mask, rule);
+		}
 		if(hw_reg.bf.rule_type == ADPT_ACL_HPPE_IPV6_DIP0_RULE)
+		{
 			_adpt_hppe_acl_ipv6_rule_hw_2_sw(1, 0, &hw_reg, &hw_mask, rule);
+		}
 		if(hw_reg.bf.rule_type == ADPT_ACL_HPPE_IPV6_DIP1_RULE)
+		{
 			_adpt_hppe_acl_ipv6_rule_hw_2_sw(1, 1, &hw_reg, &hw_mask, rule);
+		}
 		if(hw_reg.bf.rule_type == ADPT_ACL_HPPE_IPV6_DIP2_RULE)
+		{
 			_adpt_hppe_acl_ipv6_rule_hw_2_sw(1, 2, &hw_reg, &hw_mask, rule);
+		}
 		if(hw_reg.bf.rule_type == ADPT_ACL_HPPE_IPV6_SIP0_RULE)
+		{
 			_adpt_hppe_acl_ipv6_rule_hw_2_sw(0, 0, &hw_reg, &hw_mask, rule);
+		}
 		if(hw_reg.bf.rule_type == ADPT_ACL_HPPE_IPV6_SIP1_RULE)
+		{
 			_adpt_hppe_acl_ipv6_rule_hw_2_sw(0, 1, &hw_reg, &hw_mask, rule);
+		}
 		if(hw_reg.bf.rule_type == ADPT_ACL_HPPE_IPV6_SIP2_RULE)
+		{
 			_adpt_hppe_acl_ipv6_rule_hw_2_sw(0, 2, &hw_reg, &hw_mask, rule);
+		}
 		if(hw_reg.bf.rule_type == ADPT_ACL_HPPE_IPMISC_RULE)
+		{
 			_adpt_hppe_acl_ipmisc_rule_hw_2_sw(&hw_reg, &hw_mask, rule);
+		}
 		if(hw_reg.bf.rule_type == ADPT_ACL_HPPE_UDF0_RULE)
+		{
 			_adpt_hppe_acl_udf_rule_hw_2_sw(&hw_reg, 0, &hw_mask, rule);
+		}
 		if(hw_reg.bf.rule_type == ADPT_ACL_HPPE_UDF1_RULE)
+		{
 			_adpt_hppe_acl_udf_rule_hw_2_sw(&hw_reg, 1, &hw_mask, rule);
+		}
 
-		if(hw_reg.bf.inverse_en == 1){
+		if(hw_reg.bf.inverse_en == 1)
+		{
 			FAL_FIELD_FLG_SET(rule->field_flg, FAL_ACL_FIELD_INVERSE_ALL);
 		}
 
@@ -1575,21 +1703,28 @@ adpt_hppe_acl_rule_query(a_uint32_t dev_id, a_uint32_t list_id, a_uint32_t rule_
 	return SW_OK;
 }
 static sw_error_t
-_adpt_hppe_acl_rule_unbind(a_uint32_t dev_id, a_uint32_t list_id, a_uint32_t rule_id,
+_adpt_hppe_acl_rule_unbind(a_uint32_t dev_id, a_uint32_t list_id, ADPT_HPPE_ACL_SW_RULE *rule_entry,
 	fal_acl_direc_t direc, fal_acl_bind_obj_t obj_t, a_uint32_t obj_idx)
 {
-	a_uint32_t hw_index = 0, hw_entries = 0;
+	a_uint32_t hw_index = 0, hw_entries = 0, hw_list_id = 0;
 	union ipo_rule_reg_u hw_reg = {0};
 
-	hw_entries = g_acl_list[dev_id][list_id].rule_hw_entry[rule_id];
+	hw_entries = rule_entry->rule_hw_entry;
+	hw_list_id = rule_entry->rule_hw_list_id;
+	/* msg for debug */
+	SSDK_DEBUG("ACL unbind rule: list_id=%d, rule_id=%d, hw_entries=0x%x, hw_list_id=%d\n",
+		list_id, rule_entry->rule_id, hw_entries, hw_list_id);
 
 	while(hw_entries != 0)
 	{
-		hw_index = _acl_bit_index(hw_entries, 8, 0);
+		hw_index = _acl_bit_index(hw_entries, ADPT_ACL_ENTRY_NUM_PER_LIST, 0);
 		if(hw_index >= ADPT_ACL_ENTRY_NUM_PER_LIST)
+		{
 			break;
+		}
 
-		hppe_ipo_rule_reg_get(dev_id, list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index, &hw_reg);
+		hppe_ipo_rule_reg_get(dev_id, hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index,
+			&hw_reg);
 
 		if(obj_t == FAL_ACL_BIND_PORT && obj_idx < SSDK_MAX_PORT_NUM)
 		{
@@ -1614,9 +1749,10 @@ _adpt_hppe_acl_rule_unbind(a_uint32_t dev_id, a_uint32_t list_id, a_uint32_t rul
 			hw_reg.bf.src_0 = 0;
 			hw_reg.bf.src_1 = 0;
 		}
-		hppe_ipo_rule_reg_set(dev_id, list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index, &hw_reg);
+		hppe_ipo_rule_reg_set(dev_id, hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index,
+			&hw_reg);
 		SSDK_DEBUG("ACL unbind entry %d source type %d, source value 0x%x\n",
-			list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index, obj_t, obj_idx);
+			hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index, obj_t, obj_idx);
 		hw_entries &= (~(1<<hw_index));
 	}
 
@@ -1624,24 +1760,40 @@ _adpt_hppe_acl_rule_unbind(a_uint32_t dev_id, a_uint32_t list_id, a_uint32_t rul
 }
 
 sw_error_t
-adpt_hppe_acl_list_unbind(a_uint32_t dev_id, a_uint32_t list_id, fal_acl_direc_t direc, fal_acl_bind_obj_t obj_t, a_uint32_t obj_idx)
+adpt_hppe_acl_list_unbind(a_uint32_t dev_id, a_uint32_t list_id, fal_acl_direc_t direc,
+		fal_acl_bind_obj_t obj_t, a_uint32_t obj_idx)
 {
-	a_uint32_t rule_id = 0;
+	struct list_head *rule_pos = NULL;
+	ADPT_HPPE_ACL_SW_RULE *rule_unbind_entry = NULL;
+	ADPT_HPPE_ACL_SW_LIST *list_unbind_entry = NULL;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	if(list_id >= ADPT_ACL_LIST_NUM)
-		return SW_OUT_OF_RANGE;
-
-	for(rule_id = 0; rule_id < ADPT_ACL_RULE_NUM_PER_LIST; rule_id++)
+	if(list_id >= ADPT_ACL_SW_LIST_NUM)
 	{
-		if(g_acl_list[dev_id][list_id].rule_hw_entry[rule_id])
-			_adpt_hppe_acl_rule_unbind(dev_id, list_id, rule_id, direc, obj_t, obj_idx);
+		return SW_OUT_OF_RANGE;
 	}
+
+	aos_lock_bh(&hppe_acl_lock[dev_id]);
+	list_unbind_entry = _adpt_hppe_acl_list_entry_get(dev_id, list_id);
+	if(list_unbind_entry != NULL)
+	{
+		list_for_each(rule_pos, &list_unbind_entry->list_sw_rule)
+		{
+			rule_unbind_entry = list_entry(rule_pos, ADPT_HPPE_ACL_SW_RULE, list);
+			if(rule_unbind_entry->rule_hw_entry)
+			{
+				_adpt_hppe_acl_rule_unbind(dev_id, list_id, rule_unbind_entry,
+						direc, obj_t, obj_idx);
+			}
+		}
+	}
+	aos_unlock_bh(&hppe_acl_lock[dev_id]);
 	return SW_OK;
 }
 sw_error_t
-adpt_hppe_acl_rule_active(a_uint32_t dev_id, a_uint32_t list_id, a_uint32_t rule_id, a_uint32_t rule_nr)
+adpt_hppe_acl_rule_active(a_uint32_t dev_id, a_uint32_t list_id,
+		a_uint32_t rule_id, a_uint32_t rule_nr)
 {
 
 	ADPT_DEV_ID_CHECK(dev_id);
@@ -1649,8 +1801,8 @@ adpt_hppe_acl_rule_active(a_uint32_t dev_id, a_uint32_t list_id, a_uint32_t rule
 	return SW_NOT_SUPPORTED;
 }
 
-static sw_error_t _adpt_hppe_acl_rule_range_match(a_uint32_t dev_id, a_uint32_t list_id,
-			a_uint32_t rule_id, a_uint32_t rule_nr, fal_acl_rule_t * rule, a_uint8_t entries)
+static sw_error_t _adpt_hppe_acl_rule_range_match(a_uint32_t dev_id, a_uint32_t hw_list_index,
+		a_uint32_t rule_id, a_uint32_t rule_nr, fal_acl_rule_t * rule, a_uint8_t entries)
 {
 	a_uint8_t rangecount = 0, even_entry_count = 0;
 	if(FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_MAC_STAG_VID))
@@ -1714,43 +1866,54 @@ static sw_error_t _adpt_hppe_acl_rule_range_match(a_uint32_t dev_id, a_uint32_t 
 		}
 	}
 
-	even_entry_count = _acl_bits_count(entries, 8, 2);
+	even_entry_count = _acl_bits_count(entries, ADPT_ACL_ENTRY_NUM_PER_LIST, 2);
 
 	if(rangecount <= even_entry_count)
+	{
 		return SW_OK;
+	}
 	return SW_NO_RESOURCE;
 }
-sw_error_t _adpt_hppe_acl_alloc_entries(a_uint32_t dev_id, a_uint32_t list_id,
+sw_error_t _adpt_hppe_acl_alloc_entries(a_uint32_t dev_id, a_uint32_t *hw_list_index,
 			a_uint32_t rule_id, a_uint32_t rule_nr, fal_acl_rule_t * rule,
 			a_uint32_t rule_type_map, a_uint32_t rule_type_count, a_uint32_t *index)
 {
-	a_uint8_t free_hw_entry_bitmap =
-			g_acl_list[dev_id][list_id].free_hw_entry_bitmap;
-	a_uint8_t free_hw_entry_count =
-			g_acl_list[dev_id][list_id].free_hw_entry_count;
-
-	a_uint8_t i = 0;
+	a_uint8_t free_hw_entry_bitmap = 0, free_hw_entry_count = 0, i = 0;
+	a_uint32_t j = 0;
 	a_uint8_t map_info_count = sizeof(s_acl_entries)/sizeof(ADPT_HPPE_ACL_ENTRY_EXTEND_INFO);
 
-	if(free_hw_entry_count < rule_type_count)
-		return SW_NO_RESOURCE;
-
-	while(i < map_info_count)
+	for(j = 0 ; j < ADPT_ACL_HW_LIST_NUM; j++)
 	{
-		if((rule_type_count == s_acl_entries[i].num) &&
-			((free_hw_entry_bitmap & s_acl_entries[i].entries) == s_acl_entries[i].entries))
+		free_hw_entry_bitmap = g_acl_hw_list[dev_id][j].free_hw_entry_bitmap;
+		free_hw_entry_count = g_acl_hw_list[dev_id][j].free_hw_entry_count;
+		/* msg for debug */
+		SSDK_DEBUG("_adpt_hppe_acl_alloc_entries():hw_list_index=%d, hw_list_id=%d, "
+			"free_hw_entry_bitmap=0x%x, free_hw_entry_count=%d\n", j,
+			g_acl_hw_list[dev_id][j].hw_list_id, free_hw_entry_bitmap,
+			free_hw_entry_count);
+		if(free_hw_entry_count < rule_type_count)
 		{
-			if(SW_OK == _adpt_hppe_acl_rule_range_match(dev_id, list_id,
-					rule_id, rule_nr, rule, s_acl_entries[i].entries))
+			continue;
+		}
+		for(i = 0; i < map_info_count; i++)
+		{
+			if((rule_type_count == s_acl_entries[i].num) &&
+				((free_hw_entry_bitmap & s_acl_entries[i].entries) ==
+				s_acl_entries[i].entries))
 			{
-				SSDK_DEBUG("\n{%d, 0x%x, 0x%x, 0x%x, 0x%x},\n",
-					s_acl_entries[i].num, s_acl_entries[i].ext_1, s_acl_entries[i].ext_2,
-					s_acl_entries[i].ext_4, s_acl_entries[i].entries);
-				*index = i;
-				return SW_OK;
+				if(SW_OK == _adpt_hppe_acl_rule_range_match(dev_id, j,
+						rule_id, rule_nr, rule, s_acl_entries[i].entries))
+				{
+					SSDK_DEBUG("\n{%d, 0x%x, 0x%x, 0x%x, 0x%x},\n",
+						s_acl_entries[i].num, s_acl_entries[i].ext_1,
+						s_acl_entries[i].ext_2, s_acl_entries[i].ext_4,
+						s_acl_entries[i].entries);
+					*index = i;
+					*hw_list_index = j;
+					return SW_OK;
+				}
 			}
 		}
-		i++;
 	}
 	return SW_NO_RESOURCE;
 }
@@ -2950,9 +3113,9 @@ _adpt_hppe_acl_action_sw_2_hw(a_uint32_t dev_id,fal_acl_rule_t *rule, union ipo_
 }
 
 sw_error_t
-_adpt_hppe_acl_rule_hw_add(a_uint32_t dev_id, a_uint32_t list_id,
-		a_uint32_t rule_id, a_uint32_t rule_nr, fal_acl_rule_t * rule,
-		a_uint32_t rule_type_map, a_uint32_t allocated_entries)
+_adpt_hppe_acl_rule_hw_add(a_uint32_t dev_id, ADPT_HPPE_ACL_SW_LIST *list_entry,
+		a_uint32_t hw_list_id, a_uint32_t rule_id, a_uint32_t rule_nr,
+		fal_acl_rule_t * rule, a_uint32_t rule_type_map, a_uint32_t allocated_entries)
 {
 	union ipo_rule_reg_u hw_reg = {0};
 	union ipo_mask_reg_u hw_mask = {0};
@@ -2963,12 +3126,14 @@ _adpt_hppe_acl_rule_hw_add(a_uint32_t dev_id, a_uint32_t list_id,
 
 	hw_reg.bf.post_routing_en = rule->post_routing;
 	hw_reg.bf.res_chain = rule->acl_pool;
-	hw_reg.bf.pri = (g_acl_list[dev_id][list_id].list_pri<<3)|rule->pri;
+	hw_reg.bf.pri = ((list_entry->list_pri)<<3)|rule->pri;
 
 	for( i = 0; i < ADPT_ACL_HPPE_RULE_TYPE_NUM; i++)
 	{
 		if(!((1<<i)&rule_type_map))
+		{
 			continue;
+		}
 		hw_reg.bf.rule_field_0 = 0;
 		hw_reg.bf.rule_field_1 = 0;
 
@@ -3053,45 +3218,119 @@ _adpt_hppe_acl_rule_hw_add(a_uint32_t dev_id, a_uint32_t list_id,
 
 		if(!hw_reg.bf.range_en)
 		{
-			hw_entry = _acl_bit_index(allocated_entries, 8, 1);
+			hw_entry = _acl_bit_index(allocated_entries, ADPT_ACL_ENTRY_NUM_PER_LIST, 1);
 		}
 		if(hw_entry == 0xff || hw_reg.bf.range_en)
 		{
-			hw_entry = _acl_bit_index(allocated_entries, 8, 2);
+			hw_entry = _acl_bit_index(allocated_entries, ADPT_ACL_ENTRY_NUM_PER_LIST, 2);
 		}
 		if(hw_entry == 0xff)
 		{
-			printk("%s, %d, fail find hw_entry in 0x%x\n", __FUNCTION__, __LINE__, allocated_entries);
+			printk("%s, %d, fail find hw_entry in 0x%x\n",
+				__FUNCTION__, __LINE__, allocated_entries);
 			return SW_NO_RESOURCE;
 		}
 		allocated_entries &= (~(1<<hw_entry));
 
-		if(FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_INVERSE_ALL)){
+		if(FAL_FIELD_FLG_TST(rule->field_flg, FAL_ACL_FIELD_INVERSE_ALL))
+		{
 		    hw_reg.bf.inverse_en = 1;
 		}
 
 		SSDK_DEBUG("rule and mask set hw_entry = %d\n",
-				list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_entry);
+				hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_entry);
 		SSDK_DEBUG("post_route %d, chain %d, pri %d, src_1 %d, src_0 %d, src_type %d "
 			"rule_type %d, inverse %d, range %d\n", hw_reg.bf.post_routing_en,
 			hw_reg.bf.res_chain, hw_reg.bf.pri, hw_reg.bf.src_1, hw_reg.bf.src_0,
 			hw_reg.bf.src_type, hw_reg.bf.rule_type, hw_reg.bf.inverse_en,
 			hw_reg.bf.range_en);
 		/*_adpt_acl_reg_dump((a_uint8_t *)&hw_reg, sizeof(hw_reg));*/
-		rv |= hppe_ipo_rule_reg_set(dev_id, list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_entry,
+		rv |= hppe_ipo_rule_reg_set(dev_id, hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_entry,
 			&hw_reg);
 		/*_adpt_acl_reg_dump((a_uint8_t *)&hw_mask, sizeof(hw_mask));*/
-		rv |= hppe_ipo_mask_reg_set(dev_id, list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_entry,
+		rv |= hppe_ipo_mask_reg_set(dev_id, hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_entry,
 			&hw_mask);
 		_adpt_hppe_acl_action_sw_2_hw(dev_id,rule, &hw_act);
 		/*_adpt_acl_reg_dump((a_uint8_t *)&hw_act, sizeof(hw_act));*/
-		rv |= hppe_ipo_action_set(dev_id, list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_entry,
+		rv |= hppe_ipo_action_set(dev_id, hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_entry,
 			&hw_act);
 
 		if(rv != SW_OK)
+		{
 			return rv;
+		}
 	}
 
+	return SW_OK;
+}
+
+static sw_error_t
+_adpt_hppe_acl_hw_list_resort(a_uint32_t dev_id, a_uint32_t hw_list_index, a_bool_t move_up)
+{
+	a_uint32_t i = 0;
+	ADPT_HPPE_ACL_HW_LIST temp = {0};
+
+	if(hw_list_index >= ADPT_ACL_HW_LIST_NUM)
+	{
+		return SW_OUT_OF_RANGE;
+	}
+
+	if(move_up)
+	{
+		temp.hw_list_id = g_acl_hw_list[dev_id][hw_list_index].hw_list_id;
+		temp.free_hw_entry_bitmap =
+			g_acl_hw_list[dev_id][hw_list_index].free_hw_entry_bitmap;
+		temp.free_hw_entry_count =
+			g_acl_hw_list[dev_id][hw_list_index].free_hw_entry_count;
+		for(i = hw_list_index; i > 0; i--)
+		{
+			if(temp.free_hw_entry_count <
+				g_acl_hw_list[dev_id][i-1].free_hw_entry_count)
+			{
+				g_acl_hw_list[dev_id][i].hw_list_id =
+					g_acl_hw_list[dev_id][i-1].hw_list_id;
+				g_acl_hw_list[dev_id][i].free_hw_entry_bitmap =
+					g_acl_hw_list[dev_id][i-1].free_hw_entry_bitmap;
+				g_acl_hw_list[dev_id][i].free_hw_entry_count =
+					g_acl_hw_list[dev_id][i-1].free_hw_entry_count;
+			}
+			else
+			{
+				break;
+			}
+		}
+		g_acl_hw_list[dev_id][i].hw_list_id = temp.hw_list_id;
+		g_acl_hw_list[dev_id][i].free_hw_entry_bitmap = temp.free_hw_entry_bitmap;
+		g_acl_hw_list[dev_id][i].free_hw_entry_count = temp.free_hw_entry_count;
+	}
+	else
+	{
+		temp.hw_list_id = g_acl_hw_list[dev_id][hw_list_index].hw_list_id;
+		temp.free_hw_entry_bitmap =
+			g_acl_hw_list[dev_id][hw_list_index].free_hw_entry_bitmap;
+		temp.free_hw_entry_count =
+			g_acl_hw_list[dev_id][hw_list_index].free_hw_entry_count;
+		for(i = hw_list_index; i < ADPT_ACL_HW_LIST_NUM-1; i++)
+		{
+			if(temp.free_hw_entry_count >
+				g_acl_hw_list[dev_id][i+1].free_hw_entry_count)
+			{
+				g_acl_hw_list[dev_id][i].hw_list_id =
+					g_acl_hw_list[dev_id][i+1].hw_list_id;
+				g_acl_hw_list[dev_id][i].free_hw_entry_bitmap =
+					g_acl_hw_list[dev_id][i+1].free_hw_entry_bitmap;
+				g_acl_hw_list[dev_id][i].free_hw_entry_count =
+					g_acl_hw_list[dev_id][i+1].free_hw_entry_count;
+			}
+			else
+			{
+				break;
+			}
+		}
+		g_acl_hw_list[dev_id][i].hw_list_id = temp.hw_list_id;
+		g_acl_hw_list[dev_id][i].free_hw_entry_bitmap = temp.free_hw_entry_bitmap;
+		g_acl_hw_list[dev_id][i].free_hw_entry_count = temp.free_hw_entry_count;
+	}
 	return SW_OK;
 }
 
@@ -3101,30 +3340,59 @@ adpt_hppe_acl_rule_add(a_uint32_t dev_id, a_uint32_t list_id,
 {
 	a_uint32_t rule_type_map = 0;
 	a_uint32_t rule_type_count = 0;
-	a_uint32_t index = 0;
+	a_uint32_t index = 0, hw_list_index = 0, hw_list_id = 0;
 	sw_error_t rv = 0;
 	union rule_ext_1_reg_u ext_1 = {0};
 	union rule_ext_2_reg_u ext_2 = {0};
 	union rule_ext_4_reg_u ext_4 = {0};
+	struct list_head *rule_pos = NULL;
+	ADPT_HPPE_ACL_SW_RULE *rule_exist_entry = NULL, *rule_add_entry = NULL;
+	ADPT_HPPE_ACL_SW_LIST *list_find_entry = NULL;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(rule);
 
-	if(list_id >= ADPT_ACL_LIST_NUM)
+	if(list_id >= ADPT_ACL_SW_LIST_NUM)
+	{
 		return SW_OUT_OF_RANGE;
+	}
 
 	if(rule_id >= ADPT_ACL_RULE_NUM_PER_LIST)
+	{
 		return SW_OUT_OF_RANGE;
+	}
 
-	if(g_acl_list[dev_id][list_id].rule_hw_entry[rule_id] != 0)
-		return SW_ALREADY_EXIST;
+	aos_lock_bh(&hppe_acl_lock[dev_id]);
+	list_find_entry = _adpt_hppe_acl_list_entry_get(dev_id, list_id);
+	if(list_find_entry == NULL)
+	{
+		SSDK_ERROR("List %d not create, no resource to insert rules into it\n", list_id);
+		aos_unlock_bh(&hppe_acl_lock[dev_id]);
+		return SW_NO_RESOURCE;
+	}
+
+	list_for_each(rule_pos, &list_find_entry->list_sw_rule)
+	{
+		rule_exist_entry = list_entry(rule_pos, ADPT_HPPE_ACL_SW_RULE, list);
+		if((rule_exist_entry->rule_id == rule_id) && (rule_exist_entry->rule_hw_entry != 0))
+		{
+			aos_unlock_bh(&hppe_acl_lock[dev_id]);
+			return SW_ALREADY_EXIST;
+		}
+	}
 
 	SSDK_DEBUG("fields[0] = 0x%x, fields[1] = 0x%x\n",
 				rule->field_flg[0], rule->field_flg[1]);
 	if(rule->rule_type == FAL_ACL_RULE_IP4)/*input ipv4 type*/
-		_adpt_hppe_acl_ipv4_fields_check(dev_id, list_id, rule_id, rule_nr, rule, &rule_type_map);
+	{
+		_adpt_hppe_acl_ipv4_fields_check(dev_id, list_id, rule_id, rule_nr, rule,
+			&rule_type_map);
+	}
 	else if(rule->rule_type == FAL_ACL_RULE_IP6)/*input ipv6 type*/
-		_adpt_hppe_acl_ipv6_fields_check(dev_id, list_id, rule_id, rule_nr, rule, &rule_type_map);
+	{
+		_adpt_hppe_acl_ipv6_fields_check(dev_id, list_id, rule_id, rule_nr, rule,
+			&rule_type_map);
+	}
 	_adpt_hppe_acl_udf_fields_check(dev_id, list_id, rule_id, rule_nr, rule, &rule_type_map);
 	_adpt_hppe_acl_l2_fields_check(dev_id, list_id, rule_id, rule_nr, rule, &rule_type_map);
 
@@ -3138,158 +3406,259 @@ adpt_hppe_acl_rule_add(a_uint32_t dev_id, a_uint32_t list_id,
 	rule_type_count = _acl_bits_count(rule_type_map, ADPT_ACL_HPPE_RULE_TYPE_NUM, 0);
 	SSDK_DEBUG("rule_type_count = %d\n", rule_type_count);
 
-	if(rule_type_count == 0 || rule_type_count > ADPT_ACL_RULE_NUM_PER_LIST)
+	if(rule_type_count == 0 || rule_type_count > ADPT_ACL_ENTRY_NUM_PER_LIST)
 	{
 		SSDK_ERROR("rule_type_count = %d\n", rule_type_count);
+		aos_unlock_bh(&hppe_acl_lock[dev_id]);
 		return SW_NOT_SUPPORTED;
 	}
 
-	rv = _adpt_hppe_acl_alloc_entries(dev_id, list_id, rule_id, rule_nr, rule, rule_type_map, rule_type_count, &index);
+	rv = _adpt_hppe_acl_alloc_entries(dev_id, &hw_list_index, rule_id, rule_nr, rule,
+		rule_type_map, rule_type_count, &index);
 	if(rv != SW_OK)
+	{
+		SSDK_ERROR("Alloc hw entries fail for rule %d\n", rule_id);
+		aos_unlock_bh(&hppe_acl_lock[dev_id]);
 		return rv;
+	}
+	/* msg for debug */
+	SSDK_DEBUG("ACL rule add before:list_id=%d, hw_list_index=%d, hw_list_id=%d, "
+		"free_hw_entry_bitmap=0x%x, free_hw_entry_count=%d\n", list_id, hw_list_index,
+		g_acl_hw_list[dev_id][hw_list_index].hw_list_id,
+		g_acl_hw_list[dev_id][hw_list_index].free_hw_entry_bitmap,
+		g_acl_hw_list[dev_id][hw_list_index].free_hw_entry_count);
 
-	rv = _adpt_hppe_acl_rule_hw_add(dev_id, list_id, rule_id, rule_nr, rule, rule_type_map, s_acl_entries[index].entries);
+	hw_list_id = g_acl_hw_list[dev_id][hw_list_index].hw_list_id;
+	rv = _adpt_hppe_acl_rule_hw_add(dev_id, list_find_entry, hw_list_id, rule_id, rule_nr, rule,
+		rule_type_map, s_acl_entries[index].entries);
 	if(rv != SW_OK)
+	{
+		aos_unlock_bh(&hppe_acl_lock[dev_id]);
 		return rv;
+	}
 
 	if(s_acl_entries[index].ext_1 != 0)
 	{
-		rv |= hppe_rule_ext_1_reg_get(dev_id, list_id, &ext_1);
+		rv |= hppe_rule_ext_1_reg_get(dev_id, hw_list_id, &ext_1);
 		ext_1.val |= s_acl_entries[index].ext_1;
 		SSDK_DEBUG("ext_1.val = 0x%x\n", ext_1.val);
-		rv |= hppe_rule_ext_1_reg_set(dev_id, list_id, &ext_1);
+		rv |= hppe_rule_ext_1_reg_set(dev_id, hw_list_id, &ext_1);
 	}
 	if(s_acl_entries[index].ext_2 != 0)
 	{
-		rv |= hppe_rule_ext_2_reg_get(dev_id, list_id, &ext_2);
+		rv |= hppe_rule_ext_2_reg_get(dev_id, hw_list_id, &ext_2);
 		ext_2.val |= s_acl_entries[index].ext_2;
 		SSDK_DEBUG("ext_2.val = 0x%x\n", ext_2.val);
-		rv |= hppe_rule_ext_2_reg_set(dev_id, list_id, &ext_2);
+		rv |= hppe_rule_ext_2_reg_set(dev_id, hw_list_id, &ext_2);
 	}
 	if(s_acl_entries[index].ext_4 != 0)
 	{
-		rv |= hppe_rule_ext_4_reg_get(dev_id, list_id, &ext_4);
+		rv |= hppe_rule_ext_4_reg_get(dev_id, hw_list_id, &ext_4);
 		ext_4.val |= s_acl_entries[index].ext_4;
 		SSDK_DEBUG("ext_4.val = 0x%x\n", ext_4.val);
-		rv |= hppe_rule_ext_4_reg_set(dev_id, list_id, &ext_4);
+		rv |= hppe_rule_ext_4_reg_set(dev_id, hw_list_id, &ext_4);
 	}
 
-	g_acl_list[dev_id][list_id].rule_type[rule_id] = rule->rule_type;
-	g_acl_list[dev_id][list_id].rule_hw_entry[rule_id] = s_acl_entries[index].entries;
-	g_acl_list[dev_id][list_id].ext1_val[rule_id] = s_acl_entries[index].ext_1;
-	g_acl_list[dev_id][list_id].ext2_val[rule_id] = s_acl_entries[index].ext_2;
-	g_acl_list[dev_id][list_id].ext4_val[rule_id] = s_acl_entries[index].ext_4;
-	g_acl_list[dev_id][list_id].free_hw_entry_bitmap &= (~(s_acl_entries[index].entries));
-	g_acl_list[dev_id][list_id].free_hw_entry_count -= s_acl_entries[index].num;
+	/*record sw info and insert the sw rule entry to the sw list entry*/
+	rule_add_entry = (ADPT_HPPE_ACL_SW_RULE*)aos_mem_alloc(sizeof(ADPT_HPPE_ACL_SW_RULE));
+	if(rule_add_entry == NULL)
+	{
+		SSDK_ERROR("%s, %d:malloc fail for rule add entry\n", __FUNCTION__, __LINE__);
+		aos_unlock_bh(&hppe_acl_lock[dev_id]);
+		return SW_FAIL;
+	}
+	rule_add_entry->rule_id = rule_id;
+	rule_add_entry->rule_type = rule->rule_type;
+	rule_add_entry->rule_hw_entry = s_acl_entries[index].entries;
+	rule_add_entry->rule_hw_list_id = hw_list_id;
+	rule_add_entry->ext1_val = s_acl_entries[index].ext_1;
+	rule_add_entry->ext2_val = s_acl_entries[index].ext_2;
+	rule_add_entry->ext4_val = s_acl_entries[index].ext_4;
+	list_add(&rule_add_entry->list, &list_find_entry->list_sw_rule);
 
+	/*update hw list info */
+	g_acl_hw_list[dev_id][hw_list_index].free_hw_entry_bitmap &=
+		(~(s_acl_entries[index].entries));
+	g_acl_hw_list[dev_id][hw_list_index].free_hw_entry_count -= s_acl_entries[index].num;
+
+	/* msg for debug */
+	SSDK_DEBUG("ACL rule add after:list_id=%d, hw_list_index=%d, hw_list_id=%d, "
+		"free_hw_entry_bitmap=0x%x, free_hw_entry_count=%d\n", list_id, hw_list_index,
+		hw_list_id, g_acl_hw_list[dev_id][hw_list_index].free_hw_entry_bitmap,
+		g_acl_hw_list[dev_id][hw_list_index].free_hw_entry_count);
+	/*resort hw list */
+	 _adpt_hppe_acl_hw_list_resort(dev_id, hw_list_index, A_TRUE);
+
+	aos_unlock_bh(&hppe_acl_lock[dev_id]);
 	return SW_OK;
 }
 
-sw_error_t
-adpt_hppe_acl_rule_delete(a_uint32_t dev_id, a_uint32_t list_id, a_uint32_t rule_id, a_uint32_t rule_nr)
+static sw_error_t
+_adpt_hppe_acl_rule_delete(a_uint32_t dev_id, a_uint32_t list_id,
+		ADPT_HPPE_ACL_SW_RULE *rule_entry, a_uint32_t rule_nr)
 {
 	sw_error_t rv = 0;
-	a_uint32_t hw_index = 0, hw_entries = 0;
+	a_uint32_t hw_index = 0, hw_entries = 0, hw_list_id = 0, hw_list_index = 0, i = 0;
 	union ipo_rule_reg_u hw_reg = {0};
 	union ipo_mask_reg_u hw_mask = {0};
 	union ipo_action_u hw_act = {0};
-
 	union rule_ext_1_reg_u ext_1 = {0};
 	union rule_ext_2_reg_u ext_2 = {0};
 	union rule_ext_4_reg_u ext_4 = {0};
 
-	ADPT_DEV_ID_CHECK(dev_id);
-
-	if(list_id >= ADPT_ACL_LIST_NUM)
-		return SW_OUT_OF_RANGE;
-
-	if(rule_id >= ADPT_ACL_RULE_NUM_PER_LIST)
-		return SW_OUT_OF_RANGE;
-
-	hw_entries = g_acl_list[dev_id][list_id].rule_hw_entry[rule_id];
-
+	hw_entries = rule_entry->rule_hw_entry;
+	hw_list_id = rule_entry->rule_hw_list_id;
+	/* msg for debug */
+	SSDK_DEBUG("ACL delete rule entry before:list_id=%d, rule_id=%d, "
+		"hw_entries=0x%x, hw_list_id=%d\n", list_id,
+		rule_entry->rule_id, rule_entry->rule_hw_entry,
+		rule_entry->rule_hw_list_id);
 	while(hw_entries != 0)
 	{
-	    union ipo_cnt_tbl_u counters = {0};
-		hw_index = _acl_bit_index(hw_entries, 8, 0);
+		union ipo_cnt_tbl_u counters = {0};
+		hw_index = _acl_bit_index(hw_entries, ADPT_ACL_ENTRY_NUM_PER_LIST, 0);
 		if(hw_index >= ADPT_ACL_ENTRY_NUM_PER_LIST)
+		{
 			break;
+		}
 
-		rv |= hppe_ipo_rule_reg_set(dev_id, list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index, &hw_reg);
-		rv |= hppe_ipo_mask_reg_set(dev_id, list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index, &hw_mask);
-		rv |= hppe_ipo_action_set(dev_id, list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index, &hw_act);
+		rv |= hppe_ipo_rule_reg_set(dev_id,
+			hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index, &hw_reg);
+		rv |= hppe_ipo_mask_reg_set(dev_id,
+			hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index, &hw_mask);
+		rv |= hppe_ipo_action_set(dev_id,
+			hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index, &hw_act);
 		SSDK_DEBUG("ACL destroy entry %d\n",
-				list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index);
+			hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index);
 		hw_entries &= (~(1<<hw_index));
 
 		/*clean counters*/
-		hppe_ipo_cnt_tbl_set(dev_id, list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index, &counters);
+		hppe_ipo_cnt_tbl_set(dev_id,
+			hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+hw_index, &counters);
 	}
 
-	if(g_acl_list[dev_id][list_id].ext1_val[rule_id])
+	if(rule_entry->ext1_val)
 	{
-		rv |= hppe_rule_ext_1_reg_get(dev_id, list_id, &ext_1);
-		ext_1.val &= (~g_acl_list[dev_id][list_id].ext1_val[rule_id]);
+		rv |= hppe_rule_ext_1_reg_get(dev_id, hw_list_id, &ext_1);
+		ext_1.val &= (~rule_entry->ext1_val);
 		SSDK_DEBUG("ext_1.val = 0x%x\n", ext_1.val);
-		rv |= hppe_rule_ext_1_reg_set(dev_id, list_id, &ext_1);
+		rv |= hppe_rule_ext_1_reg_set(dev_id, hw_list_id, &ext_1);
 	}
-	if(g_acl_list[dev_id][list_id].ext2_val[rule_id])
+	if(rule_entry->ext2_val)
 	{
-		rv |= hppe_rule_ext_2_reg_get(dev_id, list_id, &ext_2);
-		ext_2.val &= (~g_acl_list[dev_id][list_id].ext2_val[rule_id]);
+		rv |= hppe_rule_ext_2_reg_get(dev_id, hw_list_id, &ext_2);
+		ext_2.val &= (~rule_entry->ext2_val);
 		SSDK_DEBUG("ext_2.val = 0x%x\n", ext_2.val);
-		rv |= hppe_rule_ext_2_reg_set(dev_id, list_id, &ext_2);
+		rv |= hppe_rule_ext_2_reg_set(dev_id, hw_list_id, &ext_2);
 	}
-	if(g_acl_list[dev_id][list_id].ext4_val[rule_id])
+	if(rule_entry->ext4_val)
 	{
-		rv |= hppe_rule_ext_4_reg_get(dev_id, list_id, &ext_4);
-		ext_4.val &= (~g_acl_list[dev_id][list_id].ext4_val[rule_id]);
+		rv |= hppe_rule_ext_4_reg_get(dev_id, hw_list_id, &ext_4);
+		ext_4.val &= (~rule_entry->ext4_val);
 		SSDK_DEBUG("ext_4.val = 0x%x\n", ext_4.val);
-		rv |= hppe_rule_ext_4_reg_set(dev_id, list_id, &ext_4);
+		rv |= hppe_rule_ext_4_reg_set(dev_id, hw_list_id, &ext_4);
 	}
 
-	g_acl_list[dev_id][list_id].free_hw_entry_bitmap |=
-			g_acl_list[dev_id][list_id].rule_hw_entry[rule_id];
-	g_acl_list[dev_id][list_id].free_hw_entry_count +=
-		_acl_bits_count(g_acl_list[dev_id][list_id].rule_hw_entry[rule_id], 8, 0);
-	g_acl_list[dev_id][list_id].rule_hw_entry[rule_id] = 0;
-	g_acl_list[dev_id][list_id].ext1_val[rule_id] = 0;
-	g_acl_list[dev_id][list_id].ext2_val[rule_id] = 0;
-	g_acl_list[dev_id][list_id].ext4_val[rule_id] = 0;
+	/*find hw_list_index*/
+	for(i = 0; i < ADPT_ACL_HW_LIST_NUM; i++)
+	{
+		if(g_acl_hw_list[dev_id][i].hw_list_id == hw_list_id)
+		{
+			hw_list_index = i;
+			break;
+		}
+	}
 
+	/*update hw list info and resort hw list*/
+	g_acl_hw_list[dev_id][hw_list_index].free_hw_entry_bitmap |= rule_entry->rule_hw_entry;
+	g_acl_hw_list[dev_id][hw_list_index].free_hw_entry_count +=
+		_acl_bits_count(rule_entry->rule_hw_entry, ADPT_ACL_ENTRY_NUM_PER_LIST, 0);
+	/* msg for debug */
+	SSDK_DEBUG("ACL delete rule entry after:hw_list_index=%d, list_id=%d, "
+		"rule_id=%d, hw_entries=0x%x, hw_list_id=%d\n", hw_list_index,
+		list_id, rule_entry->rule_id, rule_entry->rule_hw_entry,
+		rule_entry->rule_hw_list_id);
+	_adpt_hppe_acl_hw_list_resort(dev_id, hw_list_index, A_FALSE);
+
+	/*delete rule entry from the sw list*/
+	list_del(&rule_entry->list);
+	aos_mem_free(rule_entry);
+	rule_entry = NULL;
+
+	return rv;
+}
+
+sw_error_t
+adpt_hppe_acl_rule_delete(a_uint32_t dev_id, a_uint32_t list_id,
+		a_uint32_t rule_id, a_uint32_t rule_nr)
+{
+	struct list_head *rule_pos = NULL;
+	ADPT_HPPE_ACL_SW_RULE *rule_delete_entry = NULL;
+	ADPT_HPPE_ACL_SW_LIST *list_find_entry = NULL;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+
+	if(list_id >= ADPT_ACL_SW_LIST_NUM)
+	{
+		return SW_OUT_OF_RANGE;
+	}
+
+	if(rule_id >= ADPT_ACL_RULE_NUM_PER_LIST)
+	{
+		return SW_OUT_OF_RANGE;
+	}
+
+	aos_lock_bh(&hppe_acl_lock[dev_id]);
+	list_find_entry = _adpt_hppe_acl_list_entry_get(dev_id, list_id);
+	if(list_find_entry != NULL)
+	{
+		list_for_each(rule_pos, &list_find_entry->list_sw_rule)
+		{
+			rule_delete_entry = list_entry(rule_pos, ADPT_HPPE_ACL_SW_RULE, list);
+			if(rule_delete_entry->rule_id == rule_id)
+			{
+				_adpt_hppe_acl_rule_delete(dev_id, list_id,
+							rule_delete_entry, rule_nr);
+				break;
+			}
+		}
+	}
+	aos_unlock_bh(&hppe_acl_lock[dev_id]);
 	return SW_OK;
 }
 
-
 static sw_error_t
-_adpt_hppe_acl_rule_dump(a_uint32_t dev_id, a_uint32_t list_id, a_uint32_t rule_id)
+_adpt_hppe_acl_rule_dump(a_uint32_t dev_id, a_uint32_t list_id, ADPT_HPPE_ACL_SW_RULE *rule_entry)
 {
 	a_uint8_t i = 0;
-	a_uint8_t hw_entries = g_acl_list[dev_id][list_id].rule_hw_entry[rule_id];
+	a_uint8_t hw_entries = rule_entry->rule_hw_entry;
+	a_uint32_t hw_list_id = rule_entry->rule_hw_list_id;
 	union ipo_rule_reg_u hw_reg = {0};
 	union ipo_mask_reg_u hw_mask = {0};
 	union ipo_action_u hw_act = {0};
 
 	if(hw_entries != 0)
 	{
-		printk("######list_id %d, rule_id %d\n", list_id, rule_id);
+		printk("######list_id %d, rule_id %d, hw_list_id %d\n", list_id,
+			rule_entry->rule_id, hw_list_id);
 		for(i = 0; i < ADPT_ACL_ENTRY_NUM_PER_LIST; i++)
 		{
 			if((1<<i) & hw_entries)
 			{
 				hppe_ipo_rule_reg_get(dev_id,
-					list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+i, &hw_reg);
+					hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+i, &hw_reg);
 				hppe_ipo_mask_reg_get(dev_id,
-					list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+i, &hw_mask);
+					hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+i, &hw_mask);
 				hppe_ipo_action_get(dev_id,
-					list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+i, &hw_act);
-				printk("hw_entry %d\n", list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+i);
+					hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+i, &hw_act);
+				printk("hw_entry %d\n", hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+i);
 				_adpt_acl_reg_dump((u_int8_t *)&hw_reg, sizeof(hw_reg));
 				printk("\n");
-				printk("hw_entry_mask %d\n", list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+i);
+				printk("hw_entry_mask %d\n",
+					hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+i);
 				_adpt_acl_reg_dump((u_int8_t *)&hw_mask, sizeof(hw_mask));
 				printk("\n");
-				printk("hw_action %d\n", list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+i);
+				printk("hw_action %d\n", hw_list_id*ADPT_ACL_ENTRY_NUM_PER_LIST+i);
 				_adpt_acl_reg_dump((u_int8_t *)&hw_act, sizeof(hw_act));
 				printk("\n");
 			}
@@ -3302,17 +3671,35 @@ _adpt_hppe_acl_rule_dump(a_uint32_t dev_id, a_uint32_t list_id, a_uint32_t rule_
 sw_error_t
 adpt_hppe_acl_rule_dump(a_uint32_t dev_id)
 {
-	a_uint32_t list_id, rule_id;
+	a_uint8_t hw_list_index = 0;
+	struct list_head *list_pos = NULL, *rule_pos = NULL;
+	ADPT_HPPE_ACL_SW_LIST *list_dump_entry = NULL;
+	ADPT_HPPE_ACL_SW_RULE *rule_dump_entry = NULL;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	for(list_id = 0; list_id < ADPT_ACL_LIST_NUM; list_id++)
+	/*dump the hw list status for debug*/
+	for(hw_list_index = 0; hw_list_index < ADPT_ACL_HW_LIST_NUM; hw_list_index++)
 	{
-		for(rule_id = 0; rule_id < ADPT_ACL_RULE_NUM_PER_LIST; rule_id++)
+		SSDK_DEBUG("hw_list_index=%d, hw_list_valid=%d, hw_list_id=%d, "
+			"free_hw_entry_bitmap=0x%x, free_hw_entry_count=%d\n", hw_list_index,
+			g_acl_hw_list[dev_id][ hw_list_index].hw_list_valid,
+			g_acl_hw_list[dev_id][ hw_list_index].hw_list_id,
+			g_acl_hw_list[dev_id][ hw_list_index].free_hw_entry_bitmap,
+			g_acl_hw_list[dev_id][ hw_list_index].free_hw_entry_count);
+	}
+
+	aos_lock_bh(&hppe_acl_lock[dev_id]);
+	list_for_each(list_pos, &g_acl_sw_list[dev_id].list_sw_list)
+	{
+		list_dump_entry = list_entry(list_pos, ADPT_HPPE_ACL_SW_LIST, list);
+		list_for_each(rule_pos, &list_dump_entry->list_sw_rule)
 		{
-			_adpt_hppe_acl_rule_dump(dev_id, list_id, rule_id);
+			rule_dump_entry = list_entry(rule_pos, ADPT_HPPE_ACL_SW_RULE, list);
+			_adpt_hppe_acl_rule_dump(dev_id, list_dump_entry->list_id, rule_dump_entry);
 		}
 	}
+	aos_unlock_bh(&hppe_acl_lock[dev_id]);
 	return SW_OK;
 }
 
@@ -3328,40 +3715,66 @@ adpt_hppe_acl_list_dump(a_uint32_t dev_id)
 sw_error_t
 adpt_hppe_acl_list_creat(a_uint32_t dev_id, a_uint32_t list_id, a_uint32_t list_pri)
 {
+	ADPT_HPPE_ACL_SW_LIST *list_create_entry = NULL;
+
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	if(list_id >= ADPT_ACL_LIST_NUM) {
+	if(list_id >= ADPT_ACL_SW_LIST_NUM)
+	{
 		return SW_OUT_OF_RANGE;
 	}
 
-	if(g_acl_list[dev_id][list_id].valid) {
+	aos_lock_bh(&hppe_acl_lock[dev_id]);
+	list_create_entry = _adpt_hppe_acl_list_entry_get(dev_id, list_id);
+	if(list_create_entry != NULL)
+	{
+		aos_unlock_bh(&hppe_acl_lock[dev_id]);
 		return SW_ALREADY_EXIST;
 	}
 
-	g_acl_list[dev_id][list_id].valid = A_TRUE;
-	g_acl_list[dev_id][list_id].list_pri = list_pri;
-	g_acl_list[dev_id][list_id].free_hw_entry_bitmap = 0xff;
-	g_acl_list[dev_id][list_id].free_hw_entry_count =
-						ADPT_ACL_ENTRY_NUM_PER_LIST;
+	list_create_entry = (ADPT_HPPE_ACL_SW_LIST*)aos_mem_alloc(sizeof(ADPT_HPPE_ACL_SW_LIST));
+	if(list_create_entry == NULL)
+	{
+		SSDK_ERROR("%s, %d:malloc fail for list create entry\n", __FUNCTION__, __LINE__);
+		aos_unlock_bh(&hppe_acl_lock[dev_id]);
+		return SW_FAIL;
+	}
+	INIT_LIST_HEAD(&list_create_entry->list_sw_rule);
+	list_create_entry->list_id = list_id;
+	list_create_entry->list_pri = list_pri;
+	list_add(&list_create_entry->list, &g_acl_sw_list[dev_id].list_sw_list);
+	aos_unlock_bh(&hppe_acl_lock[dev_id]);
 	return SW_OK;
 }
 
 sw_error_t
 adpt_hppe_acl_list_destroy(a_uint32_t dev_id, a_uint32_t list_id)
 {
-	a_uint32_t rule_id = 0;
+	struct list_head *rule_pos=NULL, *rule_pos_temp = NULL;
+	ADPT_HPPE_ACL_SW_RULE *rule_delete_entry = NULL;
+	ADPT_HPPE_ACL_SW_LIST *list_destroy_entry = NULL;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	if(list_id >= ADPT_ACL_LIST_NUM)
-		return SW_OUT_OF_RANGE;
-
-	for(rule_id = 0; rule_id < ADPT_ACL_RULE_NUM_PER_LIST; rule_id++)
+	if(list_id >= ADPT_ACL_SW_LIST_NUM)
 	{
-		if(g_acl_list[dev_id][list_id].rule_hw_entry[rule_id])
-			adpt_hppe_acl_rule_delete(dev_id, list_id, rule_id, 1);
+		return SW_OUT_OF_RANGE;
 	}
-	g_acl_list[dev_id][list_id].valid = A_FALSE;
+
+	aos_lock_bh(&hppe_acl_lock[dev_id]);
+	list_destroy_entry = _adpt_hppe_acl_list_entry_get(dev_id, list_id);
+	if(list_destroy_entry != NULL)
+	{
+		list_for_each_safe(rule_pos, rule_pos_temp, &list_destroy_entry->list_sw_rule)
+		{
+			rule_delete_entry = list_entry(rule_pos, ADPT_HPPE_ACL_SW_RULE, list);
+			_adpt_hppe_acl_rule_delete(dev_id, list_id, rule_delete_entry, 1);
+		}
+		list_del(&list_destroy_entry->list);
+		aos_mem_free(list_destroy_entry);
+		list_destroy_entry = NULL;
+	}
+	aos_unlock_bh(&hppe_acl_lock[dev_id]);
 	return SW_OK;
 }
 
@@ -3369,15 +3782,21 @@ typedef sw_error_t (*hppe_acl_udp_set_func)(a_uint32_t dev_id, union udf_ctrl_re
 typedef sw_error_t (*hppe_acl_udp_get_func)(a_uint32_t dev_id, union udf_ctrl_reg_u *udf_ctrl);
 
 hppe_acl_udp_set_func g_udf_set_func[FAL_ACL_UDF_BUTT][4] = {
-	{hppe_non_ip_udf0_ctrl_reg_set, hppe_non_ip_udf1_ctrl_reg_set, hppe_non_ip_udf2_ctrl_reg_set, hppe_non_ip_udf3_ctrl_reg_set},
-	{hppe_ipv4_udf0_ctrl_reg_set, hppe_ipv4_udf1_ctrl_reg_set, hppe_ipv4_udf2_ctrl_reg_set, hppe_ipv4_udf3_ctrl_reg_set},
-	{hppe_ipv6_udf0_ctrl_reg_set, hppe_ipv6_udf1_ctrl_reg_set, hppe_ipv6_udf2_ctrl_reg_set, hppe_ipv6_udf3_ctrl_reg_set},
+	{hppe_non_ip_udf0_ctrl_reg_set, hppe_non_ip_udf1_ctrl_reg_set,
+			hppe_non_ip_udf2_ctrl_reg_set, hppe_non_ip_udf3_ctrl_reg_set},
+	{hppe_ipv4_udf0_ctrl_reg_set, hppe_ipv4_udf1_ctrl_reg_set, hppe_ipv4_udf2_ctrl_reg_set,
+			hppe_ipv4_udf3_ctrl_reg_set},
+	{hppe_ipv6_udf0_ctrl_reg_set, hppe_ipv6_udf1_ctrl_reg_set, hppe_ipv6_udf2_ctrl_reg_set,
+			hppe_ipv6_udf3_ctrl_reg_set},
 };
 
 hppe_acl_udp_get_func g_udf_get_func[FAL_ACL_UDF_BUTT][4] = {
-	{hppe_non_ip_udf0_ctrl_reg_get, hppe_non_ip_udf1_ctrl_reg_get, hppe_non_ip_udf2_ctrl_reg_get, hppe_non_ip_udf3_ctrl_reg_get},
-	{hppe_ipv4_udf0_ctrl_reg_get, hppe_ipv4_udf1_ctrl_reg_get, hppe_ipv4_udf2_ctrl_reg_get, hppe_ipv4_udf3_ctrl_reg_get},
-	{hppe_ipv6_udf0_ctrl_reg_get, hppe_ipv6_udf1_ctrl_reg_get, hppe_ipv6_udf2_ctrl_reg_get, hppe_ipv6_udf3_ctrl_reg_get},
+	{hppe_non_ip_udf0_ctrl_reg_get, hppe_non_ip_udf1_ctrl_reg_get,
+			hppe_non_ip_udf2_ctrl_reg_get, hppe_non_ip_udf3_ctrl_reg_get},
+	{hppe_ipv4_udf0_ctrl_reg_get, hppe_ipv4_udf1_ctrl_reg_get, hppe_ipv4_udf2_ctrl_reg_get,
+			hppe_ipv4_udf3_ctrl_reg_get},
+	{hppe_ipv6_udf0_ctrl_reg_get, hppe_ipv6_udf1_ctrl_reg_get, hppe_ipv6_udf2_ctrl_reg_get,
+			hppe_ipv6_udf3_ctrl_reg_get},
 };
 
 sw_error_t
@@ -3489,11 +3908,27 @@ static void adpt_hppe_acl_func_unregister(a_uint32_t dev_id, adpt_api_t *p_adpt_
 sw_error_t adpt_hppe_acl_init(a_uint32_t dev_id)
 {
 	adpt_api_t *p_adpt_api = NULL;
-
+	a_uint8_t hw_list_index = 0;
 	p_adpt_api = adpt_api_ptr_get(dev_id);
 
 	if(p_adpt_api == NULL)
+	{
 		return SW_FAIL;
+	}
+
+	for(hw_list_index = 0; hw_list_index < ADPT_ACL_HW_LIST_NUM; hw_list_index++)
+	{
+		if(g_acl_hw_list[dev_id][hw_list_index].hw_list_valid == A_FALSE)
+		{
+			g_acl_hw_list[dev_id][hw_list_index].free_hw_entry_bitmap = 0xff;
+			g_acl_hw_list[dev_id][hw_list_index].free_hw_entry_count =
+				ADPT_ACL_ENTRY_NUM_PER_LIST;
+			g_acl_hw_list[dev_id][hw_list_index].hw_list_id =
+				ADPT_ACL_HW_LIST_NUM - 1 - hw_list_index;
+			g_acl_hw_list [dev_id][hw_list_index].hw_list_valid = A_TRUE;
+			INIT_LIST_HEAD(&g_acl_sw_list[dev_id].list_sw_list);
+		}
+	}
 
 	adpt_hppe_acl_func_unregister(dev_id, p_adpt_api);
 
@@ -3541,6 +3976,8 @@ sw_error_t adpt_hppe_acl_init(a_uint32_t dev_id)
 	{
 		p_adpt_api->adpt_acl_udf_profile_get = adpt_hppe_acl_udf_profile_get;
 	}
+
+	aos_lock_init(&hppe_acl_lock[dev_id]);
 
 	return SW_OK;
 }
