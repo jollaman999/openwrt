@@ -29,8 +29,8 @@ a_uint32_t g_aclcmd_len = 0;;
 void append_acl_cmd(char * cmd)
 {
 	if(500 > (g_aclcmd_len+1)) {
-		g_aclcmd_len += snprintf(g_aclcmd+g_aclcmd_len, 500-g_aclcmd_len, cmd);
-		g_aclcmd_len += snprintf(g_aclcmd+g_aclcmd_len, 500-g_aclcmd_len, " ");
+		g_aclcmd_len += snprintf(g_aclcmd+g_aclcmd_len, 500-g_aclcmd_len, "%s", cmd);
+		g_aclcmd_len += snprintf(g_aclcmd+g_aclcmd_len, 500-g_aclcmd_len, "%s", " ");
 	}
 }
 
