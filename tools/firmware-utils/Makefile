@@ -71,7 +71,6 @@ define Host/Compile
 	$(call cc,hcsmakeimage bcmalgo)
 	$(call cc,mkporayfw, -Wall)
 	$(call cc,mkhilinkfw, -lcrypto)
-	$(call cc,mkdcs932, -Wall)
 	$(call cc,mkheader_gemtek,-lz)
 	$(call cc,mkrtn56uimg, -lz)
 	$(call cc,dgn3500sum, -Wall)
