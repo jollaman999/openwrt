@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, 2017-2018, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2014, 2017-2019, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -37,6 +37,61 @@ sw_uk_if(unsigned long arg_val[SW_MAX_API_PARAM])
 #ifndef SHELL_DEV
 #define SHELL_DEV "/dev/switch_ssdk"
 #endif
+#define MISC_DEV "/proc/misc"
+
+static int sw_device_minor_get(a_uint32_t *device_minor)
+{
+	char buf[200] = {0};
+	FILE *fp;
+	char *p;
+
+	fp = fopen(MISC_DEV, "r");
+	if (!fp) {
+		printf("failed to open %s\n", MISC_DEV);
+		return -1;
+	}
+	fseek(fp, 0, SEEK_SET);
+	while (fgets(buf, 200, fp) != NULL) {
+		p = strstr(buf, "switch_ssdk");
+		if (p) {
+			sscanf(buf,"%d",device_minor);
+			fclose(fp);
+			return 0;
+		}
+	}
+
+	fclose(fp);
+	return -1;
+}
+
+static void sw_device_check(void)
+{
+	struct stat buf;
+	a_uint32_t file_minor;
+	a_uint32_t device_minor;
+	int rv;
+
+	memset(&buf, 0, sizeof(buf));
+
+	if (stat( SHELL_DEV, &buf) < 0) {
+		printf("failed to stat!\n");
+		return;
+	}
+	if (S_ISCHR(buf.st_mode)) {
+		file_minor = minor(buf.st_rdev);
+		rv =  sw_device_minor_get(&device_minor);
+		if (!rv) {
+			if (device_minor !=  file_minor)
+				printf("device:%x file:%x mismatch!\n",
+					device_minor, file_minor);
+			else
+				printf("device:%x file:%x match!\n",
+					device_minor, file_minor);
+		}
+	}
+
+}
+
 
 sw_error_t
 sw_uk_init(a_uint32_t nl_prot)
@@ -51,6 +106,7 @@ sw_uk_init(a_uint32_t nl_prot)
 #endif
         if ((glb_socket_fd = open(SHELL_DEV, O_RDWR)) < 0)
         {
+            sw_device_check();
             return SW_INIT_ERROR;
         }
     }
