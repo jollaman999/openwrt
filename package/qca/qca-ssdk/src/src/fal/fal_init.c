@@ -204,6 +204,8 @@ fal_module_func_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 }
 
 EXPORT_SYMBOL(fal_switch_devid_get);
+EXPORT_SYMBOL(fal_module_func_ctrl_set);
+EXPORT_SYMBOL(fal_module_func_ctrl_get);
 
 /**
  * @}
