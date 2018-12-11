@@ -19,6 +19,7 @@
 #include "fal.h"
 #include "ref_vsi.h"
 #include "ssdk_clk.h"
+#include "hsl_phy.h"
 
 static sw_error_t qca_hppe_vsi_hw_init(a_uint32_t dev_id)
 {
@@ -53,6 +54,36 @@ static sw_error_t qca_hppe_fdb_hw_init(a_uint32_t dev_id)
 	fal_fdb_learning_ctrl_set(dev_id, A_TRUE);
 
 	return SW_OK;
+}
+
+#define RFDB_PROFILE_ID_STP 31
+static sw_error_t qca_hppe_ctlpkt_hw_init(a_uint32_t dev_id)
+{
+	fal_mac_addr_t mcast_mac_addr;
+	fal_ctrlpkt_action_t ctrlpkt_action;
+	fal_ctrlpkt_profile_t ctrlpkt_profile;
+	sw_error_t rv = SW_OK;
+
+	memset(&ctrlpkt_action, 0, sizeof(ctrlpkt_action));
+	memset(&ctrlpkt_profile, 0, sizeof(ctrlpkt_profile));
+	memset(&mcast_mac_addr, 0, sizeof(mcast_mac_addr));
+
+	mcast_mac_addr.uc[0] = 0x01;
+	mcast_mac_addr.uc[1] = 0x80;
+	mcast_mac_addr.uc[2] = 0xc2;
+	rv = fal_mgmtctrl_rfdb_profile_set(dev_id, RFDB_PROFILE_ID_STP,
+			&mcast_mac_addr);
+	SW_RTN_ON_ERROR(rv);
+
+	ctrlpkt_action.action = FAL_MAC_RDT_TO_CPU;
+	ctrlpkt_action.in_stp_bypass = A_TRUE;
+
+	ctrlpkt_profile.action = ctrlpkt_action;
+	ctrlpkt_profile.port_map = qca_ssdk_port_bmp_get(dev_id);
+	ctrlpkt_profile.rfdb_profile_bitmap = (1 << RFDB_PROFILE_ID_STP);
+	rv = fal_mgmtctrl_ctrlpkt_profile_add(dev_id, &ctrlpkt_profile);
+
+	return rv;
 }
 
 #ifndef HAWKEYE_CHIP
@@ -1072,6 +1103,9 @@ sw_error_t qca_hppe_hw_init(ssdk_init_cfg *cfg, a_uint32_t dev_id)
 	SW_RTN_ON_ERROR(rv);
 	rv = qca_hppe_interface_mode_init(dev_id, cfg->mac_mode, cfg->mac_mode1,
 				cfg->mac_mode2);
+	SW_RTN_ON_ERROR(rv);
+	rv = qca_hppe_ctlpkt_hw_init(dev_id);
+	SW_RTN_ON_ERROR(rv);
 #ifndef HAWKEYE_CHIP
 	rv = qca_hppe_fpga_ports_enable(dev_id);
 #endif
