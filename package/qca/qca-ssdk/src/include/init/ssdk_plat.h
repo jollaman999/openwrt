@@ -229,6 +229,16 @@ extern a_uint32_t ssdk_log_level;
 				 __FUNCTION__, __LINE__, ##__VA_ARGS__); \
 		} \
 	} while(0)
+#define SSDK_DUMP_BUF(lev, buf, len) \
+	do {\
+		if (SSDK_LOG_LEVEL_##lev <= ssdk_log_level) {\
+			a_uint32_t i_buf = 0;\
+			for(i_buf=0; i_buf<(len); i_buf++) {\
+				printk("%08lx ", *((buf)+i_buf));\
+			}\
+			printk("\n");\
+		}\
+	} while(0)
 
 #define SSDK_ERROR(fmt, ...) __SSDK_LOG_FUN(ERROR, fmt, ##__VA_ARGS__)
 #define SSDK_WARN(fmt, ...)  __SSDK_LOG_FUN(WARN, fmt, ##__VA_ARGS__)

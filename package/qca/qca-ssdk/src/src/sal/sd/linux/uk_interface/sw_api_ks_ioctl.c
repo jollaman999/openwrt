@@ -43,6 +43,8 @@
 #include <linux/module.h>
 #endif
 #include <linux/mutex.h>
+#include "ssdk_init.h"
+#include "ssdk_plat.h"
 
 static int
 switch_open(struct inode * inode,struct file * file);
@@ -99,17 +101,28 @@ input_parser(sw_api_param_t *p, a_uint32_t nr_param, unsigned long *args)
             buf_head += (p->data_size + credit) / offset;
 
             if (buf_head > (SW_MAX_API_BUF / offset))
+            {
+                SSDK_ERROR("Lengh of command is more than cmd buffer\n");
                 return SW_NO_RESOURCE;
+            }
 
             if (p->param_type & SW_PARAM_IN)
             {
-                if (copy_from_user((a_uint8_t*)(cmd_buf[i]), (void __USER *)args[i + 2], ((p->data_size + credit) / offset) * offset))
+                if (copy_from_user((a_uint8_t*)(cmd_buf[i]), (void __USER *)args[i + 2],
+				((p->data_size + credit) / offset) * offset))
+                {
+                    SSDK_ERROR("copy_from_user fail\n");
                     return SW_NO_RESOURCE;
+                }
+                SSDK_DEBUG("Input parameter %d: ", i);
+                SSDK_DUMP_BUF(DEBUG, (unsigned long *)cmd_buf[i],
+                                        ((p->data_size + credit) / offset));
             }
         }
         else
         {
             cmd_buf[i] = args[i + 2];
+            SSDK_DEBUG("Input parameter %d: %ld\n", i, cmd_buf[i]);
         }
         p++;
     }
@@ -127,9 +140,15 @@ output_parser(sw_api_param_t *p, a_uint32_t nr_param, unsigned long *args)
     {
         if (p->param_type & SW_PARAM_OUT)
         {
-            if (copy_to_user
-                    ((void __USER *) args[i + 2], (unsigned long *) cmd_buf[i], ((p->data_size + credit) / offset) * offset))
+            SSDK_DEBUG("Output parameter %d: ", i);
+            SSDK_DUMP_BUF(DEBUG, (unsigned long *)cmd_buf[i],
+				((p->data_size + credit) / offset));
+            if (copy_to_user((void __USER *) args[i + 2], (unsigned long *) cmd_buf[i],
+				((p->data_size + credit) / offset) * offset))
+            {
+                SSDK_ERROR("copy_to_user fail\n");
                 return SW_NO_RESOURCE;
+            }
         }
         p++;
     }
@@ -147,6 +166,7 @@ sw_api_cmd(unsigned long * args)
     sw_error_t rv;
     sw_api_t sw_api;
 
+    SSDK_DEBUG("api_id is %ld\n", api_id);
     sw_api.api_id = api_id;
     rv = sw_api_get(&sw_api);
     SW_OUT_ON_ERROR(rv);
@@ -229,8 +249,10 @@ switch_ioctl(struct inode *inode, struct file * file, unsigned int cmd, unsigned
     sw_error_t rv = SW_NO_RESOURCE;
     void __user *argp = (void __user *)arg;
 
+    SSDK_DEBUG("Recieved IOCTL call\n");
     if (copy_from_user(args, argp, sizeof (args)))
     {
+        SSDK_ERROR("copy_from_user fail\n");
         return SW_NO_RESOURCE;
     }
 
@@ -243,6 +265,7 @@ switch_ioctl(struct inode *inode, struct file * file, unsigned int cmd, unsigned
     if (copy_to_user
             ((void __USER *) args[1],  &rtn, sizeof (unsigned long)))
     {
+        SSDK_ERROR("copy_to_user fail\n");
         rv = SW_NO_RESOURCE;
     }
 

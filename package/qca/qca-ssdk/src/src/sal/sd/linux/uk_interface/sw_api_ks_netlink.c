@@ -52,7 +52,7 @@ static pid_t pid_childs[PID_TAB_MAX] = {0};
 static wait_queue_head_t pid_child_wait[PID_TAB_MAX];
 static struct semaphore pid_tab_sem;
 
-static a_uint32_t *cmd_buf = NULL;
+static unsigned long *cmd_buf = NULL;
 static struct semaphore api_sem;
 static struct sock *ssdk_nl_sk = NULL;
 static struct sk_buff * skb_array[PID_TAB_MAX] = {0};
