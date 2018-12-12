@@ -23,6 +23,8 @@ static ref_vsi_t ref_vsi_mapping[SW_MAX_NR_DEV][PPE_VSI_MAX+1] ={{{0, 0, NULL},
 								{0, 0, NULL}}};
 static a_uint32_t default_port_vsi[PPE_VSI_PPORT_NR] = {0, 1, 2, 3, 4, 5, 6};/*PPORT*/
 
+static aos_lock_t ppe_vlan_vsi_lock[SW_MAX_NR_DEV];
+
 static sw_error_t
 _ppe_vsi_member_init(a_uint32_t dev_id, a_uint32_t vsi_id)
 {
@@ -156,15 +158,16 @@ static sw_error_t _ppe_vlan_vsi_mapping_del(a_uint32_t dev_id, fal_port_t port_i
 				{
 					if(p_vsi_info == ref_vsi_mapping[dev_id][vsi_id].pHead)
 					{
-						ref_vsi_mapping[dev_id][vsi_id].pHead = p_vsi_info->pNext;
+						ref_vsi_mapping[dev_id][vsi_id].pHead =
+								p_vsi_info->pNext;
 					}
 					else
 					{
 						p_prev->pNext = p_vsi_info->pNext;
 					}
-					/*printk("%s,%d: port %d svlan %d cvlan %d, vsi %d free vsi info\n",
-							__FUNCTION__, __LINE__, port_id, stag_vid, ctag_vid, vsi_id);*/
 					aos_mem_free(p_vsi_info);
+					p_vsi_info = NULL;
+					break;
 				}
 			}
 			else
@@ -253,14 +256,17 @@ ppe_port_vlan_vsi_set(a_uint32_t dev_id, fal_port_t port_id,
 	ppe_port_vlan_vsi_get(dev_id, port_id, stag_vid, ctag_vid, &cur_vsi);
 	if(cur_vsi == vsi_id)
 		return SW_OK;
-
+	aos_lock_bh(&ppe_vlan_vsi_lock[dev_id]);
 	if(PPE_VSI_INVALID == vsi_id || cur_vsi != PPE_VSI_INVALID)
 	{
 		SSDK_DEBUG("Deleting port %d svlan %d cvlan %d vsi %d\n",
 				port_id, stag_vid, ctag_vid, cur_vsi);
 		rv = _ppe_vlan_vsi_mapping_del(dev_id, port_id, stag_vid, ctag_vid, cur_vsi);
 		if( rv != SW_OK )
+		{
+			aos_unlock_bh(&ppe_vlan_vsi_lock[dev_id]);
 			return rv;
+		}
 	}
 
 	if(PPE_VSI_INVALID != vsi_id)
@@ -270,7 +276,7 @@ ppe_port_vlan_vsi_set(a_uint32_t dev_id, fal_port_t port_id,
 
 		rv = _ppe_vlan_vsi_mapping_add(dev_id, port_id, stag_vid, ctag_vid, vsi_id);
 	}
-
+	aos_unlock_bh(&ppe_vlan_vsi_lock[dev_id]);
 	return rv;
 }
 
@@ -285,6 +291,7 @@ sw_error_t ppe_port_vlan_vsi_get(a_uint32_t dev_id, fal_port_t port_id,
 	REF_DEV_ID_CHECK(dev_id);
 	REF_NULL_POINT_CHECK(vsi_id);
 
+	aos_lock_bh(&ppe_vlan_vsi_lock[dev_id]);
 	for( i = 0; i <= PPE_VSI_MAX; i++ )
 	{
 		p_vsi_info = ref_vsi_mapping[dev_id][i].pHead;
@@ -297,11 +304,14 @@ sw_error_t ppe_port_vlan_vsi_get(a_uint32_t dev_id, fal_port_t port_id,
 				*vsi_id = i;
 				SSDK_DEBUG("Returned port %d svlan %d cvlan %d vsi %d\n",
 						port_id, stag_vid, ctag_vid, *vsi_id);
+				aos_unlock_bh(&ppe_vlan_vsi_lock[dev_id]);
+
 				return SW_OK;
 			}
 			p_vsi_info = p_vsi_info->pNext;
 		}
 	}
+	aos_unlock_bh(&ppe_vlan_vsi_lock[dev_id]);
 	return SW_NOT_FOUND;
 }
 
@@ -443,6 +453,8 @@ sw_error_t ppe_vsi_init(a_uint32_t dev_id)
 		/*fal_port_vsi_set(0, port_id, default_port_vsi[port_id-1]);*/
 		ppe_port_vsi_set(dev_id, port_id, default_port_vsi[port_id-1]);
 	}
+
+	aos_lock_init(&ppe_vlan_vsi_lock[dev_id]);
 
 	return SW_OK;
 }
