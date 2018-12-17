@@ -444,6 +444,9 @@ qca_switch_init(a_uint32_t dev_id)
 			fal_qos_queue_tx_buf_nr_set(dev_id, i, 2, &nr);
 			fal_qos_queue_tx_buf_nr_set(dev_id, i, 1, &nr);
 			fal_qos_queue_tx_buf_nr_set(dev_id, i, 0, &nr);
+			if (i != SSDK_PHYSICAL_PORT0)
+				fal_qos_port_mode_set(dev_id, i,
+					FAL_QOS_DSCP_MODE, A_TRUE);
 #endif
 #endif
 		} else if (SSDK_CURRENT_CHIP_TYPE == CHIP_ISISC ||
