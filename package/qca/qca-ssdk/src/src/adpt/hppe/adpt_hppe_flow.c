@@ -26,6 +26,10 @@
 #include "adpt.h"
 
 
+#define FLOW_ENTRY_TYPE_IPV4 0
+#define FLOW_ENTRY_TYPE_IPV6 1
+#define FLOW_TUPLE_TYPE_3    0
+
 sw_error_t
 adpt_hppe_ip_flow_host_data_rd_add(a_uint32_t dev_id, fal_host_entry_t * host_entry)
 
@@ -233,7 +237,7 @@ adpt_hppe_flow_entry_host_op_add(
 	if ((type & FAL_FLOW_IP4_5TUPLE_ADDR) == FAL_FLOW_IP4_5TUPLE_ADDR) {
 		union in_flow_tbl_u entry;
 		entry.bf0.valid= 1;
-		entry.bf0.entry_type = 0;
+		entry.bf0.entry_type = FLOW_ENTRY_TYPE_IPV4;
 		entry.bf0.host_addr_index_type = flow_entry->host_addr_type;
 		entry.bf0.host_addr_index = flow_entry->host_addr_index;
 		entry.bf0.protocol_type = flow_entry->protocol;
@@ -269,7 +273,7 @@ adpt_hppe_flow_entry_host_op_add(
 	} else if ((type & FAL_FLOW_IP6_5TUPLE_ADDR) == FAL_FLOW_IP6_5TUPLE_ADDR) {
 		union in_flow_ipv6_5tuple_tbl_u entry;
 		entry.bf0.valid= 1;
-		entry.bf0.entry_type = 1;
+		entry.bf0.entry_type = FLOW_ENTRY_TYPE_IPV6;
 		entry.bf0.host_addr_index_type = flow_entry->host_addr_type;
 		entry.bf0.host_addr_index = flow_entry->host_addr_index;
 		entry.bf0.protocol_type = flow_entry->protocol;
@@ -309,7 +313,7 @@ adpt_hppe_flow_entry_host_op_add(
 	} else if ((type & FAL_FLOW_IP4_3TUPLE_ADDR) == FAL_FLOW_IP4_3TUPLE_ADDR) {
 		union in_flow_3tuple_tbl_u entry;
 		entry.bf0.valid= 1;
-		entry.bf0.entry_type = 0;
+		entry.bf0.entry_type = FLOW_ENTRY_TYPE_IPV4;
 		entry.bf0.host_addr_index_type = flow_entry->host_addr_type;
 		entry.bf0.host_addr_index = flow_entry->host_addr_index;
 		entry.bf0.protocol_type = flow_entry->protocol;
@@ -341,7 +345,7 @@ adpt_hppe_flow_entry_host_op_add(
 	} else if ((type & FAL_FLOW_IP6_3TUPLE_ADDR) == FAL_FLOW_IP6_3TUPLE_ADDR) {
 		union in_flow_ipv6_3tuple_tbl_u entry;
 		entry.bf0.valid= 1;
-		entry.bf0.entry_type = 1;
+		entry.bf0.entry_type = FLOW_ENTRY_TYPE_IPV6;
 		entry.bf0.host_addr_index_type = flow_entry->host_addr_type;
 		entry.bf0.host_addr_index = flow_entry->host_addr_index;
 		entry.bf0.protocol_type = flow_entry->protocol;
@@ -402,7 +406,7 @@ adpt_hppe_flow_entry_host_op_get(
 	if ((type & FAL_FLOW_IP4_5TUPLE_ADDR) == FAL_FLOW_IP4_5TUPLE_ADDR) {
 		union in_flow_tbl_u entry;
 		entry.bf0.valid= 1;
-		entry.bf0.entry_type = 0;
+		entry.bf0.entry_type = FLOW_ENTRY_TYPE_IPV4;
 		entry.bf0.host_addr_index_type = flow_entry->host_addr_type;
 		entry.bf0.host_addr_index = flow_entry->host_addr_index;
 		entry.bf0.protocol_type = flow_entry->protocol;
@@ -447,7 +451,7 @@ adpt_hppe_flow_entry_host_op_get(
 	} else if ((type & FAL_FLOW_IP6_5TUPLE_ADDR) == FAL_FLOW_IP6_5TUPLE_ADDR) {
 		union in_flow_ipv6_5tuple_tbl_u entry;
 		entry.bf0.valid= 1;
-		entry.bf0.entry_type = 1;
+		entry.bf0.entry_type = FLOW_ENTRY_TYPE_IPV6;
 		entry.bf0.host_addr_index_type = flow_entry->host_addr_type;
 		entry.bf0.host_addr_index = flow_entry->host_addr_index;
 		entry.bf0.protocol_type = flow_entry->protocol;
@@ -502,7 +506,7 @@ adpt_hppe_flow_entry_host_op_get(
 	} else if ((type & FAL_FLOW_IP4_3TUPLE_ADDR) == FAL_FLOW_IP4_3TUPLE_ADDR) {
 		union in_flow_3tuple_tbl_u entry;
 		entry.bf0.valid= 1;
-		entry.bf0.entry_type = 0;
+		entry.bf0.entry_type = FLOW_ENTRY_TYPE_IPV4;
 		entry.bf0.host_addr_index_type = flow_entry->host_addr_type;
 		entry.bf0.host_addr_index = flow_entry->host_addr_index;
 		entry.bf0.protocol_type = flow_entry->protocol;
@@ -541,7 +545,7 @@ adpt_hppe_flow_entry_host_op_get(
 	} else if ((type & FAL_FLOW_IP6_3TUPLE_ADDR) == FAL_FLOW_IP6_3TUPLE_ADDR) {
 		union in_flow_ipv6_3tuple_tbl_u entry;
 		entry.bf0.valid= 1;
-		entry.bf0.entry_type = 1;
+		entry.bf0.entry_type = FLOW_ENTRY_TYPE_IPV6;
 		entry.bf0.host_addr_index_type = flow_entry->host_addr_type;
 		entry.bf0.host_addr_index = flow_entry->host_addr_index;
 		entry.bf0.protocol_type = flow_entry->protocol;
@@ -623,7 +627,7 @@ adpt_hppe_flow_entry_host_op_del(
 	type = flow_entry->entry_type;
 	if ((type & FAL_FLOW_IP4_5TUPLE_ADDR) == FAL_FLOW_IP4_5TUPLE_ADDR) {
 		union in_flow_tbl_u entry;
-		entry.bf0.entry_type = 0;
+		entry.bf0.entry_type = FLOW_ENTRY_TYPE_IPV4;
 		entry.bf0.host_addr_index_type = flow_entry->host_addr_type;
 		entry.bf0.host_addr_index = flow_entry->host_addr_index;
 		entry.bf0.protocol_type = flow_entry->protocol;
@@ -658,7 +662,7 @@ adpt_hppe_flow_entry_host_op_del(
 		rv = hppe_flow_entry_host_op_ipv4_5tuple_del(dev_id, del_mode, &flow_entry->entry_id, &entry);
 	} else if ((type & FAL_FLOW_IP6_5TUPLE_ADDR) == FAL_FLOW_IP6_5TUPLE_ADDR) {
 		union in_flow_ipv6_5tuple_tbl_u entry;
-		entry.bf0.entry_type = 1;
+		entry.bf0.entry_type = FLOW_ENTRY_TYPE_IPV6;
 		entry.bf0.host_addr_index_type = flow_entry->host_addr_type;
 		entry.bf0.host_addr_index = flow_entry->host_addr_index;
 		entry.bf0.protocol_type = flow_entry->protocol;
@@ -697,7 +701,7 @@ adpt_hppe_flow_entry_host_op_del(
 		rv = hppe_flow_entry_host_op_ipv6_5tuple_del(dev_id, del_mode, &flow_entry->entry_id, &entry);
 	} else if ((type & FAL_FLOW_IP4_3TUPLE_ADDR) == FAL_FLOW_IP4_3TUPLE_ADDR) {
 		union in_flow_3tuple_tbl_u entry;
-		entry.bf0.entry_type = 0;
+		entry.bf0.entry_type = FLOW_ENTRY_TYPE_IPV4;
 		entry.bf0.host_addr_index_type = flow_entry->host_addr_type;
 		entry.bf0.host_addr_index = flow_entry->host_addr_index;
 		entry.bf0.protocol_type = flow_entry->protocol;
@@ -728,7 +732,7 @@ adpt_hppe_flow_entry_host_op_del(
 		rv = hppe_flow_entry_host_op_ipv4_3tuple_del(dev_id, del_mode, &flow_entry->entry_id, &entry);
 	} else if ((type & FAL_FLOW_IP6_3TUPLE_ADDR) == FAL_FLOW_IP6_3TUPLE_ADDR) {
 		union in_flow_ipv6_3tuple_tbl_u entry;
-		entry.bf0.entry_type = 1;
+		entry.bf0.entry_type = FLOW_ENTRY_TYPE_IPV6;
 		entry.bf0.host_addr_index_type = flow_entry->host_addr_type;
 		entry.bf0.host_addr_index = flow_entry->host_addr_index;
 		entry.bf0.protocol_type = flow_entry->protocol;
@@ -844,7 +848,7 @@ adpt_hppe_flow_entry_get(
 	type = flow_entry->entry_type;
 	if ((type & FAL_FLOW_IP4_5TUPLE_ADDR) == FAL_FLOW_IP4_5TUPLE_ADDR) {
 		union in_flow_tbl_u entry;
-		entry.bf0.entry_type = 0;
+		entry.bf0.entry_type = FLOW_ENTRY_TYPE_IPV4;
 		entry.bf0.host_addr_index_type = flow_entry->host_addr_type;
 		entry.bf0.host_addr_index = flow_entry->host_addr_index;
 		entry.bf0.protocol_type = flow_entry->protocol;
@@ -854,6 +858,10 @@ adpt_hppe_flow_entry_get(
 		entry.bf0.l4_dport_0 = flow_entry->dst_port;
 		entry.bf0.l4_dport_1 = flow_entry->dst_port >> 4;
 		rv = hppe_flow_ipv4_5tuple_get(dev_id, get_mode, &flow_entry->entry_id, &entry);
+		if (entry.bf0.entry_type != FLOW_ENTRY_TYPE_IPV4 ||
+				entry.bf0.protocol_type == FLOW_TUPLE_TYPE_3) {
+			return SW_BAD_VALUE;
+		}
 		flow_entry->host_addr_type = entry.bf0.host_addr_index_type;
 		flow_entry->host_addr_index = entry.bf0.host_addr_index;
 		flow_entry->protocol = entry.bf0.protocol_type;
@@ -892,7 +900,7 @@ adpt_hppe_flow_entry_get(
 		
 	} else if ((type & FAL_FLOW_IP6_5TUPLE_ADDR) == FAL_FLOW_IP6_5TUPLE_ADDR) {
 		union in_flow_ipv6_5tuple_tbl_u entry;
-		entry.bf0.entry_type = 1;
+		entry.bf0.entry_type = FLOW_ENTRY_TYPE_IPV6;
 		entry.bf0.host_addr_index_type = flow_entry->host_addr_type;
 		entry.bf0.host_addr_index = flow_entry->host_addr_index;
 		entry.bf0.protocol_type = flow_entry->protocol;
@@ -908,6 +916,10 @@ adpt_hppe_flow_entry_get(
 		entry.bf0.l4_dport_0 = flow_entry->dst_port;
 		entry.bf0.l4_dport_1 = flow_entry->dst_port >> 4;
 		rv = hppe_flow_ipv6_5tuple_get(dev_id, get_mode, &flow_entry->entry_id, &entry);
+		if (entry.bf0.entry_type != FLOW_ENTRY_TYPE_IPV6 ||
+				entry.bf0.protocol_type == FLOW_TUPLE_TYPE_3) {
+			return SW_BAD_VALUE;
+		}
 		flow_entry->host_addr_type = entry.bf0.host_addr_index_type;
 		flow_entry->host_addr_index = entry.bf0.host_addr_index;
 		flow_entry->protocol = entry.bf0.protocol_type;
@@ -950,7 +962,7 @@ adpt_hppe_flow_entry_get(
 		
 	} else if ((type & FAL_FLOW_IP4_3TUPLE_ADDR) == FAL_FLOW_IP4_3TUPLE_ADDR) {
 		union in_flow_3tuple_tbl_u entry;
-		entry.bf0.entry_type = 0;
+		entry.bf0.entry_type = FLOW_ENTRY_TYPE_IPV4;
 		entry.bf0.host_addr_index_type = flow_entry->host_addr_type;
 		entry.bf0.host_addr_index = flow_entry->host_addr_index;
 		entry.bf0.protocol_type = flow_entry->protocol;
@@ -958,6 +970,10 @@ adpt_hppe_flow_entry_get(
 		entry.bf0.ip_addr_1 = flow_entry->flow_ip.ipv4 >> 20;
 		entry.bf0.ip_protocol = flow_entry->ip_type;
 		rv = hppe_flow_ipv4_3tuple_get(dev_id, get_mode, &flow_entry->entry_id, &entry);
+		if (entry.bf0.entry_type != FLOW_ENTRY_TYPE_IPV4 ||
+				entry.bf0.protocol_type != FLOW_TUPLE_TYPE_3) {
+			return SW_BAD_VALUE;
+		}
 		flow_entry->host_addr_type = entry.bf0.host_addr_index_type;
 		flow_entry->host_addr_index = entry.bf0.host_addr_index;
 		flow_entry->protocol = entry.bf0.protocol_type;
@@ -991,7 +1007,7 @@ adpt_hppe_flow_entry_get(
 		flow_entry->ip_type = entry.bf0.ip_protocol;
 	} else if ((type & FAL_FLOW_IP6_3TUPLE_ADDR) == FAL_FLOW_IP6_3TUPLE_ADDR) {
 		union in_flow_ipv6_3tuple_tbl_u entry;
-		entry.bf0.entry_type = 1;
+		entry.bf0.entry_type = FLOW_ENTRY_TYPE_IPV6;
 		entry.bf0.host_addr_index_type = flow_entry->host_addr_type;
 		entry.bf0.host_addr_index = flow_entry->host_addr_index;
 		entry.bf0.protocol_type = flow_entry->protocol;
@@ -1005,6 +1021,10 @@ adpt_hppe_flow_entry_get(
 		entry.bf0.ip_addr_4 = flow_entry->flow_ip.ipv6.ul[0] >> 20;
 		entry.bf0.ip_protocol = flow_entry->ip_type;
 		rv = hppe_flow_ipv6_3tuple_get(dev_id, get_mode, &flow_entry->entry_id, &entry);
+		if (entry.bf0.entry_type != FLOW_ENTRY_TYPE_IPV6 ||
+				entry.bf0.protocol_type != FLOW_TUPLE_TYPE_3) {
+			return SW_BAD_VALUE;
+		}
 		flow_entry->host_addr_type = entry.bf0.host_addr_index_type;
 		flow_entry->host_addr_index = entry.bf0.host_addr_index;
 		flow_entry->protocol = entry.bf0.protocol_type;
@@ -1115,7 +1135,7 @@ adpt_hppe_flow_entry_del(
 	type = flow_entry->entry_type;
 	if ((type & FAL_FLOW_IP4_5TUPLE_ADDR) == FAL_FLOW_IP4_5TUPLE_ADDR) {
 		union in_flow_tbl_u entry;
-		entry.bf0.entry_type = 0;
+		entry.bf0.entry_type = FLOW_ENTRY_TYPE_IPV4;
 		entry.bf0.host_addr_index_type = flow_entry->host_addr_type;
 		entry.bf0.host_addr_index = flow_entry->host_addr_index;
 		entry.bf0.protocol_type = flow_entry->protocol;
@@ -1150,7 +1170,7 @@ adpt_hppe_flow_entry_del(
 		rv = hppe_flow_ipv4_5tuple_del(dev_id, del_mode, &flow_entry->entry_id, &entry);
 	} else if ((type & FAL_FLOW_IP6_5TUPLE_ADDR) == FAL_FLOW_IP6_5TUPLE_ADDR) {
 		union in_flow_ipv6_5tuple_tbl_u entry;
-		entry.bf0.entry_type = 1;
+		entry.bf0.entry_type = FLOW_ENTRY_TYPE_IPV6;
 		entry.bf0.host_addr_index_type = flow_entry->host_addr_type;
 		entry.bf0.host_addr_index = flow_entry->host_addr_index;
 		entry.bf0.protocol_type = flow_entry->protocol;
@@ -1189,7 +1209,7 @@ adpt_hppe_flow_entry_del(
 		rv = hppe_flow_ipv6_5tuple_del(dev_id, del_mode, &flow_entry->entry_id, &entry);
 	} else if ((type & FAL_FLOW_IP4_3TUPLE_ADDR) == FAL_FLOW_IP4_3TUPLE_ADDR) {
 		union in_flow_3tuple_tbl_u entry;
-		entry.bf0.entry_type = 0;
+		entry.bf0.entry_type = FLOW_ENTRY_TYPE_IPV4;
 		entry.bf0.host_addr_index_type = flow_entry->host_addr_type;
 		entry.bf0.host_addr_index = flow_entry->host_addr_index;
 		entry.bf0.protocol_type = flow_entry->protocol;
@@ -1220,7 +1240,7 @@ adpt_hppe_flow_entry_del(
 		rv = hppe_flow_ipv4_3tuple_del(dev_id, del_mode, &flow_entry->entry_id, &entry);
 	} else if ((type & FAL_FLOW_IP6_3TUPLE_ADDR) == FAL_FLOW_IP6_3TUPLE_ADDR) {
 		union in_flow_ipv6_3tuple_tbl_u entry;
-		entry.bf0.entry_type = 1;
+		entry.bf0.entry_type = FLOW_ENTRY_TYPE_IPV6;
 		entry.bf0.host_addr_index_type = flow_entry->host_addr_type;
 		entry.bf0.host_addr_index = flow_entry->host_addr_index;
 		entry.bf0.protocol_type = flow_entry->protocol;
@@ -1458,7 +1478,7 @@ adpt_hppe_flow_entry_add(
 	if ((type & FAL_FLOW_IP4_5TUPLE_ADDR) == FAL_FLOW_IP4_5TUPLE_ADDR) {
 		union in_flow_tbl_u entry;
 		entry.bf0.valid= 1;
-		entry.bf0.entry_type = 0;
+		entry.bf0.entry_type = FLOW_ENTRY_TYPE_IPV4;
 		entry.bf0.host_addr_index_type = flow_entry->host_addr_type;
 		entry.bf0.host_addr_index = flow_entry->host_addr_index;
 		entry.bf0.protocol_type = flow_entry->protocol;
@@ -1494,7 +1514,7 @@ adpt_hppe_flow_entry_add(
 	} else if ((type & FAL_FLOW_IP6_5TUPLE_ADDR) == FAL_FLOW_IP6_5TUPLE_ADDR) {
 		union in_flow_ipv6_5tuple_tbl_u entry;
 		entry.bf0.valid= 1;
-		entry.bf0.entry_type = 1;
+		entry.bf0.entry_type = FLOW_ENTRY_TYPE_IPV6;
 		entry.bf0.host_addr_index_type = flow_entry->host_addr_type;
 		entry.bf0.host_addr_index = flow_entry->host_addr_index;
 		entry.bf0.protocol_type = flow_entry->protocol;
@@ -1534,7 +1554,7 @@ adpt_hppe_flow_entry_add(
 	} else if ((type & FAL_FLOW_IP4_3TUPLE_ADDR) == FAL_FLOW_IP4_3TUPLE_ADDR) {
 		union in_flow_3tuple_tbl_u entry;
 		entry.bf0.valid= 1;
-		entry.bf0.entry_type = 0;
+		entry.bf0.entry_type = FLOW_ENTRY_TYPE_IPV4;
 		entry.bf0.host_addr_index_type = flow_entry->host_addr_type;
 		entry.bf0.host_addr_index = flow_entry->host_addr_index;
 		entry.bf0.protocol_type = flow_entry->protocol;
@@ -1566,7 +1586,7 @@ adpt_hppe_flow_entry_add(
 	} else if ((type & FAL_FLOW_IP6_3TUPLE_ADDR) == FAL_FLOW_IP6_3TUPLE_ADDR) {
 		union in_flow_ipv6_3tuple_tbl_u entry;
 		entry.bf0.valid= 1;
-		entry.bf0.entry_type = 1;
+		entry.bf0.entry_type = FLOW_ENTRY_TYPE_IPV6;
 		entry.bf0.host_addr_index_type = flow_entry->host_addr_type;
 		entry.bf0.host_addr_index = flow_entry->host_addr_index;
 		entry.bf0.protocol_type = flow_entry->protocol;
