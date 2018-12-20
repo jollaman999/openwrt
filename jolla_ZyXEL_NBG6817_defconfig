@@ -4797,7 +4797,6 @@ CONFIG_POSTFIX_PCRE=y
 # CONFIG_PACKAGE_icecast is not set
 # CONFIG_PACKAGE_lcdgrilo is not set
 CONFIG_PACKAGE_minidlna=y
-# CONFIG_PACKAGE_minisatip is not set
 # CONFIG_PACKAGE_mjpg-streamer is not set
 # CONFIG_PACKAGE_motion is not set
 # CONFIG_PACKAGE_tvheadend is not set
@@ -6033,6 +6032,7 @@ CONFIG_PACKAGE_mariadb-client=y
 # CONFIG_PACKAGE_mariadb-client-extra is not set
 CONFIG_PACKAGE_mariadb-server-base=y
 CONFIG_PACKAGE_mariadb-server=y
+CONFIG_PACKAGE_mariadb-extra-charsets=y
 # CONFIG_PACKAGE_mariadb-server-extra is not set
 # CONFIG_PACKAGE_mariadb-server-plugin-auth-ed25519 is not set
 # CONFIG_PACKAGE_mariadb-server-plugin-auth-gssapi is not set
