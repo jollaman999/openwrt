@@ -18583,6 +18583,33 @@ cmd_data_check_flow_global(char *cmd_str, void * val, a_uint32_t size)
     }
     while (talk_mode && (SW_OK != rv));
 
+    do
+    {
+        cmd = get_sub_cmd("flow_mismatch_copy_escape_en", "no");
+        SW_RTN_ON_NULL_PARAM(cmd);
+
+        if (!strncasecmp(cmd, "quit", 4))
+        {
+            return SW_BAD_VALUE;
+        }
+        else if (!strncasecmp(cmd, "help", 4))
+        {
+            dprintf("usage: <yes/no/y/n>\n");
+            rv = SW_BAD_VALUE;
+        }
+        else
+        {
+            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.flow_mismatch_copy_escape_en),
+                                       sizeof (a_bool_t));
+            if (SW_OK != rv)
+	    {
+                dprintf("usage: <yes/no/y/n>\n");
+	    }
+        }
+
+    }
+    while (talk_mode && (SW_OK != rv));
+
     *(fal_flow_global_cfg_t *)val = entry;
     return SW_OK;
 
@@ -18595,10 +18622,18 @@ cmd_data_print_flow_global(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t 
 
     entry = (fal_flow_global_cfg_t *) buf;
 
-    dprintf("\n[src_intf_check_action]:0x%x [src_intf_check_deacclr_en]:0x%x [service_loop_en]:0x%x [service_loop_action]:0x%x [service_loop_deacclr_en]:0x%x ",
-			entry->src_if_check_action, entry->src_if_check_deacclr_en, entry->service_loop_en, entry->service_loop_action, entry->service_loop_deacclr_en);
-    dprintf("\n[flow_deacclr_action]:0x%x [sync_mismatch_action]:0x%x [sync_mismatch_deacclr_en]:0x%x [hash_mode_0]:0x%x [hash_mode_1]:0x%x ",
-			entry->flow_deacclr_action, entry->sync_mismatch_action, entry->sync_mismatch_deacclr_en, entry->hash_mode_0, entry->hash_mode_1);
+    dprintf("\n[src_intf_check_action]:0x%x [src_intf_check_deacclr_en]:0x%x "
+		    "[service_loop_en]:0x%x [service_loop_action]:0x%x "
+		    "[service_loop_deacclr_en]:0x%x ",
+		    entry->src_if_check_action, entry->src_if_check_deacclr_en,
+		    entry->service_loop_en, entry->service_loop_action,
+		    entry->service_loop_deacclr_en);
+    dprintf("\n[flow_deacclr_action]:0x%x [sync_mismatch_action]:0x%x "
+		    "[sync_mismatch_deacclr_en]:0x%x [hash_mode_0]:0x%x "
+		    "[hash_mode_1]:0x%x [flow_mismatch_copy_escape_en]:0x%x",
+		    entry->flow_deacclr_action, entry->sync_mismatch_action,
+		    entry->sync_mismatch_deacclr_en, entry->hash_mode_0,
+		    entry->hash_mode_1, entry->flow_mismatch_copy_escape_en);
 
 }
 

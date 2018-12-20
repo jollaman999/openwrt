@@ -114,6 +114,7 @@ typedef struct {
 	a_bool_t sync_mismatch_deacclr_en; /*0 for disable and 1 for enable*/
 	a_uint8_t hash_mode_0; /*0 crc10, 1 xor, 2 crc16*/
 	a_uint8_t hash_mode_1; /*0 crc10, 1 xor, 2 crc16*/
+	a_bool_t flow_mismatch_copy_escape_en; /*0 for disable and 1 for enable*/
 } fal_flow_global_cfg_t;
 
 typedef struct {
