@@ -3913,7 +3913,6 @@ CONFIG_PACKAGE_libaprutil=y
 # CONFIG_PACKAGE_libavahi-nodbus-support is not set
 # CONFIG_PACKAGE_libavl is not set
 # CONFIG_PACKAGE_libbfd is not set
-CONFIG_PACKAGE_libblkid=y
 CONFIG_PACKAGE_libblobmsg-json=y
 # CONFIG_PACKAGE_libbsd is not set
 # CONFIG_PACKAGE_libcanfestival is not set
@@ -3974,13 +3973,14 @@ CONFIG_LIBCURL_PROXY=y
 # CONFIG_PACKAGE_libdb47xx is not set
 # CONFIG_PACKAGE_libdbi is not set
 # CONFIG_PACKAGE_libdbus is not set
-CONFIG_PACKAGE_libdevmapper=y
 # CONFIG_PACKAGE_libdmapsharing is not set
 # CONFIG_PACKAGE_libdnet is not set
 # CONFIG_PACKAGE_libdouble-conversion is not set
 # CONFIG_PACKAGE_libdrm is not set
 CONFIG_PACKAGE_libedit=y
 # CONFIG_PACKAGE_libelf1 is not set
+CONFIG_PACKAGE_libblkid=y
+CONFIG_PACKAGE_libdevmapper=y
 # CONFIG_PACKAGE_libecdsautil is not set
 # CONFIG_PACKAGE_libesmtp is not set
 # CONFIG_PACKAGE_libestr is not set
@@ -4058,7 +4058,6 @@ CONFIG_PACKAGE_liblzo=y
 # CONFIG_PACKAGE_libmad is not set
 CONFIG_PACKAGE_libmagic=y
 CONFIG_PACKAGE_libmariadb=y
-# CONFIG_PACKAGE_libmariadb-plugin-auth-gssapi-client is not set
 CONFIG_PACKAGE_libmcrypt=y
 # CONFIG_PACKAGE_libmicrohttpd is not set
 # CONFIG_PACKAGE_libmicrohttpd-no-ssl is not set
@@ -6026,31 +6025,41 @@ CONFIG_PACKAGE_zoneinfo-simple=y
 #
 # database
 #
-CONFIG_PACKAGE_mariadb-common=y
-CONFIG_PACKAGE_mariadb-client-base=y
 CONFIG_PACKAGE_mariadb-client=y
 # CONFIG_PACKAGE_mariadb-client-extra is not set
-CONFIG_PACKAGE_mariadb-server-base=y
 CONFIG_PACKAGE_mariadb-server=y
 CONFIG_PACKAGE_mariadb-extra-charsets=y
 # CONFIG_PACKAGE_mariadb-server-extra is not set
+# CONFIG_PACKAGE_mariadb-server-plugin-adt-null is not set
+# CONFIG_PACKAGE_mariadb-server-plugin-auth-0x0100 is not set
 # CONFIG_PACKAGE_mariadb-server-plugin-auth-ed25519 is not set
-# CONFIG_PACKAGE_mariadb-server-plugin-auth-gssapi is not set
-# CONFIG_PACKAGE_mariadb-server-plugin-auth-pam is not set
+# CONFIG_PACKAGE_mariadb-server-plugin-auth-socket is not set
+# CONFIG_PACKAGE_mariadb-server-plugin-auth-test-plugin is not set
 # CONFIG_PACKAGE_mariadb-server-plugin-client-ed25519 is not set
+# CONFIG_PACKAGE_mariadb-server-plugin-debug-key-management is not set
+# CONFIG_PACKAGE_mariadb-server-plugin-dialog-examples is not set
 # CONFIG_PACKAGE_mariadb-server-plugin-disks is not set
+# CONFIG_PACKAGE_mariadb-server-plugin-example-key-management is not set
 # CONFIG_PACKAGE_mariadb-server-plugin-feedback is not set
 # CONFIG_PACKAGE_mariadb-server-plugin-file-key-management is not set
 # CONFIG_PACKAGE_mariadb-server-plugin-ha-archive is not set
 # CONFIG_PACKAGE_mariadb-server-plugin-ha-blackhole is not set
 # CONFIG_PACKAGE_mariadb-server-plugin-ha-connect is not set
+# CONFIG_PACKAGE_mariadb-server-plugin-ha-example is not set
 # CONFIG_PACKAGE_mariadb-server-plugin-ha-federated is not set
 # CONFIG_PACKAGE_mariadb-server-plugin-ha-federatedx is not set
+# CONFIG_PACKAGE_mariadb-server-plugin-ha-sequence is not set
 # CONFIG_PACKAGE_mariadb-server-plugin-ha-sphinx is not set
 # CONFIG_PACKAGE_mariadb-server-plugin-ha-spider is not set
+# CONFIG_PACKAGE_mariadb-server-plugin-ha-test-sql-discovery is not set
 # CONFIG_PACKAGE_mariadb-server-plugin-handlersocket is not set
+# CONFIG_PACKAGE_mariadb-server-plugin-libdaemon-example is not set
 # CONFIG_PACKAGE_mariadb-server-plugin-locales is not set
 # CONFIG_PACKAGE_mariadb-server-plugin-metadata-lock-info is not set
+# CONFIG_PACKAGE_mariadb-server-plugin-mypluglib is not set
+# CONFIG_PACKAGE_mariadb-server-plugin-qa-auth-client is not set
+# CONFIG_PACKAGE_mariadb-server-plugin-qa-auth-interface is not set
+# CONFIG_PACKAGE_mariadb-server-plugin-qa-auth-server is not set
 # CONFIG_PACKAGE_mariadb-server-plugin-query-cache-info is not set
 # CONFIG_PACKAGE_mariadb-server-plugin-query-response-time is not set
 # CONFIG_PACKAGE_mariadb-server-plugin-semisync-master is not set
