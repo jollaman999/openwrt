@@ -2861,6 +2861,52 @@ static int ssdk_dess_mac_mode_init(a_uint32_t dev_id, a_uint32_t mac_mode)
 	return 0;
 }
 
+#ifdef IN_TRUNK
+#define MULTIPLE_WAN_PORT_CNT 2
+#define TRUNK_ID_OF_MULTIPLE_WAN_PORTS 0
+
+static a_bool_t
+ssdk_dess_multiple_wan_port_check(a_uint32_t dev_id,
+	a_uint32_t wan_bitmap)
+{
+	a_uint32_t port_id = SSDK_PHYSICAL_PORT0, wan_ports_cnt = 0;
+
+	for(port_id = SSDK_PHYSICAL_PORT0; port_id < SSDK_MAX_PORT_NUM;
+		port_id++)
+	{
+		if(BIT(port_id) & wan_bitmap)
+		{
+			wan_ports_cnt++;
+		}
+	}
+	if(wan_ports_cnt >= MULTIPLE_WAN_PORT_CNT)
+	{
+		return A_TRUE;
+	}
+	else
+	{
+		return A_FALSE;
+	}
+}
+
+static sw_error_t
+ssdk_dess_trunk_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
+{
+	sw_error_t rv = SW_OK;
+	a_uint32_t wan_bitmap;
+
+	wan_bitmap = cfg->port_cfg.wan_bmp;
+	if(ssdk_dess_multiple_wan_port_check(dev_id, wan_bitmap))
+	{
+		rv = fal_trunk_group_set(dev_id, TRUNK_ID_OF_MULTIPLE_WAN_PORTS,
+			A_TRUE, wan_bitmap);
+		SW_RTN_ON_ERROR(rv);
+	}
+
+	return rv;
+}
+#endif
+
 static sw_error_t
 qca_dess_hw_init(ssdk_init_cfg *cfg, a_uint32_t dev_id)
 {
@@ -2886,12 +2932,12 @@ qca_dess_hw_init(ssdk_init_cfg *cfg, a_uint32_t dev_id)
 	ssdk_portvlan_init(dev_id);
 #endif
 
-	#ifdef IN_PORTVLAN
+#ifdef IN_PORTVLAN
 	fal_port_rxhdr_mode_set(dev_id, 0, FAL_ALL_TYPE_FRAME_EN);
-	#endif
-	#ifdef IN_IP
+#endif
+#ifdef IN_IP
 	fal_ip_route_status_set(dev_id, A_TRUE);
-	#endif
+#endif
 
 	ssdk_flow_default_act_init(dev_id);
 
@@ -2900,9 +2946,9 @@ qca_dess_hw_init(ssdk_init_cfg *cfg, a_uint32_t dev_id)
 	reg_value = (reg_value|0x1000000|0x8);
 	reg_value &= ~2;
 	qca_switch_reg_write(dev_id, 0x0e38, (a_uint8_t *)&reg_value, 4);
-	#ifdef IN_IP
+#ifdef IN_IP
 	fal_ip_vrf_base_addr_set(dev_id, 0, 0);
-	#endif
+#endif
 
 	p_api = hsl_api_ptr_get (dev_id);
 	if (p_api && p_api->port_flowctrl_thresh_set)
@@ -2918,6 +2964,9 @@ qca_dess_hw_init(ssdk_init_cfg *cfg, a_uint32_t dev_id)
 
 	/*add BGA Board led contorl*/
 	ssdk_dess_led_init(cfg);
+#ifdef IN_TRUNK
+	SW_RTN_ON_ERROR(ssdk_dess_trunk_init(dev_id, cfg));
+#endif
 
 	return SW_OK;
 }
