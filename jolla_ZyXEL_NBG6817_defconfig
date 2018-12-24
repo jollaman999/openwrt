@@ -4797,7 +4797,6 @@ CONFIG_POSTFIX_PCRE=y
 # CONFIG_PACKAGE_icecast is not set
 # CONFIG_PACKAGE_lcdgrilo is not set
 CONFIG_PACKAGE_minidlna=y
-# CONFIG_PACKAGE_minisatip is not set
 # CONFIG_PACKAGE_mjpg-streamer is not set
 # CONFIG_PACKAGE_motion is not set
 # CONFIG_PACKAGE_tvheadend is not set
