@@ -96,7 +96,7 @@ extern struct net init_net;
 
 //char *nat_lan_dev_list = "eth0.1";
 char nat_lan_dev_list[IFNAMSIZ*4] = "br-lan eth0.1";
-char nat_wan_dev_list[IFNAMSIZ*4] = "eth0.2";
+char nat_wan_dev_list[IFNAMSIZ*5] = "eth0.2";
 
 char nat_wan_port = 0x20;
 int setup_wan_if = 0;
@@ -788,9 +788,10 @@ static sw_error_t setup_interface_entry(char *list_if, int is_wan)
         {
             /* Get bridge interface name */
             br_name = (char *)(br_port_get_rcu(nat_dev)->br->dev->name);
-            //memcpy (nat_bridge_dev, br_name, sizeof(br_name));
-            strlcat (nat_lan_dev_list, " ", sizeof(nat_lan_dev_list));
-            strlcat (nat_lan_dev_list, br_name, sizeof(nat_lan_dev_list));
+            if (!is_wan) {
+                strlcat (nat_lan_dev_list, " ", sizeof(nat_lan_dev_list));
+                strlcat (nat_lan_dev_list, br_name, sizeof(nat_lan_dev_list));
+            }
             /* Get dmac */
             devmac = (uint8_t *)(br_port_get_rcu(nat_dev)->br->dev->dev_addr);
         }
@@ -876,7 +877,11 @@ static sw_error_t setup_interface_entry(char *list_if, int is_wan)
         }
 #endif
         if (1 == is_wan) {
-            in_device_wan = (struct in_device *) nat_dev->ip_ptr;
+            if (br_port_get_rcu(nat_dev)) {
+                in_device_wan = (struct in_device *) (br_port_get_rcu(nat_dev)->br->dev->ip_ptr);
+            } else {
+                in_device_wan = (struct in_device *) nat_dev->ip_ptr;
+            }
             if((nf_athrs17_hnat_wan_type == NF_S17_WAN_TYPE_IP) &&
                (in_device_wan) && (in_device_wan->ifa_list))
             {
@@ -930,7 +935,9 @@ static void setup_dev_list(void)
 				/*wan port*/
 				HNAT_PRINTK("wan port vid:%d\n", tmp_vid);
 				nat_wan_vid = tmp_vid;
-				snprintf(nat_wan_dev_list, IFNAMSIZ*4, "eth0.%d eth0 pppoe-wan erouter0", tmp_vid);
+				snprintf(nat_wan_dev_list, IFNAMSIZ*5,
+					 "eth0.%d eth0 pppoe-wan erouter0 br-wan",
+					 tmp_vid);
 			} else {
 				/*lan port*/
 				HNAT_PRINTK("lan port vid:%d\n", tmp_vid);

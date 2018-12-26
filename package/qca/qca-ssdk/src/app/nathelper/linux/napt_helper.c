@@ -260,7 +260,8 @@ napt_ct_intf_is_expected(uint32_t ct_addr)
 	dev = ip_dev_find(&init_net, dst_ip);
 	if(dev) {
 		if(dev->type == ARPHRD_ETHER) {
-			if(strstr(dev->name, "eth0") || strstr(dev->name, "erouter0")) {
+			if(strstr(dev->name, "eth0") || strstr(dev->name, "erouter0") ||
+			   strstr(dev->name, "br-wan")) {
 				dev_put(dev);
 				return 1;
 			}
