@@ -669,7 +669,7 @@ int qca_ar8327_hw_init(struct qca_phy_priv *priv)
 	paddr = of_get_property(np, "qca,ar8327-initvals", &len);
 	if (paddr) {
 		if (len < (2 * sizeof(*paddr))) {
-			SSDK_ERROR("len:%d < 2 * sizeof(*paddr):%d\n", len, 2 * sizeof(*paddr));
+			SSDK_ERROR("len:%d < 2 * sizeof(*paddr):%zu\n", len, 2 * sizeof(*paddr));
 			return -EINVAL;
 		}
 

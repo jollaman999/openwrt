@@ -662,7 +662,7 @@ struct sub_cmd_des_t g_port_des[] =
 	{"promiscmode", "set",   SW_API_PT_PROMISC_MODE_SET, NULL},
 	{"eeecfg", "set", SW_API_PT_INTERFACE_EEE_CFG_SET, NULL},
 	#endif
-	{NULL, NULL,  (int)NULL, NULL},/*end of desc*/
+	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
 
@@ -682,7 +682,7 @@ struct sub_cmd_des_t g_vlan_des[] =
 	#ifndef IN_VLAN_MINI
 	{"learnsts", "set",  SW_API_VLAN_LEARN_STATE_SET, NULL},
 	#endif
-	{NULL, NULL,  (int)NULL, NULL},/*end of desc*/
+	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
 
@@ -732,7 +732,7 @@ struct sub_cmd_des_t g_portvlan_des[] =
 	{"egbypass", "set",   SW_API_EG_FLTR_BYPASS_EN_SET, NULL},
 	{"ptvrfid", "set",   SW_API_PT_VRF_ID_SET, NULL},
 	#endif
-	{NULL, NULL,  (int)NULL, NULL},/*end of desc*/
+	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
 
@@ -770,7 +770,7 @@ struct sub_cmd_des_t g_fdb_des[] =
 	{"PtMacLimitCtrl", "set", SW_API_FDB_PT_MACLIMIT_CTRL_SET, NULL},
         {"fidEntry", "flush", SW_API_FDB_DEL_BY_FID, NULL},
 #endif
-	{NULL, NULL,  (int)NULL, NULL},/*end of desc*/
+	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
 
@@ -789,7 +789,7 @@ struct sub_cmd_des_t g_acl_des[] =
 	{"status", "set",   SW_API_ACL_STATUS_SET, NULL},
 	{"udfprofile", "set",   SW_API_ACL_PT_UDF_PROFILE_SET, NULL},
 	{"udf", "set", SW_API_ACL_UDF_SET, NULL},
-	{NULL, NULL,  (int)NULL, NULL},/*end of desc*/
+	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
 
@@ -851,7 +851,7 @@ struct sub_cmd_des_t g_qos_des[] =
 	{"dequeue", "set", SW_API_QOS_SCHEDULER_DEQUEU_CTRL_SET, NULL},
 	{"portscheduler", "set", SW_API_QOS_PORT_SCHEDULER_CFG_RESET, NULL},
 #endif
-	{NULL, NULL,  (int)NULL, NULL},/*end of desc*/
+	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
 
@@ -873,7 +873,7 @@ struct sub_cmd_des_t g_igmp_des[] =
 	{"multi", "set", SW_API_IGMP_SG_ENTRY_SET, NULL},
 	{"multi", "clear", SW_API_IGMP_SG_ENTRY_CLEAR, NULL},
 	{"multi", "show", SW_API_IGMP_SG_ENTRY_SHOW, NULL},
-	{NULL, NULL,  (int)NULL, NULL},/*end of desc*/
+	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
 
@@ -885,7 +885,7 @@ struct sub_cmd_des_t g_leaky_des[] =
 	{"arpMode", "set", SW_API_ARP_LEAKY_MODE_SET, NULL},
 	{"ptUcMode", "set", SW_API_PT_UC_LEAKY_MODE_SET, NULL},
 	{"ptMcMode", "set", SW_API_PT_MC_LEAKY_MODE_SET, NULL},
-	{NULL, NULL,  (int)NULL, NULL},/*end of desc*/
+	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
 
@@ -896,7 +896,7 @@ struct sub_cmd_des_t g_mirror_des[] =
 	{"ptIngress", "set", SW_API_MIRROR_IN_PT_SET, NULL},
 	{"ptEgress", "set", SW_API_MIRROR_EG_PT_SET, NULL},
 	{"analyCfg", "set", SW_API_MIRROR_ANALYSIS_CONFIG_SET, NULL},
-	{NULL, NULL,  (int)NULL, NULL},/*end of desc*/
+	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
 
@@ -916,7 +916,7 @@ struct sub_cmd_des_t g_rate_des[] =
 	{"aclpolicer", "set", SW_API_RATE_ACL_POLICER_SET, NULL},
 	{"ptAddRateByte", "set", SW_API_RATE_PT_ADDRATEBYTE_SET, NULL},
 	{"ptgolflowen", "set", SW_API_RATE_PT_GOL_FLOW_EN_SET, NULL},
-	{NULL, NULL,  (int)NULL, NULL},/*end of desc*/
+	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
 
@@ -935,7 +935,7 @@ struct sub_cmd_des_t g_sec_des[] =
 	{"l3parser", "set", SW_API_SEC_L3_PARSER_CTRL_SET, NULL},
 	{"l4parser", "set", SW_API_SEC_L4_PARSER_CTRL_SET, NULL},
 	{"expctrl", "set", SW_API_SEC_EXP_CTRL_SET, NULL},
-	{NULL, NULL,  (int)NULL, NULL},/*end of desc*/
+	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
 #endif
@@ -944,7 +944,7 @@ struct sub_cmd_des_t g_sec_des[] =
 struct sub_cmd_des_t g_stp_des[] =
 {
 	{"portState", "set", SW_API_STP_PT_STATE_SET, NULL},
-	{NULL, NULL,  (int)NULL, NULL},/*end of desc*/
+	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
 
@@ -954,7 +954,7 @@ struct sub_cmd_des_t g_mib_des[] =
 	{"status", "set",    SW_API_MIB_STATUS_SET, NULL},
             {"counters",  "flush",   SW_API_PT_MIB_FLUSH_COUNTERS, NULL},
             {"cpuKeep", "set",    SW_API_MIB_CPU_KEEP_SET, NULL},
-            {NULL, NULL,  (int)NULL, NULL},/*end of desc*/
+            {NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
 
@@ -962,7 +962,7 @@ struct sub_cmd_des_t g_mib_des[] =
 struct sub_cmd_des_t g_led_des[] =
 {
 	{"ctrlpattern", "set", SW_API_LED_PATTERN_SET, NULL},
-	{NULL, NULL,  (int)NULL, NULL},/*end of desc*/
+	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
 
@@ -986,7 +986,7 @@ struct sub_cmd_des_t g_cosmap_des[] =
 #ifndef IN_COSMAP_MINI
 	{"egRemark", "set",   SW_API_COSMAP_EG_REMARK_SET, NULL},
 #endif
-	{NULL, NULL,  (int)NULL, NULL},/*end of desc*/
+	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
 
@@ -1044,7 +1044,7 @@ struct sub_cmd_des_t g_misc_des[] =
 	{"Pppoe", "set",   SW_API_PPPOE_STATUS_SET, NULL},
 	{"pppoeen", "set", SW_API_PPPOE_EN_SET, NULL},
 #endif
-	{NULL, NULL,  (int)NULL, NULL},/*end of desc*/
+	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
 
@@ -1093,7 +1093,7 @@ struct sub_cmd_des_t g_ip_des[] =
 	{"portarpsg", "set",  SW_API_IP_PORT_ARP_SG_SET, NULL},
 	{"mcmode", "set",  SW_API_IP_VSI_MC_MODE_SET, NULL},
 	{"globalctrl", "set",  SW_API_GLOBAL_CTRL_SET, NULL},
-	{NULL, NULL,  (int)NULL, NULL},/*end of desc*/
+	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
 
@@ -1110,7 +1110,7 @@ struct sub_cmd_des_t g_flow_des[] =
 	{"host", "add", SW_API_FLOW_HOST_ADD, NULL},
 	{"host", "del", SW_API_FLOW_HOST_DEL, NULL},
 	{"global", "set", SW_API_FLOW_GLOBAL_CFG_SET, NULL},
-	{NULL, NULL,  (int)NULL, NULL},/*end of desc*/
+	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
 
@@ -1145,7 +1145,7 @@ struct sub_cmd_des_t g_nat_des[] =
 	{"flowentry", "next", SW_API_FLOW_NEXT, NULL},
 	{"flowcookie", "set", SW_API_FLOW_COOKIE_SET, NULL},
 	{"flowrfs", "set", SW_API_FLOW_RFS_SET, NULL},
-	{NULL, NULL,  (int)NULL, NULL},/*end of desc*/
+	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
 
@@ -1156,7 +1156,7 @@ struct sub_cmd_des_t g_trunk_des[] =
 	{"hashmode", "set", SW_API_TRUNK_HASH_SET, NULL},
 	{"mansa", "set", SW_API_TRUNK_MAN_SA_SET, NULL},
 	{"failover", "set", SW_API_TRUNK_FAILOVER_EN_SET, NULL},
-	{NULL, NULL,  (int)NULL, NULL},/*end of desc*/
+	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
 
@@ -1168,7 +1168,7 @@ struct sub_cmd_des_t g_interfacecontrol_des[] =
 	{"phymode", "set",   SW_API_PHY_MODE_SET, NULL},
 	{"fx100ctrl", "set",   SW_API_FX100_CTRL_SET, NULL},
 	{"mac06exch", "set",   SW_API_MAC06_EXCH_SET, NULL},
-	{NULL, NULL,  (int)NULL, NULL},/*end of desc*/
+	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
 
@@ -1183,7 +1183,7 @@ struct sub_cmd_des_t g_vsi_des[] =
 	{"stationmove", "set", SW_API_VSI_STAMOVE_SET, NULL},
 	{"member", "set", SW_API_VSI_MEMBER_SET, NULL},
     {"counter", "cleanup", SW_API_VSI_COUNTER_CLEANUP, NULL},
-	{NULL, NULL, (int)NULL, NULL}/*end of desc*/
+	{NULL, NULL, 0, NULL}/*end of desc*/
 };
 #endif
 
@@ -1194,24 +1194,24 @@ struct sub_cmd_des_t g_policer_des[] =
 	{"fcscompensation", "set",   SW_API_POLICER_COMPENSATION_SET, NULL},
 	{"portentry", "set",   SW_API_POLICER_PORT_ENTRY_SET, NULL},
 	{"aclentry", "set",   SW_API_POLICER_ACL_ENTRY_SET, NULL},
-	{NULL, NULL,  (int)NULL, NULL},/*end of desc*/
+	{NULL, NULL,  0, NULL},/*end of desc*/
 };
 #endif
 #ifdef IN_SHAPER
-	struct sub_cmd_des_t g_shaper_des[] =
-	{
-		{"porttimeslot", "set",   SW_API_PORT_SHAPER_TIMESLOT_SET, NULL},
-		{"flowtimeslot", "set",   SW_API_FLOW_SHAPER_TIMESLOT_SET, NULL},
-		{"queuetimeslot", "set",	 SW_API_QUEUE_SHAPER_TIMESLOT_SET, NULL},
-		{"porttoken", "set",   SW_API_PORT_SHAPER_TOKEN_NUMBER_SET, NULL},
-		{"flowtoken", "set",   SW_API_FLOW_SHAPER_TOKEN_NUMBER_SET, NULL},
-		{"queuetoken", "set",   SW_API_QUEUE_SHAPER_TOKEN_NUMBER_SET, NULL},
-		{"portshaper", "set",   SW_API_PORT_SHAPER_SET, NULL},
-		{"flowshaper", "set",   SW_API_FLOW_SHAPER_SET, NULL},
-		{"queueshaper", "set",   SW_API_QUEUE_SHAPER_SET, NULL},
-		{"ipgcompensation", "set",   SW_API_SHAPER_IPG_PRE_SET, NULL},
-		{NULL, NULL,  (int)NULL, NULL},/*end of desc*/
-	};
+struct sub_cmd_des_t g_shaper_des[] =
+{
+	{"porttimeslot", "set",   SW_API_PORT_SHAPER_TIMESLOT_SET, NULL},
+	{"flowtimeslot", "set",   SW_API_FLOW_SHAPER_TIMESLOT_SET, NULL},
+	{"queuetimeslot", "set",	 SW_API_QUEUE_SHAPER_TIMESLOT_SET, NULL},
+	{"porttoken", "set",   SW_API_PORT_SHAPER_TOKEN_NUMBER_SET, NULL},
+	{"flowtoken", "set",   SW_API_FLOW_SHAPER_TOKEN_NUMBER_SET, NULL},
+	{"queuetoken", "set",   SW_API_QUEUE_SHAPER_TOKEN_NUMBER_SET, NULL},
+	{"portshaper", "set",   SW_API_PORT_SHAPER_SET, NULL},
+	{"flowshaper", "set",   SW_API_FLOW_SHAPER_SET, NULL},
+	{"queueshaper", "set",   SW_API_QUEUE_SHAPER_SET, NULL},
+	{"ipgcompensation", "set",   SW_API_SHAPER_IPG_PRE_SET, NULL},
+	{NULL, NULL,  0, NULL},/*end of desc*/
+};
 #endif
     /*QM*/
 #ifdef IN_QM
@@ -1237,7 +1237,7 @@ struct sub_cmd_des_t g_qm_des[] =
     {"cnt", "set", SW_API_QUEUE_CNT_CLEANUP, NULL},
     {"enqueue", "set", SW_API_QM_ENQUEUE_CTRL_SET, NULL},
     {"srcprofile", "set", SW_API_QM_SOURCE_PROFILE_SET, NULL},
-    {NULL, NULL, (int)NULL, NULL},/*end of desc*/
+    {NULL, NULL, 0, NULL},/*end of desc*/
 
 };
 #endif
@@ -1253,7 +1253,7 @@ struct sub_cmd_des_t g_bm_des[] =
     {"portrsvbuff", "set", SW_API_BM_PORT_RSVBUFFER_SET, NULL},
     {"portsthresh", "set", SW_API_BM_STATIC_THRESH_SET, NULL},
     {"portdthresh", "set", SW_API_BM_DYNAMIC_THRESH_SET, NULL},
-    {NULL, NULL, (int)NULL, NULL},/*end of desc*/
+    {NULL, NULL, 0, NULL},/*end of desc*/
 
 };
 #endif
@@ -1264,7 +1264,7 @@ struct sub_cmd_des_t g_servcode_des[] =
 {
     {"config", "set", SW_API_SERVCODE_CONFIG_SET, NULL},
     {"loopcheck", "set", SW_API_SERVCODE_LOOPCHECK_EN, NULL},
-    {NULL, NULL, (int)NULL, NULL},/*end of desc*/
+    {NULL, NULL, 0, NULL},/*end of desc*/
 };
 #endif
 
@@ -1273,7 +1273,7 @@ struct sub_cmd_des_t g_servcode_des[] =
 struct sub_cmd_des_t g_rss_hash_des[] =
 {
     {"config", "set", SW_API_RSS_HASH_CONFIG_SET, NULL},
-    {NULL, NULL, (int)NULL, NULL},/*end of desc*/
+    {NULL, NULL, 0, NULL},/*end of desc*/
 };
 #endif
 
@@ -1284,7 +1284,7 @@ struct sub_cmd_des_t g_ctrlpkt_des[] =
     {"ethernetType", "set", SW_API_MGMTCTRL_ETHTYPE_PROFILE_SET, NULL},
     {"rfdb", "set", SW_API_MGMTCTRL_RFDB_PROFILE_SET, NULL},
     {"appProfile", "set", SW_API_MGMTCTRL_CTRLPKT_PROFILE_ADD, NULL},
-    {NULL, NULL, (int)NULL, NULL},/*end of desc*/
+    {NULL, NULL, 0, NULL},/*end of desc*/
 };
 #endif
 

@@ -105,7 +105,7 @@ endif
 
 ifeq ($(ARCH), arm64)
 ifeq ($(KVER),$(filter 4.1% 4.4% 4.9% 4.14% 5.4%, $(KVER)))
-  CPU_CFLAG=  -DMODULE -Os -pipe -march=armv8-a -mcpu=cortex-a53+crypto -fno-caller-saves -fno-strict-aliasing -fno-common -Wno-format-security -Wno-pointer-sign -Wno-unused-but-set-variable -Wno-error=unused-result -mcmodel=large
+  CPU_CFLAG=  -DMODULE -Os -pipe -march=armv8-a -mcpu=cortex-a53+crypto -fno-caller-saves -fno-strict-aliasing -Werror -fno-common -Wno-format-security -Wno-pointer-sign -Wno-unused-but-set-variable -Wno-error=unused-result -mcmodel=large
 endif
 endif
 

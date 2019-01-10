@@ -150,7 +150,7 @@ sll_unlock(sll_head_t * sll)
 }
 
 void *
-sll_nd_find(const sll_head_t * sll, void *data, a_uint32_t * iterator)
+sll_nd_find(const sll_head_t *sll, void *data, a_ulong_t *iterator)
 {
     sll_node_t *node;
     ll_cmp_rslt_t rslt;
@@ -161,7 +161,7 @@ sll_nd_find(const sll_head_t * sll, void *data, a_uint32_t * iterator)
         rslt = sll->nd_cmp(node->data, data);
         if (LL_CMP_EQUAL == rslt)
         {
-            *iterator = (a_uint32_t) node;
+            *iterator = (a_ulong_t)node;
             return node->data;
         }
 
@@ -176,7 +176,7 @@ sll_nd_find(const sll_head_t * sll, void *data, a_uint32_t * iterator)
 }
 
 void *
-sll_nd_next(const sll_head_t * sll, a_uint32_t * iterator)
+sll_nd_next(const sll_head_t *sll, a_ulong_t *iterator)
 {
     sll_node_t *curr = NULL;
 
@@ -198,7 +198,7 @@ sll_nd_next(const sll_head_t * sll, a_uint32_t * iterator)
     }
     else
     {
-        *iterator = (a_uint32_t) curr;
+        *iterator = (a_ulong_t)curr;
         return curr->data;
     }
 }

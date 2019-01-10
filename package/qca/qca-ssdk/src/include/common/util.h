@@ -61,9 +61,9 @@ extern "C" {
     void sll_unlock(sll_head_t * sll);
 
     void *sll_nd_find(const sll_head_t * sll, void *data,
-                      a_uint32_t * iterator);
+                      a_ulong_t *iterator);
 
-    void *sll_nd_next(const sll_head_t * sll, a_uint32_t * iterator);
+    void *sll_nd_next(const sll_head_t *sll, a_ulong_t *iterator);
 
     sw_error_t sll_nd_insert(sll_head_t * sll, void *data);
 

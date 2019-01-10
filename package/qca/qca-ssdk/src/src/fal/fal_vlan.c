@@ -40,7 +40,7 @@ static sll_head_t * vlan_list[SW_MAX_NR_DEV] = { 0 };
 static sw_error_t
 _fal_vlan_search(a_uint32_t dev_id, fal_vlan_t * vlan_entry)
 {
-    a_uint32_t iterator;
+    a_ulong_t iterator;
     v_array_t   v_tbl;
     v_array_t * p_tbl;
     hsl_dev_t * p_dev = NULL;
@@ -70,7 +70,7 @@ _fal_vlan_search(a_uint32_t dev_id, fal_vlan_t * vlan_entry)
 static sw_error_t
 _fal_vlan_following(a_uint32_t dev_id, fal_vlan_t * vlan_entry)
 {
-    a_uint32_t iterator = 0;
+    a_ulong_t iterator = 0;
     v_array_t   v_tbl;
     v_array_t * p_tbl;
     hsl_dev_t * p_dev = NULL;
@@ -120,7 +120,7 @@ _fal_vlan_del(a_uint32_t dev_id, a_uint16_t vlan_id)
     v_array_t * p_tbl;
     v_array_t   ent;
     sw_error_t  rv;
-    a_uint32_t  iterator;
+    a_ulong_t iterator;
     a_uint32_t  id;
     hsl_dev_t * p_dev = NULL;
 
@@ -176,7 +176,7 @@ _fal_vlan_creat(a_uint32_t dev_id, const fal_vlan_t * vlan_entry)
 static sw_error_t
 _fal_vlan_update(a_uint32_t dev_id, const fal_vlan_t * vlan_entry)
 {
-    a_uint32_t  iterator;
+    a_ulong_t iterator;
     v_array_t   v_tbl;
     v_array_t * p_tbl;
     hsl_dev_t * p_dev = NULL;
