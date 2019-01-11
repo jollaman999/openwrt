@@ -4433,6 +4433,9 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 				SSDK_DEBUG("Port %d the interface mode switched\n",
 						port_id);
 			}
+#ifdef IN_FDB
+			adpt_hppe_fdb_del_by_port(priv->device_id, port_id, !(FAL_FDB_DEL_STATIC));
+#endif
 			continue;
 		}
 		/* link status from down to up*/
