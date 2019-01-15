@@ -371,7 +371,7 @@ sw_error_t ppe_vsi_alloc(a_uint32_t dev_id, a_uint32_t *vsi)
 	REF_NULL_POINT_CHECK(vsi);
 	SSDK_DEBUG("requesting vsi\n");
 
-	for( vsi_id = PPE_VSI_RESERVE_MAX+1; vsi_id < PPE_VSI_MAX; vsi_id++ )
+	for( vsi_id = PPE_VSI_RESERVE_MAX+1; vsi_id <= PPE_VSI_MAX; vsi_id++ )
 	{
 		if(ref_vsi_mapping[dev_id][vsi_id].valid == 0)
 		{
