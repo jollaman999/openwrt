@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2018, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2015-2019, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -1410,25 +1410,31 @@ malibu_phy_set_autoneg_adv(a_uint32_t dev_id, a_uint32_t phy_id,
 			    ~(MALIBU_ADVERTISE_PAUSE |
 			      MALIBU_ADVERTISE_ASYM_PAUSE);
 
-			if (autoneg & FAL_PHY_ADV_100TX_FD)
+			if (autoneg & FAL_PHY_ADV_100TX_FD) {
 				phy_data |= MALIBU_ADVERTISE_100FULL;
-
-			if (autoneg & FAL_PHY_ADV_100TX_HD)
+			}
+			if (autoneg & FAL_PHY_ADV_100TX_HD) {
 				phy_data |= MALIBU_ADVERTISE_100HALF;
-
-			if (autoneg & FAL_PHY_ADV_10T_FD)
+			}
+			if (autoneg & FAL_PHY_ADV_10T_FD) {
 				phy_data |= MALIBU_ADVERTISE_10FULL;
-
-			if (autoneg & FAL_PHY_ADV_10T_HD)
+			}
+			if (autoneg & FAL_PHY_ADV_10T_HD) {
 				phy_data |= MALIBU_ADVERTISE_10HALF;
-
-			if (autoneg & FAL_PHY_ADV_PAUSE)
+			}
+			if (autoneg & FAL_PHY_ADV_PAUSE) {
 				phy_data |= MALIBU_ADVERTISE_PAUSE;
-
-			if (autoneg & FAL_PHY_ADV_ASY_PAUSE)
+			}
+			if (autoneg & FAL_PHY_ADV_ASY_PAUSE) {
 				phy_data |= MALIBU_ADVERTISE_ASYM_PAUSE;
+			}
 			__phy_reg_pages_sel(dev_id, phy_id,
 					    MALIBU_PHY_COPPER_PAGES);
+			if (autoneg & FAL_PHY_ADV_1000T_FD) {
+				phy_data |= MALIBU_EXTENDED_NEXT_PAGE_EN;
+			} else {
+				phy_data &= ~MALIBU_EXTENDED_NEXT_PAGE_EN;
+			}
 			malibu_phy_reg_write(dev_id, phy_id,
 					     MALIBU_AUTONEG_ADVERT, phy_data);
 
@@ -1438,9 +1444,9 @@ malibu_phy_set_autoneg_adv(a_uint32_t dev_id, a_uint32_t phy_id,
 			phy_data &= ~MALIBU_ADVERTISE_1000FULL;
 			phy_data &= ~MALIBU_ADVERTISE_1000HALF;
 
-			if (autoneg & FAL_PHY_ADV_1000T_FD)
+			if (autoneg & FAL_PHY_ADV_1000T_FD) {
 				phy_data |= MALIBU_ADVERTISE_1000FULL;
-
+			}
 			malibu_phy_reg_write(dev_id, phy_id,
 					     MALIBU_1000BASET_CONTROL,
 					     phy_data);
@@ -1453,18 +1459,18 @@ malibu_phy_set_autoneg_adv(a_uint32_t dev_id, a_uint32_t phy_id,
 						MALIBU_AUTONEG_ADVERT);
 			phy_data &= ~MALIBU_BX_ADVERTISE_ALL;
 
-			if (autoneg & FAL_PHY_ADV_1000BX_FD)
+			if (autoneg & FAL_PHY_ADV_1000BX_FD) {
 				phy_data |= MALIBU_BX_ADVERTISE_1000FULL;
-
-			if (autoneg & FAL_PHY_ADV_1000BX_HD)
+			}
+			if (autoneg & FAL_PHY_ADV_1000BX_HD) {
 				phy_data |= MALIBU_BX_ADVERTISE_1000HALF;
-
-			if (autoneg & FAL_PHY_ADV_PAUSE)
+			}
+			if (autoneg & FAL_PHY_ADV_PAUSE) {
 				phy_data |= MALIBU_BX_ADVERTISE_PAUSE;
-
-			if (autoneg & FAL_PHY_ADV_ASY_PAUSE)
+			}
+			if (autoneg & FAL_PHY_ADV_ASY_PAUSE) {
 				phy_data |= MALIBU_BX_ADVERTISE_ASYM_PAUSE;
-
+			}
 			__phy_reg_pages_sel(dev_id, phy_id,
 					    MALIBU_PHY_SGBX_PAGES);
 
@@ -1479,23 +1485,29 @@ malibu_phy_set_autoneg_adv(a_uint32_t dev_id, a_uint32_t phy_id,
 		phy_data &=
 		    ~(MALIBU_ADVERTISE_PAUSE | MALIBU_ADVERTISE_ASYM_PAUSE);
 
-		if (autoneg & FAL_PHY_ADV_100TX_FD)
+		if (autoneg & FAL_PHY_ADV_100TX_FD) {
 			phy_data |= MALIBU_ADVERTISE_100FULL;
-
-		if (autoneg & FAL_PHY_ADV_100TX_HD)
+		}
+		if (autoneg & FAL_PHY_ADV_100TX_HD) {
 			phy_data |= MALIBU_ADVERTISE_100HALF;
-
-		if (autoneg & FAL_PHY_ADV_10T_FD)
+		}
+		if (autoneg & FAL_PHY_ADV_10T_FD) {
 			phy_data |= MALIBU_ADVERTISE_10FULL;
-
-		if (autoneg & FAL_PHY_ADV_10T_HD)
+		}
+		if (autoneg & FAL_PHY_ADV_10T_HD) {
 			phy_data |= MALIBU_ADVERTISE_10HALF;
-
-		if (autoneg & FAL_PHY_ADV_PAUSE)
+		}
+		if (autoneg & FAL_PHY_ADV_PAUSE) {
 			phy_data |= MALIBU_ADVERTISE_PAUSE;
-
-		if (autoneg & FAL_PHY_ADV_ASY_PAUSE)
+		}
+		if (autoneg & FAL_PHY_ADV_ASY_PAUSE) {
 			phy_data |= MALIBU_ADVERTISE_ASYM_PAUSE;
+		}
+		if (autoneg & FAL_PHY_ADV_1000T_FD) {
+			phy_data |= MALIBU_EXTENDED_NEXT_PAGE_EN;
+		} else {
+			phy_data &= ~MALIBU_EXTENDED_NEXT_PAGE_EN;
+		}
 		malibu_phy_reg_write(dev_id, phy_id, MALIBU_AUTONEG_ADVERT,
 				     phy_data);
 
@@ -1505,9 +1517,9 @@ malibu_phy_set_autoneg_adv(a_uint32_t dev_id, a_uint32_t phy_id,
 		phy_data &= ~MALIBU_ADVERTISE_1000FULL;
 		phy_data &= ~MALIBU_ADVERTISE_1000HALF;
 
-		if (autoneg & FAL_PHY_ADV_1000T_FD)
+		if (autoneg & FAL_PHY_ADV_1000T_FD) {
 			phy_data |= MALIBU_ADVERTISE_1000FULL;
-
+		}
 		malibu_phy_reg_write(dev_id, phy_id, MALIBU_1000BASET_CONTROL,
 				     phy_data);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015, 2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2015, 2017, 2019, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -338,10 +338,13 @@ extern "C"
 #define MALIBU_ADVERTISE_NEXT_PAGE              0x8000
 
   /* 100TX Half Duplex Capable */
-#define MALIBU_ADVERTISE_1000HALF                0x0100
+#define MALIBU_ADVERTISE_1000HALF               0x0100
 
   /* 100TX Full Duplex Capable */
-#define MALIBU_ADVERTISE_1000FULL                0x0200
+#define MALIBU_ADVERTISE_1000FULL               0x0200
+
+  /* Extended next page enable control  */
+#define MALIBU_EXTENDED_NEXT_PAGE_EN            0x1000
 
 #define MALIBU_ADVERTISE_ALL \
     (MALIBU_ADVERTISE_10HALF | MALIBU_ADVERTISE_10FULL | \

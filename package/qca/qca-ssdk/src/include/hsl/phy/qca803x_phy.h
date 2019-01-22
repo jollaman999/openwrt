@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2017, 2019, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -275,6 +275,9 @@ extern "C"
 
   /* 100TX Full Duplex Capable */
 #define QCA803X_ADVERTISE_1000FULL                0x0200
+
+  /* Extended next page enable control  */
+#define QCA803X_EXTENDED_NEXT_PAGE_EN             0x1000
 
 #define QCA803X_ADVERTISE_ALL \
     (QCA803X_ADVERTISE_10HALF | QCA803X_ADVERTISE_10FULL | \
