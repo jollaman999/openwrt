@@ -387,7 +387,7 @@ qca_switch_init(a_uint32_t dev_id)
 	/*enable pppoe for dakota to support RSS*/
 	if (SSDK_CURRENT_CHIP_TYPE == CHIP_DESS) {
 #ifdef DESS
-#ifdef IN_MISC
+#ifdef IN_PPPOE
 		fal_pppoe_status_set(dev_id, A_TRUE);
 #endif
 #endif
