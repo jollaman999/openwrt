@@ -745,10 +745,10 @@ static ssize_t ssdk_packet_counter_get(struct device *dev,
 	ssize_t count;
 	adpt_api_t *p_api;
 
-	p_api = adpt_api_ptr_get(0);
-	if (!p_api)
+	p_api = adpt_api_ptr_get(ssdk_dev_id);
+	if (p_api == NULL || p_api->adpt_debug_counter_get == NULL)
 	{
-		count = snprintf(buf, (ssize_t)PAGE_SIZE, "just support hppe");
+		count = snprintf(buf, (ssize_t)PAGE_SIZE, "Unsupported\n");
 		return count;
 	}
 
@@ -766,9 +766,11 @@ static ssize_t ssdk_packet_counter_set(struct device *dev,
 	char num_buf[12];
 	adpt_api_t *p_api;
 
-	p_api = adpt_api_ptr_get(0);
-	if (!p_api)
+	p_api = adpt_api_ptr_get(ssdk_dev_id);
+	if (p_api == NULL || p_api->adpt_debug_counter_set == NULL) {
+		SSDK_WARN("Unsupported\n");
 		return count;
+	}
 
 	p_api->adpt_debug_counter_set();
 
@@ -788,10 +790,10 @@ static ssize_t ssdk_byte_counter_get(struct device *dev,
 	ssize_t count;
 	adpt_api_t *p_api;
 
-	p_api = adpt_api_ptr_get(0);
-	if (!p_api)
+	p_api = adpt_api_ptr_get(ssdk_dev_id);
+	if (p_api == NULL || p_api->adpt_debug_counter_get == NULL)
 	{
-		count = snprintf(buf, (ssize_t)PAGE_SIZE, "just support hppe");
+		count = snprintf(buf, (ssize_t)PAGE_SIZE, "Unsupported\n");
 		return count;
 	}
 
@@ -809,9 +811,11 @@ static ssize_t ssdk_byte_counter_set(struct device *dev,
 	char num_buf[12];
 	adpt_api_t *p_api;
 
-	p_api = adpt_api_ptr_get(0);
-	if (!p_api)
+	p_api = adpt_api_ptr_get(ssdk_dev_id);
+	if (p_api == NULL || p_api->adpt_debug_counter_set == NULL) {
+		SSDK_WARN("Unsupported\n");
 		return count;
+	}
 
 	p_api->adpt_debug_counter_set();
 
