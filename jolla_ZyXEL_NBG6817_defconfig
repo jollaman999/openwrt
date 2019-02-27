@@ -317,15 +317,16 @@ CONFIG_TOOLCHAINOPTS=y
 # Binary tools
 #
 # CONFIG_BINUTILS_USE_VERSION_2_29_1 is not set
-CONFIG_BINUTILS_USE_VERSION_2_31_1=y
+# CONFIG_BINUTILS_USE_VERSION_2_31_1 is not set
+CONFIG_BINUTILS_USE_VERSION_2_32=y
 CONFIG_EXTRA_BINUTILS_CONFIG_OPTIONS=""
 
 #
 # Compiler
 #
 # CONFIG_GCC_USE_VERSION_5 is not set
-CONFIG_GCC_USE_VERSION_7=y
-# CONFIG_GCC_USE_VERSION_8 is not set
+# CONFIG_GCC_USE_VERSION_7 is not set
+CONFIG_GCC_USE_VERSION_8=y
 CONFIG_GCC_USE_GRAPHITE=y
 CONFIG_EXTRA_GCC_CONFIG_OPTIONS=""
 # CONFIG_GCC_DEFAULT_PIE is not set
@@ -346,10 +347,11 @@ CONFIG_LIBC_USE_MUSL=y
 CONFIG_GDB=y
 CONFIG_USE_MUSL=y
 CONFIG_SSP_SUPPORT=y
-CONFIG_BINUTILS_VERSION_2_31_1=y
-CONFIG_BINUTILS_VERSION="2.31.1"
-# CONFIG_GCC_USE_EMBEDDED_PATH_REMAP is not set
-CONFIG_GCC_VERSION="7.4.0"
+CONFIG_BINUTILS_VERSION_2_32=y
+CONFIG_BINUTILS_VERSION="2.32"
+CONFIG_GCC_VERSION_8=y
+CONFIG_GCC_USE_EMBEDDED_PATH_REMAP=y
+CONFIG_GCC_VERSION="8.3.0"
 CONFIG_LIBC="musl"
 CONFIG_TARGET_SUFFIX="muslgnueabi"
 # CONFIG_IB is not set
@@ -1842,6 +1844,7 @@ CONFIG_PACKAGE_kmod-fuse=y
 # CONFIG_PACKAGE_kmod-iio-bmp280 is not set
 # CONFIG_PACKAGE_kmod-iio-bmp280-i2c is not set
 # CONFIG_PACKAGE_kmod-iio-bmp280-spi is not set
+# CONFIG_PACKAGE_kmod-iio-ccs811 is not set
 # CONFIG_PACKAGE_kmod-iio-core is not set
 # CONFIG_PACKAGE_kmod-iio-dht11 is not set
 # CONFIG_PACKAGE_kmod-iio-hmc5843 is not set
@@ -1862,6 +1865,7 @@ CONFIG_PACKAGE_kmod-input-core=y
 # CONFIG_PACKAGE_kmod-input-joydev is not set
 # CONFIG_PACKAGE_kmod-input-matrixkmap is not set
 # CONFIG_PACKAGE_kmod-input-polldev is not set
+# CONFIG_PACKAGE_kmod-input-touchscreen-ads7846 is not set
 # CONFIG_PACKAGE_kmod-input-uinput is not set
 
 #
@@ -2720,6 +2724,7 @@ CONFIG_PACKAGE_php7-pecl-mcrypt=y
 # CONFIG_PACKAGE_python-unittest is not set
 # CONFIG_PACKAGE_python-unittest-src is not set
 # CONFIG_PACKAGE_python-urllib3 is not set
+# CONFIG_PACKAGE_python-urllib3-src is not set
 # CONFIG_PACKAGE_python-vobject is not set
 # CONFIG_PACKAGE_python-vobject-src is not set
 # CONFIG_PACKAGE_python-xml is not set
@@ -2846,6 +2851,8 @@ CONFIG_PACKAGE_php7-pecl-mcrypt=y
 # CONFIG_PACKAGE_python3-twisted-src is not set
 # CONFIG_PACKAGE_python3-unittest is not set
 # CONFIG_PACKAGE_python3-unittest-src is not set
+# CONFIG_PACKAGE_python3-urllib3 is not set
+# CONFIG_PACKAGE_python3-urllib3-src is not set
 # CONFIG_PACKAGE_python3-vobject is not set
 # CONFIG_PACKAGE_python3-vobject-src is not set
 # CONFIG_PACKAGE_python3-werkzeug is not set
@@ -3831,55 +3838,20 @@ CONFIG_PACKAGE_libuhttpd-openssl=y
 # CONFIG_PACKAGE_libgnutls is not set
 # CONFIG_PACKAGE_libmbedtls is not set
 CONFIG_PACKAGE_libopenssl=y
-
-#
-# Build Options
-#
-CONFIG_OPENSSL_OPTIMIZE_SPEED=y
-CONFIG_OPENSSL_WITH_ASM=y
-CONFIG_OPENSSL_WITH_DEPRECATED=y
-# CONFIG_OPENSSL_NO_DEPRECATED is not set
-CONFIG_OPENSSL_WITH_ERROR_MESSAGES=y
-
-#
-# Protocol Support
-#
-CONFIG_OPENSSL_WITH_TLS13=y
-# CONFIG_OPENSSL_WITH_DTLS is not set
-CONFIG_OPENSSL_WITH_NPN=y
-CONFIG_OPENSSL_WITH_SRP=y
-CONFIG_OPENSSL_WITH_CMS=y
-
-#
-# Algorithm Selection
-#
 CONFIG_OPENSSL_WITH_EC=y
 # CONFIG_OPENSSL_WITH_EC2M is not set
-CONFIG_OPENSSL_WITH_CHACHA_POLY1305=y
-CONFIG_OPENSSL_PREFER_CHACHA_OVER_GCM=y
-CONFIG_OPENSSL_WITH_PSK=y
-
-#
-# Less commonly used build options
-#
-# CONFIG_OPENSSL_WITH_ARIA is not set
-# CONFIG_OPENSSL_WITH_CAMELLIA is not set
-# CONFIG_OPENSSL_WITH_IDEA is not set
-# CONFIG_OPENSSL_WITH_SEED is not set
-# CONFIG_OPENSSL_WITH_SM234 is not set
-# CONFIG_OPENSSL_WITH_BLAKE2 is not set
-# CONFIG_OPENSSL_WITH_MDC2 is not set
-# CONFIG_OPENSSL_WITH_WHIRLPOOL is not set
+# CONFIG_OPENSSL_WITH_SSL3 is not set
+CONFIG_OPENSSL_WITH_DEPRECATED=y
+# CONFIG_OPENSSL_NO_DEPRECATED is not set
+# CONFIG_OPENSSL_WITH_DTLS is not set
 # CONFIG_OPENSSL_WITH_COMPRESSION is not set
-# CONFIG_OPENSSL_WITH_RFC3779 is not set
-
-#
-# Engine/Hardware Support
-#
-CONFIG_OPENSSL_ENGINE=y
+CONFIG_OPENSSL_WITH_NPN=y
+CONFIG_OPENSSL_WITH_PSK=y
+CONFIG_OPENSSL_WITH_SRP=y
+CONFIG_OPENSSL_ENGINE_DIGEST=y
+CONFIG_OPENSSL_HARDWARE_SUPPORT=y
+CONFIG_OPENSSL_OPTIMIZE_SPEED=y
 CONFIG_OPENSSL_ENGINE_CRYPTO=y
-# CONFIG_OPENSSL_WITH_GOST is not set
-CONFIG_PACKAGE_libopenssl-conf=y
 # CONFIG_PACKAGE_libwolfssl is not set
 
 #
@@ -4749,6 +4721,7 @@ CONFIG_PACKAGE_luci-i18n-opkg-ko=y
 # CONFIG_PACKAGE_luci-i18n-transmission-zh-cn is not set
 # CONFIG_PACKAGE_luci-i18n-transmission-zh-tw is not set
 # CONFIG_PACKAGE_luci-i18n-uhttpd-en is not set
+# CONFIG_PACKAGE_luci-i18n-uhttpd-es is not set
 # CONFIG_PACKAGE_luci-i18n-uhttpd-ja is not set
 # CONFIG_PACKAGE_luci-i18n-uhttpd-pt-br is not set
 # CONFIG_PACKAGE_luci-i18n-uhttpd-ru is not set
@@ -5478,8 +5451,8 @@ CONFIG_OPENVPN_openssl_ENABLE_SMALL=y
 # Version Control Systems
 #
 # CONFIG_PACKAGE_fossil is not set
-# CONFIG_PACKAGE_git is not set
-# CONFIG_PACKAGE_git-http is not set
+CONFIG_PACKAGE_git=y
+CONFIG_PACKAGE_git-http=y
 # CONFIG_PACKAGE_subversion-client is not set
 # CONFIG_PACKAGE_subversion-libs is not set
 # CONFIG_PACKAGE_subversion-server is not set
@@ -5823,6 +5796,7 @@ CONFIG_PACKAGE_samba4-utils=y
 # CONFIG_PACKAGE_socat is not set
 # CONFIG_PACKAGE_softflowd is not set
 # CONFIG_PACKAGE_soloscli is not set
+# CONFIG_PACKAGE_speedtest-netperf is not set
 # CONFIG_PACKAGE_spoofer is not set
 # CONFIG_PACKAGE_stunnel is not set
 # CONFIG_PACKAGE_tayga is not set
