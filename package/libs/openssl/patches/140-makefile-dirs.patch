@@ -5,7 +5,7 @@
  BASEADDR=
  
 -DIRS=   crypto ssl engines apps test tools
-+DIRS=   crypto ssl engines apps
++DIRS=   crypto ssl apps
  ENGDIRS= ccgost
  SHLIBDIRS= crypto ssl
  
