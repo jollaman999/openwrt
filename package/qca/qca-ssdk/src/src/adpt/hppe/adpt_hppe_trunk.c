@@ -139,7 +139,15 @@ adpt_hppe_trunk_group_set(a_uint32_t dev_id, a_uint32_t trunk_id,
 	ADPT_DEV_ID_CHECK(dev_id);
 
 	if (trunk_id >= TRUNK_FILTER_MAX_ENTRY)
+	{
 		return SW_OUT_OF_RANGE;
+	}
+
+	if(enable == A_TRUE && member == 0)
+	{
+		SSDK_ERROR("trunk member cannot be 0 when trunk group was enabled\n");
+		return SW_BAD_PARAM;
+	}
 
 	if (A_TRUE == enable)
 	{
