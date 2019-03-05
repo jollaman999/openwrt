@@ -72,6 +72,13 @@ static a_bool_t _adpt_hppe_vsi_xlt_match(a_uint32_t dev_id, fal_port_t port_id,
 					return A_TRUE;
 				}
 			}
+			else
+			{
+				if(!(xlt_rule->bf.ckey_vid_incl))
+				{
+					return A_TRUE;
+				}
+			}
 		}
 	}
 	return A_FALSE;
