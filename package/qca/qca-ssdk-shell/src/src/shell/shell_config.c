@@ -890,7 +890,7 @@ struct cmd_des_t gcmd_des[] =
         "vsi", "config vsi",
         {
             {"vsiid", "alloc", "Alloc new vsi", "", SW_API_VSI_ALLOC, NULL},
-            {"vsiid", "free", "Free vsi", "", SW_API_VSI_FREE, NULL},
+            {"vsiid", "free", "Free vsi", "<vsi>", SW_API_VSI_FREE, NULL},
             {"portbasedvsi", "set", "Set port based vsi", "<port_id> <vsi>", SW_API_PORT_VSI_SET, NULL},
             {"portbasedvsi", "get", "Get port based vsi", "<port_id>", SW_API_PORT_VSI_GET, NULL},
             {"vlanbasedvsi", "set", "Set vlan vsi", "<port_id> <stag_vid> <ctag_vid> <vsi>", SW_API_PORT_VLAN_VSI_SET, NULL},
