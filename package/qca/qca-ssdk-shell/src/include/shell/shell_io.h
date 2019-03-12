@@ -76,13 +76,13 @@ sw_error_t cmd_data_check_macaddr(char *cmdstr, void *val, a_uint32_t size);
 
 void cmd_data_print_uint64(a_uint8_t * param_name, a_uint64_t * buf,
                            a_uint32_t size);
-void cmd_data_print_uint32(a_uint8_t * param_name, a_uint32_t * buf,
+void cmd_data_print_uint32(a_char_t * param_name, a_uint32_t * buf,
                            a_uint32_t size);
-void cmd_data_print_uint16(a_uint8_t * param_name, a_uint32_t * buf,
+void cmd_data_print_uint16(a_char_t * param_name, a_uint32_t * buf,
                            a_uint32_t size);
 void cmd_data_print_uint8(a_uint8_t * param_name, a_uint32_t * buf,
                            a_uint32_t size);
-void cmd_data_print_enable(a_uint8_t * param_name, a_uint32_t * buf,
+void cmd_data_print_enable(a_char_t * param_name, a_uint32_t * buf,
                            a_uint32_t size);
 void cmd_data_print_pbmp(a_uint8_t * param_name, a_uint32_t * buf,
                          a_uint32_t size);
@@ -102,7 +102,7 @@ void cmd_data_print_xgmib(a_uint8_t * param_name, a_uint64_t * buf,
                         a_uint64_t size);
 void cmd_data_print_1qmode(a_uint8_t * param_name, a_uint32_t * buf,
                            a_uint32_t size);
-void cmd_data_print_egmode(a_uint8_t * param_name, a_uint32_t * buf,
+void cmd_data_print_egmode(a_char_t * param_name, a_uint32_t * buf,
                            a_uint32_t size);
 /*qca808x_start*/
 void cmd_data_print_capable(a_uint8_t * param_name, a_uint32_t * buf,
@@ -111,7 +111,7 @@ void cmd_data_print_capable(a_uint8_t * param_name, a_uint32_t * buf,
 void cmd_data_print_maclimit_ctrl(a_uint8_t * param_name, a_uint32_t * buf,
                             a_uint32_t size);
 /*qca808x_start*/
-void cmd_data_print_macaddr(char * param_name, a_uint32_t * buf,
+void cmd_data_print_macaddr(a_char_t * param_name, a_uint32_t * buf,
                             a_uint32_t size);
 /*qca808x_end*/
 sw_error_t cmd_data_check_qos_sch(char *cmdstr, fal_sch_mode_t * val,
@@ -141,19 +141,19 @@ void cmd_data_print_uinta(a_uint8_t * param_name, a_uint32_t * buf,
                           a_uint32_t size);
 sw_error_t cmd_data_check_maccmd(char *cmdstr, fal_fwd_cmd_t * val,
                                  a_uint32_t size);
-void cmd_data_print_maccmd(char * param_name, a_uint32_t * buf,
+void cmd_data_print_maccmd(a_char_t * param_name, a_uint32_t * buf,
                            a_uint32_t size);
 sw_error_t cmd_data_check_flowcmd(char *cmdstr, fal_default_flow_cmd_t * val,
                                  a_uint32_t size);
-void cmd_data_print_flowcmd(char *param_name, a_uint32_t * buf,
+void cmd_data_print_flowcmd(a_char_t *param_name, a_uint32_t * buf,
                                  a_uint32_t size);
 sw_error_t cmd_data_check_flowtype(char *cmdstr, fal_flow_type_t * val,
                                  a_uint32_t size);
-void cmd_data_print_flowtype(char *param_name, a_uint32_t * buf,
+void cmd_data_print_flowtype(a_char_t *param_name, a_uint32_t * buf,
                                  a_uint32_t size);
 sw_error_t cmd_data_check_aclrule(char *info, void *val, a_uint32_t size);
 
-void cmd_data_print_aclrule(char * param_name, a_uint32_t * buf,
+void cmd_data_print_aclrule(a_char_t * param_name, a_uint32_t * buf,
                             a_uint32_t size);
 
 sw_error_t
@@ -178,7 +178,7 @@ cmd_data_print_invlan_mode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t 
 sw_error_t
 cmd_data_check_vlan_propagation(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size);
 void
-cmd_data_print_vlan_propagation(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+cmd_data_print_vlan_propagation(a_char_t * param_name, a_uint32_t * buf, a_uint32_t size);
 sw_error_t
 cmd_data_check_vlan_translation(char *info, fal_vlan_trans_entry_t *val, a_uint32_t size);
 void
@@ -186,11 +186,11 @@ cmd_data_print_vlan_translation(a_uint8_t * param_name, a_uint32_t * buf, a_uint
 sw_error_t
 cmd_data_check_qinq_mode(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size);
 void
-cmd_data_print_qinq_mode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+cmd_data_print_qinq_mode(a_char_t * param_name, a_uint32_t * buf, a_uint32_t size);
 sw_error_t
 cmd_data_check_qinq_role(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size);
 void
-cmd_data_print_qinq_role(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+cmd_data_print_qinq_role(a_char_t * param_name, a_uint32_t * buf, a_uint32_t size);
 /*qca808x_start*/
 void
 cmd_data_print_cable_status(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
@@ -221,14 +221,14 @@ sw_error_t
 cmd_data_check_udf_type(char *cmdstr, fal_acl_udf_type_t * arg_val, a_uint32_t size);
 
 void
-cmd_data_print_udf_type(char * param_name, a_uint32_t * buf,
+cmd_data_print_udf_type(a_char_t * param_name, a_uint32_t * buf,
                         a_uint32_t size);
 
 sw_error_t
-cmd_data_check_udf_pkt_type(char *cmdstr, fal_acl_udf_pkt_type_t * arg_val, a_uint32_t size);
+cmd_data_check_udf_pkt_type(a_char_t *cmdstr, fal_acl_udf_pkt_type_t * arg_val, a_uint32_t size);
 
 void
-cmd_data_print_udf_pkt_type(char * param_name, a_uint32_t * buf,
+cmd_data_print_udf_pkt_type(a_char_t * param_name, a_uint32_t * buf,
                         a_uint32_t size);
 
 sw_error_t
@@ -284,13 +284,13 @@ sw_error_t
 cmd_data_check_ip4addr(char *cmdstr, void * val, a_uint32_t size);
 
 void
-cmd_data_print_ip4addr(char * param_name, a_uint32_t * buf, a_uint32_t size);
+cmd_data_print_ip4addr(a_char_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_ip6addr(char *cmdstr, void * val, a_uint32_t size);
 
 void
-cmd_data_print_ip6addr(char * param_name, a_uint32_t * buf, a_uint32_t size);
+cmd_data_print_ip6addr(a_char_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_pub_addr_entry(char *cmd_str, void * val, a_uint32_t size);
@@ -600,7 +600,7 @@ cmd_data_check_bm_static_thresh(char *cmd_str, void * val, a_uint32_t size);
 void
 cmd_data_print_bm_static_thresh(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_queue_cnt(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
@@ -706,43 +706,43 @@ cmd_data_print_mru_info(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t siz
 sw_error_t
 cmd_data_check_global_qinqmode(char *info, void *val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_global_qinqmode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_port_qinqmode(char *info, void *val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_port_qinqmode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_tpid(char *info, void *val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_tpid(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_ingress_filter(char *info, void *val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_ingress_filter(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_port_default_vid_en(char *info, void *val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_port_default_vid_en(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_port_vlan_tag(char *info, void *val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_port_vlan_tag(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_port_vlan_direction(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_port_vlan_direction(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
@@ -763,25 +763,25 @@ cmd_data_print_port_vlan_counter(a_uint8_t * param_name, a_uint32_t * buf, a_uin
 sw_error_t
 cmd_data_check_tag_propagation(char *info, void *val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_tag_propagation(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_egress_vsi_tag(char *info, void *val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_egress_vsi_tag(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_egress_mode(char *info, void *val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_egress_mode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_ctrlpkt_profile(char *info, void *val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_ctrlpkt_profile(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
@@ -862,6 +862,9 @@ cmd_data_check_func_ctrl(char *cmd_str, void * val, a_uint32_t size);
 void
 cmd_data_print_func_ctrl(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
+void
+cmd_data_print_module_func_ctrl(a_uint32_t module, fal_func_ctrl_t *p);
+
 sw_error_t
 cmd_data_check_debug_port_counter_status(char *info, fal_counter_en_t *val, a_uint32_t size);
 
@@ -871,19 +874,19 @@ cmd_data_print_debug_port_counter_status(a_uint8_t * param_name, a_uint32_t * bu
 sw_error_t
 cmd_data_check_ptp_config(char *info, void *val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_ptp_config(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_ptp_reference_clock(char *info, void *val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_ptp_reference_clock(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_ptp_rx_timestamp_mode(char *info, void *val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_ptp_rx_timestamp_mode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
@@ -892,74 +895,74 @@ cmd_data_check_ptp_direction(char *info, void *val, a_uint32_t size);
 sw_error_t
 cmd_data_check_ptp_pkt_info(char *info, void *val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_ptp_pkt_info(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_ptp_time(char *info, void *val, a_uint32_t size);
 
-sw_error_t
-cmd_data_print_ptp_time(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
+void
+cmd_data_print_ptp_time(a_char_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_ptp_grandmaster_mode(char *info, void *val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_ptp_grandmaster_mode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_ptp_security(char *info, void *val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_ptp_security(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_ptp_pps_sig_ctrl(char *info, void *val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_ptp_pps_sig_ctrl(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_ptp_asym_correction(char *info, void *val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_ptp_asym_correction(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_ptp_waveform(char *info, void *val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_ptp_waveform(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_ptp_tod_uart(char *info, void *val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_ptp_tod_uart(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_ptp_enhanced_timestamp_engine(char *info, void *val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_ptp_enhanced_timestamp_engine(a_uint8_t * param_name, a_uint32_t * buf,
 		a_uint32_t size);
 
 sw_error_t
 cmd_data_check_ptp_trigger(char *info, void *val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_ptp_trigger(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_ptp_capture(char *info, void *val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_ptp_capture(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 sw_error_t
 cmd_data_check_ptp_interrupt(char *info, void *val, a_uint32_t size);
 
-sw_error_t
+void
 cmd_data_print_ptp_interrupt(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size);
 
 /*qca808x_start*/

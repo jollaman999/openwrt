@@ -42,20 +42,7 @@ sd_reg_mdio_set(a_uint32_t dev_id, a_uint32_t phy, a_uint32_t reg,
     }
     else
     {
-#if ((!defined(KERNEL_MODULE)) && defined(UK_IF))
-        {
-            a_uint32_t args[SW_MAX_API_PARAM];
-
-            args[0] = SW_API_PHY_SET;
-            args[1] = (a_uint32_t) & rv;
-            args[2] = dev_id;
-            args[3] = phy;
-            args[4] = reg;
-            args[5] = data;
-        }
-#else
         return SW_NOT_SUPPORTED;
-#endif
     }
 
     return rv;
@@ -72,22 +59,7 @@ sd_reg_mdio_get(a_uint32_t dev_id, a_uint32_t phy, a_uint32_t reg, a_uint16_t * 
     }
     else
     {
-#if ((!defined(KERNEL_MODULE)) && defined(UK_IF))
-        {
-            a_uint32_t args[SW_MAX_API_PARAM];
-            a_uint32_t tmp;
-
-            args[0] = SW_API_PHY_GET;
-            args[1] = (a_uint32_t) & rv;
-            args[2] = dev_id;
-            args[3] = phy;
-            args[4] = reg;
-            args[5] = (a_uint32_t) & tmp;
-            *data = *((a_uint16_t *)&tmp);
-        }
-#else
         return SW_NOT_SUPPORTED;
-#endif
     }
 
     return rv;

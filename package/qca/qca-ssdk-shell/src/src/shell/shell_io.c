@@ -474,7 +474,7 @@ cmd_data_check_uint32(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
 }
 
 void
-cmd_data_print_uint32(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+cmd_data_print_uint32(a_char_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
     dprintf("[%s]:0x%x", param_name, *(a_uint32_t *) buf);
 }
@@ -533,7 +533,7 @@ cmd_data_check_uint16(char *cmd_str, a_uint32_t *arg_val, a_uint32_t size)
 }
 
 void
-cmd_data_print_uint16(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+cmd_data_print_uint16(a_char_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
     dprintf("[%s]:0x%04x", param_name, *(a_uint16_t *) buf);
 
@@ -581,7 +581,7 @@ cmd_data_check_enable(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
 }
 
 void
-cmd_data_print_enable(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+cmd_data_print_enable(a_char_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
     dprintf("[%s]:", param_name);
     if (*(a_uint32_t *) buf == 1)
@@ -1384,23 +1384,32 @@ cmd_data_print_mru_info(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t siz
 	dprintf("\n[%s] \n", param_name);
 
 	dprintf("mru_size:0x%x\n",mru->mru_size);
-	if(mru->action == MRU_MTU_FORWARD)
+	if(mru->action == MRU_MRU_FORWARD)
+	{
 		dprintf("mru_action:forward\n");
- 	else if(mru->action == MRU_MTU_DROP)
+	}
+	else if(mru->action == MRU_MRU_DROP)
+	{
 		dprintf("mru_action:drop\n");
-	else if(mru->action == MRU_MTU_CPYCPU)
+	}
+	else if(mru->action == MRU_MRU_CPYCPU)
+	{
 		dprintf("mru_action:cpycpu\n");
-	else if(mru->action == MRU_MTU_RDTCPU)
+	}
+	else if(mru->action == MRU_MRU_RDTCPU)
+	{
 		dprintf("mru_action:rdtcpu\n");
+	}
 	else
+	{
 		dprintf("mru_action:unknown\n");
+	}
 }
 
 sw_error_t
 cmd_data_check_mtu_entry(char *cmd_str, void * val, a_uint32_t size)
 {
     char *cmd;
-    a_uint32_t tmp;
     sw_error_t rv;
     fal_mtu_ctrl_t entry;
 
@@ -1445,7 +1454,8 @@ cmd_data_check_mtu_entry(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-	    rv = cmd_data_check_maccmd(cmd, &(entry.action), sizeof (a_uint32_t));
+	    rv = cmd_data_check_maccmd(cmd, (fal_fwd_cmd_t *) (&(entry.action)),
+				sizeof (a_uint32_t));
             if (SW_OK != rv)
                 dprintf("usage: usage: forward/drop/cpycpu/rdtcpu\n");
         }
@@ -1460,7 +1470,6 @@ sw_error_t
 cmd_data_check_mru_entry(char *cmd_str, void * val, a_uint32_t size)
 {
     char *cmd;
-    a_uint32_t tmp;
     sw_error_t rv;
     fal_mru_ctrl_t entry;
 
@@ -1505,9 +1514,12 @@ cmd_data_check_mru_entry(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_maccmd(cmd, &(entry.action), sizeof (a_uint32_t));
+            rv = cmd_data_check_maccmd(cmd,(fal_fwd_cmd_t *) (&(entry.action)),
+					sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: usage: forward/drop/cpycpu/rdtcpu\n");
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -1610,7 +1622,7 @@ cmd_data_check_egmode(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
 }
 
 void
-cmd_data_print_egmode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+cmd_data_print_egmode(a_char_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
     dprintf("[%s]:", param_name);
     if (*(a_uint32_t *) buf == FAL_EG_UNMODIFIED)
@@ -2278,7 +2290,7 @@ cmd_data_check_maccmd(char *cmdstr, fal_fwd_cmd_t * val, a_uint32_t size)
     return SW_OK;
 }
 void
-cmd_data_print_maccmd(char * param_name, a_uint32_t * buf, a_uint32_t size)
+cmd_data_print_maccmd(a_char_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
     dprintf("[%s]:", param_name);
     if (*(a_uint32_t *) buf == FAL_MAC_FRWRD)
@@ -2340,7 +2352,7 @@ cmd_data_check_flowcmd(char *cmdstr, fal_default_flow_cmd_t * val, a_uint32_t si
 }
 
 void
-cmd_data_print_flowcmd(char * param_name, a_uint32_t * buf, a_uint32_t size)
+cmd_data_print_flowcmd(a_char_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
     dprintf("[%s]:", param_name);
     if (*(a_uint32_t *) buf == FAL_DEFAULT_FLOW_FORWARD)
@@ -2399,7 +2411,7 @@ cmd_data_check_flowtype(char *cmd_str, fal_flow_type_t * arg_val,
 }
 
 void
-cmd_data_print_flowtype(char * param_name, a_uint32_t * buf, a_uint32_t size)
+cmd_data_print_flowtype(a_char_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
     dprintf("[%s]:", param_name);
     if (*(a_uint32_t *) buf == FAL_FLOW_LAN_TO_LAN)
@@ -2594,7 +2606,7 @@ cmd_data_check_macaddr(char *cmdstr, void *val, a_uint32_t size)
 }
 
 void
-cmd_data_print_macaddr(char * param_name, a_uint32_t * buf,
+cmd_data_print_macaddr(a_char_t * param_name, a_uint32_t * buf,
                        a_uint32_t size)
 {
     a_uint32_t i;
@@ -3099,7 +3111,7 @@ cmd_data_print_fdbentry(a_uint8_t * param_name, a_uint32_t * buf,
 sw_error_t
 cmd_data_check_maclimit_ctrl(char *info, void *val, a_uint32_t size)
 {
-    char *cmd, *cmd_find;
+    a_char_t *cmd;
     sw_error_t rv;
     fal_maclimit_ctrl_t maclimit_ctrl;
 
@@ -3186,7 +3198,6 @@ void
 cmd_data_print_maclimit_ctrl(a_uint8_t * param_name, a_uint32_t * buf,
                         a_uint32_t size)
 {
-    a_uint32_t tmp;
     fal_maclimit_ctrl_t *maclimit_ctrl;
 
     maclimit_ctrl = (fal_maclimit_ctrl_t *) buf;
@@ -3560,7 +3571,7 @@ cmd_data_check_ip4addr(char *cmdstr, void * val, a_uint32_t size)
 }
 
 void
-cmd_data_print_ip4addr(char * param_name, a_uint32_t * buf,
+cmd_data_print_ip4addr(a_char_t * param_name, a_uint32_t * buf,
                        a_uint32_t size)
 {
     a_uint32_t i;
@@ -3853,7 +3864,7 @@ cmd_data_check_ip6addr(char *cmdstr, void * val, a_uint32_t size)
 }
 
 void
-cmd_data_print_ip6addr(char * param_name, a_uint32_t * buf,
+cmd_data_print_ip6addr(a_char_t * param_name, a_uint32_t * buf,
                        a_uint32_t size)
 {
     a_uint32_t i;
@@ -5114,7 +5125,7 @@ cmd_data_check_udf_type(char *cmdstr, fal_acl_udf_type_t * arg_val, a_uint32_t s
 }
 
 void
-cmd_data_print_udf_type(char * param_name, a_uint32_t * buf,
+cmd_data_print_udf_type(a_char_t * param_name, a_uint32_t * buf,
                         a_uint32_t size)
 {
     fal_acl_udf_type_t *val;
@@ -5149,7 +5160,7 @@ cmd_data_print_udf_type(char * param_name, a_uint32_t * buf,
 }
 
 sw_error_t
-cmd_data_check_udf_pkt_type(char *cmdstr, fal_acl_udf_pkt_type_t * arg_val, a_uint32_t size)
+cmd_data_check_udf_pkt_type(a_char_t *cmdstr, fal_acl_udf_pkt_type_t * arg_val, a_uint32_t size)
 {
     if (NULL == cmdstr)
     {
@@ -5177,7 +5188,7 @@ cmd_data_check_udf_pkt_type(char *cmdstr, fal_acl_udf_pkt_type_t * arg_val, a_ui
 }
 
 void
-cmd_data_print_udf_pkt_type(char * param_name, a_uint32_t * buf,
+cmd_data_print_udf_pkt_type(a_char_t * param_name, a_uint32_t * buf,
                         a_uint32_t size)
 {
     fal_acl_udf_pkt_type_t *val;
@@ -6272,7 +6283,7 @@ static void cmd_data_print_acl_bypass_bitmap(a_uint32_t bitmap)
 	return;
 }
 void
-cmd_data_print_aclrule(char * param_name, a_uint32_t * buf,
+cmd_data_print_aclrule(a_char_t * param_name, a_uint32_t * buf,
                        a_uint32_t size)
 {
     fal_acl_rule_t *rule;
@@ -7408,7 +7419,7 @@ cmd_data_check_vlan_propagation(char *cmd_str, a_uint32_t * arg_val, a_uint32_t 
 }
 
 void
-cmd_data_print_vlan_propagation(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+cmd_data_print_vlan_propagation(a_char_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
     dprintf("[%s]:", param_name);
 
@@ -7434,6 +7445,7 @@ sw_error_t
 cmd_data_check_vlan_translation(char *info, fal_vlan_trans_entry_t *val, a_uint32_t size)
 {
     char *cmd = NULL;
+    a_uint32_t tmp;
     sw_error_t rv;
     fal_vlan_trans_entry_t entry;
 
@@ -7983,9 +7995,15 @@ cmd_data_check_vlan_translation(char *info, fal_vlan_trans_entry_t *val, a_uint3
 	        }
 	        else
 	        {
-	            rv = cmd_data_check_uint32(cmd, &entry.protocol, sizeof (a_uint32_t));
+	            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
 	            if (SW_OK != rv)
-	            dprintf("usage: for example:0x0800 \n");
+	            {
+	                dprintf("usage: for example:0x0800 \n");
+	            }
+	            else
+	            {
+	                entry.protocol = tmp;
+	            }
 	        }
 	    }
 	    while (talk_mode && (SW_OK != rv));
@@ -8049,14 +8067,22 @@ cmd_data_check_vlan_translation(char *info, fal_vlan_trans_entry_t *val, a_uint3
               }
            else if (!strncasecmp(cmd, "help", 4))
            {
-               dprintf("usage: bit 0 for untagged, bit 1 for priority tagged and bit 2 for tagged\n");
+               dprintf("usage: bit 0 for untagged, bit 1 for priority tagged and"
+                    "bit 2 for tagged\n");
                rv = SW_BAD_VALUE;
            }
            else
            {
-               rv = cmd_data_check_uint32(cmd, &entry.s_tagged, sizeof (a_uint32_t));
+               rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
                if (SW_OK != rv)
-               dprintf("usage: bit 0 for untagged, bit 1 for priority tagged and bit 2 for tagged\n");
+               {
+                    dprintf("usage: bit 0 for untagged, bit 1 for priority"
+                        "tagged and bit 2 for tagged\n");
+               }
+               else
+               {
+                    entry.s_tagged = tmp;
+               }
            }
        }
        while (talk_mode && (SW_OK != rv));
@@ -8072,14 +8098,22 @@ cmd_data_check_vlan_translation(char *info, fal_vlan_trans_entry_t *val, a_uint3
               }
            else if (!strncasecmp(cmd, "help", 4))
            {
-               dprintf("usage: bit 0 for untagged, bit 1 for priority tagged and bit 2 for tagged\n");
+               dprintf("usage: bit 0 for untagged, bit 1 for priority tagged and"
+                    "bit 2 for tagged\n");
                rv = SW_BAD_VALUE;
            }
            else
            {
-               rv = cmd_data_check_uint32(cmd, &entry.c_tagged, sizeof (a_uint32_t));
+               rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
                if (SW_OK != rv)
-               dprintf("usage: bit 0 for untagged, bit 1 for priority tagged and bit 2 for tagged\n");
+               {
+                   dprintf("usage: bit 0 for untagged, bit 1 for priority"
+                       "tagged and bit 2 for tagged\n");
+               }
+               else
+               {
+                    entry.c_tagged = tmp;
+               }
            }
          }
        while (talk_mode && (SW_OK != rv));
@@ -8125,9 +8159,15 @@ cmd_data_check_vlan_translation(char *info, fal_vlan_trans_entry_t *val, a_uint3
            }
            else
            {
-               rv = cmd_data_check_uint32(cmd, &entry.s_pcp, sizeof (a_uint32_t));
+               rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
                if (SW_OK != rv)
+               {
                    dprintf("usage: the range is 0 -- 7\n");
+               }
+               else
+               {
+                   entry.s_pcp = tmp;
+               }
            }
        }
        while (talk_mode && (SW_OK != rv));
@@ -8173,9 +8213,15 @@ cmd_data_check_vlan_translation(char *info, fal_vlan_trans_entry_t *val, a_uint3
            }
            else
            {
-               rv = cmd_data_check_uint32(cmd, &entry.c_pcp, sizeof (a_uint32_t));
+               rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
                if (SW_OK != rv)
+               {
                    dprintf("usage: the range is 0 -- 7\n");
+               }
+               else
+               {
+                   entry.c_pcp = tmp;
+               }
            }
        }
        while (talk_mode && (SW_OK != rv));
@@ -8221,9 +8267,15 @@ cmd_data_check_vlan_translation(char *info, fal_vlan_trans_entry_t *val, a_uint3
            }
            else
            {
-               rv = cmd_data_check_uint32(cmd, &entry.s_dei, sizeof (a_uint32_t));
+               rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
                if (SW_OK != rv)
+               {
                    dprintf("usage: the range is 0 -- 1\n");
+               }
+               else
+               {
+                   entry.s_dei = tmp;
+               }
            }
        }
        while (talk_mode && (SW_OK != rv));
@@ -8269,9 +8321,15 @@ cmd_data_check_vlan_translation(char *info, fal_vlan_trans_entry_t *val, a_uint3
            }
            else
            {
-               rv = cmd_data_check_uint32(cmd, &entry.c_dei, sizeof (a_uint32_t));
+               rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
                if (SW_OK != rv)
-                   dprintf("usage: the range is 0 -- 1\n");
+               {
+                    dprintf("usage: the range is 0 -- 1\n");
+               }
+               else
+               {
+                    entry.c_dei = tmp;
+               }
            }
        }
        while (talk_mode && (SW_OK != rv));
@@ -8317,9 +8375,15 @@ cmd_data_check_vlan_translation(char *info, fal_vlan_trans_entry_t *val, a_uint3
            }
            else
            {
-               rv = cmd_data_check_uint32(cmd, &entry.counter_id, sizeof (a_uint32_t));
+               rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
                if (SW_OK != rv)
+               {
                    dprintf("usage: the range is 0 -- 53\n");
+               }
+               else
+               {
+                   entry.counter_id = tmp;
+               }
            }
        }
        while (talk_mode && (SW_OK != rv));
@@ -8366,9 +8430,15 @@ cmd_data_check_vlan_translation(char *info, fal_vlan_trans_entry_t *val, a_uint3
            }
            else
            {
-               rv = cmd_data_check_uint32(cmd, &entry.vsi_action, sizeof (a_uint32_t));
+               rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
                if (SW_OK != rv)
+               {
                    dprintf("usage: the range is 0 -- 32\n");
+               }
+               else
+               {
+                   entry.vsi_action = tmp;
+               }
            }
        }
        while (talk_mode && (SW_OK != rv));
@@ -8413,9 +8483,15 @@ cmd_data_check_vlan_translation(char *info, fal_vlan_trans_entry_t *val, a_uint3
            }
            else
            {
-               rv = cmd_data_check_uint32(cmd, &entry.svid_xlt, sizeof (a_uint32_t));
+               rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
                if (SW_OK != rv)
-                   dprintf("usage: the range is 0 -- 4095\n");
+               {
+                    dprintf("usage: the range is 0 -- 4095\n");
+               }
+               else
+               {
+                    entry.svid_xlt = tmp;
+               }
            }
        }
        while (talk_mode && (SW_OK != rv));
@@ -8459,9 +8535,15 @@ cmd_data_check_vlan_translation(char *info, fal_vlan_trans_entry_t *val, a_uint3
            }
            else
            {
-               rv = cmd_data_check_uint32(cmd, &entry.cvid_xlt, sizeof (a_uint32_t));
+               rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
                if (SW_OK != rv)
-                   dprintf("usage: the range is 0 -- 4095\n");
+               {
+                    dprintf("usage: the range is 0 -- 4095\n");
+               }
+               else
+               {
+                    entry.cvid_xlt = tmp;
+               }
            }
        }
        while (talk_mode && (SW_OK != rv));
@@ -8532,9 +8614,15 @@ cmd_data_check_vlan_translation(char *info, fal_vlan_trans_entry_t *val, a_uint3
            }
            else
            {
-               rv = cmd_data_check_uint32(cmd, &entry.spcp_xlt, sizeof (a_uint32_t));
+               rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
                if (SW_OK != rv)
-                   dprintf("usage: the range is 0 -- 7\n");
+               {
+                    dprintf("usage: the range is 0 -- 7\n");
+               }
+               else
+               {
+                    entry.spcp_xlt = tmp;
+               }
            }
        }
        while (talk_mode && (SW_OK != rv));
@@ -8580,9 +8668,15 @@ cmd_data_check_vlan_translation(char *info, fal_vlan_trans_entry_t *val, a_uint3
            }
            else
            {
-               rv = cmd_data_check_uint32(cmd, &entry.cpcp_xlt, sizeof (a_uint32_t));
+               rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
                if (SW_OK != rv)
-                   dprintf("usage: the range is 0 -- 7\n");
+               {
+                    dprintf("usage: the range is 0 -- 7\n");
+               }
+               else
+               {
+                    entry.cpcp_xlt = tmp;
+               }
            }
        }
        while (talk_mode && (SW_OK != rv));
@@ -8653,9 +8747,15 @@ cmd_data_check_vlan_translation(char *info, fal_vlan_trans_entry_t *val, a_uint3
            }
            else
            {
-               rv = cmd_data_check_uint32(cmd, &entry.sdei_xlt, sizeof (a_uint32_t));
+               rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
                if (SW_OK != rv)
-                   dprintf("usage: the range is 0 -- 1\n");
+               {
+                    dprintf("usage: the range is 0 -- 1\n");
+               }
+               else
+               {
+                    entry.sdei_xlt = tmp;
+               }
            }
        }
        while (talk_mode && (SW_OK != rv));
@@ -8701,9 +8801,15 @@ cmd_data_check_vlan_translation(char *info, fal_vlan_trans_entry_t *val, a_uint3
            }
            else
            {
-               rv = cmd_data_check_uint32(cmd, &entry.cdei_xlt, sizeof (a_uint32_t));
+               rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
                if (SW_OK != rv)
-                   dprintf("usage: the range is 0 -- 7\n");
+               {
+                    dprintf("usage: the range is 0 -- 7\n");
+               }
+               else
+               {
+                    entry.cdei_xlt = tmp;
+               }
            }
        }
        while (talk_mode && (SW_OK != rv));
@@ -8848,7 +8954,7 @@ cmd_data_check_qinq_mode(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
 }
 
 void
-cmd_data_print_qinq_mode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+cmd_data_print_qinq_mode(a_char_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
     dprintf("[%s]:", param_name);
 
@@ -8890,7 +8996,7 @@ cmd_data_check_qinq_role(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
 }
 
 void
-cmd_data_print_qinq_role(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+cmd_data_print_qinq_role(a_char_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
     dprintf("[%s]:", param_name);
 
@@ -9782,6 +9888,7 @@ sw_error_t
 cmd_data_check_host_entry(char *cmd_str, void * val, a_uint32_t size)
 {
     char *cmd;
+    a_uint32_t tmp;
     sw_error_t rv;
     fal_host_entry_t entry;
 
@@ -10114,9 +10221,15 @@ cmd_data_check_host_entry(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-           rv = cmd_data_check_uint8(cmd, &(entry.syn_toggle), sizeof (a_uint8_t));
+           rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: toggle\n");
+            }
+            else
+            {
+                entry.syn_toggle = tmp;
+            }
         }
 
     }
@@ -10139,9 +10252,15 @@ cmd_data_check_host_entry(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-           rv = cmd_data_check_uint8(cmd, &(entry.lan_wan), sizeof (a_uint8_t));
+           rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: lan wan\n");
+            }
+            else
+            {
+                entry.lan_wan = tmp;
+            }
         }
 
     }
@@ -10166,9 +10285,15 @@ cmd_data_check_host_entry(char *cmd_str, void * val, a_uint32_t size)
             }
             else
             {
-                rv = cmd_data_check_uint8(cmd, &(entry.mcast_info.vsi), sizeof (a_uint8_t));
+                rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
                 if (SW_OK != rv)
+                {
                     dprintf("usage: integer\n");
+                }
+                else
+                {
+                    entry.mcast_info.vsi = tmp;
+                }
             }
         }
         while (talk_mode && (SW_OK != rv));
@@ -14237,7 +14362,7 @@ cmd_data_check_default_route_entry(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.vrf_id), sizeof (a_uint32_t));
+            rv = cmd_data_check_uint32(cmd, &(entry.vrf_id), sizeof (a_uint32_t));
             if (SW_OK != rv)
                 dprintf("usage: VRF id\n");
         }
@@ -14284,7 +14409,7 @@ cmd_data_check_default_route_entry(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.droute_type), sizeof (a_uint32_t));
+            rv = cmd_data_check_uint32(cmd, &(entry.droute_type), sizeof (a_uint32_t));
             if (SW_OK != rv)
                 dprintf("usage: 0 for arp and 1 for wcmp \n");
         }
@@ -14308,7 +14433,7 @@ cmd_data_check_default_route_entry(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.index), sizeof (a_uint32_t));
+            rv = cmd_data_check_uint32(cmd, &(entry.index), sizeof (a_uint32_t));
             if (SW_OK != rv)
                 dprintf("usage: index for arp entry or wcmp entry \n");
         }
@@ -14345,9 +14470,15 @@ cmd_data_check_u_qmap(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.src_profile), sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: src profile \n");
+            }
+            else
+            {
+                entry.src_profile = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -14391,9 +14522,15 @@ cmd_data_check_u_qmap(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.service_code), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: service code \n");
+            }
+            else
+            {
+                entry.service_code = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -14437,9 +14574,15 @@ cmd_data_check_u_qmap(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.cpu_code), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: cpu code \n");
+            }
+            else
+            {
+                entry.cpu_code = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -14529,7 +14672,7 @@ cmd_data_check_host_route_entry(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.vrf_id), sizeof (a_uint32_t));
+            rv = cmd_data_check_uint32(cmd, &(entry.vrf_id), sizeof (a_uint32_t));
             if (SW_OK != rv)
                 dprintf("usage: VRF id\n");
         }
@@ -14552,7 +14695,7 @@ cmd_data_check_host_route_entry(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.ip_version), sizeof (a_uint32_t));
+            rv = cmd_data_check_uint32(cmd, &(entry.ip_version), sizeof (a_uint32_t));
             if (SW_OK != rv)
                 dprintf("usage: 0 for ipv4 and 1 for ipv6 \n");
         }
@@ -14587,14 +14730,16 @@ cmd_data_check_host_route_entry(char *cmd_str, void * val, a_uint32_t size)
         }
         else if (!strncasecmp(cmd, "help", 4))
         {
-            dprintf("usage: prefix length for this host route, 0~31 for ipv4 and 0~127 for ipv6 \n");
+            dprintf("usage: prefix length for this host route, 0~31 for"
+                "ipv4 and 0~127 for ipv6 \n");
             rv = SW_BAD_VALUE;
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.prefix_length), sizeof (a_uint32_t));
+            rv = cmd_data_check_uint32(cmd, &(entry.prefix_length), sizeof (a_uint32_t));
             if (SW_OK != rv)
-                dprintf("usage: prefix length for this host route, 0~31 for ipv4 and 0~127 for ipv6 \n");
+                dprintf("usage: prefix length for this host route, 0~31 for ipv4"
+                    "and 0~127 for ipv6 \n");
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -15006,8 +15151,6 @@ sw_error_t
 cmd_data_check_newadr_lrn(char *cmd_str, void * val, a_uint32_t size)
 {
 	char *cmd;
-	a_uint32_t tmp;
-	sw_error_t rv;
 	fal_vsi_newaddr_lrn_t entry;
 
 	aos_mem_zero(&entry, sizeof (fal_vsi_newaddr_lrn_t));
@@ -15039,7 +15182,6 @@ sw_error_t
 cmd_data_check_stamove(char *cmd_str, void * val, a_uint32_t size)
 {
 	char *cmd;
-	sw_error_t rv;
 	fal_vsi_stamove_t entry;
 
 	aos_mem_zero(&entry, sizeof (fal_vsi_stamove_t));
@@ -15070,8 +15212,6 @@ cmd_data_print_stamove_entry(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_
 sw_error_t
 cmd_data_check_vsi_member(char *cmd_str, void * val, a_uint32_t size)
 {
-	char *cmd;
-	a_uint32_t tmp;
 	sw_error_t rv;
 	fal_vsi_member_t entry;
 
@@ -15168,9 +15308,15 @@ cmd_data_check_intf(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.mru), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: mru \n");
+            }
+            else
+            {
+                entry.mru = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -15191,9 +15337,15 @@ cmd_data_check_intf(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.mtu), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: mtu \n");
+            }
+            else
+            {
+                entry.mtu = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -15354,9 +15506,15 @@ cmd_data_check_intf(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.mac_addr_bitmap), sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: mac bitmap \n");
+            }
+            else
+            {
+                entry.mac_addr_bitmap = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -15398,9 +15556,13 @@ cmd_data_check_flow_age(char *cmd_str, void * val, a_uint32_t size)
         {
             rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: age time \n");
+            }
             else
+            {
                 entry.age_time = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -15423,9 +15585,13 @@ cmd_data_check_flow_age(char *cmd_str, void * val, a_uint32_t size)
         {
             rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: age unit \n");
+            }
             else
+            {
                 entry.unit = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -15508,9 +15674,15 @@ cmd_data_check_ac_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.shared_weight), sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: weight\n");
+            }
+            else
+            {
+                entry.shared_weight = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -15531,9 +15703,15 @@ cmd_data_check_ac_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.green_min_off), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: green min offset \n");
+            }
+            else
+            {
+                entry.green_min_off = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -15554,9 +15732,15 @@ cmd_data_check_ac_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.yel_max_off), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: green max offset \n");
+            }
+            else
+            {
+                entry.yel_max_off = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -15577,9 +15761,15 @@ cmd_data_check_ac_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.yel_min_off), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: green min offset \n");
+            }
+            else
+            {
+                entry.yel_min_off = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -15600,9 +15790,15 @@ cmd_data_check_ac_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.red_max_off), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: red max offset \n");
+            }
+            else
+            {
+                entry.red_max_off = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -15623,9 +15819,15 @@ cmd_data_check_ac_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.red_min_off), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: red min offset \n");
+            }
+            else
+            {
+                entry.red_min_off = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -15646,9 +15848,15 @@ cmd_data_check_ac_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.green_resume_off), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: green resume offset \n");
+            }
+            else
+            {
+                entry.green_resume_off = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -15669,9 +15877,15 @@ cmd_data_check_ac_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.yel_resume_off), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: yellow resume offset \n");
+            }
+            else
+            {
+                entry.yel_resume_off = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -15692,9 +15906,15 @@ cmd_data_check_ac_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.red_resume_off), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: red resume offset \n");
+            }
+            else
+            {
+                entry.red_resume_off = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -15715,9 +15935,15 @@ cmd_data_check_ac_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.ceiling), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: shared ceiling \n");
+            }
+            else
+            {
+                entry.ceiling = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -15750,9 +15976,15 @@ cmd_data_check_ac_group_buff(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.prealloc_buffer), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: prealloc buffer \n");
+            }
+            else
+            {
+                entry.prealloc_buffer = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -15773,9 +16005,15 @@ cmd_data_check_ac_group_buff(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.total_buffer), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: total buffer \n");
+            }
+            else
+            {
+                entry.total_buffer = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -15788,7 +16026,6 @@ sw_error_t
 cmd_data_check_ac_ctrl(char *cmd_str, void * val, a_uint32_t size)
 {
     char *cmd;
-    a_uint32_t tmp;
     sw_error_t rv;
     fal_ac_ctrl_t entry;
 
@@ -15846,7 +16083,6 @@ sw_error_t
 cmd_data_check_ac_obj(char *cmd_str, void * val, a_uint32_t size)
 {
     char *cmd;
-    a_uint32_t tmp;
     sw_error_t rv;
     fal_ac_obj_t entry;
 
@@ -15973,9 +16209,15 @@ cmd_data_check_ac_static_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.green_max), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: group id\n");
+            }
+            else
+            {
+                entry.green_max = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -15996,9 +16238,15 @@ cmd_data_check_ac_static_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.green_min_off), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: green min offset \n");
+            }
+            else
+            {
+                entry.green_min_off = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -16019,9 +16267,15 @@ cmd_data_check_ac_static_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.yel_max_off), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
-                dprintf("usage: green max offset \n");
+            {
+                dprintf("usage: yel max offset \n");
+            }
+            else
+            {
+                entry.yel_max_off = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -16042,9 +16296,15 @@ cmd_data_check_ac_static_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.yel_min_off), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: yel min offset \n");
+            }
+            else
+            {
+                entry.yel_min_off = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -16065,9 +16325,15 @@ cmd_data_check_ac_static_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.red_max_off), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: red max offset \n");
+            }
+            else
+            {
+                entry.red_max_off = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -16088,9 +16354,15 @@ cmd_data_check_ac_static_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.red_min_off), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: red min offset \n");
+            }
+            else
+            {
+                entry.red_min_off = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -16111,9 +16383,15 @@ cmd_data_check_ac_static_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.green_resume_off), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: green resume offset \n");
+            }
+            else
+            {
+                entry.green_resume_off = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -16134,9 +16412,15 @@ cmd_data_check_ac_static_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.yel_resume_off), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: yellow resume offset \n");
+            }
+            else
+            {
+                entry.yel_resume_off = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -16157,9 +16441,15 @@ cmd_data_check_ac_static_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.red_resume_off), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: red resume offset \n");
+            }
+            else
+            {
+                entry.red_resume_off = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -16448,9 +16738,13 @@ cmd_data_check_ip_global(char *cmd_str, void * val, a_uint32_t size)
             rv = cmd_data_check_uint8(cmd, &tmp,
                                        sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: hash mode\n");
+            }
             else
+            {
                 entry.hash_mode_0 = tmp;
+            }
         }
 
     }
@@ -17032,7 +17326,6 @@ sw_error_t
 cmd_data_check_exp_ctrl(char *cmd_str, void * val, a_uint32_t size)
 {
     char *cmd;
-    a_uint32_t tmp;
     sw_error_t rv;
     fal_l3_excep_ctrl_t entry;
 
@@ -17256,10 +17549,16 @@ cmd_data_check_port_group(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.pcp_group),
-                                       sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: group\n");
+            }
+            else
+            {
+                entry.pcp_group = tmp;
+            }
         }
 
     }
@@ -17281,10 +17580,16 @@ cmd_data_check_port_group(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.dscp_group),
-                                       sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: group\n");
+            }
+            else
+            {
+                entry.dscp_group = tmp;
+            }
         }
 
     }
@@ -17306,10 +17611,16 @@ cmd_data_check_port_group(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.flow_group),
-                                       sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: group\n");
+            }
+            else
+            {
+                entry.flow_group = tmp;
+            }
         }
 
     }
@@ -17356,10 +17667,16 @@ cmd_data_check_port_pri(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.pcp_pri),
-                                       sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: priority\n");
+            }
+            else
+            {
+                entry.pcp_pri = tmp;
+            }
         }
 
     }
@@ -17381,10 +17698,16 @@ cmd_data_check_port_pri(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.dscp_pri),
-                                       sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: priority\n");
+            }
+            else
+            {
+                entry.dscp_pri = tmp;
+            }
         }
 
     }
@@ -17406,10 +17729,16 @@ cmd_data_check_port_pri(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.preheader_pri),
-                                       sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: priority\n");
+            }
+            else
+            {
+                entry.preheader_pri = tmp;
+            }
         }
 
     }
@@ -17431,10 +17760,16 @@ cmd_data_check_port_pri(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.flow_pri),
-                                       sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: priority\n");
+            }
+            else
+            {
+                entry.flow_pri = tmp;
+            }
         }
 
     }
@@ -17456,10 +17791,16 @@ cmd_data_check_port_pri(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.acl_pri),
-                                       sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: priority\n");
+            }
+            else
+            {
+                entry.acl_pri = tmp;
+            }
         }
 
     }
@@ -17486,7 +17827,6 @@ sw_error_t
 cmd_data_check_port_remark(char *cmd_str, void * val, a_uint32_t size)
 {
     char *cmd;
-    a_uint32_t tmp;
     sw_error_t rv;
     fal_qos_remark_enable_t entry;
 
@@ -17608,10 +17948,16 @@ cmd_data_check_cosmap(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.internal_pcp),
-                                       sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: internal pcp\n");
+            }
+            else
+            {
+                entry.internal_pcp = tmp;
+            }
         }
 
     }
@@ -17633,10 +17979,16 @@ cmd_data_check_cosmap(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.internal_dei),
-                                       sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: internal dei\n");
+            }
+            else
+            {
+                entry.internal_dei = tmp;
+            }
         }
 
     }
@@ -17658,10 +18010,16 @@ cmd_data_check_cosmap(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.internal_pri),
-                                       sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: internal pri\n");
+            }
+            else
+            {
+                entry.internal_pri = tmp;
+            }
         }
 
     }
@@ -17683,10 +18041,16 @@ cmd_data_check_cosmap(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.internal_dscp),
-                                       sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: internal dscp\n");
+            }
+            else
+            {
+                entry.internal_dscp = tmp;
+            }
         }
 
     }
@@ -17708,10 +18072,16 @@ cmd_data_check_cosmap(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.internal_dp),
-                                       sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: internal dp\n");
+            }
+            else
+            {
+                entry.internal_dp = tmp;
+            }
         }
 
     }
@@ -17777,10 +18147,16 @@ cmd_data_check_queue_scheduler(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.sp_id),
-                                       sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: spi id\n");
+            }
+            else
+            {
+                entry.sp_id = tmp;
+            }
         }
 
     }
@@ -17802,10 +18178,16 @@ cmd_data_check_queue_scheduler(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.e_pri),
-                                       sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: e pri\n");
+            }
+            else
+            {
+                entry.e_pri = tmp;
+            }
         }
 
     }
@@ -17827,10 +18209,16 @@ cmd_data_check_queue_scheduler(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.c_pri),
-                                       sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: c pri\n");
+            }
+            else
+            {
+                entry.c_pri = tmp;
+            }
         }
 
     }
@@ -17852,10 +18240,16 @@ cmd_data_check_queue_scheduler(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.c_drr_id),
-                                       sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: c drr id\n");
+            }
+            else
+            {
+                entry.c_drr_id = tmp;
+            }
         }
 
     }
@@ -17877,10 +18271,16 @@ cmd_data_check_queue_scheduler(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.e_drr_id),
-                                       sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: e drr id\n");
+            }
+            else
+            {
+                entry.e_drr_id = tmp;
+            }
         }
 
     }
@@ -17902,10 +18302,16 @@ cmd_data_check_queue_scheduler(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.e_drr_wt),
-                                       sizeof (a_uint8_t));
+            rv = cmd_data_check_uint16(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: e drr wt\n");
+            }
+            else
+            {
+                entry.e_drr_wt = tmp;
+            }
         }
 
     }
@@ -17927,10 +18333,16 @@ cmd_data_check_queue_scheduler(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.c_drr_wt),
-                                       sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: c drr wt\n");
+            }
+            else
+            {
+                entry.c_drr_wt = tmp;
+            }
         }
 
     }
@@ -17952,10 +18364,16 @@ cmd_data_check_queue_scheduler(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.c_drr_unit),
-                                       sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: c drr unit\n");
+            }
+            else
+            {
+                entry.c_drr_unit = tmp;
+            }
         }
 
     }
@@ -17977,10 +18395,16 @@ cmd_data_check_queue_scheduler(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.e_drr_unit),
-                                       sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: e drr unit\n");
+            }
+            else
+            {
+                entry.e_drr_unit = tmp;
+            }
         }
 
     }
@@ -18054,10 +18478,16 @@ cmd_data_check_bm_static_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.max_thresh),
-                                       sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: max thresh\n");
+            }
+            else
+            {
+                entry.max_thresh = tmp;
+            }
         }
 
     }
@@ -18079,10 +18509,16 @@ cmd_data_check_bm_static_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.resume_off),
-                                       sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: resume offset\n");
+            }
+            else
+            {
+                entry.resume_off = tmp;
+            }
         }
 
     }
@@ -18103,7 +18539,7 @@ cmd_data_print_bm_static_thresh(a_uint8_t * param_name, a_uint32_t * buf, a_uint
 			entry->max_thresh, entry->resume_off);
 }
 
-sw_error_t
+void
 cmd_data_print_queue_cnt(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
     fal_queue_stats_t *entry;
@@ -18125,7 +18561,6 @@ cmd_data_print_queue_cnt(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t si
     dprintf("\n[red_force_drop_packets]:0x%x ", entry->drop_packets[5]);
     dprintf("\n[red_force_drop_bytes]:0x%llx ", entry->drop_bytes[5]);
 
-    return SW_OK;
 }
 
 void
@@ -18167,10 +18602,16 @@ cmd_data_check_bm_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.weight),
-                                       sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: weight\n");
+            }
+            else
+            {
+                entry.weight = tmp;
+            }
         }
 
     }
@@ -18192,10 +18633,16 @@ cmd_data_check_bm_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.shared_ceiling),
-                                       sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: shared ceiling\n");
+            }
+            else
+            {
+                entry.shared_ceiling = tmp;
+            }
         }
 
     }
@@ -18217,10 +18664,16 @@ cmd_data_check_bm_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.resume_off),
-                                       sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: resume offset\n");
+            }
+            else
+            {
+                entry.resume_off = tmp;
+            }
         }
 
     }
@@ -18242,10 +18695,16 @@ cmd_data_check_bm_dynamic_thresh(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.resume_min_thresh),
-                                       sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp,
+                                       sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: resume min thresh\n");
+            }
+            else
+            {
+                entry.resume_min_thresh = tmp;
+            }
         }
 
     }
@@ -18270,7 +18729,7 @@ sw_error_t
 cmd_data_check_ring_queue(char *cmd_str, void * val, a_uint32_t size)
 {
     char *cmd;
-    a_uint32_t tmp, i = 0;
+    a_uint32_t i = 0;
     sw_error_t rv;
     fal_queue_bmp_t entry;
 
@@ -18299,7 +18758,7 @@ cmd_data_check_ring_queue(char *cmd_str, void * val, a_uint32_t size)
         }
 
     }
-    while (talk_mode && (SW_OK != rv) || ++i < 10);
+    while ((talk_mode && (SW_OK != rv)) || (++i < 10));
 
     *(fal_queue_bmp_t *)val = entry;
     return SW_OK;
@@ -18687,9 +19146,15 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.entry_type), sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: entry type \n");
+            }
+            else
+            {
+                entry.entry_type = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -18710,9 +19175,15 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.host_addr_type), sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: host addr type \n");
+            }
+            else
+            {
+                entry.host_addr_type = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -18733,9 +19204,15 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.host_addr_index), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: host addr index \n");
+            }
+            else
+            {
+                entry.host_addr_index = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -18756,9 +19233,15 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.protocol), sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: protocol \n");
+            }
+            else
+            {
+                entry.protocol = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -18779,9 +19262,15 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.age), sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: age \n");
+            }
+            else
+            {
+                entry.age = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -18825,9 +19314,15 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.src_intf_index), sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: src intf index \n");
+            }
+            else
+            {
+                entry.src_intf_index = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -18848,9 +19343,15 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.fwd_type), sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: fwd type \n");
+            }
+            else
+            {
+                entry.fwd_type = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -18872,9 +19373,15 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.snat_nexthop), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: snat nexthop \n");
+            }
+            else
+            {
+                entry.snat_nexthop = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -18895,9 +19402,15 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.snat_srcport), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: snat srcport \n");
+            }
+            else
+            {
+                entry.snat_srcport = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -18918,9 +19431,15 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.dnat_nexthop), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: dnat nexthop \n");
+            }
+            else
+            {
+                entry.dnat_nexthop = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -18941,9 +19460,15 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.dnat_dstport), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: dnat dstport \n");
+            }
+            else
+            {
+                entry.dnat_dstport = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -18964,9 +19489,15 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.route_nexthop), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: route nexthop \n");
+            }
+            else
+            {
+                entry.route_nexthop = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -19102,9 +19633,15 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.syn_toggle), sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: sync toggle \n");
+            }
+            else
+            {
+                entry.syn_toggle = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -19125,9 +19662,15 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.pri_profile), sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: pri profile \n");
+            }
+            else
+            {
+                entry.pri_profile = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -19148,9 +19691,15 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.sevice_code), sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: service code \n");
+            }
+            else
+            {
+                entry.sevice_code = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -19171,9 +19720,15 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.ip_type), sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: ip type \n");
+            }
+            else
+            {
+                entry.ip_type = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -19194,9 +19749,15 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.src_port), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: src port \n");
+            }
+            else
+            {
+                entry.src_port = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -19217,9 +19778,15 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.dst_port), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: dst port \n");
+            }
+            else
+            {
+                entry.dst_port = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -19229,7 +19796,8 @@ cmd_data_check_flow(char *cmd_str, void * val, a_uint32_t size)
                                "usage: the format is xx.xx.xx.xx \n",
                                cmd_data_check_ip4addr, (cmd, &(entry.flow_ip.ipv4), 4));
 		
-    } else if (entry.entry_type & FAL_FLOW_IP6_5TUPLE_ADDR || entry.entry_type & FAL_FLOW_IP6_3TUPLE_ADDR) {
+    } else if (entry.entry_type & FAL_FLOW_IP6_5TUPLE_ADDR || entry.entry_type &
+				FAL_FLOW_IP6_3TUPLE_ADDR) {
         cmd_data_check_element("ip addr", NULL,
                                "usage: the format is xxxx::xx.xx \n",
                                cmd_data_check_ip6addr, (cmd, &(entry.flow_ip.ipv6), 16));
@@ -19506,7 +20074,8 @@ cmd_data_print_flow_ctrl(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t si
 
     entry = (fal_flow_mgmt_t *) buf;
     
-    dprintf("\n[frag_bypass_en]:0x%x [tcp_spec_bypass_en]:0x%x [all_bypass_en]:0x%x [key_sel]:0x%x [miss_action]:0x%x ",
+    dprintf("\n[frag_bypass_en]:0x%x [tcp_spec_bypass_en]:0x%x [all_bypass_en]:0x%x"
+			"[key_sel]:0x%x [miss_action]:0x%x ",
 			entry->frag_bypass_en, entry->tcp_spec_bypass_en,
 			entry->all_bypass_en, entry->key_sel, entry->miss_action);
 }
@@ -19514,8 +20083,7 @@ cmd_data_print_flow_ctrl(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t si
 sw_error_t
 cmd_data_check_ip_mcmode(char *cmd_str, void * val, a_uint32_t size)
 {
-	char *cmd;
-    a_uint32_t tmp;
+    a_char_t *cmd;
     sw_error_t rv;
     fal_mc_mode_cfg_t entry;
 
@@ -19633,8 +20201,7 @@ cmd_data_print_ip_mcmode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t si
 sw_error_t
 cmd_data_check_ip_portmac(char *cmd_str, void * val, a_uint32_t size)
 {
-	char *cmd;
-    a_uint32_t tmp;
+    a_char_t *cmd;
     sw_error_t rv;
     fal_macaddr_entry_t entry;
 
@@ -19688,9 +20255,7 @@ cmd_data_print_ip_portmac(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t s
 sw_error_t
 cmd_data_check_ip_pub(char *cmd_str, void * val, a_uint32_t size)
 {
-	char *cmd;
-    a_uint32_t tmp;
-    sw_error_t rv;
+    a_char_t *cmd;
     fal_ip_pub_addr_t entry;
 
     aos_mem_zero(&entry, sizeof (fal_ip_pub_addr_t));
@@ -19719,7 +20284,6 @@ sw_error_t
 cmd_data_check_ip_sg(char *cmd_str, void * val, a_uint32_t size)
 {
     char *cmd;
-    a_uint32_t tmp;
     sw_error_t rv;
     fal_sg_cfg_t entry;
 
@@ -20034,7 +20598,6 @@ sw_error_t
 cmd_data_check_vsi_intf(char *cmd_str, void * val, a_uint32_t size)
 {
     char *cmd;
-    a_uint32_t tmp;
     sw_error_t rv;
     fal_intf_id_t entry;
 
@@ -20140,9 +20703,15 @@ cmd_data_check_nexthop(char *cmd_str, void * val, a_uint32_t size)
 		        }
 		        else
 		        {
-		            rv = cmd_data_check_uint8(cmd, &(entry.vsi), sizeof (a_uint8_t));
+		            rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
 		            if (SW_OK != rv)
+		            {
 		                dprintf("usage: vsi\n");
+		            }
+		            else
+		            {
+		                entry.vsi = tmp;
+		            }
 		        }
     		}
     		while (talk_mode && (SW_OK != rv));
@@ -20233,9 +20802,15 @@ cmd_data_check_nexthop(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.pub_ip_index), sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: pubip index\n");
+            }
+            else
+            {
+                entry.pub_ip_index = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -20256,9 +20831,15 @@ cmd_data_check_nexthop(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.stag_fmt), sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: stag fmt\n");
+            }
+            else
+            {
+                entry.stag_fmt = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -20279,9 +20860,15 @@ cmd_data_check_nexthop(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.svid), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: svid\n");
+            }
+            else
+            {
+                entry.svid = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -20302,9 +20889,15 @@ cmd_data_check_nexthop(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.ctag_fmt), sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: ctag fmt\n");
+            }
+            else
+            {
+                entry.ctag_fmt = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -20325,9 +20918,15 @@ cmd_data_check_nexthop(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint16(cmd, &(entry.cvid), sizeof (a_uint16_t));
+            rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: cvid\n");
+            }
+            else
+            {
+                entry.cvid = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -20400,24 +20999,29 @@ cmd_data_print_intf(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
             entry->mru, entry->mtu, entry->ttl_dec_bypass_en);
     dprintf("\n[ipv4_route_en]:0x%x  [ipv6_route_en]:0x%x  [icmp_trigger_en]:0x%x",
             entry->ipv4_uc_route_en, entry->ipv6_uc_route_en, entry->icmp_trigger_en);
-    dprintf("\n[ttl_exceed_action]:0x%x  [ttl_exceed_de_acclr_en]:0x%x  [mac_addr_bitmap]:0x%x",
-            entry->ttl_exceed_action, entry->ttl_exceed_deacclr_en, entry->mac_addr_bitmap);
+    dprintf("\n[ttl_exceed_action]:0x%x  [ttl_exceed_de_acclr_en]:0x%x"
+			"[mac_addr_bitmap]:0x%x",
+			entry->ttl_exceed_action, entry->ttl_exceed_deacclr_en,
+			entry->mac_addr_bitmap);
     cmd_data_print_macaddr("\n[mac_addr]:",
                            (a_uint32_t *) & (entry->mac_addr),
                            sizeof (fal_mac_addr_t));
-    dprintf("\n[rx_pkt]:0x%x  [rx_byte]:0x%x  [rx_drop_pkt]:0x%x  [rx_drop_byte]:0x%x  ", 
+    dprintf("\n[rx_pkt]:0x%x  [rx_byte]:0x%x  [rx_drop_pkt]:0x%x"
+				"[rx_drop_byte]:0x%x  ",
 				entry->counter.rx_pkt_counter, entry->counter.rx_byte_counter,
-				entry->counter.rx_drop_pkt_counter, entry->counter.rx_drop_byte_counter);
-    dprintf("\n[tx_pkt]:0x%x  [tx_byte]:0x%x  [tx_drop_pkt]:0x%x  [tx_drop_byte]:0x%x  ", 
+				entry->counter.rx_drop_pkt_counter,
+				entry->counter.rx_drop_byte_counter);
+    dprintf("\n[tx_pkt]:0x%x  [tx_byte]:0x%x  [tx_drop_pkt]:0x%x"
+				"[tx_drop_byte]:0x%x  ",
 				entry->counter.tx_pkt_counter, entry->counter.tx_byte_counter,
-				entry->counter.tx_drop_pkt_counter, entry->counter.tx_drop_byte_counter);
+				entry->counter.tx_drop_pkt_counter,
+				entry->counter.tx_drop_byte_counter);
 }
 
 sw_error_t
 cmd_data_check_arp_sg(char *cmd_str, void * val, a_uint32_t size)
 {
     char *cmd;
-    a_uint32_t tmp;
     sw_error_t rv;
     fal_arp_sg_cfg_t entry;
 
@@ -20754,9 +21358,15 @@ cmd_data_check_network_route(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.type), sizeof (a_bool_t));
+            rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
-                dprintf("usage: 0 for disable and 1 for enable \n");
+            {
+                dprintf("usage: 0 for ipv4 and 1 for ipv6 \n");
+            }
+            else
+            {
+                entry.type = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -20859,9 +21469,15 @@ cmd_data_check_network_route(char *cmd_str, void * val, a_uint32_t size)
         }
         else
         {
-            rv = cmd_data_check_uint8(cmd, &(entry.lan_wan), sizeof (a_uint8_t));
+            rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
             if (SW_OK != rv)
+            {
                 dprintf("usage: 0 for lan and 1 for wan \n");
+            }
+            else
+            {
+                entry.lan_wan = tmp;
+            }
         }
     }
     while (talk_mode && (SW_OK != rv));
@@ -20980,7 +21596,7 @@ cmd_data_check_global_qinqmode(char *info, void *val, a_uint32_t size)
     return SW_OK;
 }
 
-sw_error_t
+void
 cmd_data_print_global_qinqmode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
     fal_global_qinq_mode_t *entry;
@@ -20997,7 +21613,6 @@ cmd_data_print_global_qinqmode(a_uint8_t * param_name, a_uint32_t * buf, a_uint3
 				(a_uint32_t *) & (entry->egress_mode),
 				sizeof(a_uint32_t));
 
-    return SW_OK;
 }
 
 sw_error_t
@@ -21081,7 +21696,7 @@ cmd_data_check_port_qinqmode(char *info, void *val, a_uint32_t size)
     return SW_OK;
 }
 
-sw_error_t
+void
 cmd_data_print_port_qinqmode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
     fal_port_qinq_role_t *entry;
@@ -21098,7 +21713,6 @@ cmd_data_print_port_qinqmode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_
 				(a_uint32_t *) & (entry->egress_port_role),
 				sizeof(a_uint32_t));
 
-    return SW_OK;
 }
 
 sw_error_t
@@ -21187,7 +21801,7 @@ cmd_data_check_tpid(char *info, void *val, a_uint32_t size)
     return SW_OK;
 }
 
-sw_error_t
+void
 cmd_data_print_tpid(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
     fal_tpid_t *entry;
@@ -21198,7 +21812,6 @@ cmd_data_print_tpid(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
     dprintf("[ctagtpid]:0x%x\n", entry->ctpid);
     dprintf("[stagtpid]:0x%x\n", entry->stpid);
 
-    return SW_OK;
 }
 
 sw_error_t
@@ -21305,7 +21918,7 @@ cmd_data_check_ingress_filter(char *info, void *val, a_uint32_t size)
     return SW_OK;
 }
 
-sw_error_t
+void
 cmd_data_print_ingress_filter(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
     fal_ingress_vlan_filter_t *entry;
@@ -21319,10 +21932,10 @@ cmd_data_print_ingress_filter(a_uint8_t * param_name, a_uint32_t * buf, a_uint32
     dprintf("\n");
     cmd_data_print_enable("untagged_filter_en", (a_uint32_t *) & (entry->untagged_filter), 4);
     dprintf("\n");
-    cmd_data_print_enable("priority_tagged_filter_en", (a_uint32_t *) & (entry->priority_filter), 4);
+    cmd_data_print_enable("priority_tagged_filter_en", (a_uint32_t *) &
+        (entry->priority_filter), 4);
     dprintf("\n");
 
-    return SW_OK;
 }
 
 sw_error_t
@@ -21331,7 +21944,6 @@ cmd_data_check_port_default_vid_en(char *info, void *val, a_uint32_t size)
     char *cmd;
     sw_error_t rv;
     fal_port_default_vid_enable_t *pEntry = (fal_port_default_vid_enable_t *)val;
-    a_uint32_t tmp = 0;
 
     memset(pEntry, 0, sizeof(fal_port_default_vid_enable_t));
 
@@ -21382,7 +21994,7 @@ cmd_data_check_port_default_vid_en(char *info, void *val, a_uint32_t size)
     return SW_OK;
 }
 
-sw_error_t
+void
 cmd_data_print_port_default_vid_en(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
     fal_port_default_vid_enable_t *entry;
@@ -21395,7 +22007,6 @@ cmd_data_print_port_default_vid_en(a_uint8_t * param_name, a_uint32_t * buf, a_u
     cmd_data_print_enable("default_stag_vid_en", (a_uint32_t *) & (entry->default_svid_en), 4);
     dprintf("\n");
 
-    return SW_OK;
 }
 
 sw_error_t
@@ -21584,7 +22195,7 @@ cmd_data_check_port_vlan_tag(char *info, void *val, a_uint32_t size)
     return SW_OK;
 }
 
-sw_error_t
+void
 cmd_data_print_port_vlan_tag(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
     fal_port_vlan_tag_t *entry;
@@ -21607,7 +22218,6 @@ cmd_data_print_port_vlan_tag(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_
     cmd_data_print_uint16("default_stag_dei", (a_uint32_t *) & (entry->sdei), 4);
     dprintf("\n");
 
-    return SW_OK;
 }
 
 sw_error_t
@@ -21637,7 +22247,7 @@ cmd_data_check_port_vlan_direction(char *cmd_str, a_uint32_t * arg_val, a_uint32
     return SW_OK;
 }
 
-sw_error_t
+void
 cmd_data_print_port_vlan_direction(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
     dprintf("[%s]:", param_name);
@@ -21658,13 +22268,13 @@ cmd_data_print_port_vlan_direction(a_uint8_t * param_name, a_uint32_t * buf, a_u
         dprintf("UNKNOWN VALUE");
     }
 
-    return SW_OK;
 }
 
 sw_error_t
 cmd_data_check_port_vlan_translation_adv_rule(char *info, fal_vlan_trans_adv_rule_t *val, a_uint32_t size)
 {
 	char *cmd = NULL;
+	a_uint32_t tmp;
 	sw_error_t rv;
 	fal_vlan_trans_adv_rule_t entry;
 
@@ -21681,14 +22291,22 @@ cmd_data_check_port_vlan_translation_adv_rule(char *info, fal_vlan_trans_adv_rul
 		}
 		else if (!strncasecmp(cmd, "help", 4))
 		{
-			dprintf("usage: bit 0 for untagged, bit 1 for priority tagged and bit 2 for tagged\n");
+			dprintf("usage: bit 0 for untagged, bit 1 for priority tagged and bit 2"
+				"for tagged\n");
 			rv = SW_BAD_VALUE;
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &entry.s_tagged, sizeof (a_uint32_t));
+			rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
 			if (SW_OK != rv)
-				dprintf("usage: bit 0 for untagged, bit 1 for priority tagged and bit 2 for tagged\n");
+			{
+				dprintf("usage: bit 0 for untagged, bit 1 for priority tagged and"
+					"bit 2 for tagged\n");
+			}
+			else
+			{
+				entry.s_tagged = tmp;
+			}
 		}
 	}
 	while (talk_mode && (SW_OK != rv));
@@ -21787,9 +22405,15 @@ cmd_data_check_port_vlan_translation_adv_rule(char *info, fal_vlan_trans_adv_rul
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &entry.s_pcp, sizeof (a_uint32_t));
+			rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
 			if (SW_OK != rv)
+			{
 				dprintf("usage: the range is 0 -- 7\n");
+			}
+			else
+			{
+				entry.s_pcp = tmp;
+			}
 		}
 	}
 	while (talk_mode && (SW_OK != rv));
@@ -21835,9 +22459,15 @@ cmd_data_check_port_vlan_translation_adv_rule(char *info, fal_vlan_trans_adv_rul
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &entry.s_dei, sizeof (a_uint32_t));
+			rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
 			if (SW_OK != rv)
+			{
 				dprintf("usage: the range is 0 -- 1\n");
+			}
+			else
+			{
+				entry.s_dei = tmp;
+			}
 		}
 	}
 	while (talk_mode && (SW_OK != rv));
@@ -21853,14 +22483,22 @@ cmd_data_check_port_vlan_translation_adv_rule(char *info, fal_vlan_trans_adv_rul
 		}
 		else if (!strncasecmp(cmd, "help", 4))
 		{
-			dprintf("usage: bit 0 for untagged, bit 1 for priority tagged and bit 2 for tagged\n");
+			dprintf("usage: bit 0 for untagged, bit 1 for priority tagged and"
+				"bit 2 for tagged\n");
 			rv = SW_BAD_VALUE;
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &entry.c_tagged, sizeof (a_uint32_t));
+			rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
 			if (SW_OK != rv)
-				dprintf("usage: bit 0 for untagged, bit 1 for priority tagged and bit 2 for tagged\n");
+			{
+				dprintf("usage: bit 0 for untagged, bit 1 for priority tagged"
+					"and bit 2 for tagged\n");
+			}
+			else
+			{
+				entry.c_tagged = tmp;
+			}
 		}
 	}
 	while (talk_mode && (SW_OK != rv));
@@ -21959,9 +22597,15 @@ cmd_data_check_port_vlan_translation_adv_rule(char *info, fal_vlan_trans_adv_rul
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &entry.c_pcp, sizeof (a_uint32_t));
+			rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
 			if (SW_OK != rv)
+			{
 				dprintf("usage: the range is 0 -- 7\n");
+			}
+			else
+			{
+				entry.c_pcp = tmp;
+			}
 		}
 	}
 	while (talk_mode && (SW_OK != rv));
@@ -22007,9 +22651,15 @@ cmd_data_check_port_vlan_translation_adv_rule(char *info, fal_vlan_trans_adv_rul
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &entry.c_dei, sizeof (a_uint32_t));
+			rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
 			if (SW_OK != rv)
+			{
 				dprintf("usage: the range is 0 -- 1\n");
+			}
+			else
+			{
+				entry.c_dei = tmp;
+			}
 		}
 	}
 	while (talk_mode && (SW_OK != rv));
@@ -22102,9 +22752,15 @@ cmd_data_check_port_vlan_translation_adv_rule(char *info, fal_vlan_trans_adv_rul
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &entry.protocol, sizeof (a_uint32_t));
+			rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
 			if (SW_OK != rv)
+			{
 				dprintf("usage: for example:0x0800 \n");
+			}
+			else
+			{
+				entry.protocol = tmp;
+			}
 		}
 	}
 	while (talk_mode && (SW_OK != rv));
@@ -22203,17 +22859,21 @@ cmd_data_print_port_vlan_translation_adv_rule(a_uint8_t * param_name, a_uint32_t
 	dprintf("\n[cpcp_en]:%s  [cpcp]:%d", entry->c_pcp_enable?"ENABLE":"DISABLE", entry->c_pcp);
 	dprintf("\n[cdei_en]:%s  [cdei]:%d", entry->c_dei_enable?"ENABLE":"DISABLE", entry->c_dei);
 
-	dprintf("\n[frame_type_en]:%s  [frametype]:0x%x", entry->frmtype_enable?"ENABLE":"DISABLE", entry->frmtype);
-	dprintf("\n[protocol_en]:%s  [protocol]:0x%x", entry->protocol_enable?"ENABLE":"DISABLE", entry->protocol);
+	dprintf("\n[frame_type_en]:%s  [frametype]:0x%x", entry->frmtype_enable?"ENABLE":"DISABLE",
+		entry->frmtype);
+	dprintf("\n[protocol_en]:%s  [protocol]:0x%x", entry->protocol_enable?"ENABLE":"DISABLE",
+		entry->protocol);
 
 	dprintf("\n[vsivalid]:%s  [vsi_en]:%s  [vsi]:%d\n\n", entry->vsi_valid?"ENABLE":"DISABLE",
 			entry->vsi_enable?"ENABLE":"DISABLE", entry->vsi);
 }
 
 sw_error_t
-cmd_data_check_port_vlan_translation_adv_action(char *info, fal_vlan_trans_adv_action_t *val, a_uint32_t size)
+cmd_data_check_port_vlan_translation_adv_action(char *info,
+	fal_vlan_trans_adv_action_t *val, a_uint32_t size)
 {
 	char *cmd = NULL;
+	a_uint32_t tmp;
 	sw_error_t rv;
 	fal_vlan_trans_adv_action_t entry;
 
@@ -22283,9 +22943,15 @@ cmd_data_check_port_vlan_translation_adv_action(char *info, fal_vlan_trans_adv_a
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &entry.svid_xlt, sizeof (a_uint32_t));
+			rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
 			if (SW_OK != rv)
+			{
 				dprintf("usage: the range is 0 -- 4095\n");
+			}
+			else
+			{
+				entry.svid_xlt = tmp;
+			}
 		}
 	}
 	while (talk_mode && (SW_OK != rv));
@@ -22329,9 +22995,15 @@ cmd_data_check_port_vlan_translation_adv_action(char *info, fal_vlan_trans_adv_a
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &entry.cvid_xlt, sizeof (a_uint32_t));
+			rv = cmd_data_check_uint16(cmd, &tmp, sizeof (a_uint32_t));
 			if (SW_OK != rv)
+			{
 				dprintf("usage: the range is 0 -- 4095\n");
+			}
+			else
+			{
+				entry.cvid_xlt = tmp;
+			}
 		}
 	}
 	while (talk_mode && (SW_OK != rv));
@@ -22402,9 +23074,15 @@ cmd_data_check_port_vlan_translation_adv_action(char *info, fal_vlan_trans_adv_a
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &entry.spcp_xlt, sizeof (a_uint32_t));
+			rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
 			if (SW_OK != rv)
+			{
 				dprintf("usage: the range is 0 -- 7\n");
+			}
+			else
+			{
+				entry.spcp_xlt = tmp;
+			}
 		}
 	}
 	while (talk_mode && (SW_OK != rv));
@@ -22450,9 +23128,15 @@ cmd_data_check_port_vlan_translation_adv_action(char *info, fal_vlan_trans_adv_a
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &entry.cpcp_xlt, sizeof (a_uint32_t));
+			rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
 			if (SW_OK != rv)
+			{
 				dprintf("usage: the range is 0 -- 7\n");
+			}
+			else
+			{
+				entry.cpcp_xlt = tmp;
+			}
 		}
 	}
 	while (talk_mode && (SW_OK != rv));
@@ -22523,9 +23207,15 @@ cmd_data_check_port_vlan_translation_adv_action(char *info, fal_vlan_trans_adv_a
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &entry.sdei_xlt, sizeof (a_uint32_t));
+			rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
 			if (SW_OK != rv)
+			{
 				dprintf("usage: the range is 0 -- 1\n");
+			}
+			else
+			{
+				entry.sdei_xlt = tmp;
+			}
 		}
 	}
 	while (talk_mode && (SW_OK != rv));
@@ -22571,9 +23261,15 @@ cmd_data_check_port_vlan_translation_adv_action(char *info, fal_vlan_trans_adv_a
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &entry.cdei_xlt, sizeof (a_uint32_t));
+			rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
 			if (SW_OK != rv)
+			{
 				dprintf("usage: the range is 0 -- 7\n");
+			}
+			else
+			{
+				entry.cdei_xlt = tmp;
+			}
 		}
 	}
 	while (talk_mode && (SW_OK != rv));
@@ -22619,9 +23315,15 @@ cmd_data_check_port_vlan_translation_adv_action(char *info, fal_vlan_trans_adv_a
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &entry.counter_id, sizeof (a_uint32_t));
+			rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
 			if (SW_OK != rv)
+			{
 				dprintf("usage: the range is 0 -- 53\n");
+			}
+			else
+			{
+				entry.counter_id = tmp;
+			}
 		}
 	}
 	while (talk_mode && (SW_OK != rv));
@@ -22667,9 +23369,15 @@ cmd_data_check_port_vlan_translation_adv_action(char *info, fal_vlan_trans_adv_a
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &entry.vsi_xlt, sizeof (a_uint32_t));
+			rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
 			if (SW_OK != rv)
+			{
 				dprintf("usage: the range is 0 -- 32\n");
+			}
+			else
+			{
+				entry.vsi_xlt = tmp;
+			}
 		}
 	}
 	while (talk_mode && (SW_OK != rv));
@@ -22956,7 +23664,7 @@ cmd_data_check_tag_propagation(char *info, void *val, a_uint32_t size)
     return SW_OK;
 }
 
-sw_error_t
+void
 cmd_data_print_tag_propagation(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
     fal_vlantag_propagation_t *entry;
@@ -22966,14 +23674,16 @@ cmd_data_print_tag_propagation(a_uint8_t * param_name, a_uint32_t * buf, a_uint3
 
     cmd_data_print_uint32("mask", (a_uint32_t *) & (entry->mask), 4);
     dprintf("\n");
-    cmd_data_print_vlan_propagation("vid_propagation_en", (a_uint32_t *) & (entry->vid_propagation), 4);
+    cmd_data_print_vlan_propagation("vid_propagation_en", (a_uint32_t *) &
+		(entry->vid_propagation), 4);
     dprintf("\n");
-    cmd_data_print_vlan_propagation("pri_propagation_en", (a_uint32_t *) & (entry->pri_propagation), 4);
+    cmd_data_print_vlan_propagation("pri_propagation_en", (a_uint32_t *) &
+		(entry->pri_propagation), 4);
     dprintf("\n");
-    cmd_data_print_vlan_propagation("dei_propagation_en", (a_uint32_t *) & (entry->dei_propagation), 4);
+    cmd_data_print_vlan_propagation("dei_propagation_en", (a_uint32_t *) &
+		(entry->dei_propagation), 4);
     dprintf("\n");
 
-    return SW_OK;
 }
 
 sw_error_t
@@ -23057,7 +23767,7 @@ cmd_data_check_egress_mode(char *info, void *val, a_uint32_t size)
     return SW_OK;
 }
 
-sw_error_t
+void
 cmd_data_print_egress_mode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
     fal_vlantag_egress_mode_t *entry;
@@ -23072,7 +23782,6 @@ cmd_data_print_egress_mode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t 
     cmd_data_print_egmode("stag_egress_vlan_mode", (a_uint32_t *) & (entry->stag_mode), 4);
     dprintf("\n");
 
-    return SW_OK;
 }
 
 sw_error_t
@@ -23537,7 +24246,7 @@ cmd_data_check_ctrlpkt_profile(char *info, void *val, a_uint32_t size)
     return SW_OK;
 }
 
-sw_error_t
+void
 cmd_data_print_ctrlpkt_profile(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
     fal_ctrlpkt_profile_t *entry;
@@ -23547,9 +24256,11 @@ cmd_data_print_ctrlpkt_profile(a_uint8_t * param_name, a_uint32_t * buf, a_uint3
 
     cmd_data_print_uint32("port_bitmap", (a_uint32_t *) & (entry->port_map), 4);
     dprintf(" ");
-    cmd_data_print_uint32("ethtype_profile_bitmap", (a_uint32_t *) & (entry->ethtype_profile_bitmap), 4);
+    cmd_data_print_uint32("ethtype_profile_bitmap", (a_uint32_t *) &
+		(entry->ethtype_profile_bitmap), 4);
     dprintf(" ");
-    cmd_data_print_uint32("rfdb_profile_bitmap", (a_uint32_t *) & (entry->rfdb_profile_bitmap), 4);
+    cmd_data_print_uint32("rfdb_profile_bitmap", (a_uint32_t *) & (entry->rfdb_profile_bitmap),
+		4);
     dprintf("\n");
     cmd_data_print_enable("eapol_en", (a_uint32_t *) & (entry->protocol_types.mgt_eapol), 4);
     dprintf(" ");
@@ -23557,9 +24268,11 @@ cmd_data_print_ctrlpkt_profile(a_uint8_t * param_name, a_uint32_t * buf, a_uint3
     dprintf(" ");
     cmd_data_print_enable("igmp_en", (a_uint32_t *) & (entry->protocol_types.mgt_igmp), 4);
     dprintf(" ");
-    cmd_data_print_enable("arp_request_en", (a_uint32_t *) & (entry->protocol_types.mgt_arp_req), 4);
+    cmd_data_print_enable("arp_request_en", (a_uint32_t *) & (entry->protocol_types.mgt_arp_req),
+		4);
     dprintf(" ");
-    cmd_data_print_enable("arp_response_en", (a_uint32_t *) & (entry->protocol_types.mgt_arp_rep), 4);
+    cmd_data_print_enable("arp_response_en", (a_uint32_t *) & (entry->protocol_types.mgt_arp_rep),
+		4);
     dprintf("\n");
     cmd_data_print_enable("dhcp4_en", (a_uint32_t *) & (entry->protocol_types.mgt_dhcp4), 4);
     dprintf(" ");
@@ -23575,14 +24288,16 @@ cmd_data_print_ctrlpkt_profile(a_uint8_t * param_name, a_uint32_t * buf, a_uint3
     dprintf(" ");
     cmd_data_print_enable("sourceguard_bypass", (a_uint32_t *) & (entry->action.sg_bypass), 4);
     dprintf("\n");
-    cmd_data_print_enable("l2filter_bypass", (a_uint32_t *) & (entry->action.l2_filter_bypass), 4);
+    cmd_data_print_enable("l2filter_bypass", (a_uint32_t *) & (entry->action.l2_filter_bypass),
+		4);
     dprintf(" ");
-    cmd_data_print_enable("ingress_stp_bypass", (a_uint32_t *) & (entry->action.in_stp_bypass), 4);
+    cmd_data_print_enable("ingress_stp_bypass", (a_uint32_t *) & (entry->action.in_stp_bypass),
+		4);
     dprintf(" ");
-    cmd_data_print_enable("ingress_vlan_filter_bypass", (a_uint32_t *) & (entry->action.in_vlan_fltr_bypass), 4);
+    cmd_data_print_enable("ingress_vlan_filter_bypass", (a_uint32_t *) &
+		(entry->action.in_vlan_fltr_bypass), 4);
     dprintf("\n");
 
-    return SW_OK;
 }
 
 sw_error_t
@@ -23634,7 +24349,7 @@ cmd_data_check_servcode_config(char *info, fal_servcode_config_t *val, a_uint32_
 		}
 		else
 		{
-			rv = rv = cmd_data_check_uint32(cmd, &entry.dest_port_id, sizeof (a_uint32_t));
+			rv = cmd_data_check_uint32(cmd, &entry.dest_port_id, sizeof (a_uint32_t));
 			if (SW_OK != rv)
 				dprintf("physical port id: 0 - 7\n");
 		}
@@ -23657,7 +24372,8 @@ cmd_data_check_servcode_config(char *info, fal_servcode_config_t *val, a_uint32_
 		}
 		else
 		{
-			rv = rv = cmd_data_check_uint32(cmd, &entry.bypass_bitmap[0], sizeof (a_uint32_t));
+			rv = cmd_data_check_uint32(cmd, &entry.bypass_bitmap[0],
+				sizeof (a_uint32_t));
 			if (SW_OK != rv)
 				dprintf("usage: refer to service spec\n");
 		}
@@ -23680,7 +24396,8 @@ cmd_data_check_servcode_config(char *info, fal_servcode_config_t *val, a_uint32_
 		}
 		else
 		{
-			rv = rv = cmd_data_check_uint32(cmd, &entry.bypass_bitmap[1], sizeof (a_uint32_t));
+			rv = cmd_data_check_uint32(cmd, &entry.bypass_bitmap[1],
+				sizeof (a_uint32_t));
 			if (SW_OK != rv)
 				dprintf("usage: refer to service spec\n");
 		}
@@ -23703,7 +24420,8 @@ cmd_data_check_servcode_config(char *info, fal_servcode_config_t *val, a_uint32_
 		}
 		else
 		{
-			rv = rv = cmd_data_check_uint32(cmd, &entry.bypass_bitmap[2], sizeof (a_uint32_t));
+			rv = cmd_data_check_uint32(cmd, &entry.bypass_bitmap[2],
+				sizeof (a_uint32_t));
 			if (SW_OK != rv)
 				dprintf("usage: refer to service spec\n");
 		}
@@ -23726,7 +24444,8 @@ cmd_data_check_servcode_config(char *info, fal_servcode_config_t *val, a_uint32_
 		}
 		else
 		{
-			rv = rv = cmd_data_check_uint32(cmd, &entry.direction, sizeof (a_uint32_t));
+			rv = cmd_data_check_uint32(cmd, &entry.direction,
+				sizeof (a_uint32_t));
 			if (SW_OK != rv)
 				dprintf("usage: 0:dest, 1:src \n");
 		}
@@ -23749,7 +24468,8 @@ cmd_data_check_servcode_config(char *info, fal_servcode_config_t *val, a_uint32_
 		}
 		else
 		{
-			rv = rv = cmd_data_check_uint32(cmd, &entry.field_update_bitmap, sizeof (a_uint32_t));
+			rv = cmd_data_check_uint32(cmd, &entry.field_update_bitmap,
+				sizeof (a_uint32_t));
 			if (SW_OK != rv)
 				dprintf("usage: refer to service spec\n");
 		}
@@ -23772,7 +24492,8 @@ cmd_data_check_servcode_config(char *info, fal_servcode_config_t *val, a_uint32_
 		}
 		else
 		{
-			rv = rv = cmd_data_check_uint32(cmd, &entry.next_service_code, sizeof (a_uint32_t));
+			rv = cmd_data_check_uint32(cmd, &entry.next_service_code,
+				sizeof (a_uint32_t));
 			if (SW_OK != rv)
 				dprintf("usage: refer to service spec\n");
 		}
@@ -23795,7 +24516,8 @@ cmd_data_check_servcode_config(char *info, fal_servcode_config_t *val, a_uint32_
 		}
 		else
 		{
-			rv = rv = cmd_data_check_uint32(cmd, &entry.hw_services, sizeof (a_uint32_t));
+			rv = cmd_data_check_uint32(cmd, &entry.hw_services,
+				sizeof (a_uint32_t));
 			if (SW_OK != rv)
 				dprintf("usage: refer to service spec\n");
 		}
@@ -23818,7 +24540,8 @@ cmd_data_check_servcode_config(char *info, fal_servcode_config_t *val, a_uint32_
 		}
 		else
 		{
-			rv = rv = cmd_data_check_uint32(cmd, &entry.offset_sel, sizeof (a_uint32_t));
+			rv = cmd_data_check_uint32(cmd, &entry.offset_sel,
+				sizeof (a_uint32_t));
 			if (SW_OK != rv)
 				dprintf("usage: refer to service spec\n");
 		}
@@ -23879,6 +24602,7 @@ sw_error_t
 cmd_data_check_rss_hash_config(char *info, fal_rss_hash_config_t *val, a_uint32_t size)
 {
 	char *cmd = NULL;
+	a_uint32_t tmp;
 	sw_error_t rv;
 	fal_rss_hash_config_t entry;
 
@@ -24016,9 +24740,15 @@ cmd_data_check_rss_hash_config(char *info, fal_rss_hash_config_t *val, a_uint32_
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &entry.hash_protocol_mix, sizeof (a_uint32_t));
+			rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
 			if (SW_OK != rv)
+			{
 				dprintf("hash_mask: 0 - 0x1f\n");
+			}
+			else
+			{
+				entry.hash_protocol_mix = tmp;
+			}
 		}
 	}
 	while (talk_mode && (SW_OK != rv));
@@ -24039,9 +24769,15 @@ cmd_data_check_rss_hash_config(char *info, fal_rss_hash_config_t *val, a_uint32_
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &entry.hash_sport_mix, sizeof (a_uint32_t));
+			rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
 			if (SW_OK != rv)
+			{
 				dprintf("hash_mask: 0 - 0x1f\n");
+			}
+			else
+			{
+				entry.hash_sport_mix = tmp;
+			}
 		}
 	}
 	while (talk_mode && (SW_OK != rv));
@@ -24062,9 +24798,15 @@ cmd_data_check_rss_hash_config(char *info, fal_rss_hash_config_t *val, a_uint32_
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &entry.hash_dport_mix, sizeof (a_uint32_t));
+			rv = cmd_data_check_uint8(cmd, &tmp, sizeof (a_uint32_t));
 			if (SW_OK != rv)
+			{
 				dprintf("hash_mask: 0 - 0x1f\n");
+			}
+			else
+			{
+				entry.hash_dport_mix = tmp;
+			}
 		}
 	}
 	while (talk_mode && (SW_OK != rv));
@@ -24163,8 +24905,8 @@ cmd_data_print_flow_host(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t si
         fal_flow_entry_t *flow_entry = &(flow_host->flow_entry);
         fal_host_entry_t *host_entry = &(flow_host->host_entry);
 
-        cmd_data_print_flow(param_name, flow_entry, size);
-        cmd_data_print_host_entry(param_name, host_entry, size);
+        cmd_data_print_flow(param_name, (a_uint32_t *)flow_entry, size);
+        cmd_data_print_host_entry(param_name, (a_uint32_t *)host_entry, size);
 }
 
 sw_error_t
@@ -24172,7 +24914,6 @@ cmd_data_check_port_shaper_token_config(char *cmd_str, void * val, a_uint32_t si
 {
     char *cmd;
     sw_error_t rv;
-    a_bool_t bool = A_FALSE;
     fal_shaper_token_number_t entry;
 
     aos_mem_zero(&entry, sizeof (fal_shaper_token_number_t));
@@ -24235,7 +24976,6 @@ cmd_data_check_shaper_token_config(char *cmd_str, void * val, a_uint32_t size)
 {
     char *cmd;
     sw_error_t rv;
-    a_bool_t bool = A_FALSE;
     fal_shaper_token_number_t entry;
 
     aos_mem_zero(&entry, sizeof (fal_shaper_token_number_t));
@@ -24347,7 +25087,6 @@ cmd_data_check_port_shaper_config(char *cmd_str, void * val, a_uint32_t size)
 {
     char *cmd;
     sw_error_t rv;
-    a_bool_t bool = A_FALSE;
     fal_shaper_config_t entry;
 
     aos_mem_zero(&entry, sizeof (fal_shaper_config_t));
@@ -24479,7 +25218,6 @@ cmd_data_check_shaper_config(char *cmd_str, void * val, a_uint32_t size)
 {
     char *cmd;
     sw_error_t rv;
-    a_bool_t bool = A_FALSE;
     fal_shaper_config_t entry;
 
     aos_mem_zero(&entry, sizeof (fal_shaper_config_t));
@@ -24828,7 +25566,6 @@ cmd_data_check_port_policer_config(char *cmd_str, void * val, a_uint32_t size)
 {
     char *cmd;
     sw_error_t rv;
-    a_bool_t bool = A_FALSE;
     fal_policer_config_t entry;
 
     aos_mem_zero(&entry, sizeof (fal_policer_config_t));
@@ -25077,7 +25814,6 @@ cmd_data_check_acl_policer_config(char *cmd_str, void * val, a_uint32_t size)
 {
     char *cmd;
     sw_error_t rv;
-    a_bool_t bool = A_FALSE;
     fal_policer_config_t entry;
 
     aos_mem_zero(&entry, sizeof (fal_policer_config_t));
@@ -25304,7 +26040,6 @@ cmd_data_check_policer_cmd_config(char *cmd_str, void * val, a_uint32_t size)
 {
     char *cmd;
     sw_error_t rv;
-    a_bool_t bool = A_FALSE;
     fal_policer_action_t entry;
 
     aos_mem_zero(&entry, sizeof (fal_policer_action_t));
@@ -26032,7 +26767,7 @@ cmd_data_check_ptp_config(char *info, void *val, a_uint32_t size)
 	return SW_OK;
 }
 
-sw_error_t
+void
 cmd_data_print_ptp_config(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
 	fal_ptp_config_t *entry;
@@ -26042,14 +26777,11 @@ cmd_data_print_ptp_config(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t s
 	dprintf("[clock_mode]:%d [step_mode]:%d\n", entry->clock_mode, entry->step_mode);
 	dprintf("\n");
 
-	return SW_OK;
 }
 
 sw_error_t
 cmd_data_check_ptp_reference_clock(char *info, void *val, a_uint32_t size)
 {
-	char *cmd;
-	sw_error_t rv;
 	a_uint32_t *pValue = (a_uint32_t *)val;
 
 	if (info == NULL)
@@ -26076,7 +26808,7 @@ cmd_data_check_ptp_reference_clock(char *info, void *val, a_uint32_t size)
 	return SW_OK;
 }
 
-sw_error_t
+void
 cmd_data_print_ptp_reference_clock(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
 	if (*(a_uint32_t *) buf == FAL_REF_CLOCK_LOCAL)
@@ -26096,14 +26828,11 @@ cmd_data_print_ptp_reference_clock(a_uint8_t * param_name, a_uint32_t * buf, a_u
 		dprintf("UNKNOWN VALUE");
 	}
 
-	return SW_OK;
 }
 
 sw_error_t
 cmd_data_check_ptp_rx_timestamp_mode(char *info, void *val, a_uint32_t size)
 {
-	char *cmd;
-	sw_error_t rv;
 	a_uint32_t *pValue = (a_uint32_t *)val;
 
 	if (info == NULL)
@@ -26126,7 +26855,7 @@ cmd_data_check_ptp_rx_timestamp_mode(char *info, void *val, a_uint32_t size)
 	return SW_OK;
 }
 
-sw_error_t
+void
 cmd_data_print_ptp_rx_timestamp_mode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
 	if (*(a_uint32_t *) buf == FAL_RX_TS_MDIO)
@@ -26142,14 +26871,11 @@ cmd_data_print_ptp_rx_timestamp_mode(a_uint8_t * param_name, a_uint32_t * buf, a
 		dprintf("UNKNOWN VALUE");
 	}
 
-	return SW_OK;
 }
 
 sw_error_t
 cmd_data_check_ptp_direction(char *info, void *val, a_uint32_t size)
 {
-	char *cmd;
-	sw_error_t rv;
 	a_uint32_t *pValue = (a_uint32_t *)val;
 
 	if (info == NULL)
@@ -26277,7 +27003,7 @@ cmd_data_check_ptp_pkt_info(char *info, void *val, a_uint32_t size)
 	return SW_OK;
 }
 
-sw_error_t
+void
 cmd_data_print_ptp_pkt_info(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
 	fal_ptp_pkt_info_t *entry;
@@ -26288,7 +27014,6 @@ cmd_data_print_ptp_pkt_info(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t
 	dprintf("[port_number]:%d [msg_type]:%d\n", entry->port_number, entry->msg_type);
 	dprintf("\n");
 
-	return SW_OK;
 }
 
 sw_error_t
@@ -26317,7 +27042,8 @@ cmd_data_check_ptp_time(char *info, void *val, a_uint32_t size)
 		}
 		else
 		{
-			rv = cmd_data_check_uint64(cmd, &(pEntry->seconds), sizeof(a_uint64_t));
+			rv = cmd_data_check_uint64(cmd, (a_uint64_t *) (&(pEntry->seconds)),
+					sizeof(a_uint64_t));
 			if (SW_OK != rv)
 				dprintf("usage: seconds 48bits \n");
 		}
@@ -26340,7 +27066,7 @@ cmd_data_check_ptp_time(char *info, void *val, a_uint32_t size)
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &(pEntry->nanoseconds),
+			rv = cmd_data_check_uint32(cmd, (a_uint32_t *) (&(pEntry->nanoseconds)),
 					sizeof(a_uint32_t));
 			if (SW_OK != rv)
 				dprintf("usage: nanoseconds 32bits\n");
@@ -26364,7 +27090,7 @@ cmd_data_check_ptp_time(char *info, void *val, a_uint32_t size)
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &(pEntry->fracnanoseconds),
+			rv = cmd_data_check_uint32(cmd, (a_uint32_t *) (&(pEntry->fracnanoseconds)),
 					sizeof(a_uint32_t));
 			if (SW_OK != rv)
 				dprintf("usage: fracnanoseconds 32bits\n");
@@ -26374,8 +27100,8 @@ cmd_data_check_ptp_time(char *info, void *val, a_uint32_t size)
 	return SW_OK;
 }
 
-sw_error_t
-cmd_data_print_ptp_time(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
+void
+cmd_data_print_ptp_time(a_char_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
 	fal_ptp_time_t *entry;
 
@@ -26385,7 +27111,6 @@ cmd_data_print_ptp_time(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t siz
 	dprintf("[fracnanoseconds]:0x%x\n", entry->fracnanoseconds);
 	dprintf("\n");
 
-	return SW_OK;
 }
 
 sw_error_t
@@ -26591,7 +27316,7 @@ cmd_data_check_ptp_grandmaster_mode(char *info, void *val, a_uint32_t size)
 	return SW_OK;
 }
 
-sw_error_t
+void
 cmd_data_print_ptp_grandmaster_mode(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
 	fal_ptp_grandmaster_mode_t *entry;
@@ -26609,7 +27334,6 @@ cmd_data_print_ptp_grandmaster_mode(a_uint8_t * param_name, a_uint32_t * buf, a_
 	dprintf("[ns_sync_mode]:%d\n", entry->ns_sync_mode);
 	dprintf("\n");
 
-	return SW_OK;
 }
 
 sw_error_t
@@ -26778,7 +27502,7 @@ cmd_data_check_ptp_security(char *info, void *val, a_uint32_t size)
 	return SW_OK;
 }
 
-sw_error_t
+void
 cmd_data_print_ptp_security(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
 	fal_ptp_security_t *entry;
@@ -26797,7 +27521,6 @@ cmd_data_print_ptp_security(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t
 			entry->ipv6_embed_udp_checksum_force_zero_en ? "YES" : "NO");
 	dprintf("\n");
 
-	return SW_OK;
 }
 
 sw_error_t
@@ -26907,7 +27630,7 @@ cmd_data_check_ptp_pps_sig_ctrl(char *info, void *val, a_uint32_t size)
 	return SW_OK;
 }
 
-sw_error_t
+void
 cmd_data_print_ptp_pps_sig_ctrl(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
 	fal_ptp_pps_signal_control_t *entry;
@@ -26919,7 +27642,6 @@ cmd_data_print_ptp_pps_sig_ctrl(a_uint8_t * param_name, a_uint32_t * buf, a_uint
 	dprintf("[out_pulse_width]:0x%x\n", entry->out_pulse_width);
 	dprintf("\n");
 
-	return SW_OK;
 }
 
 sw_error_t
@@ -27032,7 +27754,7 @@ cmd_data_check_ptp_asym_correction(char *info, void *val, a_uint32_t size)
 	return SW_OK;
 }
 
-sw_error_t
+void
 cmd_data_print_ptp_asym_correction(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
 	fal_ptp_asym_correction_t *entry;
@@ -27044,7 +27766,6 @@ cmd_data_print_ptp_asym_correction(a_uint8_t * param_name, a_uint32_t * buf, a_u
 	dprintf("[in_asym_value]:0x%x\n", entry->in_asym_value);
 	dprintf("\n");
 
-	return SW_OK;
 }
 
 sw_error_t
@@ -27132,7 +27853,7 @@ cmd_data_check_ptp_waveform(char *info, void *val, a_uint32_t size)
 	return SW_OK;
 }
 
-sw_error_t
+void
 cmd_data_print_ptp_waveform(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
 	fal_ptp_output_waveform_t *entry;
@@ -27143,13 +27864,13 @@ cmd_data_print_ptp_waveform(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t
 	dprintf("[wave_period]:0x%llx\n", entry->wave_period);
 	dprintf("\n");
 
-	return SW_OK;
 }
 
 sw_error_t
 cmd_data_check_ptp_tod_uart(char *info, void *val, a_uint32_t size)
 {
 	char *cmd;
+        a_uint32_t tmp;
 	sw_error_t rv;
 	fal_ptp_tod_uart_t *pEntry = (fal_ptp_tod_uart_t *)val;
 
@@ -27172,9 +27893,15 @@ cmd_data_check_ptp_tod_uart(char *info, void *val, a_uint32_t size)
 		}
 		else
 		{
-			rv = cmd_data_check_uint16(cmd, &(pEntry->baud_config), sizeof(a_uint16_t));
+			rv = cmd_data_check_uint16(cmd, &tmp, sizeof(a_uint32_t));
 			if (SW_OK != rv)
+			{
 				dprintf("usage: baud config value \n");
+			}
+			else
+			{
+				pEntry->baud_config = tmp;
+            }
 		}
 	}while (talk_mode && (SW_OK != rv));
 
@@ -27244,17 +27971,23 @@ cmd_data_check_ptp_tod_uart(char *info, void *val, a_uint32_t size)
 		}
 		else
 		{
-			rv = cmd_data_check_uint16(cmd, &(pEntry->tx_buf_value),
-					sizeof(a_uint16_t));
+			rv = cmd_data_check_uint16(cmd, &tmp,
+					sizeof(a_uint32_t));
 			if (SW_OK != rv)
+			{
 				dprintf("usage: tx buffer value \n");
+			}
+			else
+			{
+				pEntry->tx_buf_value = tmp;
+			}
 		}
 	}while (talk_mode && (SW_OK != rv));
 
 	return SW_OK;
 }
 
-sw_error_t
+void
 cmd_data_print_ptp_tod_uart(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
 	fal_ptp_tod_uart_t *entry;
@@ -27268,7 +28001,6 @@ cmd_data_print_ptp_tod_uart(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t
 	dprintf("[rx_buf_value]:0x%x\n", entry->rx_buf_value);
 	dprintf("\n");
 
-	return SW_OK;
 }
 
 sw_error_t
@@ -27459,7 +28191,7 @@ cmd_data_check_ptp_enhanced_timestamp_engine(char *info, void *val, a_uint32_t s
 	return SW_OK;
 }
 
-sw_error_t
+void
 cmd_data_print_ptp_enhanced_timestamp_engine(a_uint8_t * param_name,
 		a_uint32_t * buf, a_uint32_t size)
 {
@@ -27499,7 +28231,6 @@ cmd_data_print_ptp_enhanced_timestamp_engine(a_uint8_t * param_name,
         dprintf("[fracnanoseconds]:0x%x\n", entry->timestamp_pre.fracnanoseconds);
 	printf("\n");
 
-	return SW_OK;
 }
 
 sw_error_t
@@ -27580,7 +28311,8 @@ cmd_data_check_ptp_trigger(char *info, void *val, a_uint32_t size)
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &(pEntry->trigger_conf.output_force_value),
+			rv = cmd_data_check_uint32(cmd,
+					(a_uint32_t *) (&(pEntry->trigger_conf.output_force_value)),
 					sizeof(a_uint32_t));
 			if (SW_OK != rv)
 				dprintf("usage: output force value \n");
@@ -27604,7 +28336,8 @@ cmd_data_check_ptp_trigger(char *info, void *val, a_uint32_t size)
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &(pEntry->trigger_conf.patten_select),
+			rv = cmd_data_check_uint32(cmd,
+					(a_uint32_t *) (&(pEntry->trigger_conf.patten_select)),
 					sizeof(a_uint32_t));
 			if (SW_OK != rv)
 				dprintf("usage: patten select \n");
@@ -27628,7 +28361,8 @@ cmd_data_check_ptp_trigger(char *info, void *val, a_uint32_t size)
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &(pEntry->trigger_conf.late_operation),
+			rv = cmd_data_check_uint32(cmd,
+					(a_uint32_t *) (&(pEntry->trigger_conf.late_operation)),
 					sizeof(a_uint32_t));
 			if (SW_OK != rv)
 				dprintf("usage: late operation\n");
@@ -27652,7 +28386,8 @@ cmd_data_check_ptp_trigger(char *info, void *val, a_uint32_t size)
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &(pEntry->trigger_conf.notify),
+			rv = cmd_data_check_uint32(cmd,
+					(a_uint32_t *) (&(pEntry->trigger_conf.notify)),
 					sizeof(a_uint32_t));
 			if (SW_OK != rv)
 				dprintf("usage: notify\n");
@@ -27676,7 +28411,8 @@ cmd_data_check_ptp_trigger(char *info, void *val, a_uint32_t size)
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &(pEntry->trigger_conf.trigger_effect),
+			rv = cmd_data_check_uint32(cmd,
+					(a_uint32_t *) (&(pEntry->trigger_conf.trigger_effect)),
 					sizeof(a_uint32_t));
 			if (SW_OK != rv)
 				dprintf("usage: trigger effect\n");
@@ -27700,7 +28436,8 @@ cmd_data_check_ptp_trigger(char *info, void *val, a_uint32_t size)
 		}
 		else
 		{
-			rv = cmd_data_check_uint64(cmd, &(pEntry->trigger_conf.tim.seconds),
+			rv = cmd_data_check_uint64(cmd,
+					(a_uint64_t *) (&(pEntry->trigger_conf.tim.seconds)),
 					sizeof(a_uint64_t));
 			if (SW_OK != rv)
 				dprintf("usage: seconds 48bits \n");
@@ -27724,7 +28461,8 @@ cmd_data_check_ptp_trigger(char *info, void *val, a_uint32_t size)
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &(pEntry->trigger_conf.tim.nanoseconds),
+			rv = cmd_data_check_uint32(cmd,
+					(a_uint32_t *) (&(pEntry->trigger_conf.tim.nanoseconds)),
 					sizeof(a_uint32_t));
 			if (SW_OK != rv)
 				dprintf("usage: nanoseconds 32bits\n");
@@ -27748,8 +28486,9 @@ cmd_data_check_ptp_trigger(char *info, void *val, a_uint32_t size)
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &(pEntry->trigger_conf.tim.fracnanoseconds),
-					sizeof(a_uint32_t));
+			rv = cmd_data_check_uint32(cmd,
+				(a_uint32_t *) (&(pEntry->trigger_conf.tim.fracnanoseconds)),
+				sizeof(a_uint32_t));
 			if (SW_OK != rv)
 				dprintf("usage: fracnanoseconds 32bits\n");
 		}
@@ -27758,7 +28497,7 @@ cmd_data_check_ptp_trigger(char *info, void *val, a_uint32_t size)
 	return SW_OK;
 }
 
-sw_error_t
+void
 cmd_data_print_ptp_trigger(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
 	fal_ptp_trigger_t *entry;
@@ -27778,7 +28517,6 @@ cmd_data_print_ptp_trigger(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t 
 			(a_uint32_t *) & (entry->trigger_conf.tim),
 			sizeof (fal_ptp_time_t));
 
-	return SW_OK;
 }
 
 sw_error_t
@@ -27807,7 +28545,8 @@ cmd_data_check_ptp_capture(char *info, void *val, a_uint32_t size)
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &(pEntry->capture_conf.status_clear),
+			rv = cmd_data_check_uint32(cmd,
+					(a_uint32_t *) (&(pEntry->capture_conf.status_clear)),
 					sizeof(a_uint32_t));
 			if (SW_OK != rv)
 				dprintf("usage: status clear \n");
@@ -27831,7 +28570,8 @@ cmd_data_check_ptp_capture(char *info, void *val, a_uint32_t size)
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &(pEntry->capture_conf.notify_event),
+			rv = cmd_data_check_uint32(cmd,
+					(a_uint32_t *) (&(pEntry->capture_conf.notify_event)),
 					sizeof(a_uint32_t));
 			if (SW_OK != rv)
 				dprintf("usage: notify event \n");
@@ -27855,8 +28595,9 @@ cmd_data_check_ptp_capture(char *info, void *val, a_uint32_t size)
 		}
 		else
 		{
-			rv = cmd_data_check_uint32(cmd, &(pEntry->capture_conf.single_multi_select),
-					sizeof(a_uint32_t));
+			rv = cmd_data_check_uint32(cmd,
+				(a_uint32_t *) (&(pEntry->capture_conf.single_multi_select)),
+				sizeof(a_uint32_t));
 			if (SW_OK != rv)
 				dprintf("usage: single multiple select\n");
 		}
@@ -27917,7 +28658,7 @@ cmd_data_check_ptp_capture(char *info, void *val, a_uint32_t size)
 	return SW_OK;
 }
 
-sw_error_t
+void
 cmd_data_print_ptp_capture(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
 	fal_ptp_capture_t *entry;
@@ -27937,7 +28678,6 @@ cmd_data_print_ptp_capture(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t 
 			(a_uint32_t *) & (entry->capture_status.tim),
 			sizeof (fal_ptp_time_t));
 
-	return SW_OK;
 }
 
 sw_error_t
@@ -27975,7 +28715,7 @@ cmd_data_check_ptp_interrupt(char *info, void *val, a_uint32_t size)
 	return SW_OK;
 }
 
-sw_error_t
+void
 cmd_data_print_ptp_interrupt(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
 {
 	fal_ptp_interrupt_t *entry;
@@ -27984,6 +28724,5 @@ cmd_data_print_ptp_interrupt(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_
 	dprintf("[intr_mask]:0x%x\n", entry->intr_mask);
 	dprintf("[intr_status]:0x%x\n", entry->intr_status);
 
-	return SW_OK;
 }
 

@@ -53,7 +53,7 @@ cmd_data_print_func_ctrl(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t si
 {
     dprintf("[%s]:", param_name);
 
-    fal_func_ctrl_t *p = buf;
+    fal_func_ctrl_t *p = (fal_func_ctrl_t *) buf;
 
     dprintf("%08x %08x %08x\n", p->bitmap[0], p->bitmap[1], p->bitmap[2]);
 }

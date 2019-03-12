@@ -308,7 +308,7 @@ cmd_show_resv_fdb(a_ulong_t *arg_val)
 {
     sw_error_t rtn;
     a_uint32_t cnt = 0;
-    a_uint32_t  *iterator  = ioctl_buf + 1;
+    a_ulong_t  *iterator  = ioctl_buf + 1;
     fal_fdb_entry_t *entry = (fal_fdb_entry_t *) (ioctl_buf + 2);
 
     *iterator = 0;

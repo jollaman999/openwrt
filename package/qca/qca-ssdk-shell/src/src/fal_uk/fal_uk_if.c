@@ -25,7 +25,6 @@ sw_uk_exec(a_uint32_t api_id, ...)
 {
     unsigned long value[SW_MAX_API_PARAM] = { 0 };
     unsigned long rtn = SW_OK, i;
-    sw_error_t rv;
     va_list arg_ptr;
     a_uint32_t nr_param = 0;
 
