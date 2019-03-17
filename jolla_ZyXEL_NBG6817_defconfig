@@ -2414,13 +2414,13 @@ CONFIG_PACKAGE_MAC80211_MESH=y
 # CONFIG_PACKAGE_golang-doc is not set
 # CONFIG_PACKAGE_golang-github-agl-ed25519-dev is not set
 # CONFIG_PACKAGE_golang-github-dchest-siphash-dev is not set
+# CONFIG_PACKAGE_golang-gitlab-yawning-obfs4-dev is not set
 # CONFIG_PACKAGE_golang-golang-x-crypto-dev is not set
 # CONFIG_PACKAGE_golang-golang-x-net-dev is not set
 # CONFIG_PACKAGE_golang-golang-x-sys-dev is not set
 # CONFIG_PACKAGE_golang-golang-x-text-dev is not set
 # CONFIG_PACKAGE_golang-src is not set
 # CONFIG_PACKAGE_golang-torproject-pluggable-transports-goptlib-dev is not set
-# CONFIG_PACKAGE_golang-torproject-pluggable-transports-obfs4-dev is not set
 # CONFIG_PACKAGE_golang-torproject-tor-fw-helper-dev is not set
 
 #
@@ -2567,7 +2567,6 @@ CONFIG_PACKAGE_php7-pecl-mcrypt=y
 #
 # Python
 #
-# CONFIG_PACKAGE_chardet is not set
 # CONFIG_PACKAGE_django is not set
 # CONFIG_PACKAGE_django-appconf is not set
 # CONFIG_PACKAGE_django-compressor is not set
@@ -2607,6 +2606,8 @@ CONFIG_PACKAGE_php7-pecl-mcrypt=y
 # CONFIG_PACKAGE_python-certifi-src is not set
 # CONFIG_PACKAGE_python-cffi is not set
 # CONFIG_PACKAGE_python-cffi-src is not set
+# CONFIG_PACKAGE_python-chardet is not set
+# CONFIG_PACKAGE_python-chardet-src is not set
 # CONFIG_PACKAGE_python-codecs is not set
 # CONFIG_PACKAGE_python-codecs-src is not set
 # CONFIG_PACKAGE_python-compiler is not set
@@ -2616,6 +2617,10 @@ CONFIG_PACKAGE_php7-pecl-mcrypt=y
 # CONFIG_PACKAGE_python-crcmod is not set
 # CONFIG_PACKAGE_python-crypto is not set
 # CONFIG_PACKAGE_python-crypto-src is not set
+# CONFIG_PACKAGE_python-cryptodome is not set
+# CONFIG_PACKAGE_python-cryptodome-src is not set
+# CONFIG_PACKAGE_python-cryptodomex is not set
+# CONFIG_PACKAGE_python-cryptodomex-src is not set
 # CONFIG_PACKAGE_python-cryptography is not set
 # CONFIG_PACKAGE_python-cryptography-src is not set
 # CONFIG_PACKAGE_python-ctypes is not set
@@ -2704,6 +2709,8 @@ CONFIG_PACKAGE_php7-pecl-mcrypt=y
 # CONFIG_PACKAGE_python-pyptlib-src is not set
 # CONFIG_PACKAGE_python-pyserial is not set
 # CONFIG_PACKAGE_python-pyserial-src is not set
+# CONFIG_PACKAGE_python-pytz is not set
+# CONFIG_PACKAGE_python-pytz-src is not set
 # CONFIG_PACKAGE_python-qrcode is not set
 # CONFIG_PACKAGE_python-requests is not set
 # CONFIG_PACKAGE_python-requests-oauthlib is not set
@@ -2713,6 +2720,8 @@ CONFIG_PACKAGE_php7-pecl-mcrypt=y
 # CONFIG_PACKAGE_python-service-identity-src is not set
 # CONFIG_PACKAGE_python-setuptools is not set
 # CONFIG_PACKAGE_python-setuptools-src is not set
+# CONFIG_PACKAGE_python-simplejson is not set
+# CONFIG_PACKAGE_python-simplejson-src is not set
 # CONFIG_PACKAGE_python-six is not set
 # CONFIG_PACKAGE_python-six-src is not set
 # CONFIG_PACKAGE_python-smbus is not set
@@ -2734,6 +2743,8 @@ CONFIG_PACKAGE_php7-pecl-mcrypt=y
 # CONFIG_PACKAGE_python-zope-interface is not set
 # CONFIG_PACKAGE_python-zope-interface-src is not set
 # CONFIG_PACKAGE_python3 is not set
+# CONFIG_PACKAGE_python3-appdirs is not set
+# CONFIG_PACKAGE_python3-appdirs-src is not set
 # CONFIG_PACKAGE_python3-asn1crypto is not set
 # CONFIG_PACKAGE_python3-asyncio is not set
 # CONFIG_PACKAGE_python3-asyncio-src is not set
@@ -2746,6 +2757,7 @@ CONFIG_PACKAGE_php7-pecl-mcrypt=y
 # CONFIG_PACKAGE_python3-bcrypt is not set
 # CONFIG_PACKAGE_python3-bcrypt-src is not set
 # CONFIG_PACKAGE_python3-bottle is not set
+# CONFIG_PACKAGE_python3-bottle-src is not set
 # CONFIG_PACKAGE_python3-certifi is not set
 # CONFIG_PACKAGE_python3-certifi-src is not set
 # CONFIG_PACKAGE_python3-cffi is not set
@@ -2754,13 +2766,23 @@ CONFIG_PACKAGE_php7-pecl-mcrypt=y
 # CONFIG_PACKAGE_python3-cgi-src is not set
 # CONFIG_PACKAGE_python3-cgitb is not set
 # CONFIG_PACKAGE_python3-cgitb-src is not set
+# CONFIG_PACKAGE_python3-chardet is not set
+# CONFIG_PACKAGE_python3-chardet-src is not set
 # CONFIG_PACKAGE_python3-click is not set
+# CONFIG_PACKAGE_python3-click-log is not set
+# CONFIG_PACKAGE_python3-click-log-src is not set
 # CONFIG_PACKAGE_python3-codecs is not set
 # CONFIG_PACKAGE_python3-codecs-src is not set
 # CONFIG_PACKAGE_python3-constantly is not set
 # CONFIG_PACKAGE_python3-constantly-src is not set
+# CONFIG_PACKAGE_python3-contextlib2 is not set
+# CONFIG_PACKAGE_python3-contextlib2-src is not set
 # CONFIG_PACKAGE_python3-crypto is not set
 # CONFIG_PACKAGE_python3-crypto-src is not set
+# CONFIG_PACKAGE_python3-cryptodome is not set
+# CONFIG_PACKAGE_python3-cryptodome-src is not set
+# CONFIG_PACKAGE_python3-cryptodomex is not set
+# CONFIG_PACKAGE_python3-cryptodomex-src is not set
 # CONFIG_PACKAGE_python3-cryptography is not set
 # CONFIG_PACKAGE_python3-cryptography-src is not set
 # CONFIG_PACKAGE_python3-ctypes is not set
@@ -2771,6 +2793,8 @@ CONFIG_PACKAGE_php7-pecl-mcrypt=y
 # CONFIG_PACKAGE_python3-dbm-src is not set
 # CONFIG_PACKAGE_python3-decimal is not set
 # CONFIG_PACKAGE_python3-decimal-src is not set
+# CONFIG_PACKAGE_python3-decorator is not set
+# CONFIG_PACKAGE_python3-decorator-src is not set
 # CONFIG_PACKAGE_python3-dev is not set
 # CONFIG_PACKAGE_python3-dev-src is not set
 # CONFIG_PACKAGE_python3-distutils is not set
@@ -2792,8 +2816,12 @@ CONFIG_PACKAGE_php7-pecl-mcrypt=y
 # CONFIG_PACKAGE_python3-idna-src is not set
 # CONFIG_PACKAGE_python3-incremental is not set
 # CONFIG_PACKAGE_python3-incremental-src is not set
+# CONFIG_PACKAGE_python3-influxdb is not set
+# CONFIG_PACKAGE_python3-influxdb-src is not set
 # CONFIG_PACKAGE_python3-itsdangerous is not set
 # CONFIG_PACKAGE_python3-jinja2 is not set
+# CONFIG_PACKAGE_python3-jsonpath-ng is not set
+# CONFIG_PACKAGE_python3-jsonpath-ng-src is not set
 # CONFIG_PACKAGE_python3-lib2to3 is not set
 # CONFIG_PACKAGE_python3-lib2to3-src is not set
 # CONFIG_PACKAGE_python3-light is not set
@@ -2818,6 +2846,8 @@ CONFIG_PACKAGE_php7-pecl-mcrypt=y
 # CONFIG_PACKAGE_python3-oauthlib-src is not set
 # CONFIG_PACKAGE_python3-openssl is not set
 # CONFIG_PACKAGE_python3-openssl-src is not set
+# CONFIG_PACKAGE_python3-paho-mqtt is not set
+# CONFIG_PACKAGE_python3-paho-mqtt-src is not set
 # CONFIG_PACKAGE_python3-parsley is not set
 # CONFIG_PACKAGE_python3-parsley-src is not set
 # CONFIG_PACKAGE_python3-passlib is not set
@@ -2841,10 +2871,18 @@ CONFIG_PACKAGE_php7-pecl-mcrypt=y
 # CONFIG_PACKAGE_python3-pyopenssl-src is not set
 # CONFIG_PACKAGE_python3-pyserial is not set
 # CONFIG_PACKAGE_python3-pyserial-src is not set
+# CONFIG_PACKAGE_python3-pytz is not set
+# CONFIG_PACKAGE_python3-pytz-src is not set
+# CONFIG_PACKAGE_python3-requests is not set
+# CONFIG_PACKAGE_python3-requests-src is not set
+# CONFIG_PACKAGE_python3-schema is not set
+# CONFIG_PACKAGE_python3-schema-src is not set
 # CONFIG_PACKAGE_python3-service-identity is not set
 # CONFIG_PACKAGE_python3-service-identity-src is not set
 # CONFIG_PACKAGE_python3-setuptools is not set
 # CONFIG_PACKAGE_python3-setuptools-src is not set
+# CONFIG_PACKAGE_python3-simplejson is not set
+# CONFIG_PACKAGE_python3-simplejson-src is not set
 # CONFIG_PACKAGE_python3-six is not set
 # CONFIG_PACKAGE_python3-six-src is not set
 # CONFIG_PACKAGE_python3-smbus is not set
@@ -2866,9 +2904,7 @@ CONFIG_PACKAGE_php7-pecl-mcrypt=y
 # CONFIG_PACKAGE_python3-yaml is not set
 # CONFIG_PACKAGE_python3-zope-interface is not set
 # CONFIG_PACKAGE_python3-zope-interface-src is not set
-# CONFIG_PACKAGE_pytz is not set
 # CONFIG_PACKAGE_rcssmin is not set
-# CONFIG_PACKAGE_simplejson is not set
 
 #
 # Ruby
@@ -3843,20 +3879,57 @@ CONFIG_PACKAGE_libuhttpd-openssl=y
 # CONFIG_PACKAGE_libgnutls is not set
 # CONFIG_PACKAGE_libmbedtls is not set
 CONFIG_PACKAGE_libopenssl=y
-CONFIG_OPENSSL_WITH_EC=y
-# CONFIG_OPENSSL_WITH_EC2M is not set
-# CONFIG_OPENSSL_WITH_SSL3 is not set
+
+#
+# Build Options
+#
+CONFIG_OPENSSL_OPTIMIZE_SPEED=y
+CONFIG_OPENSSL_WITH_ASM=y
 CONFIG_OPENSSL_WITH_DEPRECATED=y
 # CONFIG_OPENSSL_NO_DEPRECATED is not set
+CONFIG_OPENSSL_WITH_ERROR_MESSAGES=y
+
+#
+# Protocol Support
+#
+CONFIG_OPENSSL_WITH_TLS13=y
 # CONFIG_OPENSSL_WITH_DTLS is not set
-# CONFIG_OPENSSL_WITH_COMPRESSION is not set
 CONFIG_OPENSSL_WITH_NPN=y
-CONFIG_OPENSSL_WITH_PSK=y
 CONFIG_OPENSSL_WITH_SRP=y
-CONFIG_OPENSSL_ENGINE_DIGEST=y
-CONFIG_OPENSSL_HARDWARE_SUPPORT=y
-CONFIG_OPENSSL_OPTIMIZE_SPEED=y
+CONFIG_OPENSSL_WITH_CMS=y
+
+#
+# Algorithm Selection
+#
+CONFIG_OPENSSL_WITH_EC=y
+# CONFIG_OPENSSL_WITH_EC2M is not set
+CONFIG_OPENSSL_WITH_CHACHA_POLY1305=y
+CONFIG_OPENSSL_PREFER_CHACHA_OVER_GCM=y
+CONFIG_OPENSSL_WITH_PSK=y
+
+#
+# Less commonly used build options
+#
+# CONFIG_OPENSSL_WITH_ARIA is not set
+# CONFIG_OPENSSL_WITH_CAMELLIA is not set
+# CONFIG_OPENSSL_WITH_IDEA is not set
+# CONFIG_OPENSSL_WITH_SEED is not set
+# CONFIG_OPENSSL_WITH_SM234 is not set
+# CONFIG_OPENSSL_WITH_BLAKE2 is not set
+# CONFIG_OPENSSL_WITH_MDC2 is not set
+# CONFIG_OPENSSL_WITH_WHIRLPOOL is not set
+# CONFIG_OPENSSL_WITH_COMPRESSION is not set
+# CONFIG_OPENSSL_WITH_RFC3779 is not set
+
+#
+# Engine/Hardware Support
+#
+CONFIG_OPENSSL_ENGINE=y
+CONFIG_OPENSSL_ENGINE_BUILTIN=y
 CONFIG_OPENSSL_ENGINE_CRYPTO=y
+CONFIG_OPENSSL_ENGINE_BUILTIN_DEVCRYPTO=y
+# CONFIG_OPENSSL_WITH_GOST is not set
+CONFIG_PACKAGE_libopenssl-conf=y
 # CONFIG_PACKAGE_libwolfssl is not set
 
 #
@@ -3942,6 +4015,7 @@ CONFIG_PACKAGE_alsa-lib=y
 # CONFIG_PACKAGE_classpath is not set
 # CONFIG_PACKAGE_classpath-tools is not set
 # CONFIG_PACKAGE_confuse is not set
+# CONFIG_PACKAGE_czmq is not set
 # CONFIG_PACKAGE_dtndht is not set
 # CONFIG_PACKAGE_fcgi is not set
 # CONFIG_PACKAGE_fftw3 is not set
@@ -4124,6 +4198,7 @@ CONFIG_PACKAGE_liblzo=y
 CONFIG_PACKAGE_libmagic=y
 CONFIG_PACKAGE_libmariadb=y
 # CONFIG_PACKAGE_libmariadb-plugin-auth-gssapi-client is not set
+# CONFIG_PACKAGE_libmaxminddb is not set
 CONFIG_PACKAGE_libmcrypt=y
 # CONFIG_PACKAGE_libmicrohttpd is not set
 # CONFIG_PACKAGE_libmicrohttpd-ssl is not set
@@ -4291,6 +4366,7 @@ CONFIG_PACKAGE_libxml2=y
 # CONFIG_PACKAGE_linux-atm is not set
 # CONFIG_PACKAGE_loudmouth is not set
 # CONFIG_PACKAGE_lttng-ust is not set
+# CONFIG_PACKAGE_measurement-kit is not set
 # CONFIG_PACKAGE_mtdev is not set
 # CONFIG_PACKAGE_musl-fts is not set
 # CONFIG_PACKAGE_mxml is not set
@@ -5073,6 +5149,7 @@ CONFIG_PACKAGE_ddns-scripts=y
 # CONFIG_PACKAGE_nsd-nossl is not set
 # CONFIG_PACKAGE_ohybridproxy is not set
 # CONFIG_PACKAGE_stubby is not set
+# CONFIG_PACKAGE_torsocks is not set
 # CONFIG_PACKAGE_unbound is not set
 # CONFIG_PACKAGE_unbound-anchor is not set
 # CONFIG_PACKAGE_unbound-control is not set
@@ -5902,6 +5979,12 @@ CONFIG_PACKAGE_wpad-openssl=m
 #
 
 #
+# BigClown
+#
+# CONFIG_PACKAGE_bigclown-control-tool is not set
+# CONFIG_PACKAGE_bigclown-mqtt2influxdb is not set
+
+#
 # Boot Loaders
 #
 # CONFIG_PACKAGE_fconfig is not set
@@ -6364,6 +6447,7 @@ CONFIG_PACKAGE_findutils-xargs=y
 # CONFIG_PACKAGE_flock is not set
 # CONFIG_PACKAGE_fritz-caldata is not set
 # CONFIG_PACKAGE_fritz-tffs is not set
+# CONFIG_PACKAGE_fritz-tffs-nand is not set
 # CONFIG_PACKAGE_ftdi_eeprom is not set
 # CONFIG_PACKAGE_gammu is not set
 # CONFIG_PACKAGE_gawk is not set
@@ -6532,6 +6616,7 @@ CONFIG_PACKAGE_shadow-vipw=y
 # CONFIG_PACKAGE_sockread is not set
 # CONFIG_PACKAGE_spi-tools is not set
 # CONFIG_PACKAGE_spidev-test is not set
+# CONFIG_PACKAGE_ssdeep is not set
 # CONFIG_PACKAGE_strace is not set
 CONFIG_STRACE_NONE=y
 # CONFIG_STRACE_LIBDW is not set
