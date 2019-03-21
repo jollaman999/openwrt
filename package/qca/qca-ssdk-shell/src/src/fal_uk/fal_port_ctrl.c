@@ -26,7 +26,7 @@ fal_port_duplex_set(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_PT_DUPLEX_SET, dev_id, port_id,
-                    (a_uint32_t) duplex);
+                   duplex);
     return rv;
 }
 
@@ -47,7 +47,7 @@ fal_port_speed_set(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_PT_SPEED_SET, dev_id, port_id,
-                    (a_uint32_t) speed);
+                   speed);
     return rv;
 }
 
@@ -114,7 +114,7 @@ fal_port_hdr_status_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_PT_HDR_SET, dev_id, port_id, (a_uint32_t) enable);
+    rv = sw_uk_exec(SW_API_PT_HDR_SET, dev_id, port_id, enable);
     return rv;
 }
 
@@ -134,7 +134,7 @@ fal_port_flowctrl_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_PT_FLOWCTRL_SET, dev_id, port_id,
-                    (a_uint32_t) enable);
+                    enable);
     return rv;
 }
 
@@ -154,7 +154,7 @@ fal_port_flowctrl_forcemode_set(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_PT_FLOWCTRL_MODE_SET, dev_id, port_id,
-                    (a_uint32_t) enable);
+                   enable);
     return rv;
 }
 
@@ -175,7 +175,7 @@ fal_port_powersave_set(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_PT_POWERSAVE_SET, dev_id, port_id,
-                    (a_uint32_t) enable);
+                    enable);
     return rv;
 }
 
@@ -196,7 +196,7 @@ fal_port_hibernate_set(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_PT_HIBERNATE_SET, dev_id, port_id,
-                    (a_uint32_t) enable);
+                    enable);
     return rv;
 }
 
@@ -227,7 +227,7 @@ fal_port_rxhdr_mode_set(a_uint32_t dev_id, fal_port_t port_id,
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_PT_RXHDR_SET, dev_id, port_id, (a_uint32_t)mode);
+    rv = sw_uk_exec(SW_API_PT_RXHDR_SET, dev_id, port_id, mode);
     return rv;
 }
 
@@ -247,7 +247,7 @@ fal_port_txhdr_mode_set(a_uint32_t dev_id, fal_port_t port_id,
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_PT_TXHDR_SET, dev_id, port_id, (a_uint32_t)mode);
+    rv = sw_uk_exec(SW_API_PT_TXHDR_SET, dev_id, port_id, mode);
     return rv;
 }
 
@@ -266,7 +266,7 @@ fal_header_type_set(a_uint32_t dev_id, a_bool_t enable, a_uint32_t type)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_HEADER_TYPE_SET, dev_id, (a_uint32_t)enable, type);
+    rv = sw_uk_exec(SW_API_HEADER_TYPE_SET, dev_id, enable, type);
     return rv;
 }
 
@@ -284,7 +284,7 @@ fal_port_txmac_status_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_TXMAC_STATUS_SET, dev_id, port_id, (a_uint32_t)enable);
+    rv = sw_uk_exec(SW_API_TXMAC_STATUS_SET, dev_id, port_id, enable);
     return rv;
 }
 
@@ -302,7 +302,7 @@ fal_port_rxmac_status_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_RXMAC_STATUS_SET, dev_id, port_id, (a_uint32_t)enable);
+    rv = sw_uk_exec(SW_API_RXMAC_STATUS_SET, dev_id, port_id, enable);
     return rv;
 }
 
@@ -320,7 +320,7 @@ fal_port_txfc_status_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_TXFC_STATUS_SET, dev_id, port_id, (a_uint32_t)enable);
+    rv = sw_uk_exec(SW_API_TXFC_STATUS_SET, dev_id, port_id, enable);
     return rv;
 }
 
@@ -338,7 +338,7 @@ fal_port_rxfc_status_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_RXFC_STATUS_SET, dev_id, port_id, (a_uint32_t)enable);
+    rv = sw_uk_exec(SW_API_RXFC_STATUS_SET, dev_id, port_id, enable);
     return rv;
 }
 
@@ -356,7 +356,7 @@ fal_port_bp_status_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_BP_STATUS_SET, dev_id, port_id, (a_uint32_t)enable);
+    rv = sw_uk_exec(SW_API_BP_STATUS_SET, dev_id, port_id, enable);
     return rv;
 }
 
@@ -374,7 +374,7 @@ fal_port_link_forcemode_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enab
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_PT_LINK_MODE_SET, dev_id, port_id, (a_uint32_t)enable);
+    rv = sw_uk_exec(SW_API_PT_LINK_MODE_SET, dev_id, port_id, enable);
     return rv;
 }
 
@@ -410,7 +410,7 @@ fal_port_mac_loopback_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_t enable
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_PT_MAC_LOOPBACK_SET, dev_id, port_id, (a_uint32_t)enable);
+    rv = sw_uk_exec(SW_API_PT_MAC_LOOPBACK_SET, dev_id, port_id, enable);
     return rv;
 }
 
@@ -431,7 +431,7 @@ fal_port_congestion_drop_set(a_uint32_t dev_id, fal_port_t port_id,
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_PT_CONGESTION_DROP_SET, dev_id, port_id, queue_id, (a_uint32_t)enable);
+    rv = sw_uk_exec(SW_API_PT_CONGESTION_DROP_SET, dev_id, port_id, queue_id, enable);
     return rv;
 }
 
@@ -474,7 +474,7 @@ fal_port_8023az_set(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_PT_8023AZ_SET, dev_id, port_id,
-                    (a_uint32_t) enable);
+                    enable);
     return rv;
 }
 
@@ -494,7 +494,7 @@ fal_port_mdix_set(a_uint32_t dev_id, fal_port_t port_id,
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_PT_MDIX_SET, dev_id, port_id, (a_uint32_t)mode);
+    rv = sw_uk_exec(SW_API_PT_MDIX_SET, dev_id, port_id, mode);
     return rv;
 }
 
@@ -524,7 +524,7 @@ fal_port_combo_prefer_medium_set(a_uint32_t dev_id, fal_port_t port_id,
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_PT_COMBO_PREFER_MEDIUM_SET, dev_id, port_id, (a_uint32_t)medium);
+    rv = sw_uk_exec(SW_API_PT_COMBO_PREFER_MEDIUM_SET, dev_id, port_id, medium);
     return rv;
 }
 
@@ -554,7 +554,7 @@ fal_port_combo_fiber_mode_set(a_uint32_t dev_id, fal_port_t port_id,
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_PT_COMBO_FIBER_MODE_SET, dev_id, port_id, (a_uint32_t)mode);
+    rv = sw_uk_exec(SW_API_PT_COMBO_FIBER_MODE_SET, dev_id, port_id, mode);
     return rv;
 }
 
@@ -575,7 +575,7 @@ fal_port_local_loopback_set(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_PT_LOCAL_LOOPBACK_SET, dev_id, port_id,
-                    (a_uint32_t) enable);
+                     enable);
     return rv;
 }
 
@@ -596,7 +596,7 @@ fal_port_remote_loopback_set(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_PT_REMOTE_LOOPBACK_SET, dev_id, port_id,
-                    (a_uint32_t) enable);
+                    enable);
     return rv;
 }
 
@@ -675,7 +675,7 @@ fal_port_power_on(a_uint32_t dev_id, fal_port_t port_id)
 {
         sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_PT_WOL_STATUS_SET, dev_id, port_id,(a_uint32_t) enable);
+    rv = sw_uk_exec(SW_API_PT_WOL_STATUS_SET, dev_id, port_id, enable);
     return rv;
 
  }
@@ -695,7 +695,7 @@ fal_port_interface_mode_set (a_uint32_t dev_id, fal_port_t port_id,
 			fal_port_interface_mode_t  mode)
 {
   sw_error_t rv;
-  rv = sw_uk_exec(SW_API_PT_INTERFACE_MODE_SET, dev_id, port_id,(a_uint32_t) mode);
+  rv = sw_uk_exec(SW_API_PT_INTERFACE_MODE_SET, dev_id, port_id, mode);
   return rv;
 }
 
@@ -735,7 +735,7 @@ fal_debug_phycounter_set(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_DEBUG_PHYCOUNTER_SET, dev_id, port_id,
-                    (a_uint32_t) enable);
+                     enable);
     return rv;
 }
 
@@ -806,7 +806,7 @@ fal_port_source_filter_enable(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_PT_SOURCE_FILTER_SET, dev_id, port_id,
-                    (a_uint32_t) enable);
+                     enable);
     return rv;
 }
 
@@ -845,7 +845,7 @@ fal_port_interface_3az_status_set(a_uint32_t dev_id, fal_port_t port_id, a_bool_
 {
 	sw_error_t rv;
 
-	rv = sw_uk_exec(SW_API_PT_INTERFACE_3AZ_STATUS_SET, dev_id, port_id, (a_uint32_t)enable);
+	rv = sw_uk_exec(SW_API_PT_INTERFACE_3AZ_STATUS_SET, dev_id, port_id, enable);
 
 	return rv;
 }
@@ -855,7 +855,7 @@ fal_port_interface_3az_status_get(a_uint32_t dev_id, fal_port_t port_id, a_bool_
 
 	sw_error_t rv;
 
-	rv = sw_uk_exec(SW_API_PT_INTERFACE_3AZ_STATUS_GET, dev_id, port_id, (a_uint32_t)enable);
+	rv = sw_uk_exec(SW_API_PT_INTERFACE_3AZ_STATUS_GET, dev_id, port_id, enable);
 
 	return rv;
 

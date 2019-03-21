@@ -124,7 +124,7 @@ struct cmd_des_t gcmd_des[] =
             {"eeecfg", "set", "set interface eee info", "<port_id>", SW_API_PT_INTERFACE_EEE_CFG_SET, NULL},
             {"eeecfg", "get", "get interface eee info", "<port_id>", SW_API_PT_INTERFACE_EEE_CFG_GET, NULL},
 /*qca808x_start*/
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL},/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL},/*end of desc*/
         },
     },
 /*qca808x_end*/
@@ -149,7 +149,7 @@ struct cmd_des_t gcmd_des[] =
             {"member", "del", "del VLAN entry member", "<vlan_id> <port_id>",SW_API_VLAN_MEMBER_DEL, NULL},
             {"learnsts", "set", "set VLAN entry learn status", "<vlan_id> <enable|disable>",SW_API_VLAN_LEARN_STATE_SET, NULL},
             {"learnsts", "get", "get VLAN entry learn status", "<vlan_id>",SW_API_VLAN_LEARN_STATE_GET, NULL},
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -234,7 +234,7 @@ struct cmd_des_t gcmd_des[] =
             {"translationAdv", "getnext", "get vlan advanced translation next entry based on port and direction", "<port_id> <ingress|egress>", SW_API_PT_VLAN_TRANS_ADV_GETNEXT, NULL},
             {"counter", "set", "clean up port vlan counter", "<cnt_index>", SW_API_PT_VLAN_COUNTER_CLEANUP, NULL},
             {"counter", "get", "get port vlan counter", "<cnt_index>", SW_API_PT_VLAN_COUNTER_GET, NULL},
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -293,7 +293,7 @@ struct cmd_des_t gcmd_des[] =
             {"ptmaclimitctrl", "set", "set port maclimit ctrl", "<port_id>", SW_API_FDB_PT_MACLIMIT_CTRL_SET, NULL},
             {"ptmaclimitctrl", "get", "get port maclimit ctrl", "<port_id>", SW_API_FDB_PT_MACLIMIT_CTRL_GET, NULL},
             {"fidEntry", "flush", "flush all FDB entries by a fid", "<fid> <0:dynamic only|1:dynamic and static>", SW_API_FDB_DEL_BY_FID, NULL},
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -320,7 +320,7 @@ struct cmd_des_t gcmd_des[] =
             {"udfprofile", "get", "get port udf profile", "<port_id> <l2/l2snap/l3/l3plus/l4>", SW_API_ACL_PT_UDF_PROFILE_GET, NULL},
             {"udf", "set", "set udf", "<non-ip/ipv4/ipv6> <0-3> <l2/l3/l4> <offset>", SW_API_ACL_UDF_SET, NULL},
             {"udf", "get", "get udf", "<non-ip/ipv4/ipv6> <0-3>", SW_API_ACL_UDF_GET, NULL},
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -387,7 +387,7 @@ struct cmd_des_t gcmd_des[] =
 	{"dequeue", "set", "dequeue control set", "<queue_id> <ctrl>", SW_API_QOS_SCHEDULER_DEQUEU_CTRL_SET, NULL},
 	{"portscheduler", "reset", "reset queue scheduler config", "<port_id>", SW_API_QOS_PORT_SCHEDULER_CFG_RESET, NULL},
 	{"schedulerresource", "get", "get port scheduler resource", "<port_id>", SW_API_QOS_PORT_SCHEDULER_RESOURCE_GET, NULL},
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -424,7 +424,7 @@ struct cmd_des_t gcmd_des[] =
             {"multi", "set", "set igmp/mld entry", "<entry>", SW_API_IGMP_SG_ENTRY_SET, NULL},
             {"multi", "clear", "clear igmp/mld entry", "<entry>", SW_API_IGMP_SG_ENTRY_CLEAR, NULL},
             {"multi", "show", "show all igmp/mld entry", "", SW_API_IGMP_SG_ENTRY_SHOW, NULL},
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -444,7 +444,7 @@ struct cmd_des_t gcmd_des[] =
             {"ptUcMode", "get", "get unicast packets leaky status of a port", "<port_id>", SW_API_PT_UC_LEAKY_MODE_GET, NULL},
             {"ptMcMode", "set", "set multicast packets leaky status of a port", "<port_id> <enable|disable>", SW_API_PT_MC_LEAKY_MODE_SET, NULL},
             {"ptMcMode", "get", "get multicast packets leaky status of a port", "<port_id>", SW_API_PT_MC_LEAKY_MODE_GET, NULL},
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -462,7 +462,7 @@ struct cmd_des_t gcmd_des[] =
             {"ptEgress", "get", "get egress mirror status of a port", "<port_id>", SW_API_MIRROR_EG_PT_GET, NULL},
             {"analyCfg", "set", "set analysis configure", "<both|ingress|egress>", SW_API_MIRROR_ANALYSIS_CONFIG_SET, NULL},
             {"analyCfg", "get", "get analysis configure", "<both|ingress|egress>", SW_API_MIRROR_ANALYSIS_CONFIG_GET, NULL},
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -494,7 +494,7 @@ struct cmd_des_t gcmd_des[] =
             {"ptAddRateByte", "get", "get add_rate_byte when cal rate ", "<port_id>", SW_API_RATE_PT_ADDRATEBYTE_GET, NULL},
             {"ptgolflowen", "set", "set status of port globle flow control", "<port_id> <enable|disable>", SW_API_RATE_PT_GOL_FLOW_EN_SET, NULL},
             {"ptgolflowen", "get", "get status of port globle flow control", "<port_id>", SW_API_RATE_PT_GOL_FLOW_EN_GET, NULL},
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -525,7 +525,7 @@ struct cmd_des_t gcmd_des[] =
 	{"l4parser", "set", "set l4 parser ctrl", "<tcp_flag> <tcp_flag_mask>", SW_API_SEC_L4_PARSER_CTRL_SET, NULL},
 	{"expctrl", "get", "get l3 exp ctrl", "<excep_type>", SW_API_SEC_EXP_CTRL_GET, NULL},
 	{"expctrl", "set", "set l3 exp ctrl", "<excep_type>", SW_API_SEC_EXP_CTRL_SET, NULL},
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -537,7 +537,7 @@ struct cmd_des_t gcmd_des[] =
         {
             {"portState", "set", "set STP state of a port", "<st_id> <port_id> <disable|block|listen|learn|forward>", SW_API_STP_PT_STATE_SET, NULL},
             {"portState", "get", "get STP state of a port", "<st_id> <port_id>", SW_API_STP_PT_STATE_GET, NULL},
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -555,7 +555,7 @@ struct cmd_des_t gcmd_des[] =
             {"cpuKeep", "get", "get cpu keep bit", "",  SW_API_MIB_CPU_KEEP_GET, NULL},
             {"xgstatistics","get", "get statistics information of a xg_port", "<port_id>",SW_API_PT_XGMIB_GET},
             {"counter", "get", "get counter information of a port", "<port_id>",  SW_API_PT_MIB_COUNTER_GET, NULL},
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -567,7 +567,7 @@ struct cmd_des_t gcmd_des[] =
         {
             {"ctrlpattern", "set", "set led control pattern", "<group_id> <led_id>", SW_API_LED_PATTERN_SET, NULL},
             {"ctrlpattern", "get", "get led control pattern", "<group_id> <led_id>", SW_API_LED_PATTERN_GET, NULL},
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -599,7 +599,7 @@ struct cmd_des_t gcmd_des[] =
             {"pri2ehq", "get", "get priority to enhanced queue mapping", "<priority>", SW_API_COSMAP_PRI_TO_EHQU_GET, NULL},
             {"egRemark", "set", "set egress remark table", "<tableid>", SW_API_COSMAP_EG_REMARK_SET, NULL},
             {"egRemark", "get", "get egress remark table", "<tableid>", SW_API_COSMAP_EG_REMARK_GET, NULL},
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -674,7 +674,7 @@ struct cmd_des_t gcmd_des[] =
 			{"lldp", "get", "get lldp frames hardware identification status", "", SW_API_LLDP_STATUS_GET, NULL},
 			{"framecrc", "set", "set frame crc reserve enable", "<enable|disable>", SW_API_FRAME_CRC_RESERVE_SET, NULL},
 			{"framecrc", "get", "get frame crc reserve enable", "", SW_API_FRAME_CRC_RESERVE_GET, NULL},
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -763,7 +763,7 @@ struct cmd_des_t gcmd_des[] =
             {"mcmode", "set", "set mc mode", "<vsi>", SW_API_IP_VSI_MC_MODE_SET, NULL},
             {"globalctrl", "set", "set global", "", SW_API_GLOBAL_CTRL_SET, NULL},
             {"globalctrl", "get", "get global", "", SW_API_GLOBAL_CTRL_GET, NULL},
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -791,7 +791,7 @@ struct cmd_des_t gcmd_des[] =
             {"host", "get", "get flow host entry", "<get_mode>", SW_API_FLOW_HOST_GET, NULL},
             {"global", "get", "get flow global cfg", "", SW_API_FLOW_GLOBAL_CFG_GET, NULL},
             {"global", "set", "set flow global cfg", "", SW_API_FLOW_GLOBAL_CFG_SET, NULL},
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -841,7 +841,7 @@ struct cmd_des_t gcmd_des[] =
             {"global", "set", "set global nat function", "<enable|disable> <enable:sync counter|disable:unsync counter> <portbmp>", SW_API_NAT_GLOBAL_SET, NULL},
 			{"flowcookie", "set", "set flow cookie", "", SW_API_FLOW_COOKIE_SET, NULL},
 			{"flowrfs", "set", "set flow rfs", "<action>", SW_API_FLOW_RFS_SET, NULL},
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -859,7 +859,7 @@ struct cmd_des_t gcmd_des[] =
             {"mansa", "get", "get trunk manipulable sa", "", SW_API_TRUNK_MAN_SA_GET, NULL},
             {"failover", "set", "set failover status of trunk", "<failover> <enable|disable>", SW_API_TRUNK_FAILOVER_EN_SET, NULL},
             {"failover", "get", "get failover status of trunk", "", SW_API_TRUNK_FAILOVER_EN_GET, NULL},
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -880,7 +880,7 @@ struct cmd_des_t gcmd_des[] =
             {"fx100status", "get", "get fx100 status", "", SW_API_FX100_STATUS_GET, NULL},
             {"mac06exch", "set", "set mac0 and mac6 exchange status", "<enable/disable>", SW_API_MAC06_EXCH_SET, NULL},
             {"mac06exch", "get", "get mac0 and mac6 exchange status", "", SW_API_MAC06_EXCH_GET, NULL},
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -904,7 +904,7 @@ struct cmd_des_t gcmd_des[] =
             {"member", "get", "Get vsi based member ports", "<vsi>", SW_API_VSI_MEMBER_GET, NULL},
             {"counter", "get", "Get vsi based counter", "<vsi>", SW_API_VSI_COUNTER_GET, NULL},
             {"counter", "cleanup", "Cleanup vsi based counter", "<vsi>", SW_API_VSI_COUNTER_CLEANUP, NULL},
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -947,7 +947,7 @@ struct cmd_des_t gcmd_des[] =
 	    {"enqueue", "get", "get enqueue control", "<queue_id>", SW_API_QM_ENQUEUE_CTRL_GET, NULL},
 	    {"srcprofile", "set", "set source profile", "<port_id> <src_profile>", SW_API_QM_SOURCE_PROFILE_SET, NULL},
 	    {"srcprofile", "get", "get source profile", "<port_id>", SW_API_QM_SOURCE_PROFILE_GET, NULL},
-	    {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+	    {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -966,7 +966,7 @@ struct cmd_des_t gcmd_des[] =
             {"appprofile", "getfirst", "get first app profile entry", "", SW_API_MGMTCTRL_CTRLPKT_PROFILE_GETFIRST, NULL},
             {"appprofile", "getnext", "get next app profile entry", "<app_entry>", SW_API_MGMTCTRL_CTRLPKT_PROFILE_GETNEXT, NULL},
             {"appprofile", "show", "show whole app profile entries", "", SW_CMD_CTRLPKT_SHOW, cmd_show_ctrlpkt},
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -980,7 +980,7 @@ struct cmd_des_t gcmd_des[] =
             {"Config", "get", "get a servcode config by index", "<servcode_index>", SW_API_SERVCODE_CONFIG_GET, NULL},
             {"Loopcheck", "set", "set servcode loopcheck status", "<enable|disable>", SW_API_SERVCODE_LOOPCHECK_EN, NULL},
             {"Loopcheck", "get", "get servcode loopcheck status", "", SW_API_SERVCODE_LOOPCHECK_STATUS_GET, NULL},
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -992,7 +992,7 @@ struct cmd_des_t gcmd_des[] =
 		{
 			{"Config", "set", "set ipv4/ipv6 rss hash code", "<ipv4v6|ipv4|ipv6>", SW_API_RSS_HASH_CONFIG_SET, NULL},
 			{"Config", "get", "get ipv4/ipv6 rss hash code", "<ipv4v6|ipv4|ipv6>", SW_API_RSS_HASH_CONFIG_GET, NULL},
-			{NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+			{NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
 		},
 	},
 #endif
@@ -1012,7 +1012,7 @@ struct cmd_des_t gcmd_des[] =
 			{"aclentry", "set", "Set acl policer entry", "<index>", SW_API_POLICER_ACL_ENTRY_SET, NULL},
 			{"aclentry", "get", "Get acl policer entry", "<index>", SW_API_POLICER_ACL_ENTRY_GET, NULL},
 			{"globalcounter", "get", "Get policer global counter", "", SW_API_POLICER_GLOBAL_COUNTER_GET, NULL},
-			{NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+			{NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
 		},
 	},
 #endif
@@ -1041,7 +1041,7 @@ struct cmd_des_t gcmd_des[] =
 	    {"queueshaper", "get", "Get queue shaper entry", " <queue_id>", SW_API_QUEUE_SHAPER_GET, NULL},
 	    {"ipgcompensation", "set", "Set shaper IPG and Preamble value", " <value>", SW_API_SHAPER_IPG_PRE_SET, NULL},
 	    {"ipgcompensation", "get", "Get port shaper IPG and Preamble value", "", SW_API_SHAPER_IPG_PRE_GET, NULL},
-	    {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+	    {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
 	},
     },
 #endif
@@ -1064,7 +1064,7 @@ struct cmd_des_t gcmd_des[] =
 	{"portdthresh", "set", "set port dynamic threshold", "<port_id>", SW_API_BM_DYNAMIC_THRESH_SET, NULL},
 	{"portdthresh", "get", "get port dynamic threshold", "<port_id>", SW_API_BM_DYNAMIC_THRESH_GET, NULL},
 	{"portcounter", "get", "get port counter", "<port_id>", SW_API_BM_PORT_COUNTER_GET, NULL},
-	{NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+	{NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 #endif
@@ -1102,7 +1102,7 @@ struct cmd_des_t gcmd_des[] =
             {"uniphy", "get", "read uniphy register", "<uniphy_index> <reg_addr> <4>", SW_API_UNIPHY_REG_GET, NULL},
             {"uniphy", "set", "write uniphy register", "<uniphy_index> <reg_addr> <value> <4>", SW_API_UNIPHY_REG_SET, NULL},
 /*qca808x_start*/
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 /*qca808x_end*/
@@ -1111,7 +1111,7 @@ struct cmd_des_t gcmd_des[] =
         "device", "set device id",
         {
             {"id", "set", "set device id", "<dev_id>", SW_CMD_SET_DEVID, cmd_set_devid},
-            {NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+            {NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
         },
     },
 
@@ -1215,15 +1215,15 @@ struct cmd_des_t gcmd_des[] =
 				"<port_id>", SW_API_PTP_INTERRUPT_SET, NULL},
 			{"Interrupt", "get", "get PTP Interrupt mask",
 				"<port_id>", SW_API_PTP_INTERRUPT_GET, NULL},
-			{NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/
+			{NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/
 		},
 	},
 #endif
 /*qca808x_start*/
-    {"help", "type ? get help", {{NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/}},
+    {"help", "type ? get help", {{NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/}},
 
-    {"quit", "type quit/q quit shell", {{NULL, NULL, NULL, NULL, (int)NULL, NULL}/*end of desc*/}},
+    {"quit", "type quit/q quit shell", {{NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}/*end of desc*/}},
 
-    {NULL, NULL, {{NULL, NULL, NULL, NULL, (int)NULL, NULL}}} /*end of desc*/
+    {NULL, NULL, {{NULL, NULL, NULL, NULL, SW_API_INVALID, NULL}}} /*end of desc*/
 };
 /*qca808x_end*/

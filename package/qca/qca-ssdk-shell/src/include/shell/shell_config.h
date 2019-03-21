@@ -46,6 +46,8 @@ extern "C" {
 
 #define MAX_SUB_CMD_DES_NUM  120
 
+#define SW_API_INVALID 0
+
     struct sub_cmd_des_t
     {
         char *sub_name;

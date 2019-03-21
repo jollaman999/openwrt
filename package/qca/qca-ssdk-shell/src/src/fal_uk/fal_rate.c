@@ -27,7 +27,7 @@ fal_rate_queue_egrl_set(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_RATE_QU_EGRL_SET, dev_id, port_id, queue_id,
-                    (a_uint32_t) speed, (a_uint32_t) enable);
+                    speed, enable);
     return rv;
 }
 
@@ -39,7 +39,7 @@ fal_rate_queue_egrl_get(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_RATE_QU_EGRL_GET, dev_id, port_id, queue_id,
-                    (a_uint32_t) speed, (a_uint32_t) enable);
+                    speed, enable);
     return rv;
 }
 
@@ -50,7 +50,7 @@ fal_rate_port_egrl_set(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_RATE_PT_EGRL_SET, dev_id, port_id,
-                    (a_uint32_t) speed, (a_uint32_t) enable);
+                    speed, enable);
     return rv;
 }
 
@@ -61,7 +61,7 @@ fal_rate_port_egrl_get(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_RATE_PT_EGRL_GET, dev_id, port_id,
-                    (a_uint32_t) speed, (a_uint32_t) enable);
+                    speed, enable);
     return rv;
 }
 
@@ -72,7 +72,7 @@ fal_rate_port_inrl_set(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_RATE_PT_INRL_SET, dev_id, port_id,
-                    (a_uint32_t) speed, (a_uint32_t) enable);
+                    speed, enable);
     return rv;
 }
 
@@ -83,7 +83,7 @@ fal_rate_port_inrl_get(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_RATE_PT_INRL_GET, dev_id, port_id,
-                    (a_uint32_t) speed, (a_uint32_t) enable);
+                    speed, enable);
     return rv;
 }
 
@@ -94,7 +94,7 @@ fal_storm_ctrl_frame_set(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_STORM_CTRL_FRAME_SET, dev_id, port_id,
-                    (a_uint32_t) frame_type, (a_uint32_t) enable);
+                    frame_type, enable);
     return rv;
 }
 
@@ -105,7 +105,7 @@ fal_storm_ctrl_frame_get(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_STORM_CTRL_FRAME_GET, dev_id, port_id,
-                    (a_uint32_t) frame_type, (a_uint32_t) enable);
+                    frame_type, enable);
     return rv;
 }
 
@@ -116,7 +116,7 @@ fal_storm_ctrl_rate_set(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_STORM_CTRL_RATE_SET, dev_id, port_id,
-                    (a_uint32_t) rate);
+                    rate);
     return rv;
 }
 
@@ -127,7 +127,7 @@ fal_storm_ctrl_rate_get(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_STORM_CTRL_RATE_GET, dev_id, port_id,
-                    (a_uint32_t) rate);
+                    rate);
     return rv;
 }
 
@@ -138,7 +138,7 @@ fal_rate_port_policer_set(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_RATE_PORT_POLICER_SET, dev_id, port_id,
-                    (a_uint32_t) policer);
+                    policer);
     return rv;
 }
 
@@ -149,7 +149,7 @@ fal_rate_port_policer_get(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_RATE_PORT_POLICER_GET, dev_id, port_id,
-                    (a_uint32_t) policer);
+                    policer);
     return rv;
 }
 
@@ -160,7 +160,7 @@ fal_rate_port_shaper_set(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_RATE_PORT_SHAPER_SET, dev_id, port_id,
-                    (a_uint32_t) enable, (a_uint32_t) shaper);
+                    enable, shaper);
     return rv;
 }
 
@@ -171,7 +171,7 @@ fal_rate_port_shaper_get(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_RATE_PORT_SHAPER_GET, dev_id, port_id,
-                    (a_uint32_t) enable, (a_uint32_t) shaper);
+                    enable, shaper);
     return rv;
 }
 
@@ -183,7 +183,7 @@ fal_rate_queue_shaper_set(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_RATE_QUEUE_SHAPER_SET, dev_id, port_id, queue_id,
-                    (a_uint32_t) enable, (a_uint32_t) shaper);
+                    enable, shaper);
     return rv;
 }
 
@@ -195,7 +195,7 @@ fal_rate_queue_shaper_get(a_uint32_t dev_id, fal_port_t port_id,
     sw_error_t rv;
 
     rv = sw_uk_exec(SW_API_RATE_QUEUE_SHAPER_GET, dev_id, port_id, queue_id,
-                    (a_uint32_t) enable, (a_uint32_t) shaper);
+                    enable, shaper);
     return rv;
 }
 
@@ -205,7 +205,7 @@ fal_rate_acl_policer_set(a_uint32_t dev_id, a_uint32_t policer_id,
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_RATE_ACL_POLICER_SET, dev_id, policer_id, (a_uint32_t) policer);
+    rv = sw_uk_exec(SW_API_RATE_ACL_POLICER_SET, dev_id, policer_id, policer);
     return rv;
 }
 
@@ -215,7 +215,7 @@ fal_rate_acl_policer_get(a_uint32_t dev_id, a_uint32_t policer_id,
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_RATE_ACL_POLICER_GET, dev_id, policer_id, (a_uint32_t) policer);
+    rv = sw_uk_exec(SW_API_RATE_ACL_POLICER_GET, dev_id, policer_id, policer);
     return rv;
 }
 

@@ -106,7 +106,7 @@ fal_reg_dump(a_uint32_t dev_id, a_uint32_t reg_idx,fal_reg_dump_t *reg_dump)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_REG_DUMP, dev_id, (a_uint32_t) reg_idx,(a_uint32_t) reg_dump);
+    rv = sw_uk_exec(SW_API_REG_DUMP, dev_id, reg_idx, reg_dump);
     return rv;
 }
 
@@ -116,7 +116,7 @@ fal_dbg_reg_dump(a_uint32_t dev_id,fal_reg_dump_t *reg_dump)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_DBG_REG_DUMP, dev_id,(a_uint32_t) reg_dump);
+    rv = sw_uk_exec(SW_API_DBG_REG_DUMP, dev_id, reg_dump);
     return rv;
 }
 
@@ -126,7 +126,7 @@ fal_debug_psgmii_self_test(a_uint32_t dev_id, a_bool_t enable,
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_DBG_PSGMII_SELF_TEST, dev_id, (a_uint32_t) enable, times, result);
+    rv = sw_uk_exec(SW_API_DBG_PSGMII_SELF_TEST, dev_id, enable, times, result);
     return rv;
 }
 sw_error_t
@@ -134,7 +134,7 @@ fal_phy_dump(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t reg_idx,fal_phy_
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_PHY_DUMP, dev_id, phy_addr, (a_uint32_t) reg_idx,(a_uint32_t) phy_dump);
+    rv = sw_uk_exec(SW_API_PHY_DUMP, dev_id, phy_addr, reg_idx, phy_dump);
     return rv;
 }
 

@@ -34,7 +34,7 @@ fal_cosmap_dscp_to_pri_get(a_uint32_t dev_id, a_uint32_t dscp, a_uint32_t * pri)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_COSMAP_DSCP_TO_PRI_GET, dev_id, dscp, (a_uint32_t)pri);
+    rv = sw_uk_exec(SW_API_COSMAP_DSCP_TO_PRI_GET, dev_id, dscp, pri);
     return rv;
 }
 
@@ -52,7 +52,7 @@ fal_cosmap_dscp_to_dp_get(a_uint32_t dev_id, a_uint32_t dscp, a_uint32_t * dp)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_COSMAP_DSCP_TO_DP_GET, dev_id, dscp, (a_uint32_t)dp);
+    rv = sw_uk_exec(SW_API_COSMAP_DSCP_TO_DP_GET, dev_id, dscp, dp);
     return rv;
 }
 
@@ -70,7 +70,7 @@ fal_cosmap_up_to_pri_get(a_uint32_t dev_id, a_uint32_t up, a_uint32_t * pri)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_COSMAP_UP_TO_PRI_GET, dev_id, up, (a_uint32_t)pri);
+    rv = sw_uk_exec(SW_API_COSMAP_UP_TO_PRI_GET, dev_id, up, pri);
     return rv;
 }
 
@@ -88,7 +88,7 @@ fal_cosmap_up_to_dp_get(a_uint32_t dev_id, a_uint32_t up, a_uint32_t * dp)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_COSMAP_UP_TO_DP_GET, dev_id, up, (a_uint32_t)dp);
+    rv = sw_uk_exec(SW_API_COSMAP_UP_TO_DP_GET, dev_id, up, dp);
     return rv;
 }
 
@@ -108,7 +108,7 @@ fal_cosmap_pri_to_queue_get(a_uint32_t dev_id, a_uint32_t pri,
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_COSMAP_PRI_TO_QU_GET, dev_id, pri, (a_uint32_t)queue);
+    rv = sw_uk_exec(SW_API_COSMAP_PRI_TO_QU_GET, dev_id, pri, queue);
     return rv;
 }
 
@@ -128,7 +128,7 @@ fal_cosmap_pri_to_ehqueue_get(a_uint32_t dev_id, a_uint32_t pri,
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_COSMAP_PRI_TO_EHQU_GET, dev_id, pri, (a_uint32_t)queue);
+    rv = sw_uk_exec(SW_API_COSMAP_PRI_TO_EHQU_GET, dev_id, pri, queue);
     return rv;
 }
 
@@ -166,7 +166,7 @@ fal_cosmap_dscp_to_ehpri_get(a_uint32_t dev_id, a_uint32_t dscp, a_uint32_t * pr
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_COSMAP_DSCP_TO_EHPRI_GET, dev_id, dscp, (a_uint32_t)pri);
+    rv = sw_uk_exec(SW_API_COSMAP_DSCP_TO_EHPRI_GET, dev_id, dscp, pri);
     return rv;
 }
 
@@ -184,7 +184,7 @@ fal_cosmap_dscp_to_ehdp_get(a_uint32_t dev_id, a_uint32_t dscp, a_uint32_t * dp)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_COSMAP_DSCP_TO_EHDP_GET, dev_id, dscp, (a_uint32_t)dp);
+    rv = sw_uk_exec(SW_API_COSMAP_DSCP_TO_EHDP_GET, dev_id, dscp, dp);
     return rv;
 }
 
@@ -202,7 +202,7 @@ fal_cosmap_up_to_ehpri_get(a_uint32_t dev_id, a_uint32_t up, a_uint32_t * pri)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_COSMAP_UP_TO_EHPRI_GET, dev_id, up, (a_uint32_t)pri);
+    rv = sw_uk_exec(SW_API_COSMAP_UP_TO_EHPRI_GET, dev_id, up, pri);
     return rv;
 }
 
@@ -220,6 +220,6 @@ fal_cosmap_up_to_ehdp_get(a_uint32_t dev_id, a_uint32_t up, a_uint32_t * dp)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_COSMAP_UP_TO_EHDP_GET, dev_id, up, (a_uint32_t)dp);
+    rv = sw_uk_exec(SW_API_COSMAP_UP_TO_EHDP_GET, dev_id, up, dp);
     return rv;
 }

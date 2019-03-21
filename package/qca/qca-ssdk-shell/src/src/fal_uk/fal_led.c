@@ -26,8 +26,8 @@ fal_led_ctrl_pattern_set(a_uint32_t dev_id, led_pattern_group_t group,
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_LED_PATTERN_SET, dev_id, (a_uint32_t)group,
-                    (a_uint32_t)id, (a_uint32_t)pattern);
+    rv = sw_uk_exec(SW_API_LED_PATTERN_SET, dev_id, group,
+                    id, pattern);
     return rv;
 }
 
@@ -37,7 +37,7 @@ fal_led_ctrl_pattern_get(a_uint32_t dev_id, led_pattern_group_t group,
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_LED_PATTERN_GET, dev_id, (a_uint32_t)group,
-                    (a_uint32_t)id, (a_uint32_t)pattern);
+    rv = sw_uk_exec(SW_API_LED_PATTERN_GET, dev_id, group,
+                    id, pattern);
     return rv;
 }

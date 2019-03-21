@@ -24,7 +24,7 @@ fal_vlan_entry_append(a_uint32_t dev_id, fal_vlan_t * vlan_entry)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_VLAN_APPEND, dev_id, (a_uint32_t) vlan_entry);
+    rv = sw_uk_exec(SW_API_VLAN_APPEND, dev_id, vlan_entry);
     return rv;
 }
 
@@ -43,7 +43,7 @@ fal_vlan_next(a_uint32_t dev_id, a_uint32_t vlan_id, fal_vlan_t * p_vlan)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_VLAN_NEXT, dev_id, vlan_id, (a_uint32_t) p_vlan);
+    rv = sw_uk_exec(SW_API_VLAN_NEXT, dev_id, vlan_id, p_vlan);
     return rv;
 }
 
@@ -52,7 +52,7 @@ fal_vlan_find(a_uint32_t dev_id, a_uint32_t vlan_id, fal_vlan_t * p_vlan)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_VLAN_FIND, dev_id, vlan_id, (a_uint32_t) p_vlan);
+    rv = sw_uk_exec(SW_API_VLAN_FIND, dev_id, vlan_id, p_vlan);
     return rv;
 }
 
@@ -99,7 +99,7 @@ fal_vlan_fid_get(a_uint32_t dev_id, a_uint32_t vlan_id, a_uint32_t * fid)
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_VLAN_FID_GET, dev_id, vlan_id, (a_uint32_t)fid);
+    rv = sw_uk_exec(SW_API_VLAN_FID_GET, dev_id, vlan_id, fid);
     return rv;
 }
 
@@ -128,7 +128,7 @@ fal_vlan_learning_state_set(a_uint32_t dev_id, a_uint32_t vlan_id,
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_VLAN_LEARN_STATE_SET, dev_id, vlan_id, (a_uint32_t)enable);
+    rv = sw_uk_exec(SW_API_VLAN_LEARN_STATE_SET, dev_id, vlan_id, enable);
     return rv;
 }
 
@@ -138,7 +138,7 @@ fal_vlan_learning_state_get(a_uint32_t dev_id, a_uint32_t vlan_id,
 {
     sw_error_t rv;
 
-    rv = sw_uk_exec(SW_API_VLAN_LEARN_STATE_GET, dev_id, vlan_id, (a_uint32_t)enable);
+    rv = sw_uk_exec(SW_API_VLAN_LEARN_STATE_GET, dev_id, vlan_id, enable);
     return rv;
 }
 
