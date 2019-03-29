@@ -1988,7 +1988,8 @@ adpt_hppe_port_interface_mode_set(a_uint32_t dev_id, fal_port_t port_id,
 {
 	sw_error_t rv = SW_OK;
 	ADPT_DEV_ID_CHECK(dev_id);
-	if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_EXCL_CPU))
+	if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_EXCL_CPU) &&
+		mode != PORT_INTERFACE_MODE_MAX)
 	{
 		return SW_BAD_PARAM;
 	}
@@ -2378,6 +2379,10 @@ adpt_hppe_port_mux_mac_type_set(a_uint32_t dev_id, fal_port_t port_id,
 	sw_error_t rv = SW_OK;
 	a_uint32_t mode_tmp;
 	ssdk_port_phyinfo *phyinfo = NULL;
+
+	/*init the port interface mode before set it according to three mac modes*/
+	rv = adpt_hppe_port_interface_mode_set(dev_id, port_id, PORT_INTERFACE_MODE_MAX);
+	SW_RTN_ON_ERROR(rv);
 
 	switch (mode0) {
 		case PORT_WRAPPER_PSGMII_FIBER:
