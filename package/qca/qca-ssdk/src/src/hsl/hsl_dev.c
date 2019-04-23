@@ -59,6 +59,7 @@
 #else
 #include "sw_api_us.h"
 #endif
+#include "ssdk_plat.h"
 /*qca808x_start*/
 static hsl_dev_t dev_table[SW_MAX_NR_DEV];
 static ssdk_init_cfg *dev_ssdk_cfg[SW_MAX_NR_DEV] = { 0 };
@@ -264,6 +265,11 @@ hsl_dev_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 sw_error_t
 hsl_ssdk_cfg(a_uint32_t dev_id, ssdk_cfg_t *ssdk_cfg)
 {
+    if(!dev_ssdk_cfg[dev_id])
+    {
+        SSDK_ERROR("the dev%d wasn't initialized\n", dev_id);
+        return SW_BAD_VALUE;
+    }
     aos_mem_set(&(ssdk_cfg->init_cfg), 0,  sizeof(ssdk_init_cfg));
 
     aos_mem_copy(&(ssdk_cfg->init_cfg), dev_ssdk_cfg[dev_id], sizeof(ssdk_init_cfg));
