@@ -37,7 +37,7 @@ cmd_set_devid(a_uint32_t *arg_val)
 	    ssdk_cfg = ssdk_cfg_new;
     }
 
-    return SW_OK;
+    return rtn;
 }
 
 int
