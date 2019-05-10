@@ -1797,6 +1797,38 @@ qca_phy_config_aneg(struct phy_device *pdev)
 	return 0;
 }
 
+int qca_phy_suspend(struct phy_device *phydev)
+{
+	struct mii_bus *bus = phydev->bus;
+	int val = 0;
+	int addr;
+
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,9,0))
+	addr = phydev->mdio.addr;
+#else
+	addr = phydev->addr;
+#endif
+
+	val = mdiobus_read(bus, addr, MII_BMCR);
+	return mdiobus_write(bus, addr, MII_BMCR, (u16)(val | BMCR_PDOWN));
+}
+
+int qca_phy_resume(struct phy_device *phydev)
+{
+	struct mii_bus *bus = phydev->bus;
+	int val = 0;
+	int addr;
+
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,9,0))
+	addr = phydev->mdio.addr;
+#else
+	addr = phydev->addr;
+#endif
+
+	val = mdiobus_read(bus, addr, MII_BMCR);
+	return mdiobus_write(bus, addr, MII_BMCR, (u16)(val & ~BMCR_PDOWN));
+}
+
 static int
 qca_phy_probe(struct phy_device *pdev)
 {
@@ -1850,6 +1882,8 @@ static struct phy_driver qca_phy_driver = {
 	.config_init= &qca_phy_config_init,
 	.config_aneg= &qca_phy_config_aneg,
 	.read_status= &qca_phy_read_status,
+	.suspend	= qca_phy_suspend,
+	.resume		= qca_phy_resume,
 	.features	= PHY_BASIC_FEATURES,
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,9,0))
 	.mdiodrv.driver		= { .owner = THIS_MODULE },
