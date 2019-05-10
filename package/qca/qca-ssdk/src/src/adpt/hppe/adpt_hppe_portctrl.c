@@ -1177,33 +1177,43 @@ adpt_hppe_ports_link_status_get(a_uint32_t dev_id, a_uint32_t * status)
 		return SW_NOT_INITIALIZED;
 
 	*status = 0x0;
-	for (port_id = 0; port_id < pdev->nr_ports; port_id++)
+	for (port_id = 0; port_id < SW_MAX_NR_PORT; port_id++)
 	{
-		if (port_id >= SW_MAX_NR_PORT)
-			break;
-
 		/* for those ports without PHY device should be sfp port */
 		if (A_FALSE == _adpt_hppe_port_phy_connected(dev_id, port_id))
 		{
-			if (port_id == SSDK_PHYSICAL_PORT0 ||
-				port_id == SSDK_PHYSICAL_PORT7)
+			if (hsl_port_prop_check(dev_id, port_id, HSL_PP_CPU) ||
+				hsl_port_prop_check(dev_id, port_id, HSL_PP_INNER))
+			{
 				*status |= (0x1 << port_id);
-			else {
+			}
+			else
+			{
+				if(!hsl_port_prop_check(dev_id, port_id, HSL_PP_PHY))
+				{
+					continue;
+				}
 				rv = _adpt_phy_status_get_from_ppe(dev_id,
 					port_id, &phy_status);
 				SW_RTN_ON_ERROR (rv);
 
 				if (phy_status.link_status == PORT_LINK_UP)
+				{
 					*status |= (0x1 << port_id);
+				}
 				else
+				{
 					*status &= ~(0x1 << port_id);
+				}
 			}
 		}
 		else
 		{
 			SW_RTN_ON_NULL (phy_drv = hsl_phy_api_ops_get (dev_id, port_id));
 			if (NULL == phy_drv->phy_link_status_get)
+			{
 				return SW_NOT_SUPPORTED;
+			}
 			rv = hsl_port_prop_get_phyid(dev_id, port_id, &phy_id);
 			SW_RTN_ON_ERROR(rv);
 

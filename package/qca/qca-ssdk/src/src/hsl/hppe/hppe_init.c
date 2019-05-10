@@ -74,7 +74,7 @@ hppe_portproperty_init(a_uint32_t dev_id)
 						if (SW_IS_PBMP_MEMBER(bitmap, port_id))
 						{
 							SW_RTN_ON_ERROR
-							(hsl_port_prop_set(dev_id, port_id, p_type));
+							(hsl_port_prop_set(dev_id, port_id,p_type));
 						}
 						break;
 
@@ -82,24 +82,31 @@ hppe_portproperty_init(a_uint32_t dev_id)
 						if (SW_IS_PBMP_MEMBER(inner_pbmp, port_id))
 						{
 							SW_RTN_ON_ERROR
-							(hsl_port_prop_set(dev_id, port_id, p_type));
+							(hsl_port_prop_set(dev_id, port_id,p_type));
 						}
 						break;
 
 					case HSL_PP_INCL_CPU:
-						/* include cpu port but exclude wan port in some cases */
-						/* but which port is wan port, we are no meaning */
+						/*the ports include cpu port*/
 						SW_RTN_ON_ERROR
 						(hsl_port_prop_set(dev_id, port_id, p_type));
 						break;
 
 					case HSL_PP_EXCL_CPU:
-						/* exclude cpu port and wan port in some cases */
-						/* which port is wan port, we are no meaning but port0
-						is always CPU port */
+						/*the ports exclude cpu port*/
 						if (port_id != pdev->cpu_port_nr)
+						{
 							SW_RTN_ON_ERROR
-							(hsl_port_prop_set(dev_id, port_id, p_type));
+							(hsl_port_prop_set(dev_id, port_id,p_type));
+						}
+						break;
+
+					case HSL_PP_CPU:/*cpu port*/
+						if (port_id == pdev->cpu_port_nr)
+						{
+							SW_RTN_ON_ERROR
+							(hsl_port_prop_set(dev_id, port_id,p_type));
+						}
 						break;
 
 					default:

@@ -26,6 +26,7 @@ extern "c" {
         HSL_PP_INCL_CPU,   /* setting may include cpu port */
         HSL_PP_EXCL_CPU,   /* setting exclude cpu port */
         HSL_PP_INNER,   /* setting inner ports */
+        HSL_PP_CPU, /* setting cpu ports */
         HSL_PP_BUTT
     }
     hsl_port_prop_t;
