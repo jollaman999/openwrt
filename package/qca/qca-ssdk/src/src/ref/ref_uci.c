@@ -7283,7 +7283,10 @@ parse_nat_global(struct switch_val *val)
 	struct switch_ext *switch_ext_p, *ext_value_p;
 	int rv = 0;
 	char *sync_str = "disable";
+	char *portbmp_str = "0x20";
 	val_ptr[1] = sync_str;
+	parameter_length++;
+	val_ptr[2] = portbmp_str;
 	parameter_length++;
 	switch_ext_p = val->value.ext_val;
 	while(switch_ext_p) {
