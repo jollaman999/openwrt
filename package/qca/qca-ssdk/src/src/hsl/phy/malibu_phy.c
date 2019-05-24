@@ -20,7 +20,7 @@
 #include "hsl_phy.h"
 #include "ssdk_plat.h"
 
-static a_uint32_t first_phy_addr = 0;
+static a_uint32_t first_phy_addr = MAX_PHY_ADDR;
 
 static a_uint16_t
 _phy_reg_read(a_uint32_t dev_id, a_uint32_t phy_addr, a_uint32_t reg)
@@ -2698,7 +2698,7 @@ malibu_phy_get_eee_status(a_uint32_t dev_id, a_uint32_t phy_id,
 sw_error_t
 malibu_phy_hw_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 {
-	a_uint32_t port_id = 0, phy_addr = 0, phy_cnt = 0;
+	a_uint32_t port_id = 0, phy_addr = 0;
 	a_uint16_t dac_value,led_status, phy_data;
 	a_uint32_t phy_id = 0, mode;
 
@@ -2706,15 +2706,10 @@ malibu_phy_hw_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 	{
 		if (port_bmp & (0x1 << port_id))
 		{
-			phy_cnt ++;
 			phy_addr = qca_ssdk_port_to_phy_addr(dev_id, port_id);
-			if (phy_cnt == 1)
+			if (phy_addr < first_phy_addr)
 			{
 				first_phy_addr = phy_addr;
-				malibu_phy_get_phy_id(dev_id, first_phy_addr, &phy_id);
-				/* software get 8072 phy chip's firstly address to init phy chip*/
-				if ((phy_id == MALIBU_1_1_2PORT) && (first_phy_addr >= 0x3))
-					first_phy_addr = first_phy_addr - 0x3;
 			}
 			/*enable phy power saving function by default */
 			malibu_phy_set_8023az(dev_id, phy_addr, A_TRUE);
@@ -2737,6 +2732,11 @@ malibu_phy_hw_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 				MALIBU_PHY_MMD7_LED_1000_CTRL1, led_status);
 		}
 	}
+
+	malibu_phy_get_phy_id(dev_id, first_phy_addr, &phy_id);
+	/* software get 8072 phy chip's firstly address to init phy chip */
+	if ((phy_id == MALIBU_1_1_2PORT) && (first_phy_addr >= 0x3))
+		first_phy_addr = first_phy_addr - 0x3;
 
 	/*workaround to enable AZ transmitting ability*/
 	malibu_phy_mmd_write(dev_id, first_phy_addr + 5, MALIBU_PHY_MMD1_NUM,
