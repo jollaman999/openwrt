@@ -398,7 +398,7 @@ adpt_hppe_qos_cosmap_dscp_get(a_uint32_t dev_id, a_uint8_t group_id,
 
 sw_error_t
 adpt_hppe_qos_cosmap_flow_set(a_uint32_t dev_id, a_uint8_t group_id,
-					a_uint8_t flow, fal_qos_cosmap_t *cosmap)
+					a_uint16_t flow, fal_qos_cosmap_t *cosmap)
 {
 	sw_error_t rv = SW_OK;
 	union flow_qos_group_0_u flow_qos_group_0;
@@ -592,7 +592,7 @@ adpt_hppe_queue_scheduler_get(a_uint32_t dev_id, a_uint32_t node_id,
 
 sw_error_t
 adpt_hppe_qos_cosmap_flow_get(a_uint32_t dev_id, a_uint8_t group_id,
-					a_uint8_t flow, fal_qos_cosmap_t *cosmap)
+					a_uint16_t flow, fal_qos_cosmap_t *cosmap)
 {
 	sw_error_t rv = SW_OK;
 	union flow_qos_group_0_u flow_qos_group_0;

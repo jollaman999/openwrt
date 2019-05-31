@@ -767,7 +767,7 @@ _fal_qos_cosmap_dscp_get(a_uint32_t dev_id, a_uint8_t group_id,
 }
 sw_error_t
 _fal_qos_cosmap_flow_set(a_uint32_t dev_id, a_uint8_t group_id,
-					a_uint8_t flow, fal_qos_cosmap_t *cosmap)
+					a_uint16_t flow, fal_qos_cosmap_t *cosmap)
 {
 	adpt_api_t *p_api;
 	sw_error_t rv = SW_OK;
@@ -843,7 +843,7 @@ _fal_qos_port_remark_set(a_uint32_t dev_id, fal_port_t port_id,
 
 sw_error_t
 _fal_qos_cosmap_flow_get(a_uint32_t dev_id, a_uint8_t group_id,
-					a_uint8_t flow, fal_qos_cosmap_t *cosmap)
+					a_uint16_t flow, fal_qos_cosmap_t *cosmap)
 {
 	adpt_api_t *p_api;
 	sw_error_t rv = SW_OK;
@@ -1797,7 +1797,7 @@ fal_qos_cosmap_dscp_get(a_uint32_t dev_id, a_uint8_t group_id,
 }
 sw_error_t
 fal_qos_cosmap_flow_set(a_uint32_t dev_id, a_uint8_t group_id,
-					a_uint8_t flow, fal_qos_cosmap_t *cosmap)
+					a_uint16_t flow, fal_qos_cosmap_t *cosmap)
 {
 	sw_error_t rv = SW_OK;
 
@@ -1853,7 +1853,7 @@ fal_qos_port_remark_set(a_uint32_t dev_id, fal_port_t port_id,
 
 sw_error_t
 fal_qos_cosmap_flow_get(a_uint32_t dev_id, a_uint8_t group_id,
-					a_uint8_t flow, fal_qos_cosmap_t *cosmap)
+					a_uint16_t flow, fal_qos_cosmap_t *cosmap)
 {
 	sw_error_t rv = SW_OK;
 

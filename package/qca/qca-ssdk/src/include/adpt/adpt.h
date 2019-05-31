@@ -756,7 +756,7 @@ typedef sw_error_t (*adpt_qos_port_remark_get_func)(a_uint32_t dev_id, fal_port_
 typedef sw_error_t (*adpt_qos_cosmap_dscp_get_func)(a_uint32_t dev_id, a_uint8_t group_id,
 					a_uint8_t dscp, fal_qos_cosmap_t *cosmap);
 typedef sw_error_t (*adpt_qos_cosmap_flow_set_func)(a_uint32_t dev_id, a_uint8_t group_id,
-					a_uint8_t flow, fal_qos_cosmap_t *cosmap);
+					a_uint16_t flow, fal_qos_cosmap_t *cosmap);
 typedef sw_error_t (*adpt_qos_port_group_set_func)(a_uint32_t dev_id, fal_port_t port_id,
 					fal_qos_group_t *group);
 typedef sw_error_t (*adpt_ring_queue_map_set_func)(a_uint32_t dev_id,
@@ -766,7 +766,7 @@ typedef sw_error_t (*adpt_qos_cosmap_dscp_set_func)(a_uint32_t dev_id, a_uint8_t
 typedef sw_error_t (*adpt_qos_port_remark_set_func)(a_uint32_t dev_id, fal_port_t port_id,
 					fal_qos_remark_enable_t *remark);
 typedef sw_error_t (*adpt_qos_cosmap_flow_get_func)(a_uint32_t dev_id, a_uint8_t group_id,
-					a_uint8_t flow, fal_qos_cosmap_t *cosmap);
+					a_uint16_t flow, fal_qos_cosmap_t *cosmap);
 typedef sw_error_t (*adpt_qos_port_group_get_func)(a_uint32_t dev_id, fal_port_t port_id,
 					fal_qos_group_t *group);
 typedef sw_error_t (*adpt_ring_queue_map_get_func)(a_uint32_t dev_id,
