@@ -482,7 +482,7 @@ fal_qos_cosmap_pcp_get(a_uint32_t dev_id, a_uint8_t group_id,
 
 sw_error_t
 fal_qos_cosmap_flow_set(a_uint32_t dev_id, a_uint8_t group_id,
-					a_uint8_t flow, fal_qos_cosmap_t *cosmap)
+					a_uint16_t flow, fal_qos_cosmap_t *cosmap)
 {
     sw_error_t rv;
 
@@ -492,7 +492,7 @@ fal_qos_cosmap_flow_set(a_uint32_t dev_id, a_uint8_t group_id,
 
 sw_error_t
 fal_qos_cosmap_flow_get(a_uint32_t dev_id, a_uint8_t group_id,
-					a_uint8_t flow, fal_qos_cosmap_t *cosmap)
+					a_uint16_t flow, fal_qos_cosmap_t *cosmap)
 {
     sw_error_t rv;
 
