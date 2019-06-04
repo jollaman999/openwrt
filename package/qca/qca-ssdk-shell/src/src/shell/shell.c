@@ -716,12 +716,17 @@ cmd_run_batch (char *cmd_str)
     while ((read = getline(&line, &len, in_fd)) != -1)
     {
         //dprintf("(%d)%s",read, line);
-        if(read <= 1 ) continue;
+        if (read <= 1 )
+	{
+	    continue;
+	}
 
-        if(line[strlen(line)-1] == '\n');
-        line[strlen(line)-1] = '\0';
+	if (line[strlen(line)-1] == '\n')
+	{
+	    line[strlen(line)-1] = '\0';
+	}
 
-        if(!strncmp(line, "echo", 4))
+        if (!strncmp(line, "echo", 4))
         {
             dprintf("%s\n", line+strlen("echo "));
             continue;
