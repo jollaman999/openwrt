@@ -62,7 +62,7 @@ adpt_hppe_ucast_hash_map_set(
 	memset(&ucast_hash_map_tbl, 0, sizeof(ucast_hash_map_tbl));
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	index = profile << 4 | rss_hash;
+	index = profile << 8 | rss_hash;
 	ucast_hash_map_tbl.bf.hash = queue_hash;
 	
 	return hppe_ucast_hash_map_tbl_set(dev_id, index, &ucast_hash_map_tbl);
@@ -465,7 +465,7 @@ adpt_hppe_ucast_hash_map_get(
 	memset(&ucast_hash_map_tbl, 0, sizeof(ucast_hash_map_tbl));
 	ADPT_DEV_ID_CHECK(dev_id);
 
-	index = profile << 4 | rss_hash;
+	index = profile << 8 | rss_hash;
 	
 	rv = hppe_ucast_hash_map_tbl_get(dev_id, index, &ucast_hash_map_tbl);
 	if (rv)
