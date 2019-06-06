@@ -778,16 +778,19 @@ adpt_hppe_flow_host_add(
 		a_uint32_t add_mode,
 		fal_flow_host_entry_t *flow_host)
 {
+	sw_error_t rv = SW_OK;
 	fal_flow_entry_t *flow_entry = &(flow_host->flow_entry);
 	fal_host_entry_t *host_entry = &(flow_host->host_entry);
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(flow_host);
 
-	adpt_hppe_ip_flow_host_data_add(dev_id, host_entry);
-	adpt_hppe_flow_entry_host_op_add(dev_id, add_mode, flow_entry);
+	rv = adpt_hppe_ip_flow_host_data_add(dev_id, host_entry);
+	SW_RTN_ON_ERROR(rv);
+	rv = adpt_hppe_flow_entry_host_op_add(dev_id, add_mode, flow_entry);
+	SW_RTN_ON_ERROR(rv);
 
-	hppe_flow_host_tbl_op_rslt_host_entry_index_get(dev_id, &host_entry->entry_id);
-	return SW_OK;
+	rv = hppe_flow_host_tbl_op_rslt_host_entry_index_get(dev_id, &host_entry->entry_id);
+	return rv;
 }
 
 sw_error_t
