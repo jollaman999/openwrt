@@ -66,7 +66,9 @@ static char *sfe_cm_exception_events_string[SFE_CM_EXCEPTION_MAX] = {
 	"PACKET_MULTICAST",
 	"NO_IIF",
 	"NO_CT",
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,14,0))
 	"CT_NO_TRACK",
+#endif
 	"CT_NO_CONFIRM",
 	"CT_IS_ALG",
 	"IS_IPV4_MCAST",
@@ -223,7 +225,11 @@ static bool sfe_cm_find_dev_and_mac_addr(sfe_ip_addr_t *addr, struct net_device 
 
 		dst = (struct dst_entry *)rt;
 	} else {
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,19,0))
 		rt6 = rt6_lookup(&init_net, (struct in6_addr *)addr->ip6, 0, 0, 0);
+#else
+		rt6 = rt6_lookup(&init_net, (struct in6_addr *)addr->ip6, 0, 0, 0, 0);
+#endif
 		if (!rt6) {
 			goto ret_fail;
 		}
@@ -759,6 +765,18 @@ static struct nf_hook_ops sfe_cm_ops_post_routing[] __read_mostly = {
 #endif
 };
 
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,19,0))
+static inline struct nf_udp_net *udp_pernet(struct net *net)
+{
+	return &net->ct.nf_ct_proto.udp;
+}
+
+static unsigned int *udp_get_timeouts(struct net *net)
+{
+	return udp_pernet(net)->timeouts;
+}
+#endif
+
 /*
  * sfe_cm_sync_rule()
  *	Synchronize a connection's state.
@@ -876,14 +894,22 @@ static void sfe_cm_sync_rule(struct sfe_connection_sync *sis)
 			u_int64_t reply_pkts = atomic64_read(&SFE_ACCT_COUNTER(acct)[IP_CT_DIR_REPLY].packets);
 
 			if (reply_pkts != 0) {
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,19,0))
 				struct nf_conntrack_l4proto *l4proto;
+#endif
 				unsigned int *timeouts;
 
 				set_bit(IPS_SEEN_REPLY_BIT, &ct->status);
 				set_bit(IPS_ASSURED_BIT, &ct->status);
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,19,0))
 				l4proto = __nf_ct_l4proto_find((sis->is_v6 ? AF_INET6 : AF_INET), IPPROTO_UDP);
 				timeouts = nf_ct_timeout_lookup(&init_net, ct, l4proto);
+#else
+				timeouts = nf_ct_timeout_lookup(ct);
+				if (!timeouts)
+					timeouts = udp_get_timeouts(nf_ct_net(ct));
+#endif
 
 				spin_lock_bh(&ct->lock);
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(4,9,0))
