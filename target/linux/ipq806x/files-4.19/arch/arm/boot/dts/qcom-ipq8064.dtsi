@@ -949,15 +949,13 @@
 			#clock-cells = <1>;
 			#reset-cells = <1>;
 			#power-domain-cells = <1>;
-		};
-
-		tsens: thermal-sensor@900000 {
-			compatible = "qcom,ipq8064-tsens";
-			reg = <0x900000 0x3680>;
-			nvmem-cells = <&tsens_calib>, <&tsens_backup>;
-			nvmem-cell-names = "calib", "calib_backup";
-			interrupts = <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>;
-			#thermal-sensor-cells = <1>;
+			tsens: thermal-sensor {
+				compatible = "qcom,ipq8064-tsens";
+				nvmem-cells = <&tsens_calib>, <&tsens_backup>;
+				nvmem-cell-names = "calib", "calib_backup";
+				interrupts = <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>;
+				#thermal-sensor-cells = <1>;
+			};
 		};
 
 		tcsr: syscon@1a400000 {
