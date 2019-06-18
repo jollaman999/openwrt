@@ -785,6 +785,59 @@ qca_hppe_qos_scheduler_hw_init(a_uint32_t dev_id)
 
 #define LIST_ID_BYP_FDB_LRN 63/*reserved for bypass fdb learning*/
 #define LIST_PRI_BYP_FDB_LRN 32
+#define LIST_ID_BYP_EG_STP 56/* reserved for bypass egress stp */
+#define LIST_PRI_BYP_EG_STP 48
+#define RULE_NUM_BYP_EG_STP 4
+#define EDMA_SERVCODE 1
+#define ETH_TYPE_EAPOL 0x888E
+#define ETH_TYPE_LACP 0x8809
+#define ETH_TYPE_PTP 0x88F7
+
+sw_error_t qca_hppe_acl_byp_eg_stp(a_uint32_t dev_id)
+{
+	a_uint32_t rule_id = 0;
+	fal_acl_rule_t rule = { 0 };
+	a_uint8_t bpdu_dst_mac[6]={0x01, 0x80, 0xc2, 0x00, 0x00, 0x00};
+
+	/* Create an acl list to bypass egress stp for specific packets */
+	fal_acl_list_creat(dev_id, LIST_ID_BYP_EG_STP, LIST_PRI_BYP_EG_STP);
+
+	/* Add rules for the acl list */
+	rule.rule_type = FAL_ACL_RULE_MAC;
+	rule.bypass_bitmap |= (1<<FAL_ACL_BYPASS_EG_STP_CHECK);
+
+	for (rule_id = 0; rule_id < RULE_NUM_BYP_EG_STP; rule_id++)
+	{
+		if(rule_id == 0)/* EAPOL */
+		{
+			rule.ethtype_val = ETH_TYPE_EAPOL;
+			rule.ethtype_mask = 0xffff;
+			FAL_FIELD_FLG_SET(rule.field_flg, FAL_ACL_FIELD_MAC_ETHTYPE);
+		}
+		else if(rule_id == 1)/* LACP */
+		{
+			rule.ethtype_val = ETH_TYPE_LACP;
+		}
+		else if(rule_id == 2)/* PTP */
+		{
+			rule.ethtype_val = ETH_TYPE_PTP;
+		}
+		else/* STP BPDU */
+		{
+			memcpy(rule.dest_mac_val.uc, bpdu_dst_mac, 6);
+			memset(rule.dest_mac_mask.uc, 0xff, 6);
+			FAL_FIELD_FLG_CLR(rule.field_flg, FAL_ACL_FIELD_MAC_ETHTYPE);
+			FAL_FIELD_FLG_SET(rule.field_flg, FAL_ACL_FIELD_MAC_DA);
+		}
+		fal_acl_rule_add(dev_id, LIST_ID_BYP_EG_STP, rule_id, 1, &rule);
+	}
+
+	/* Bind the acl list to servcode */
+	fal_acl_list_bind(dev_id, LIST_ID_BYP_EG_STP, FAL_ACL_DIREC_IN,
+				FAL_ACL_BIND_SERVICE_CODE, EDMA_SERVCODE);
+
+	return SW_OK;
+}
 
 sw_error_t qca_hppe_acl_byp_intf_mac_learn(a_uint32_t dev_id)
 {
@@ -919,6 +972,8 @@ sw_error_t qca_hppe_hw_init(ssdk_init_cfg *cfg, a_uint32_t dev_id)
 	rv = qca_hppe_flow_hw_init(dev_id);
 	SW_RTN_ON_ERROR(rv);
 	rv = qca_hppe_acl_byp_intf_mac_learn(dev_id);
+	SW_RTN_ON_ERROR(rv);
+	rv = qca_hppe_acl_byp_eg_stp(dev_id);
 	SW_RTN_ON_ERROR(rv);
 	rv = qca_hppe_interface_mode_init(dev_id, cfg->mac_mode, cfg->mac_mode1,
 				cfg->mac_mode2);
