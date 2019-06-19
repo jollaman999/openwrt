@@ -71,6 +71,8 @@ qca_ar8327_sw_atu_dump(struct switch_dev *dev,
 	a_uint32_t i = 0;
 	fal_fdb_op_t option;
 	fal_fdb_entry_t entry;
+	fal_pbmp_t port_bmp = 0;
+	a_uint32_t port_type = 0;
 
 	buf = (char*) priv->buf;
 	memset(buf, 0, 2048);
@@ -83,11 +85,27 @@ qca_ar8327_sw_atu_dump(struct switch_dev *dev,
 		rv = fal_fdb_entry_extend_getfirst(priv->device_id, &option, &entry);
 	while (!rv)
     {
-		len += snprintf(buf+len, 2048-len, "MAC: %02x:%02x:%02x:%02x:%02x:%02x PORTMAP: 0x%02x VID: 0x%x STATUS: 0x%x\n",
-			entry.addr.uc[0],entry.addr.uc[1],entry.addr.uc[2],entry.addr.uc[3],entry.addr.uc[4],entry.addr.uc[5],
-			entry.port.map,
-			entry.fid,
-			entry.static_en);
+		len += snprintf(buf+len, 2048-len, "MAC: %02x:%02x:%02x:%02x:%02x:%02x ",
+			entry.addr.uc[0],entry.addr.uc[1],entry.addr.uc[2],entry.addr.uc[3],
+			entry.addr.uc[4],entry.addr.uc[5]);
+		if(entry.portmap_en == A_TRUE) {
+			port_bmp = entry.port.map;
+			len += snprintf(buf+len, 2048-len,
+				"PORTMAP: 0x%02x VID: 0x%x STATUS: 0x%x\n",
+				port_bmp, entry.fid, entry.static_en);
+		} else {
+			port_type = FAL_PORT_ID_TYPE(entry.port.id);
+			if(port_type == FAL_PORT_TYPE_PPORT) {
+				port_bmp = 1 << entry.port.id;
+				len += snprintf(buf+len, 2048-len,
+					"PORTMAP: 0x%02x VID: 0x%x STATUS: 0x%x\n",
+					port_bmp, entry.fid, entry.static_en);
+			} else {
+				len += snprintf(buf+len, 2048-len,
+					"DEST_INFO: 0x%02x VID: 0x%x STATUS: 0x%x\n",
+					entry.port.id, entry.fid, entry.static_en);
+			}
+		}
 
 		if (2048-len < 74){
 //			snprintf(buf+len, 2048-len, "Buffer not enough!\n");

@@ -50,10 +50,28 @@ qca_ar8327_sw_set_max_frame_size(struct switch_dev *dev,
 	struct qca_phy_priv *priv = qca_phy_priv_get(dev);
 	a_uint32_t size = val->value.i;
 	a_uint32_t ret;
+	a_uint32_t port_id = SSDK_PHYSICAL_PORT0;
 
-	ret = fal_frame_max_size_set(priv->device_id, size);
-	if (ret){
-		return -1;
+	if (priv->version == QCA_VER_HPPE)
+	{
+		for(port_id = SSDK_PHYSICAL_PORT1; port_id <= SSDK_PHYSICAL_PORT6;
+			port_id++)
+		{
+			ret = fal_port_max_frame_size_set(priv->device_id,
+				port_id, size);
+			if(ret)
+			{
+				return -1;
+			}
+		}
+	}
+	else
+	{
+		ret = fal_frame_max_size_set(priv->device_id, size);
+		if (ret)
+		{
+			return -1;
+		}
 	}
 
 	return 0;
@@ -68,7 +86,15 @@ qca_ar8327_sw_get_max_frame_size(struct switch_dev *dev,
 	a_uint32_t size = 0;
 	a_uint32_t ret;
 
-	ret = fal_frame_max_size_get(priv->device_id, &size);
+	if (priv->version == QCA_VER_HPPE)
+	{
+		ret = fal_port_max_frame_size_get(priv->device_id,
+			SSDK_PHYSICAL_PORT1, &size);
+	}
+	else
+	{
+		ret = fal_frame_max_size_get(priv->device_id, &size);
+	}
 	if (ret){
 		return -1;
 	}
