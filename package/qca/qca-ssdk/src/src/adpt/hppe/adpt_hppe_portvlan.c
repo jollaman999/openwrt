@@ -1573,7 +1573,8 @@ adpt_hppe_port_vlan_trans_adv_add(a_uint32_t dev_id, fal_port_t port_id, fal_por
 				fal_vlan_trans_adv_rule_t * rule, fal_vlan_trans_adv_action_t * action)
 {
 	sw_error_t rtn = SW_OK;
-	a_uint32_t idx, entry_idx, entry_sign, rule_valid;
+	a_uint32_t entry_idx, entry_sign, rule_valid;
+	a_int32_t idx;
 	fal_vlan_trans_adv_rule_t temp_rule;
 	fal_vlan_trans_adv_action_t temp_action;
 
@@ -1583,7 +1584,7 @@ adpt_hppe_port_vlan_trans_adv_add(a_uint32_t dev_id, fal_port_t port_id, fal_por
 		return SW_FAIL;
 
 	entry_sign = 0;
-	for (idx = 0; idx < XLT_RULE_TBL_NUM; idx++) {
+	for (idx = XLT_RULE_TBL_NUM - 1; idx >= 0; idx--) {
 		aos_mem_zero(&temp_rule, sizeof (fal_vlan_trans_adv_rule_t));
 		aos_mem_zero(&temp_action, sizeof (fal_vlan_trans_adv_action_t));
 		rule_valid = _get_port_vlan_trans_adv_rule_by_index(dev_id, idx, direction, &temp_rule, &temp_action);

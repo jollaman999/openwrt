@@ -89,8 +89,8 @@ static sw_error_t _adpt_hppe_vsi_xlt_update(a_uint32_t dev_id,
 				a_uint32_t stag_vid, a_uint32_t ctag_vid,
 				a_uint32_t op)
 {
-	a_uint32_t index = 0;
-	a_uint32_t new_entry = XLT_RULE_TBL_NUM;
+	a_int32_t index = 0;
+	a_uint32_t new_entry = 0;
 	sw_error_t rv;
 	union xlt_rule_tbl_u xlt_rule;
 	union xlt_action_tbl_u xlt_action;
@@ -98,7 +98,7 @@ static sw_error_t _adpt_hppe_vsi_xlt_update(a_uint32_t dev_id,
 	/*printk("%s,%d: port_id 0x%x svlan %d cvlan %d vsi %d op %d\n",
 			__FUNCTION__, __LINE__, port_id, stag_vid, ctag_vid, vsi_id, op);*/
 
-	for(index = 0; index < XLT_RULE_TBL_NUM; index++)
+	for(index = XLT_RULE_TBL_NUM - 1; index >= 0; index--)
 	{
 		rv = hppe_xlt_rule_tbl_get(dev_id, index, &xlt_rule);
 		if( rv != SW_OK )
@@ -106,7 +106,7 @@ static sw_error_t _adpt_hppe_vsi_xlt_update(a_uint32_t dev_id,
 		rv = hppe_xlt_action_tbl_get(dev_id, index, &xlt_action);
 		if( rv != SW_OK )
 			return rv;
-		if(xlt_rule.bf.valid == A_FALSE && index < new_entry)
+		if(xlt_rule.bf.valid == A_FALSE && index >= new_entry)
 		{
 			new_entry = index;
 		}
@@ -122,7 +122,7 @@ static sw_error_t _adpt_hppe_vsi_xlt_update(a_uint32_t dev_id,
 		}
 	}
 
-	if(index < XLT_RULE_TBL_NUM) /*found*/
+	if(index >= 0) /*found*/
 	{
 		if(op == ADPT_VSI_DEL)/*Delete*/
 		{
