@@ -350,7 +350,8 @@ cmd_parse_sw(char **cmd_str, a_ulong_t * arg_val)
                               api_id == SW_CMD_CTRLPKT_SHOW ||
                               api_id == SW_CMD_INTFMAC_SHOW ||
                               api_id == SW_CMD_PUBADDR_SHOW )) ||
-            ( arg_index == 1 && api_id == SW_CMD_SET_DEVID) )
+		    ( arg_index == 1 && api_id == SW_CMD_SET_DEVID) ||
+		    ( arg_index == 2 && api_id == SW_CMD_PT_VLAN_TRANS_ADV_SHOW) )
         return SW_OK;
 
     return SW_BAD_PARAM;

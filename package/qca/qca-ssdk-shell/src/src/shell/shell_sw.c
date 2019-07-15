@@ -728,3 +728,54 @@ cmd_show_flow(a_ulong_t *arg_val)
     return SW_OK;
 }
 
+sw_error_t
+cmd_show_ptvlan_entry(a_ulong_t *arg_val)
+{
+	sw_error_t rtn;
+	a_uint32_t port_id, direction, cnt;
+	a_uint32_t p_size = sizeof(a_ulong_t);
+
+	fal_vlan_trans_adv_rule_t *vlan_rule = (fal_vlan_trans_adv_rule_t *)(ioctl_buf +
+			(sizeof(sw_error_t) + p_size - 1) / p_size);
+	fal_vlan_trans_adv_action_t *vlan_action = (fal_vlan_trans_adv_action_t *)(ioctl_buf +
+			(sizeof(sw_error_t) + p_size - 1) / p_size +
+			(sizeof(fal_vlan_trans_adv_rule_t) + p_size - 1) / p_size);
+
+	aos_mem_zero(vlan_rule, sizeof(fal_vlan_trans_adv_rule_t));
+	aos_mem_zero(vlan_action, sizeof(fal_vlan_trans_adv_action_t));
+
+	port_id = arg_val[1];
+	direction = arg_val[2];
+	cnt = 0;
+
+	if (direction != FAL_PORT_VLAN_INGRESS &&
+			direction != FAL_PORT_VLAN_EGRESS) {
+		return SW_BAD_PARAM;
+	}
+
+	arg_val[0] = SW_API_PT_VLAN_TRANS_ADV_GETFIRST;
+
+	while (1) {
+		arg_val[1] = (a_ulong_t)ioctl_buf;
+		arg_val[2] = get_devid();
+		arg_val[3] = port_id;
+		arg_val[4] = direction;
+		arg_val[5] = (a_ulong_t)vlan_rule;
+		arg_val[6] = (a_ulong_t)vlan_action;
+
+		rtn = cmd_exec_api(arg_val);
+		if ((SW_OK != rtn)  || (SW_OK != (sw_error_t)(*ioctl_buf))) {
+			break;
+		}
+		arg_val[0] = SW_API_PT_VLAN_TRANS_ADV_GETNEXT;
+		cnt++;
+	}
+
+	if((rtn != SW_OK) && (rtn != SW_NOT_FOUND)) {
+		cmd_print_error(rtn);
+	} else {
+		dprintf("\nvlan total %d entries\n", cnt);
+	}
+
+	return SW_OK;
+}

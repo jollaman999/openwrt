@@ -41,8 +41,9 @@ extern "C" {
     sw_error_t cmd_show_napt(a_uint32_t *arg_val);
     sw_error_t cmd_show_intfmac(a_uint32_t *arg_val);
     sw_error_t cmd_show_pubaddr(a_uint32_t *arg_val);
-	sw_error_t cmd_show_flow(a_uint32_t *arg_val);
+    sw_error_t cmd_show_flow(a_uint32_t *arg_val);
     sw_error_t cmd_show_ctrlpkt(a_uint32_t *arg_val);
+    sw_error_t cmd_show_ptvlan_entry(a_ulong_t *arg_val);
 /*qca808x_start*/
 #ifdef __cplusplus
 }
