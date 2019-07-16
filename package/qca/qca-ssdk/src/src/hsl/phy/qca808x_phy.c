@@ -187,6 +187,46 @@ qca808x_phy_mmd_read(a_uint32_t dev_id, a_uint32_t phy_id,
 	return phy_data;
 }
 
+static sw_error_t
+qca808x_phy_ms_random_seed_set(a_uint32_t dev_id, a_uint32_t phy_id)
+{
+	a_uint16_t phy_data;
+	sw_error_t rv = SW_OK;
+
+	phy_data = qca808x_phy_debug_read(dev_id, phy_id,
+		QCA808X_DEBUG_LOCAL_SEED);
+	phy_data &= ~(QCA808X_MASTER_SLAVE_SEED_CFG);
+	phy_data |= (prandom_u32()%QCA808X_MASTER_SLAVE_SEED_RANGE) << 2;
+	SSDK_DEBUG("QCA808X_DEBUG_LOCAL_SEED:%x\n", phy_data);
+	rv = qca808x_phy_debug_write(dev_id, phy_id,
+		QCA808X_DEBUG_LOCAL_SEED, phy_data);
+
+	return rv;
+}
+
+static sw_error_t
+qca808x_phy_ms_seed_enable(a_uint32_t dev_id, a_uint32_t phy_id,
+	a_bool_t enable)
+{
+	a_uint16_t phy_data;
+	sw_error_t rv = SW_OK;
+
+	phy_data = qca808x_phy_debug_read(dev_id, phy_id,
+		QCA808X_DEBUG_LOCAL_SEED);
+	if(enable)
+	{
+		phy_data |= QCA808X_MASTER_SLAVE_SEED_ENABLE;
+	}
+	else
+	{
+		phy_data &= ~(QCA808X_MASTER_SLAVE_SEED_ENABLE);
+	}
+	rv = qca808x_phy_debug_write(dev_id, phy_id,
+		QCA808X_DEBUG_LOCAL_SEED, phy_data);
+
+	return rv;
+}
+
 /******************************************************************************
 *
 * qca808x_phy_get status
@@ -208,6 +248,19 @@ qca808x_phy_get_status(a_uint32_t dev_id, a_uint32_t phy_id,
 	}
 	else {
 		phy_status->link_status = A_FALSE;
+		SW_RTN_ON_ERROR(
+			qca808x_phy_ms_random_seed_set (dev_id, phy_id));
+		/*protect logic, if MASTER_SLAVE_CONFIG_FAULT is 1,
+			then disable this logic*/
+		phy_data = qca808x_phy_reg_read(dev_id, phy_id,
+			QCA808X_1000BASET_STATUS);
+		if((phy_data & QCA808X_MASTER_SLAVE_CONFIG_FAULT) >> 15)
+		{
+			SW_RTN_ON_ERROR(
+				qca808x_phy_ms_seed_enable (dev_id, phy_id, A_FALSE));
+			SSDK_INFO("master_slave_config_fault was set\n");
+		}
+
 		return SW_OK;
 	}
 
@@ -514,6 +567,9 @@ sw_error_t qca808x_phy_reset(a_uint32_t dev_id, a_uint32_t phy_id)
 
 	rv = qca808x_phy_reg_write(dev_id, phy_id, QCA808X_PHY_CONTROL,
 			     phy_data | QCA808X_CTRL_SOFTWARE_RESET);
+	SW_RTN_ON_ERROR(rv);
+	/*the configure will lost when reset.*/
+	rv = qca808x_phy_ms_seed_enable(dev_id, phy_id, A_TRUE);
 
 	return rv;
 }
@@ -1877,6 +1933,67 @@ qca808x_phy_led_init(a_uint32_t dev_id, a_uint32_t phy_id)
 }
 
 static sw_error_t
+qca808x_phy_fast_retrain_cfg(a_uint32_t dev_id, a_uint32_t phy_id)
+{
+	sw_error_t rv = SW_OK;
+
+	rv = qca808x_phy_mmd_write(dev_id, phy_id, QCA808X_PHY_MMD7_NUM,
+		QCA808X_PHY_MMD7_AUTONEGOTIATION_CONTROL,
+		QCA808X_ADVERTISE_2500FULL |
+		QCA808X_PHY_FAST_RETRAIN_2500BT |
+		QCA808X_PHY_ADV_LOOP_TIMING);
+	SW_RTN_ON_ERROR(rv);
+	rv = qca808x_phy_mmd_write(dev_id, phy_id, QCA808X_PHY_MMD1_NUM,
+		QCA808X_PHY_MMD1_FAST_RETRAIN_STATUS_CTL,
+		QCA808X_PHY_FAST_RETRAIN_CTRL);
+	SW_RTN_ON_ERROR(rv);
+	rv = qca808x_phy_mmd_write(dev_id, phy_id, QCA808X_PHY_MMD1_NUM,
+		QCA808X_PHY_MMD1_MSE_THRESHOLD_20DB,
+		QCA808X_PHY_MSE_THRESHOLD_20DB_VALUE);
+	SW_RTN_ON_ERROR(rv);
+	rv = qca808x_phy_mmd_write(dev_id, phy_id, QCA808X_PHY_MMD1_NUM,
+		QCA808X_PHY_MMD1_MSE_THRESHOLD_17DB,
+		QCA808X_PHY_MSE_THRESHOLD_17DB_VALUE);
+	SW_RTN_ON_ERROR(rv);
+	rv = qca808x_phy_mmd_write(dev_id, phy_id, QCA808X_PHY_MMD1_NUM,
+		QCA808X_PHY_MMD1_MSE_THRESHOLD_27DB,
+		QCA808X_PHY_MSE_THRESHOLD_27DB_VALUE);
+	SW_RTN_ON_ERROR(rv);
+	rv = qca808x_phy_mmd_write(dev_id, phy_id, QCA808X_PHY_MMD1_NUM,
+		QCA808X_PHY_MMD1_MSE_THRESHOLD_28DB,
+		QCA808X_PHY_MSE_THRESHOLD_28DB_VALUE);
+	SW_RTN_ON_ERROR(rv);
+	rv = qca808x_phy_mmd_write(dev_id, phy_id, QCA808X_PHY_MMD7_NUM,
+		QCA808X_PHY_MMD7_ADDR_EEE_LP_ADVERTISEMENT,
+		QCA808X_PHY_EEE_ADV_THP);
+	SW_RTN_ON_ERROR(rv);
+	rv = qca808x_phy_mmd_write(dev_id, phy_id, QCA808X_PHY_MMD7_NUM,
+		QCA808X_PHY_MMD7_TOP_OPTION1,
+		QCA808X_PHY_TOP_OPTION1_DATA);
+	SW_RTN_ON_ERROR(rv);
+	/*adjust the threshold for link down*/
+	rv = qca808x_phy_mmd_write(dev_id, phy_id, QCA808X_PHY_MMD3_NUM,
+		0xa100, 0x9203);
+	SW_RTN_ON_ERROR(rv);
+	rv = qca808x_phy_mmd_write(dev_id, phy_id, QCA808X_PHY_MMD3_NUM,
+		0xa105, 0x8001);
+	SW_RTN_ON_ERROR(rv);
+	rv = qca808x_phy_mmd_write(dev_id, phy_id, QCA808X_PHY_MMD3_NUM,
+		0xa106, 0x1111);
+	SW_RTN_ON_ERROR(rv);
+	rv = qca808x_phy_mmd_write(dev_id, phy_id, QCA808X_PHY_MMD3_NUM,
+		0xa103, 0x1698);
+	SW_RTN_ON_ERROR(rv);
+	rv = qca808x_phy_mmd_write(dev_id, phy_id, QCA808X_PHY_MMD3_NUM,
+		0xa011, 0x5f85);
+	SW_RTN_ON_ERROR(rv);
+	rv = qca808x_phy_mmd_write(dev_id, phy_id, QCA808X_PHY_MMD3_NUM,
+		0xa101, 0x48ad);
+
+	return rv;
+}
+
+static sw_error_t
 qca808x_phy_hw_init(a_uint32_t dev_id,  a_uint32_t port_bmp)
 {
 	a_uint16_t phy_data = 0;
@@ -1903,6 +2020,15 @@ qca808x_phy_hw_init(a_uint32_t dev_id,  a_uint32_t port_bmp)
 			phy_data = QCA808X_PHY_MMD3_AZ_TRAINING_VAL;
 			rv = qca808x_phy_mmd_write(dev_id, phy_addr, QCA808X_PHY_MMD3_NUM,
 				QCA808X_PHY_MMD3_AZ_TRAINING_CTRL, phy_data);
+			SW_RTN_ON_ERROR(rv);
+			/*config the fast retrain*/
+			rv = qca808x_phy_fast_retrain_cfg(dev_id, phy_addr);
+			SW_RTN_ON_ERROR(rv);
+			/*enable seed and configure ramdom seed in order that napa can be
+				as slave easier*/
+			rv = qca808x_phy_ms_seed_enable(dev_id, phy_addr, A_TRUE);
+			SW_RTN_ON_ERROR(rv);
+			rv = qca808x_phy_ms_random_seed_set(dev_id, phy_addr);
 			SW_RTN_ON_ERROR(rv);
 		}
 	}
