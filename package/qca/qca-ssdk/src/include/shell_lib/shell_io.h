@@ -452,5 +452,9 @@ sw_error_t
 cmd_data_check_fieldop(char *cmdstr, fal_acl_field_op_t def, fal_acl_field_op_t * val);
 
 #endif
+sw_error_t
+cmd_data_check_module(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size);
+sw_error_t
+cmd_data_check_func_ctrl(char *cmd_str, void * val, a_uint32_t size);
 #endif
 

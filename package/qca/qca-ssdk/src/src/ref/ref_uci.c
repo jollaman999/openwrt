@@ -11460,6 +11460,49 @@ parse_vsi(const char *command_name, struct switch_val *val)
 }
 #endif
 
+static int
+parse_debug_module_func(struct switch_val *val)
+{
+	struct switch_ext *switch_ext_p, *ext_value_p;
+	int rv = 0;
+
+	switch_ext_p = val->value.ext_val;
+	while (switch_ext_p) {
+		ext_value_p = switch_ext_p;
+
+		if (!strcmp(ext_value_p->option_name, "name")) {
+			switch_ext_p = switch_ext_p->next;
+			continue;
+		} else if (!strcmp(ext_value_p->option_name, "module")) {
+			val_ptr[0] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "bitmap0")) {
+			val_ptr[1] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "bitmap1")) {
+			val_ptr[2] = (char*)ext_value_p->option_value;
+		} else if (!strcmp(ext_value_p->option_name, "bitmap2")) {
+			val_ptr[3] = (char*)ext_value_p->option_value;
+		} else {
+			rv = -1;
+			break;
+		}
+
+		parameter_length++;
+		switch_ext_p = switch_ext_p->next;
+	}
+
+	return rv;
+}
+
+static int
+parse_debug(const char *command_name, struct switch_val *val)
+{
+	int rv = -1;
+	if (!strcmp(command_name, "Module_func")) {
+		rv = parse_debug_module_func(val);
+	}
+	return rv;
+}
+
 static int name_transfer(char *name, char *module, char *cmd)
 {
         char *p;
@@ -11616,6 +11659,8 @@ qca_ar8327_sw_switch_ext(struct switch_dev *dev,
 #ifdef IN_VSI
 		rv = parse_vsi(command_name, val);
 #endif
+	} else if(!strcmp(module_name, "Debug")) {
+		rv = parse_debug(command_name, val);
 	}
 
 	if(!rv) {

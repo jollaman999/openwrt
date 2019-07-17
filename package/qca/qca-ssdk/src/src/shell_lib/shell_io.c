@@ -207,8 +207,8 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_CABLESTATUS, NULL, NULL),
     SW_TYPE_DEF(SW_CABLELEN, NULL, NULL),
     SW_TYPE_DEF(SW_SSDK_CFG, NULL, NULL),
-    SW_TYPE_DEF(SW_MODULE, NULL, NULL),
-    SW_TYPE_DEF(SW_FUNC_CTRL, NULL, NULL),
+    SW_TYPE_DEF(SW_MODULE, (param_check_t)cmd_data_check_module, NULL),
+    SW_TYPE_DEF(SW_FUNC_CTRL, (param_check_t)cmd_data_check_func_ctrl, NULL),
 	#ifdef IN_PORTCONTROL
     SW_TYPE_DEF(SW_HDRMODE, cmd_data_check_hdrmode, NULL),
 	#endif
@@ -13505,3 +13505,91 @@ cmd_data_check_ctrlpkt_appprofile(char *info, void *val, a_uint32_t size)
     return SW_OK;
 }
 #endif
+
+sw_error_t
+cmd_data_check_module(char *cmd_str, a_uint32_t * arg_val, a_uint32_t size)
+{
+	if (cmd_str == NULL)
+		return SW_BAD_PARAM;
+
+	if (!strcasecmp(cmd_str, "acl")) {
+		*arg_val = FAL_MODULE_ACL;
+	} else if (!strcasecmp(cmd_str, "vsi")) {
+		*arg_val = FAL_MODULE_VSI;
+	} else if (!strcasecmp(cmd_str, "ip")) {
+		*arg_val = FAL_MODULE_IP;
+	} else if (!strcasecmp(cmd_str, "flow")) {
+		*arg_val = FAL_MODULE_FLOW;
+	} else if (!strcasecmp(cmd_str, "qm")) {
+		*arg_val = FAL_MODULE_QM;
+	} else if (!strcasecmp(cmd_str, "qos")) {
+		*arg_val = FAL_MODULE_QOS;
+	} else if (!strcasecmp(cmd_str, "bm")) {
+		*arg_val = FAL_MODULE_BM;
+	} else if (!strcasecmp(cmd_str, "servcode")) {
+		*arg_val = FAL_MODULE_SERVCODE;
+	} else if (!strcasecmp(cmd_str, "rsshash")) {
+		*arg_val = FAL_MODULE_RSS_HASH;
+	} else if (!strcasecmp(cmd_str, "pppoe")) {
+		*arg_val = FAL_MODULE_PPPOE;
+	} else if (!strcasecmp(cmd_str, "portctrl")) {
+		*arg_val = FAL_MODULE_PORTCTRL;
+	} else if (!strcasecmp(cmd_str, "shaper")) {
+		*arg_val = FAL_MODULE_SHAPER;
+	} else if (!strcasecmp(cmd_str, "mib")) {
+		*arg_val = FAL_MODULE_MIB;
+	} else if (!strcasecmp(cmd_str, "mirror")) {
+		*arg_val = FAL_MODULE_MIRROR;
+	} else if (!strcasecmp(cmd_str, "fdb")) {
+		*arg_val = FAL_MODULE_FDB;
+	} else if (!strcasecmp(cmd_str, "stp")) {
+		*arg_val = FAL_MODULE_STP;
+	} else if (!strcasecmp(cmd_str, "sec")) {
+		*arg_val = FAL_MODULE_SEC;
+	} else if (!strcasecmp(cmd_str, "trunk")) {
+		*arg_val = FAL_MODULE_TRUNK;
+	} else if (!strcasecmp(cmd_str, "portvlan")) {
+		*arg_val = FAL_MODULE_PORTVLAN;
+	} else if (!strcasecmp(cmd_str, "ctrlpkt")) {
+		*arg_val = FAL_MODULE_CTRLPKT;
+	} else if (!strcasecmp(cmd_str, "policer")) {
+		*arg_val = FAL_MODULE_POLICER;
+	}
+	else
+	{
+		return SW_BAD_VALUE;
+	}
+
+	return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_func_ctrl(char *cmd_str, void * val, a_uint32_t size)
+{
+	sw_error_t rv;
+	fal_func_ctrl_t entry;
+
+	aos_mem_zero(&entry, sizeof (fal_func_ctrl_t));
+
+	rv = __cmd_data_check_complex("bitmap0", "0",
+			"usage: the format is HEX \n", cmd_data_check_uint32,
+			&(entry.bitmap[0]), sizeof (a_uint32_t));
+	if (rv)
+		return rv;
+
+	rv = __cmd_data_check_complex("bitmap1", "0",
+			"usage: the format is HEX \n", cmd_data_check_uint32,
+			&(entry.bitmap[1]), sizeof (a_uint32_t));
+	if (rv)
+		return rv;
+
+	rv = __cmd_data_check_complex("bitmap2", "0",
+			"usage: the format is HEX \n", cmd_data_check_uint32,
+			&(entry.bitmap[2]), sizeof (a_uint32_t));
+	if (rv)
+		return rv;
+
+	*(fal_func_ctrl_t *)val = entry;
+
+	return SW_OK;
+}
