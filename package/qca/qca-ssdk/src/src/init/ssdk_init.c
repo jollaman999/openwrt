@@ -3218,14 +3218,12 @@ static int ssdk_dev_event(struct notifier_block *this, unsigned long event, void
 #ifdef IN_RFS
 #if defined(CONFIG_RFS_ACCEL)
 		case NETDEV_UP:
-			#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,4,0))
 			if (strstr(dev->name, "eth")) {
 				if (dev->netdev_ops && dev->netdev_ops->ndo_register_rfs_filter) {
 					dev->netdev_ops->ndo_register_rfs_filter(dev,
 						ssdk_netdev_rfs_cb);
 				}
 			}
-			#endif
 			break;
 #endif
 #endif
