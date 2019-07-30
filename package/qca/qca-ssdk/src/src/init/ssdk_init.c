@@ -77,7 +77,6 @@
 #endif
 #elif defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
 #include <linux/of.h>
-#include <drivers/leds/leds-ipq40xx.h>
 #include <linux/of_platform.h>
 #include <linux/of_net.h>
 #include <linux/of_address.h>
@@ -93,6 +92,7 @@
 #include "ssdk_plat.h"
 /*qca808x_end*/
 #include "ssdk_clk.h"
+#include "ssdk_led.h"
 #include "ref_vlan.h"
 #include "ref_fdb.h"
 #include "ref_mib.h"
@@ -2615,83 +2615,6 @@ static int ssdk_flow_default_act_init(a_uint32_t dev_id)
 		}
 	}
 
-	return 0;
-}
-
-static int ssdk_dess_led_init(ssdk_init_cfg *cfg)
-{
-	a_uint32_t i,led_num, led_source_id,source_id;
-	led_ctrl_pattern_t  pattern;
-
-	if(cfg->led_source_num != 0) {
-		for (i = 0; i < cfg->led_source_num; i++) {
-
-			led_source_id = cfg->led_source_cfg[i].led_source_id;
-			pattern.mode = cfg->led_source_cfg[i].led_pattern.mode;
-			pattern.map = cfg->led_source_cfg[i].led_pattern.map;
-			pattern.freq = cfg->led_source_cfg[i].led_pattern.freq;
-			#ifdef IN_LED
-			fal_led_source_pattern_set(0, led_source_id,&pattern);
-			#endif
-			led_num = ((led_source_id-1)/3) + 3;
-			source_id = led_source_id%3;
-		#ifndef BOARD_AR71XX
-		#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0)) && (LINUX_VERSION_CODE <= KERNEL_VERSION(4,0,0))
-			if (source_id == 1) {
-				if (led_source_id == 1) {
-					ipq40xx_led_source_select(led_num, LAN0_1000_LNK_ACTIVITY);
-				}
-				if (led_source_id == 4) {
-					ipq40xx_led_source_select(led_num, LAN1_1000_LNK_ACTIVITY);
-				}
-				if (led_source_id == 7) {
-					ipq40xx_led_source_select(led_num, LAN2_1000_LNK_ACTIVITY);
-				}
-				if (led_source_id == 10) {
-					ipq40xx_led_source_select(led_num, LAN3_1000_LNK_ACTIVITY);
-				}
-				if (led_source_id == 13) {
-					ipq40xx_led_source_select(led_num, WAN_1000_LNK_ACTIVITY);
-				}
-			}
-			if (source_id == 2) {
-				if (led_source_id == 2) {
-					ipq40xx_led_source_select(led_num, LAN0_100_LNK_ACTIVITY);
-				}
-				if (led_source_id == 5) {
-					ipq40xx_led_source_select(led_num, LAN1_100_LNK_ACTIVITY);
-				}
-				if (led_source_id == 8) {
-					ipq40xx_led_source_select(led_num, LAN2_100_LNK_ACTIVITY);
-				}
-				if (led_source_id == 11) {
-					ipq40xx_led_source_select(led_num, LAN3_100_LNK_ACTIVITY);
-				}
-				if (led_source_id == 14) {
-					ipq40xx_led_source_select(led_num, WAN_100_LNK_ACTIVITY);
-				}
-			}
-			if (source_id == 0) {
-				if (led_source_id == 3) {
-					ipq40xx_led_source_select(led_num, LAN0_10_LNK_ACTIVITY);
-				}
-				if (led_source_id == 6) {
-					ipq40xx_led_source_select(led_num, LAN1_10_LNK_ACTIVITY);
-				}
-				if (led_source_id == 9) {
-					ipq40xx_led_source_select(led_num, LAN2_10_LNK_ACTIVITY);
-				}
-				if (led_source_id == 12) {
-					ipq40xx_led_source_select(led_num, LAN3_10_LNK_ACTIVITY);
-				}
-				if (led_source_id == 15) {
-					ipq40xx_led_source_select(led_num, WAN_10_LNK_ACTIVITY);
-				}
-			}
-		#endif
-		#endif
-		}
-	}
 	return 0;
 }
 
