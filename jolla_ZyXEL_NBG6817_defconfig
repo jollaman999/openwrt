@@ -4388,6 +4388,7 @@ CONFIG_PACKAGE_libpopt=y
 # CONFIG_PACKAGE_libpsl is not set
 # CONFIG_PACKAGE_libqrencode is not set
 # CONFIG_PACKAGE_libradcli is not set
+# CONFIG_PACKAGE_libradiotap is not set
 CONFIG_PACKAGE_libreadline=y
 # CONFIG_PACKAGE_libredblack is not set
 # CONFIG_PACKAGE_librouteros is not set
