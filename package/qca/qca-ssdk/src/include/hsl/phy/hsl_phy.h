@@ -370,6 +370,7 @@ typedef struct {
 
 #define INVALID_PHY_ADDR        0xff
 #define MAX_PHY_ADDR            0x1f
+#define QCA8072_PHY_NUM         0x2
 
 sw_error_t
 hsl_phy_api_ops_register(phy_type_t phy_type, hsl_phy_ops_t * phy_api_ops);

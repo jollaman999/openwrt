@@ -2698,14 +2698,15 @@ malibu_phy_get_eee_status(a_uint32_t dev_id, a_uint32_t phy_id,
 sw_error_t
 malibu_phy_hw_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 {
-	a_uint32_t port_id = 0, phy_addr = 0;
+	a_uint32_t port_id = 0, phy_addr = 0, phy_cnt = 0;
 	a_uint16_t dac_value,led_status, phy_data;
-	a_uint32_t phy_id = 0, mode;
+	a_uint32_t mode;
 
 	for (port_id = 0; port_id < SW_MAX_NR_PORT; port_id ++)
 	{
 		if (port_bmp & (0x1 << port_id))
 		{
+			phy_cnt ++;
 			phy_addr = qca_ssdk_port_to_phy_addr(dev_id, port_id);
 			if (phy_addr < first_phy_addr)
 			{
@@ -2732,11 +2733,10 @@ malibu_phy_hw_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 				MALIBU_PHY_MMD7_LED_1000_CTRL1, led_status);
 		}
 	}
-
-	malibu_phy_get_phy_id(dev_id, first_phy_addr, &phy_id);
-	/* software get 8072 phy chip's firstly address to init phy chip */
-	if ((phy_id == MALIBU_1_1_2PORT) && (first_phy_addr >= 0x3))
+	/* qca 8072 two ports phy chip's firstly address to init phy chip */
+	if ((phy_cnt == QCA8072_PHY_NUM) && (first_phy_addr >= 0x3)) {
 		first_phy_addr = first_phy_addr - 0x3;
+	}
 
 	/*workaround to enable AZ transmitting ability*/
 	malibu_phy_mmd_write(dev_id, first_phy_addr + 5, MALIBU_PHY_MMD1_NUM,

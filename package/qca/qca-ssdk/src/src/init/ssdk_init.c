@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2014-2018, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012, 2014-2019, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -2164,13 +2164,12 @@ void ssdk_psgmii_all_phy_testing(a_uint32_t dev_id, a_uint32_t first_phy_addr, a
 		SSDK_INFO("PHY final test result: 0x%x \r\n",phy_t_status);
 
 }
-void ssdk_psgmii_self_test(a_uint32_t dev_id, a_bool_t enable, a_uint32_t times,
-				a_uint32_t *result)
+
+void ssdk_psgmii_get_first_phy_address(a_uint32_t dev_id,
+	a_uint32_t *first_phy_addr)
 {
-	int i = 0;
-	u32 value = 0;
+	a_uint32_t port_id = 0, phy_addr = 0, phy_cnt = 0;
 	a_uint32_t port_bmp[SW_MAX_NR_DEV] = {0};
-	a_uint32_t port_id = 0, first_phy_addr = 0, phy = 0;
 
 	port_bmp[dev_id] = qca_ssdk_phy_type_port_bmp_get(dev_id, MALIBU_PHY_CHIP);
 
@@ -2178,9 +2177,28 @@ void ssdk_psgmii_self_test(a_uint32_t dev_id, a_bool_t enable, a_uint32_t times,
 	{
 		if (port_bmp[dev_id] & (0x1 << port_id))
 		{
-			first_phy_addr = qca_ssdk_port_to_phy_addr(dev_id, port_id);
-				break;
+			phy_cnt ++;
+			phy_addr = qca_ssdk_port_to_phy_addr(dev_id, port_id);
+			if (phy_addr < *first_phy_addr) {
+				*first_phy_addr = phy_addr;
+			}
 		}
+	}
+	if ((phy_cnt == QCA8072_PHY_NUM) && (*first_phy_addr >= 0x3)) {
+		*first_phy_addr = *first_phy_addr - 3;
+	}
+}
+
+void ssdk_psgmii_self_test(a_uint32_t dev_id, a_bool_t enable, a_uint32_t times,
+				a_uint32_t *result)
+{
+	int i = 0;
+	u32 value = 0;
+	a_uint32_t first_phy_addr = MAX_PHY_ADDR + 1, phy = 0;
+
+	ssdk_psgmii_get_first_phy_address(dev_id, &first_phy_addr);
+	if ((first_phy_addr < 0) || (first_phy_addr > MAX_PHY_ADDR)) {
+		return;
 	}
 
 	if (enable == A_FALSE) {
@@ -2247,19 +2265,11 @@ void ssdk_psgmii_self_test(a_uint32_t dev_id, a_bool_t enable, a_uint32_t times,
 void clear_self_test_config(a_uint32_t dev_id)
 {
 	u32 value = 0;
-	a_uint32_t port_bmp[SW_MAX_NR_DEV] = {0};
-	a_uint32_t port_id = 0, first_phy_addr = 0, phy = 0;
+	a_uint32_t first_phy_addr = MAX_PHY_ADDR + 1, phy = 0;
 
-
-	port_bmp[dev_id] = qca_ssdk_phy_type_port_bmp_get(dev_id, MALIBU_PHY_CHIP);
-
-	for (port_id = 0; port_id < SW_MAX_NR_PORT; port_id ++)
-	{
-		if (port_bmp[dev_id] & (0x1 << port_id))
-		{
-			first_phy_addr = qca_ssdk_port_to_phy_addr(dev_id, port_id);
-				break;
-		}
+	ssdk_psgmii_get_first_phy_address(dev_id, &first_phy_addr);
+	if ((first_phy_addr < 0) || (first_phy_addr > MAX_PHY_ADDR)) {
+		return;
 	}
 
 	/* disable EEE */
