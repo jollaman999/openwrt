@@ -34,7 +34,9 @@ adpt_hppe_pppoe_session_table_add(a_uint32_t dev_id, fal_pppoe_session_t * sessi
 	union pppoe_session_ext_u pppoe_session_ext = {0};
 	union pppoe_session_ext1_u pppoe_session_ext1 = {0};
 	union eg_l3_if_tbl_u eg_l3_if_tbl = {0};
-	a_uint32_t num, entry_idx = PPPOE_SESSION_MAX_ENTRY;
+	a_uint32_t num, index, entry_idx = PPPOE_SESSION_MAX_ENTRY;
+	a_uint16_t smac_ext = 0;
+	a_uint32_t smac_ext1 = 0;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(session_tbl);
@@ -49,14 +51,31 @@ adpt_hppe_pppoe_session_table_add(a_uint32_t dev_id, fal_pppoe_session_t * sessi
 	{
 		hppe_pppoe_session_get(dev_id, num, &pppoe_session);
 		hppe_pppoe_session_ext_get(dev_id, num, &pppoe_session_ext);
+		hppe_pppoe_session_ext1_get(dev_id, num, &pppoe_session_ext1);
 
-		if (pppoe_session_ext.bf.mc_valid == A_FALSE && pppoe_session_ext.bf.uc_valid == A_FALSE)
+		for (index = 0; index <= 3; index++) {
+			smac_ext1 = (smac_ext1 << 8) + session_tbl->smac_addr.uc[index];
+
+		}
+		for (index = 4; index <= 5; index++) {
+			smac_ext = (smac_ext << 8) + session_tbl->smac_addr.uc[index];
+		}
+
+		if (pppoe_session_ext.bf.mc_valid == A_FALSE &&
+				pppoe_session_ext.bf.uc_valid == A_FALSE)
 		{
 			if (entry_idx == PPPOE_SESSION_MAX_ENTRY)
 				entry_idx = num;
 		}
-		else if (pppoe_session.bf.session_id == session_tbl->session_id)
-			return SW_ALREADY_EXIST;
+		else if (pppoe_session.bf.session_id == session_tbl->session_id &&
+				pppoe_session_ext.bf.smac_valid == session_tbl->smac_valid) {
+			if (session_tbl->smac_valid == A_FALSE ||
+					(session_tbl->smac_valid == A_TRUE &&
+					 smac_ext == pppoe_session_ext.bf.smac &&
+					 smac_ext1 == pppoe_session_ext1.bf.smac)) {
+				return SW_ALREADY_EXIST;
+			}
+		}
 	}
 	if (entry_idx == PPPOE_SESSION_MAX_ENTRY)
 		return SW_NO_RESOURCE;
@@ -70,23 +89,19 @@ adpt_hppe_pppoe_session_table_add(a_uint32_t dev_id, fal_pppoe_session_t * sessi
 	pppoe_session_ext.bf.uc_valid = session_tbl->uni_session;
 	pppoe_session_ext.bf.smac_valid = session_tbl->smac_valid;
 
-	for (num = 4; num <= 5; num++)
-		pppoe_session_ext.bf.smac = (pppoe_session_ext.bf.smac << 8) + session_tbl->smac_addr.uc[num];
-
-	for (num = 0; num <= 3; num++)
-		pppoe_session_ext1.bf.smac = (pppoe_session_ext1.bf.smac << 8) + session_tbl->smac_addr.uc[num];
+	pppoe_session_ext.bf.smac = smac_ext;
+	pppoe_session_ext1.bf.smac = smac_ext1;
 
 	hppe_pppoe_session_set(dev_id, entry_idx, &pppoe_session);
 	hppe_pppoe_session_ext_set(dev_id, entry_idx, &pppoe_session_ext);
 	hppe_pppoe_session_ext1_set(dev_id, entry_idx, &pppoe_session_ext1);
 
 	rv = hppe_eg_l3_if_tbl_get(dev_id, session_tbl->l3_if_index, &eg_l3_if_tbl);
-	if (rv != SW_OK)
-		return rv;
+	SW_RTN_ON_ERROR(rv);
+
 	eg_l3_if_tbl.bf.session_id = session_tbl->session_id;
 	rv = hppe_eg_l3_if_tbl_set(dev_id, session_tbl->l3_if_index, &eg_l3_if_tbl);
-	if (rv != SW_OK)
-		return rv;
+	SW_RTN_ON_ERROR(rv);
 
 	session_tbl->entry_id = entry_idx;
 
@@ -99,52 +114,14 @@ adpt_hppe_pppoe_session_table_del(a_uint32_t dev_id, fal_pppoe_session_t * sessi
 	sw_error_t rv = SW_OK;
 	union pppoe_session_u pppoe_session = {0};
 	union pppoe_session_ext_u pppoe_session_ext = {0};
+	union pppoe_session_ext1_u pppoe_session_ext1 = {0};
 	union pppoe_session_u pppoe_session_zero = {0};
 	union pppoe_session_ext_u pppoe_session_ext_zero = {0};
 	union pppoe_session_ext1_u pppoe_session_ext1_zero = {0};
 	union eg_l3_if_tbl_u eg_l3_if_tbl = {0};
-	a_uint32_t num;
-
-	ADPT_DEV_ID_CHECK(dev_id);
-	ADPT_NULL_POINT_CHECK(session_tbl);
-
-	if (session_tbl->session_id > MAX_SESSION_ID)
-		return SW_BAD_PARAM;
-
-	for (num = 0; num < PPPOE_SESSION_MAX_ENTRY; num++)
-	{
-		hppe_pppoe_session_get(dev_id, num, &pppoe_session);
-		hppe_pppoe_session_ext_get(dev_id, num, &pppoe_session_ext);
-
-		if ((pppoe_session_ext.bf.mc_valid == A_TRUE || pppoe_session_ext.bf.uc_valid == A_TRUE) &&
-			pppoe_session.bf.session_id == session_tbl->session_id)
-		{
-			hppe_pppoe_session_set(dev_id, num, &pppoe_session_zero);
-			hppe_pppoe_session_ext_set(dev_id, num, &pppoe_session_ext_zero);
-			hppe_pppoe_session_ext1_set(dev_id, num, &pppoe_session_ext1_zero);
-
-			rv = hppe_eg_l3_if_tbl_get(dev_id, pppoe_session.bf.l3_if_index, &eg_l3_if_tbl);
-			if (rv != SW_OK)
-				return rv;
-			eg_l3_if_tbl.bf.session_id = 0;
-			rv = hppe_eg_l3_if_tbl_set(dev_id, pppoe_session.bf.l3_if_index, &eg_l3_if_tbl);
-			if (rv != SW_OK)
-				return rv;
-
-			return SW_OK;
-		}
-	}
-
-	return SW_NOT_FOUND;
-}
-
-sw_error_t
-adpt_hppe_pppoe_session_table_get(a_uint32_t dev_id, fal_pppoe_session_t * session_tbl)
-{
-	union pppoe_session_u pppoe_session = {0};
-	union pppoe_session_ext_u pppoe_session_ext = {0};
-	union pppoe_session_ext1_u pppoe_session_ext1 = {0};
-	a_uint32_t num;
+	a_uint16_t smac_ext = 0;
+	a_uint32_t smac_ext1 = 0;
+	a_uint32_t num, index;
 
 	ADPT_DEV_ID_CHECK(dev_id);
 	ADPT_NULL_POINT_CHECK(session_tbl);
@@ -158,8 +135,77 @@ adpt_hppe_pppoe_session_table_get(a_uint32_t dev_id, fal_pppoe_session_t * sessi
 		hppe_pppoe_session_ext_get(dev_id, num, &pppoe_session_ext);
 		hppe_pppoe_session_ext1_get(dev_id, num, &pppoe_session_ext1);
 
-		if ((pppoe_session_ext.bf.mc_valid == A_TRUE || pppoe_session_ext.bf.uc_valid == A_TRUE) &&
-			pppoe_session.bf.session_id == session_tbl->session_id)
+		for (index = 0; index <= 3; index++) {
+			smac_ext1 = (smac_ext1 << 8) + session_tbl->smac_addr.uc[index];
+		}
+		for (index = 4; index <= 5; index++) {
+			smac_ext = (smac_ext << 8) + session_tbl->smac_addr.uc[index];
+		}
+
+		if ((pppoe_session_ext.bf.mc_valid == A_TRUE ||
+					pppoe_session_ext.bf.uc_valid == A_TRUE) &&
+				(pppoe_session.bf.session_id == session_tbl->session_id &&
+				 pppoe_session_ext.bf.smac_valid == session_tbl->smac_valid &&
+				 (session_tbl->smac_valid == A_FALSE ||
+				  (session_tbl->smac_valid == A_TRUE &&
+				   smac_ext == pppoe_session_ext.bf.smac &&
+				   smac_ext1 == pppoe_session_ext1.bf.smac))))
+		{
+			hppe_pppoe_session_set(dev_id, num, &pppoe_session_zero);
+			hppe_pppoe_session_ext_set(dev_id, num, &pppoe_session_ext_zero);
+			hppe_pppoe_session_ext1_set(dev_id, num, &pppoe_session_ext1_zero);
+
+			rv = hppe_eg_l3_if_tbl_get(dev_id,
+					pppoe_session.bf.l3_if_index, &eg_l3_if_tbl);
+			SW_RTN_ON_ERROR(rv);
+
+			eg_l3_if_tbl.bf.session_id = 0;
+			rv = hppe_eg_l3_if_tbl_set(dev_id,
+					pppoe_session.bf.l3_if_index, &eg_l3_if_tbl);
+
+			return rv;
+		}
+	}
+
+	return SW_NOT_FOUND;
+}
+
+sw_error_t
+adpt_hppe_pppoe_session_table_get(a_uint32_t dev_id, fal_pppoe_session_t * session_tbl)
+{
+	union pppoe_session_u pppoe_session = {0};
+	union pppoe_session_ext_u pppoe_session_ext = {0};
+	union pppoe_session_ext1_u pppoe_session_ext1 = {0};
+	a_uint16_t smac_ext = 0;
+	a_uint32_t smac_ext1 = 0;
+	a_uint32_t num, index;
+
+	ADPT_DEV_ID_CHECK(dev_id);
+	ADPT_NULL_POINT_CHECK(session_tbl);
+
+	if (session_tbl->session_id > MAX_SESSION_ID)
+		return SW_BAD_PARAM;
+
+	for (num = 0; num < PPPOE_SESSION_MAX_ENTRY; num++)
+	{
+		hppe_pppoe_session_get(dev_id, num, &pppoe_session);
+		hppe_pppoe_session_ext_get(dev_id, num, &pppoe_session_ext);
+		hppe_pppoe_session_ext1_get(dev_id, num, &pppoe_session_ext1);
+
+		for (index = 0; index <= 3; index++) {
+			smac_ext1 = (smac_ext1 << 8) + session_tbl->smac_addr.uc[index];
+		}
+		for (index = 4; index <= 5; index++) {
+			smac_ext = (smac_ext << 8) + session_tbl->smac_addr.uc[index];
+		}
+		if ((pppoe_session_ext.bf.mc_valid == A_TRUE ||
+					pppoe_session_ext.bf.uc_valid == A_TRUE) &&
+				(pppoe_session.bf.session_id == session_tbl->session_id &&
+				 pppoe_session_ext.bf.smac_valid == session_tbl->smac_valid &&
+				 (session_tbl->smac_valid == A_FALSE ||
+				  (session_tbl->smac_valid == A_TRUE &&
+				   smac_ext == pppoe_session_ext.bf.smac &&
+				   smac_ext1 == pppoe_session_ext1.bf.smac))))
 		{
 			session_tbl->entry_id = num;
 			session_tbl->session_id = pppoe_session.bf.session_id;
@@ -192,25 +238,20 @@ adpt_hppe_pppoe_en_set(a_uint32_t dev_id, a_uint32_t l3_if, a_uint32_t enable)
 	ADPT_DEV_ID_CHECK(dev_id);
 
 	rv = hppe_in_l3_if_tbl_get(dev_id, l3_if, &in_l3_if_tbl);
-	if (rv != SW_OK)
-		return rv;
+	SW_RTN_ON_ERROR(rv);
 
 	rv = hppe_eg_l3_if_tbl_get(dev_id, l3_if, &eg_l3_if_tbl);
-	if (rv != SW_OK)
-		return rv;
+	SW_RTN_ON_ERROR(rv);
 
 	in_l3_if_tbl.bf.pppoe_en = enable;
 	eg_l3_if_tbl.bf.pppoe_en = enable;
 
 	rv = hppe_in_l3_if_tbl_set(dev_id, l3_if, &in_l3_if_tbl);
-	if (rv != SW_OK)
-		return rv;
+	SW_RTN_ON_ERROR(rv);
 
 	rv = hppe_eg_l3_if_tbl_set(dev_id, l3_if, &eg_l3_if_tbl);
-	if (rv != SW_OK)
-		return rv;
 
-	return SW_OK;
+	return rv;
 }
 
 sw_error_t
@@ -223,13 +264,11 @@ adpt_hppe_pppoe_en_get(a_uint32_t dev_id, a_uint32_t l3_if, a_uint32_t *enable)
 	ADPT_NULL_POINT_CHECK(enable);
 
 	rv = hppe_in_l3_if_tbl_get(dev_id, l3_if, &in_l3_if_tbl);
-
-	if( rv != SW_OK )
-		return rv;
+	SW_RTN_ON_ERROR(rv);
 
 	*enable = in_l3_if_tbl.bf.pppoe_en;
 
-	return SW_OK;
+	return rv;
 }
 
 void adpt_hppe_pppoe_func_bitmap_init(a_uint32_t dev_id)
