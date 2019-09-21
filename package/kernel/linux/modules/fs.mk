@@ -383,6 +383,8 @@ define KernelPackage/fs-nfs-common-rpcsec
   TITLE:=NFS Secure RPC
   DEPENDS:= \
 	+kmod-fs-nfs-common \
+	+kmod-crypto-arc4 \
+	+kmod-crypto-aes \
 	+kmod-crypto-des \
 	+kmod-crypto-cbc \
 	+kmod-crypto-cts \
