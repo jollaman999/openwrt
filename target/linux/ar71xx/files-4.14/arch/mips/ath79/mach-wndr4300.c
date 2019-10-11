@@ -102,7 +102,7 @@ static struct gpio_led wndr4300_leds_gpio[] __initdata = {
 
 static struct gpio_keys_button wndr4300_gpio_keys[] __initdata = {
 	{
-		.desc		= "Reset button",
+		.desc		= "reset",
 		.type		= EV_KEY,
 		.code		= KEY_RESTART,
 		.debounce_interval = WNDR4300_KEYS_DEBOUNCE_INTERVAL,
@@ -110,7 +110,7 @@ static struct gpio_keys_button wndr4300_gpio_keys[] __initdata = {
 		.active_low	= 1,
 	},
 	{
-		.desc		= "WPS button",
+		.desc		= "wps",
 		.type		= EV_KEY,
 		.code		= KEY_WPS_BUTTON,
 		.debounce_interval = WNDR4300_KEYS_DEBOUNCE_INTERVAL,
@@ -118,7 +118,7 @@ static struct gpio_keys_button wndr4300_gpio_keys[] __initdata = {
 		.active_low	= 1,
 	},
 	{
-		.desc		= "Wireless button",
+		.desc		= "rfkill",
 		.type		= EV_KEY,
 		.code		= KEY_RFKILL,
 		.debounce_interval = WNDR4300_KEYS_DEBOUNCE_INTERVAL,
