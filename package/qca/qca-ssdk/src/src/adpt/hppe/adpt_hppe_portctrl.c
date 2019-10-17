@@ -2245,6 +2245,7 @@ static sw_error_t
 adpt_hppe_port_speed_change_mac_reset(a_uint32_t dev_id, a_uint32_t port_id)
 {
 	a_uint32_t uniphy_index = 0, mode = 0;
+	a_uint32_t rxfc_status = 0, txfc_status = 0;
 	sw_error_t rv = 0;
 
 	if (port_id == HPPE_MUX_PORT1) {
@@ -2260,6 +2261,20 @@ adpt_hppe_port_speed_change_mac_reset(a_uint32_t dev_id, a_uint32_t port_id)
 		/*restore xgmac's pr and pcf setting after reset operation*/
 		rv = adpt_hppe_port_xgmac_promiscuous_mode_set(dev_id,
 			port_id);
+		SW_RTN_ON_ERROR(rv);
+		/*flowctrl need to be configured when reset XGMAC*/
+		rv = _adpt_xgmac_port_rxfc_status_get(dev_id, port_id,
+			&rxfc_status);
+		SW_RTN_ON_ERROR(rv);
+		rv = _adpt_xgmac_port_rxfc_status_set(dev_id, port_id,
+			rxfc_status);
+		SW_RTN_ON_ERROR(rv);
+
+		rv = _adpt_xgmac_port_txfc_status_get(dev_id, port_id,
+			&txfc_status);
+		SW_RTN_ON_ERROR(rv);
+		rv = _adpt_xgmac_port_txfc_status_set(dev_id, port_id,
+			txfc_status);
 	}
 	return rv;
 }
