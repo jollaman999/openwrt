@@ -362,6 +362,12 @@ _fal_vlan_member_update(a_uint32_t dev_id, a_uint32_t vlan_id,
 
         p_api->vlan_delete(dev_id, vlan_id);
 
+	vlan_entry.vid = vlan_id;
+	vlan_entry.fid = vlan_id;
+
+	vlan_entry.untagged_ports = u_member;
+	vlan_entry.tagged_ports = member & ~u_member;
+
         rv = p_api->vlan_entry_append(dev_id, &vlan_entry);
         SW_RTN_ON_ERROR(rv);
     }
