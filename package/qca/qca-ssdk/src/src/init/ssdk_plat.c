@@ -900,6 +900,38 @@ void ssdk_dts_l1scheduler_dump(a_uint32_t dev_id)
 	}
 }
 
+static const a_int8_t *qca_phy_feature_str[QCA_PHY_FEATURE_MAX] = {
+	"PHY_CLAUSE45",
+	"PHY_COMBO",
+	"PHY_QGMAC",
+	"PHY_XGMAC",
+	"PHY_I2C",
+	"PHY_INIT"
+};
+
+void ssdk_dts_phyinfo_dump(a_uint32_t dev_id)
+{
+	a_uint32_t i, j;
+	ssdk_port_phyinfo *port_phyinfo;
+
+	printk("=====================port phyinfo========================\n");
+	printk("portid     phy_addr     features\n");
+
+	for (i = 0; i <= SSDK_MAX_PORT_NUM; i++) {
+		port_phyinfo = ssdk_port_phyinfo_get(dev_id, i);
+		if (port_phyinfo) {
+			printk("%6d%13d%*s", port_phyinfo->port_id,
+					port_phyinfo->phy_addr, 5, "");
+			for (j = 0; j < QCA_PHY_FEATURE_MAX; j++) {
+				if (port_phyinfo->phy_features & BIT(j)) {
+					printk("%s ", qca_phy_feature_str[j]);
+				}
+			}
+			printk("\n");
+		}
+	}
+}
+
 static ssize_t ssdk_dts_dump(struct device *dev,
 		struct device_attribute *attr,
 		char *buf)
@@ -963,6 +995,8 @@ static ssize_t ssdk_dts_dump(struct device *dev,
 		ssdk_dts_l0scheduler_dump(dev_id);
 		printk("\n");
 		ssdk_dts_l1scheduler_dump(dev_id);
+		printk("\n");
+		ssdk_dts_phyinfo_dump(dev_id);
 	}
 
 	return count;

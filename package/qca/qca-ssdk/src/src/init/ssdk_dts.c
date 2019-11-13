@@ -129,9 +129,21 @@ a_uint32_t ssdk_inner_bmp_get(a_uint32_t dev_id)
 
 ssdk_port_phyinfo* ssdk_port_phyinfo_get(a_uint32_t dev_id, a_uint32_t port_id)
 {
-	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
+	a_uint32_t i;
+	ssdk_port_phyinfo *phyinfo_tmp = NULL;
+	ssdk_dt_cfg *cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
 
-	return &cfg->port_phyinfo[port_id-1];
+	for (i = 0; i < cfg->phyinfo_num; i++) {
+		if (port_id == cfg->port_phyinfo[i].port_id) {
+			phyinfo_tmp = &cfg->port_phyinfo[i];
+			break;
+		} else if (!(cfg->port_phyinfo[i].phy_features & PHY_F_INIT) &&
+				phyinfo_tmp == NULL) {
+			phyinfo_tmp = &cfg->port_phyinfo[i];
+		}
+	}
+
+	return phyinfo_tmp;
 }
 
 struct mii_bus *
@@ -575,6 +587,8 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 				}
 			}
 
+			port_phyinfo->phy_features |= PHY_F_INIT;
+
 			if (mdio_node)
 				port_phyinfo->miibus = of_mdio_find_bus(mdio_node);
 		}
@@ -623,6 +637,8 @@ static void ssdk_dt_parse_mdio(a_uint32_t dev_id, struct device_node *switch_nod
 				if (c45_phy) {
 					port_phyinfo->phy_features |= PHY_F_CLAUSE45;
 				}
+
+				port_phyinfo->phy_features |= PHY_F_INIT;
 			}
 
 			i++;

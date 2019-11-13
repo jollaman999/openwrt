@@ -192,6 +192,7 @@ enum {
 	QCA_PHY_F_QGMAC_BIT,
 	QCA_PHY_F_XGMAC_BIT,
 	QCA_PHY_F_I2C_BIT,
+	QCA_PHY_F_INIT_BIT,
 	QCA_PHY_FEATURE_MAX
 };
 /*qca808x_start*/
@@ -204,6 +205,7 @@ enum {
 #define PHY_F_QGMAC        _PHY_F(QGMAC)
 #define PHY_F_XGMAC        _PHY_F(XGMAC)
 #define PHY_F_I2C          _PHY_F(I2C)
+#define PHY_F_INIT         _PHY_F(INIT)
 
 typedef struct
 {
