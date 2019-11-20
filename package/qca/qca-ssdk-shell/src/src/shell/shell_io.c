@@ -170,6 +170,7 @@ static sw_data_type_t sw_data_type[] =
      SW_TYPE_DEF(SW_XGMIB, NULL, cmd_data_print_xgmib),
     SW_TYPE_DEF(SW_MIB_CNTR, NULL, cmd_data_print_mib_cntr),
     SW_TYPE_DEF(SW_VLAN, cmd_data_check_vlan, cmd_data_print_vlan),
+    SW_TYPE_DEF(SW_LAN_WAN_CFG, cmd_data_check_lan_wan_cfg, cmd_data_print_lan_wan_cfg),
 /*qca808x_start*/
     SW_TYPE_DEF(SW_PBMP, cmd_data_check_pbmp, cmd_data_print_pbmp),
     SW_TYPE_DEF(SW_ENABLE, cmd_data_check_enable, cmd_data_print_enable),
@@ -1928,6 +1929,206 @@ cmd_data_print_vlan(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
     {
         dprintf("[pri_en]:disable [pri]:0x%-4x\n", 0);
     }
+}
+
+sw_error_t
+cmd_data_check_lan_wan_cfg(char *cmdstr, void *val, a_uint32_t size)
+{
+	char *cmd;
+	sw_error_t rv;
+	char *tmp = NULL, *str_save;
+	a_uint32_t port;
+	a_uint32_t vid, pvlan_ports = 0, i = 0, j = 0;
+	qca_lan_wan_cfg_t entry;
+
+	memset(&entry, 0, sizeof (qca_lan_wan_cfg_t));
+
+	do {
+		cmd = get_sub_cmd("lan_ports", NULL);
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4)) {
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4)) {
+			dprintf("usage: input port number such as 1,3\n");
+			rv = SW_BAD_VALUE;
+		}
+		else {
+			tmp = (void *) strtok_r(cmd, ",", &str_save);
+			while (tmp) {
+				sscanf(tmp, "%d", &port);
+				if (SW_MAX_NR_PORT <= port) {
+					return SW_BAD_VALUE;
+				}
+
+				entry.v_port_info[i].port_id = port;
+				entry.v_port_info[i].is_wan_port = A_FALSE;
+				entry.v_port_info[i].valid = A_TRUE;
+
+				tmp = (void *) strtok_r(NULL, ",", &str_save);
+				i++;
+			}
+		}
+		if (i == 0) {
+			dprintf("usage: input port number such as 1,3\n");
+			rv = SW_BAD_VALUE;
+		} else {
+			rv = SW_OK;
+		}
+	} while (talk_mode && (SW_OK != rv));
+
+	entry.lan_only_mode = A_TRUE;
+	do {
+		cmd = get_sub_cmd("lan_vids", NULL);
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4)) {
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4)) {
+			dprintf("usage: input vlan ids such as 1,1, the vlan id range 0--4095\n");
+			rv = SW_BAD_VALUE;
+		}
+		else {
+			tmp = (void *) strtok_r(cmd, ",", &str_save);
+			while (tmp) {
+				sscanf(tmp, "%d", &vid);
+				if (0xfff <= vid) {
+					return SW_BAD_VALUE;
+				}
+
+				entry.v_port_info[j].vid = vid;
+
+				if (vid == 0) {
+					pvlan_ports++;
+				} else {
+					entry.lan_only_mode = A_FALSE;
+				}
+
+				tmp = (void *) strtok_r(NULL, ",", &str_save);
+				j++;
+			}
+		}
+		if (j == 0) {
+			dprintf("usage: input vlan ids such as 1,1, the vlan id range 0--4095\n");
+			rv = SW_BAD_VALUE;
+		} else {
+			rv = SW_OK;
+		}
+	} while (talk_mode && (SW_OK != rv));
+
+	if (i != j) {
+		dprintf("the lan ports and vids are unmatched\n");
+		return SW_BAD_VALUE;
+	}
+
+	/*
+	 * portbased vlan used:
+	 * ssdk_sh vlan lan_wan_cfg set 1,2,3,4 0,0,0,0
+	 */
+	if (pvlan_ports == i && entry.lan_only_mode) {
+		*(qca_lan_wan_cfg_t *)val = entry;
+		return SW_OK;
+	}
+
+	do {
+		cmd = get_sub_cmd("wan_ports", NULL);
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4)) {
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4)) {
+			dprintf("usage: input port number such as 1,3\n");
+			rv = SW_BAD_VALUE;
+		}
+		else {
+			tmp = (void *) strtok_r(cmd, ",", &str_save);
+			while (tmp) {
+				sscanf(tmp, "%d", &port);
+				if (SW_MAX_NR_PORT <= port) {
+					return SW_BAD_VALUE;
+				}
+
+				entry.v_port_info[i].port_id = port;
+				entry.v_port_info[i].is_wan_port = A_TRUE;
+				entry.v_port_info[i].valid = A_TRUE;
+
+				tmp = (void *) strtok_r(NULL, ",", &str_save);
+				i++;
+			}
+		}
+		if (i == 0) {
+			dprintf("usage: input port number such as 1,3\n");
+			rv = SW_BAD_VALUE;
+		} else {
+			rv = SW_OK;
+		}
+	} while (talk_mode && (SW_OK != rv));
+
+	do {
+		cmd = get_sub_cmd("wan_vids", NULL);
+		SW_RTN_ON_NULL_PARAM(cmd);
+
+		if (!strncasecmp(cmd, "quit", 4)) {
+			return SW_BAD_VALUE;
+		}
+		else if (!strncasecmp(cmd, "help", 4)) {
+			dprintf("usage: input vlan ids such as 1,1, the vlan id range 0--4095\n");
+			rv = SW_BAD_VALUE;
+		}
+		else {
+			tmp = (void *) strtok_r(cmd, ",", &str_save);
+			while (tmp) {
+				sscanf(tmp, "%d", &vid);
+				if (0xfff <= vid) {
+					return SW_BAD_VALUE;
+				}
+
+				entry.v_port_info[j].vid = vid;
+
+				tmp = (void *) strtok_r(NULL, ",", &str_save);
+				j++;
+			}
+		}
+		if (j == 0) {
+			dprintf("usage: input vlan ids such as 1,1, the vlan id range 0--4095\n");
+			rv = SW_BAD_VALUE;
+		} else {
+			rv = SW_OK;
+		}
+	} while (talk_mode && (SW_OK != rv));
+
+	if (i != j) {
+		dprintf("the wan ports and vids are unmatched\n");
+		return SW_BAD_VALUE;
+	}
+
+	*(qca_lan_wan_cfg_t *)val = entry;
+
+	return SW_OK;
+}
+
+void
+cmd_data_print_lan_wan_cfg(a_uint8_t *param_name, a_ulong_t *buf, a_uint32_t size)
+{
+	qca_lan_wan_cfg_t *entry = (qca_lan_wan_cfg_t *)buf;
+	a_uint32_t i;
+
+	dprintf("\n[%s] \n", param_name);
+	dprintf("[lan_only_mode]: %s\n", entry->lan_only_mode ? "enabled" : "disabled");
+
+	dprintf("port_id\tvlan_id\tport_type\n");
+	for (i = 0; i < sizeof(entry->v_port_info)/sizeof(entry->v_port_info[0]); i++) {
+		if (entry->v_port_info[i].valid) {
+			dprintf("%7d\t%7d\t%9s\n",
+					entry->v_port_info[i].port_id,
+					entry->v_port_info[i].vid,
+					entry->v_port_info[i].is_wan_port ? "wan" : "lan");
+		}
+	}
+	dprintf("\n");
 }
 
 /*qos*/

@@ -18,7 +18,10 @@
 #include "sw.h"
 #include "sw_api.h"
 #include "fal.h"
+/*qca808x_end*/
+#include "ref_vlan.h"
 
+/*qca808x_start*/
 #define SW_TYPE_DEF(type, parser, show) {type, parser, show}
 typedef struct
 {
@@ -94,6 +97,10 @@ void cmd_data_print_speed(a_uint8_t * param_name, a_uint32_t * buf,
 sw_error_t cmd_data_check_vlan(char *cmdstr, fal_vlan_t * val, a_uint32_t size);
 void cmd_data_print_vlan(a_uint8_t * param_name, a_uint32_t * buf,
                          a_uint32_t size);
+sw_error_t cmd_data_check_lan_wan_cfg(char *cmd_str, void *arg_val, a_uint32_t size);
+
+void cmd_data_print_lan_wan_cfg(a_uint8_t *param_name, a_ulong_t *buf, a_uint32_t size);
+
 void cmd_data_print_mib(a_uint8_t * param_name, a_uint32_t * buf,
                         a_uint32_t size);
 void cmd_data_print_mib_cntr(a_uint8_t * param_name, a_uint64_t * buf,

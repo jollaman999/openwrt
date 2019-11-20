@@ -22,7 +22,7 @@ ifeq (linux, $(OS))
         COMPONENTS += FAL
       endif
     else
-      COMPONENTS = UK_IF SAL
+      COMPONENTS = UK_IF SAL REF
     endif
 
     ifeq (TRUE, $(UK_IF))
