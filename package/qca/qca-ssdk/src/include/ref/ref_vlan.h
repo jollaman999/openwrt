@@ -58,6 +58,24 @@ int
 qca_ar8327_sw_hw_apply(struct switch_dev *dev);
 #endif
 
+typedef struct {
+	fal_port_t port_id;        /* port id */
+	a_uint32_t vid;            /* vlan id */
+	a_bool_t   is_wan_port;    /* belong to wan port */
+	a_bool_t   valid;          /* valid or not */
+} qca_lan_wan_port_info;
+
+typedef struct {
+	a_bool_t lan_only_mode;
+	qca_lan_wan_port_info v_port_info[SW_MAX_NR_PORT];
+} qca_lan_wan_cfg_t;
+
+sw_error_t
+qca_lan_wan_cfg_set(a_uint32_t dev_id, qca_lan_wan_cfg_t *lan_wan_cfg);
+
+sw_error_t
+qca_lan_wan_cfg_get(a_uint32_t dev_id, qca_lan_wan_cfg_t *lan_wan_cfg);
+
 #ifdef __cplusplus
 }
 #endif                          /* __cplusplus */

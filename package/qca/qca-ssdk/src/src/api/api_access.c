@@ -58,6 +58,7 @@
 /*qca808x_end*/
 #endif
 #include "ref_vsi.h"
+#include "ref_vlan.h"
 
 /*qca808x_start*/
 static sw_api_func_t sw_api_func[] = { SSDK_API };

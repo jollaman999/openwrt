@@ -27,6 +27,8 @@
 #include "hsl.h"
 #include "hsl_dev.h"
 #include "ssdk_init.h"
+#include "ssdk_dts.h"
+#include "hsl_phy.h"
 #include <linux/kconfig.h>
 #include <linux/version.h>
 #include <linux/kernel.h>
@@ -51,6 +53,197 @@
 
 extern ssdk_chip_type SSDK_CURRENT_CHIP_TYPE;
 
+sw_error_t
+qca_lan_wan_cfg_set(a_uint32_t dev_id, qca_lan_wan_cfg_t *lan_wan_cfg)
+{
+	a_uint32_t i = 0, lan_bmp = 0, wan_bmp = 0;
+	sw_error_t rv = SW_OK;
+	fal_vlan_t vlan_entry;
+
+	SW_RTN_ON_NULL(lan_wan_cfg);
+
+	switch (SSDK_CURRENT_CHIP_TYPE) {
+		case CHIP_ISIS:
+		case CHIP_ISISC:
+		case CHIP_DESS:
+			break;
+		default:
+			return SW_NOT_SUPPORTED;
+	}
+
+	fal_vlan_flush(dev_id);
+	aos_mem_set(&vlan_entry, 0, sizeof(vlan_entry));
+
+	if (lan_wan_cfg->lan_only_mode) {
+#if defined(IN_PORTVLAN)
+		while (i < sizeof(lan_wan_cfg->v_port_info)/sizeof(lan_wan_cfg->v_port_info[0])) {
+			if (lan_wan_cfg->v_port_info[i].valid) {
+				/* use the portbased vlan table for forwarding */
+				rv = fal_port_1qmode_set(dev_id,
+						lan_wan_cfg->v_port_info[i].port_id,
+						FAL_1Q_DISABLE);
+				SW_RTN_ON_ERROR(rv);
+				rv = fal_port_egvlanmode_set(dev_id,
+						lan_wan_cfg->v_port_info[i].port_id,
+						FAL_EG_UNMODIFIED);
+				SW_RTN_ON_ERROR(rv);
+				rv = fal_port_default_cvid_set(dev_id,
+						lan_wan_cfg->v_port_info[i].port_id,
+						0);
+				SW_RTN_ON_ERROR(rv);
+				lan_bmp |= (0x1 << lan_wan_cfg->v_port_info[i].port_id);
+			}
+			i++;
+		}
+		/* CPU port 0 configurations */
+		rv = fal_port_1qmode_set(dev_id, SSDK_PORT_CPU, FAL_1Q_DISABLE);
+		SW_RTN_ON_ERROR(rv);
+		rv = fal_port_egvlanmode_set(dev_id, SSDK_PORT_CPU, FAL_EG_UNMODIFIED);
+		SW_RTN_ON_ERROR(rv);
+		rv = fal_port_default_cvid_set(dev_id, SSDK_PORT_CPU, 0);
+		SW_RTN_ON_ERROR(rv);
+		rv = fal_portvlan_member_update(dev_id, SSDK_PORT_CPU, lan_bmp);
+		SW_RTN_ON_ERROR(rv);
+#endif
+	} else {
+		while (i < sizeof(lan_wan_cfg->v_port_info)/sizeof(lan_wan_cfg->v_port_info[0])) {
+			if (lan_wan_cfg->v_port_info[i].valid) {
+				rv = fal_vlan_find(dev_id,
+						lan_wan_cfg->v_port_info[i].vid, &vlan_entry);
+				/* create vlan entry if the vlan entry does not exist */
+				if (rv == SW_NOT_FOUND) {
+					rv = fal_vlan_create(dev_id,
+							lan_wan_cfg->v_port_info[i].vid);
+					SW_RTN_ON_ERROR(rv);
+#if defined(IN_PORTVLAN)
+					rv = fal_port_1qmode_set(dev_id,
+							SSDK_PORT_CPU, FAL_1Q_SECURE);
+					SW_RTN_ON_ERROR(rv);
+#endif
+					rv = fal_vlan_member_add(dev_id,
+							lan_wan_cfg->v_port_info[i].vid,
+							SSDK_PORT_CPU, FAL_EG_TAGGED);
+					SW_RTN_ON_ERROR(rv);
+				}
+				rv = fal_vlan_member_add(dev_id,
+						lan_wan_cfg->v_port_info[i].vid,
+						lan_wan_cfg->v_port_info[i].port_id,
+						FAL_EG_UNTAGGED);
+				SW_RTN_ON_ERROR(rv);
+#if defined(IN_PORTVLAN)
+				rv = fal_port_1qmode_set(dev_id,
+						lan_wan_cfg->v_port_info[i].port_id,
+						FAL_1Q_SECURE);
+				SW_RTN_ON_ERROR(rv);
+
+				rv = fal_port_default_cvid_set(dev_id,
+						lan_wan_cfg->v_port_info[i].port_id,
+						lan_wan_cfg->v_port_info[i].vid);
+				SW_RTN_ON_ERROR(rv);
+#endif
+				if (lan_wan_cfg->v_port_info[i].is_wan_port) {
+					wan_bmp |= (0x1 << lan_wan_cfg->v_port_info[i].port_id);
+				} else {
+					lan_bmp |= (0x1 << lan_wan_cfg->v_port_info[i].port_id);
+				}
+			}
+			i++;
+		}
+	}
+	ssdk_lan_bmp_set(dev_id, lan_bmp);
+	ssdk_wan_bmp_set(dev_id, wan_bmp);
+	qca_ssdk_port_bmp_set(dev_id, lan_bmp|wan_bmp);
+#if defined(DESS) && defined(IN_TRUNK)
+	if(SSDK_CURRENT_CHIP_TYPE == CHIP_DESS) {
+		ssdk_dess_trunk_init(dev_id, wan_bmp);
+	}
+#endif
+#if defined(IN_PORTVLAN)
+	ssdk_portvlan_init(dev_id);
+#endif
+	return rv;
+}
+
+sw_error_t
+qca_lan_wan_cfg_get(a_uint32_t dev_id, qca_lan_wan_cfg_t *lan_wan_cfg)
+{
+	sw_error_t rv = SW_OK;
+	fal_vlan_t vlan_entry;
+	fal_pbmp_t member_pmap, lan_bmp, wan_bmp;
+	a_uint32_t port_id, entry_id, vlan_id;
+
+	SW_RTN_ON_NULL(lan_wan_cfg);
+
+	switch (SSDK_CURRENT_CHIP_TYPE) {
+		case CHIP_ISIS:
+		case CHIP_ISISC:
+		case CHIP_DESS:
+			break;
+		default:
+			return SW_NOT_SUPPORTED;
+	}
+
+	lan_bmp = ssdk_lan_bmp_get(dev_id);
+	wan_bmp = ssdk_wan_bmp_get(dev_id);
+
+	member_pmap = lan_bmp | wan_bmp;
+	vlan_id = FAL_NEXT_ENTRY_FIRST_ID;
+	entry_id = 0;
+
+	while (1) {
+		aos_mem_set(&vlan_entry, 0, sizeof(vlan_entry));
+		rv = fal_vlan_next(dev_id, vlan_id, &vlan_entry);
+		if (rv != SW_OK) {
+			break;
+		}
+
+		/*
+		 * the special port id should be existed only in one vlan entry
+		 * starting from port 1.
+		 */
+		port_id = 1;
+		while (vlan_entry.mem_ports >> port_id) {
+			if (((vlan_entry.mem_ports >> port_id) & 1) &&
+					SW_IS_PBMP_MEMBER(member_pmap, port_id)) {
+				lan_wan_cfg->v_port_info[entry_id].port_id = port_id;
+				lan_wan_cfg->v_port_info[entry_id].vid = vlan_entry.vid;
+				lan_wan_cfg->v_port_info[entry_id].valid = A_TRUE;
+				lan_wan_cfg->v_port_info[entry_id].is_wan_port =
+					SW_IS_PBMP_MEMBER(wan_bmp, port_id) ? A_TRUE : A_FALSE;
+				entry_id++;
+			}
+			port_id++;
+		}
+		vlan_id = vlan_entry.vid;
+	}
+
+	/*
+	 * no vlan entry exists, the portbased vlan used.
+	 */
+#if defined(IN_PORTVLAN)
+	if (entry_id == 0) {
+		lan_wan_cfg->lan_only_mode = A_TRUE;
+		port_id = 1;
+		while (lan_bmp >> port_id) {
+			if ((lan_bmp >> port_id) & 1) {
+				lan_wan_cfg->v_port_info[entry_id].port_id = port_id;
+				lan_wan_cfg->v_port_info[entry_id].vid = 0;
+				lan_wan_cfg->v_port_info[entry_id].is_wan_port = A_FALSE;
+
+				member_pmap = 0;
+#if !defined(IN_PORTVLAN_MINI)
+				fal_portvlan_member_get(dev_id, port_id, &member_pmap);
+#endif
+				lan_wan_cfg->v_port_info[entry_id].valid =
+					member_pmap ? A_TRUE : A_FALSE;
+				entry_id++;
+			}
+			port_id++;
+		}
+	}
+#endif
+	return SW_OK;
+}
 
 int
 qca_ar8327_sw_enable_vlan0(a_uint32_t dev_id, a_bool_t enable, a_uint8_t portmap)

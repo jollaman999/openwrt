@@ -362,6 +362,9 @@ qca_hppe_port_mac_type_get(a_uint32_t dev_id, a_uint32_t port_id);
 a_uint32_t
 qca_hppe_port_mac_type_set(a_uint32_t dev_id, a_uint32_t port_id, a_uint32_t port_type);
 
+void ssdk_portvlan_init(a_uint32_t dev_id);
+sw_error_t ssdk_dess_trunk_init(a_uint32_t dev_id, a_uint32_t wan_bitmap);
+
 void
 qca_mac_port_status_init(a_uint32_t dev_id, a_uint32_t port_id);
 void

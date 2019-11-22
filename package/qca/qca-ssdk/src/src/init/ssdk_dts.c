@@ -120,6 +120,22 @@ a_uint32_t ssdk_wan_bmp_get(a_uint32_t dev_id)
 	return cfg->port_cfg.wan_bmp;
 }
 
+sw_error_t ssdk_lan_bmp_set(a_uint32_t dev_id, a_uint32_t lan_bmp)
+{
+	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
+	cfg->port_cfg.lan_bmp = lan_bmp;
+
+	return SW_OK;
+}
+
+sw_error_t ssdk_wan_bmp_set(a_uint32_t dev_id, a_uint32_t wan_bmp)
+{
+	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];
+	cfg->port_cfg.wan_bmp = wan_bmp;
+
+	return SW_OK;
+}
+
 a_uint32_t ssdk_inner_bmp_get(a_uint32_t dev_id)
 {
 	ssdk_dt_cfg* cfg = ssdk_dt_global.ssdk_dt_switch_nodes[dev_id];

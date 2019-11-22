@@ -133,6 +133,8 @@ a_uint32_t ssdk_dt_global_set_mac_mode(a_uint32_t dev_id, a_uint32_t index, a_ui
 a_uint32_t ssdk_cpu_bmp_get(a_uint32_t dev_id);
 a_uint32_t ssdk_lan_bmp_get(a_uint32_t dev_id);
 a_uint32_t ssdk_wan_bmp_get(a_uint32_t dev_id);
+sw_error_t ssdk_lan_bmp_set(a_uint32_t dev_id, a_uint32_t lan_bmp);
+sw_error_t ssdk_wan_bmp_set(a_uint32_t dev_id, a_uint32_t wan_bmp);
 a_uint32_t ssdk_inner_bmp_get(a_uint32_t dev_id);
 ssdk_port_phyinfo* ssdk_port_phyinfo_get(a_uint32_t dev_id, a_uint32_t port_id);
 struct mii_bus *

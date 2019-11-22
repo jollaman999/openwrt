@@ -286,7 +286,9 @@ extern "C" {
     SW_API_DEF(SW_API_VLAN_MEMBER_ADD, fal_vlan_member_add), \
     SW_API_DEF(SW_API_VLAN_MEMBER_DEL, fal_vlan_member_del), \
     SW_API_DEF(SW_API_VLAN_LEARN_STATE_SET, fal_vlan_learning_state_set), \
-    SW_API_DEF(SW_API_VLAN_LEARN_STATE_GET, fal_vlan_learning_state_get),
+    SW_API_DEF(SW_API_VLAN_LEARN_STATE_GET, fal_vlan_learning_state_get), \
+    SW_API_DEF(SW_API_LAN_WAN_CFG_SET, qca_lan_wan_cfg_set), \
+    SW_API_DEF(SW_API_LAN_WAN_CFG_GET, qca_lan_wan_cfg_get),
 
 #define VLAN_API_PARAM \
     SW_API_DESC(SW_API_VLAN_ADD) \
@@ -301,7 +303,9 @@ extern "C" {
     SW_API_DESC(SW_API_VLAN_MEMBER_ADD) \
     SW_API_DESC(SW_API_VLAN_MEMBER_DEL) \
     SW_API_DESC(SW_API_VLAN_LEARN_STATE_SET) \
-    SW_API_DESC(SW_API_VLAN_LEARN_STATE_GET)
+    SW_API_DESC(SW_API_VLAN_LEARN_STATE_GET) \
+    SW_API_DESC(SW_API_LAN_WAN_CFG_SET) \
+    SW_API_DESC(SW_API_LAN_WAN_CFG_GET)
 #else
 #define VLAN_API
 #define VLAN_API_PARAM

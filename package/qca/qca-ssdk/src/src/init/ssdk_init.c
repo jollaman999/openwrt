@@ -328,7 +328,7 @@ static void qca_port_isolate(a_uint32_t dev_id)
 
 }
 
-static void ssdk_portvlan_init(a_uint32_t dev_id)
+void ssdk_portvlan_init(a_uint32_t dev_id)
 {
 	a_uint32_t port = 0;
 	a_uint32_t cpu_bmp, lan_bmp, wan_bmp;
@@ -2856,13 +2856,11 @@ ssdk_dess_multiple_wan_port_check(a_uint32_t dev_id,
 	}
 }
 
-static sw_error_t
-ssdk_dess_trunk_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
+sw_error_t
+ssdk_dess_trunk_init(a_uint32_t dev_id, a_uint32_t wan_bitmap)
 {
 	sw_error_t rv = SW_OK;
-	a_uint32_t wan_bitmap;
 
-	wan_bitmap = cfg->port_cfg.wan_bmp;
 	if(ssdk_dess_multiple_wan_port_check(dev_id, wan_bitmap))
 	{
 		rv = fal_trunk_group_set(dev_id, TRUNK_ID_OF_MULTIPLE_WAN_PORTS,
@@ -2932,7 +2930,7 @@ qca_dess_hw_init(ssdk_init_cfg *cfg, a_uint32_t dev_id)
 	/*add BGA Board led contorl*/
 	ssdk_dess_led_init(cfg);
 #ifdef IN_TRUNK
-	SW_RTN_ON_ERROR(ssdk_dess_trunk_init(dev_id, cfg));
+	SW_RTN_ON_ERROR(ssdk_dess_trunk_init(dev_id, cfg->port_cfg.wan_bmp));
 #endif
 
 	return SW_OK;
