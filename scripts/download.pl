@@ -199,6 +199,7 @@ foreach my $mirror (@ARGV) {
 		push @mirrors, "https://mirror.netcologne.de/apache.org/$1";
 		push @mirrors, "https://mirror.aarnet.edu.au/pub/apache/$1";
 		push @mirrors, "https://mirror.csclub.uwaterloo.ca/apache/$1";
+		push @mirrors, "https://archive.apache.org/dist/$1";
 		push @mirrors, "http://mirror.cogentco.com/pub/apache/$1";
 		push @mirrors, "http://ftp.jaist.ac.jp/pub/apache/$1";
 		push @mirrors, "ftp://apache.cs.utah.edu/apache.org/$1";
