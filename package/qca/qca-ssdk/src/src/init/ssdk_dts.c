@@ -528,7 +528,8 @@ static void ssdk_dt_parse_scheduler_cfg(a_uint32_t dev_id, struct device_node *s
 	}
 }
 
-static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint32_t dev_id)
+static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint32_t dev_id,
+		ssdk_init_cfg *cfg)
 {
 	struct device_node *phy_info_node, *port_node;
 	ssdk_port_phyinfo *port_phyinfo;
@@ -548,6 +549,12 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 		if (of_property_read_u32(port_node, "port_id", &port_id) ||
 				of_property_read_u32(port_node, "phy_address", &phy_addr))
 			return SW_BAD_VALUE;
+
+		if (!cfg->port_cfg.wan_bmp) {
+			cfg->port_cfg.wan_bmp = BIT(port_id);
+		} else {
+			cfg->port_cfg.lan_bmp |= BIT(port_id);
+		}
 
 		phy_c45 = of_property_read_bool(port_node,
 				"ethernet-phy-ieee802.3-c45");
@@ -613,7 +620,8 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 	return rv;
 }
 
-static void ssdk_dt_parse_mdio(a_uint32_t dev_id, struct device_node *switch_node)
+static void ssdk_dt_parse_mdio(a_uint32_t dev_id, struct device_node *switch_node,
+		ssdk_init_cfg *cfg)
 {
 	struct device_node *mdio_node = NULL;
 	struct device_node *child = NULL;
@@ -623,7 +631,7 @@ static void ssdk_dt_parse_mdio(a_uint32_t dev_id, struct device_node *switch_nod
 	const __be32 *c45_phy;
 
 	/* prefer to get phy info from ess-switch node */
-	if (SW_OK == ssdk_dt_parse_phy_info(switch_node, dev_id))
+	if (SW_OK == ssdk_dt_parse_phy_info(switch_node, dev_id, cfg))
 		return;
 
 	mdio_node = of_find_node_by_name(NULL, "mdio");
@@ -657,6 +665,12 @@ static void ssdk_dt_parse_mdio(a_uint32_t dev_id, struct device_node *switch_nod
 				port_phyinfo->phy_features |= PHY_F_INIT;
 			}
 
+			if (!cfg->port_cfg.wan_bmp) {
+				cfg->port_cfg.wan_bmp = BIT(i);
+			} else {
+				cfg->port_cfg.lan_bmp |= BIT(i);
+			}
+
 			i++;
 			if (i >= SW_MAX_NR_PORT) {
 				break;
@@ -674,8 +688,10 @@ static void ssdk_dt_parse_port_bmp(a_uint32_t dev_id,
 	if (of_property_read_u32(switch_node, "switch_cpu_bmp", &cfg->port_cfg.cpu_bmp)
 		|| of_property_read_u32(switch_node, "switch_lan_bmp", &cfg->port_cfg.lan_bmp)
 		|| of_property_read_u32(switch_node, "switch_wan_bmp", &cfg->port_cfg.wan_bmp)) {
-		SSDK_ERROR("port_bmp doesn't exist!\n");
-		return;
+		SSDK_INFO("port_bmp doesn't exist!\n");
+		/*
+		 * the bmp maybe initialized already, so just keep ongoing.
+		 */
 	}
 
 	if (!of_property_read_u32(switch_node, "switch_inner_bmp", &cfg->port_cfg.inner_bmp)) {
@@ -908,7 +924,7 @@ sw_error_t ssdk_dt_parse(ssdk_init_cfg *cfg, a_uint32_t num, a_uint32_t *dev_id)
 	rv = ssdk_dt_parse_access_mode(switch_node, ssdk_dt_priv);
 	SW_RTN_ON_ERROR(rv);
 	ssdk_dt_parse_mac_mode(*dev_id, switch_node, cfg);
-	ssdk_dt_parse_mdio(*dev_id, switch_node);
+	ssdk_dt_parse_mdio(*dev_id, switch_node, cfg);
 	ssdk_dt_parse_port_bmp(*dev_id, switch_node, cfg);
 
 	if (of_device_is_compatible(switch_node, "qcom,ess-switch")) {
