@@ -13,7 +13,7 @@ PKG_SOURCE_VERSION:=5d63529ffc6e24974bc7c45b28fd1c34573126eb
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/kvalo/ath10k-firmware.git
+PKG_SOURCE_URL:=https://github.com/jollaman999/ath10k-firmware.git
 
 PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
 
