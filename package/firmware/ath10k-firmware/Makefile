@@ -8,8 +8,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ath10k-firmware
-PKG_SOURCE_DATE:=2019-11-15
-PKG_SOURCE_VERSION:=5d63529ffc6e24974bc7c45b28fd1c34573126eb
+PKG_SOURCE_DATE:=2019-12-08
+PKG_SOURCE_VERSION:=c23a5d3833b200c459c63c656790207bdaca27e5
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
@@ -472,7 +472,7 @@ define Package/ath10k-firmware-qca9984/install
 		$(PKG_BUILD_DIR)/QCA9984/hw1.0/board-2.bin \
 		$(1)/lib/firmware/ath10k/QCA9984/hw1.0/board-2.bin
 	$(INSTALL_DATA) \
-		$(PKG_BUILD_DIR)/QCA9984/hw1.0/3.9.0.2/firmware-5.bin_10.4-3.9.0.2-00070 \
+		$(PKG_BUILD_DIR)/QCA9984/hw1.0/ct-firmware/10.4.3_b12/firmware-5-ct-full-htt-mgt-community.bin \
 		$(1)/lib/firmware/ath10k/QCA9984/hw1.0/firmware-5.bin
 endef
 
