@@ -16,6 +16,7 @@ define Device/Default
 	KERNEL_INITRAMFS_PREFIX := $$(IMG_PREFIX)-$(1)-initramfs
 	KERNEL_PREFIX := $$(IMAGE_PREFIX)
 	KERNEL_LOADADDR = 0x42208000
+	DEVICE_DTS = $$(SOC)-$(lastword $(subst _, ,$(1)))
 	SUPPORTED_DEVICES := $(subst _,$(comma),$(1))
 	IMAGE/sysupgrade.bin = sysupgrade-tar | append-metadata
 	IMAGE/sysupgrade.bin/squashfs :=
@@ -82,7 +83,7 @@ endef
 
 define Device/buffalo_wxr-2533dhp
 	$(call Device/LegacyImage)
-	DEVICE_DTS := qcom-ipq8064-wxr-2533dhp
+	SOC := qcom-ipq8064
 	DEVICE_VENDOR := Buffalo
 	DEVICE_MODEL := WXR-2533DHP
 	BLOCKSIZE := 128k
@@ -103,7 +104,7 @@ define Device/compex_wpq864
 	DEVICE_MODEL := WPQ864
 	BLOCKSIZE := 128k
 	PAGESIZE := 2048
-	DEVICE_DTS := qcom-ipq8064-wpq864
+	SOC := qcom-ipq8064
 	DEVICE_PACKAGES := kmod-gpio-beeper
 endef
 TARGET_DEVICES += compex_wpq864
@@ -112,7 +113,7 @@ define Device/linksys_ea8500
 	$(call Device/LegacyImage)
 	DEVICE_VENDOR := Linksys
 	DEVICE_MODEL := EA8500
-	DEVICE_DTS := qcom-ipq8064-ea8500
+	SOC := qcom-ipq8064
 	PAGESIZE := 2048
 	BLOCKSIZE := 128k
 	KERNEL_SIZE := 3072k
@@ -130,7 +131,7 @@ define Device/nec_wg2600hp
 	$(call Device/LegacyImage)
 	DEVICE_VENDOR := NEC
 	DEVICE_MODEL := Aterm WG2600HP
-	DEVICE_DTS := qcom-ipq8064-wg2600hp
+	SOC := qcom-ipq8064
 	BLOCKSIZE := 64k
 	BOARD_NAME := wg2600hp
 	IMAGES := sysupgrade.bin
@@ -143,7 +144,7 @@ define Device/netgear_d7800
 	$(call Device/DniImage)
 	DEVICE_VENDOR := NETGEAR
 	DEVICE_MODEL := Nighthawk X4 D7800
-	DEVICE_DTS := qcom-ipq8064-d7800
+	SOC := qcom-ipq8064
 	KERNEL_SIZE := 4096k
 	NETGEAR_BOARD_ID := D7800
 	NETGEAR_HW_ID := 29764958+0+128+512+4x4+4x4
@@ -160,7 +161,7 @@ define Device/netgear_r7500
 	DEVICE_VENDOR := NETGEAR
 	DEVICE_MODEL := Nighthawk X4 R7500
 	DEVICE_VARIANT := v1
-	DEVICE_DTS := qcom-ipq8064-r7500
+	SOC := qcom-ipq8064
 	KERNEL_SIZE := 4096k
 	NETGEAR_BOARD_ID := R7500
 	NETGEAR_HW_ID := 29764841+0+128+256+3x3+4x4
@@ -177,7 +178,7 @@ define Device/netgear_r7500v2
 	DEVICE_VENDOR := NETGEAR
 	DEVICE_MODEL := Nighthawk X4 R7500
 	DEVICE_VARIANT := v2
-	DEVICE_DTS := qcom-ipq8064-r7500v2
+	SOC := qcom-ipq8064
 	KERNEL_SIZE := 4096k
 	NETGEAR_BOARD_ID := R7500v2
 	NETGEAR_HW_ID := 29764958+0+128+512+3x3+4x4
@@ -193,7 +194,7 @@ define Device/netgear_r7800
 	$(call Device/DniImage)
 	DEVICE_VENDOR := NETGEAR
 	DEVICE_MODEL := Nighthawk X4S R7800
-	DEVICE_DTS := qcom-ipq8065-r7800
+	SOC := qcom-ipq8065
 	KERNEL_SIZE := 4096k
 	NETGEAR_BOARD_ID := R7800
 	NETGEAR_HW_ID := 29764958+0+128+512+4x4+4x4+cascade
@@ -211,6 +212,7 @@ define Device/qcom_ipq8064-ap148
 	DEVICE_VENDOR := Qualcomm
 	DEVICE_MODEL := AP148
 	DEVICE_VARIANT := standard
+	SOC := qcom-ipq8064
 	DEVICE_DTS := qcom-ipq8064-ap148
 	KERNEL_INSTALL := 1
 	BLOCKSIZE := 128k
@@ -227,6 +229,7 @@ define Device/qcom_ipq8064-ap148-legacy
 	DEVICE_VENDOR := Qualcomm
 	DEVICE_MODEL := AP148
 	DEVICE_VARIANT := legacy
+	SOC := qcom-ipq8064
 	DEVICE_DTS := qcom-ipq8064-ap148
 	BLOCKSIZE := 128k
 	PAGESIZE := 2048
@@ -241,6 +244,7 @@ define Device/qcom_ipq8064-ap161
 	$(call Device/UbiFit)
 	DEVICE_VENDOR := Qualcomm
 	DEVICE_MODEL := AP161
+	SOC := qcom-ipq8064
 	DEVICE_DTS := qcom-ipq8064-ap161
 	KERNEL_INSTALL := 1
 	BLOCKSIZE := 128k
@@ -254,6 +258,7 @@ define Device/qcom_ipq8064-db149
 	$(call Device/FitImage)
 	DEVICE_VENDOR := Qualcomm
 	DEVICE_MODEL := DB149
+	SOC := qcom-ipq8064
 	DEVICE_DTS := qcom-ipq8064-db149
 	KERNEL_INSTALL := 1
 	BOARD_NAME := db149
@@ -266,7 +271,7 @@ define Device/tplink_c2600
 	DEVICE_VENDOR := TP-Link
 	DEVICE_MODEL := Archer C2600
 	DEVICE_VARIANT := v1
-	DEVICE_DTS := qcom-ipq8064-c2600
+	SOC := qcom-ipq8064
 	BLOCKSIZE := 128k
 	PAGESIZE := 2048
 	BOARD_NAME := c2600
@@ -284,7 +289,7 @@ define Device/tplink_vr2600v
 	KERNEL = kernel-bin | append-dtb | uImage none
 	KERNEL_NAME := zImage
 	KERNEL_SIZE := 3072k
-	DEVICE_DTS := qcom-ipq8064-vr2600v
+	SOC := qcom-ipq8064
 	BLOCKSIZE := 128k
 	PAGESIZE := 2048
 	BOARD_NAME := vr2600v
@@ -298,7 +303,7 @@ TARGET_DEVICES += tplink_vr2600v
 define Device/zyxel_nbg6817
 	DEVICE_VENDOR := ZyXEL
 	DEVICE_MODEL := NBG6817
-	DEVICE_DTS := qcom-ipq8065-nbg6817
+	SOC := qcom-ipq8065
 	KERNEL_SIZE := 4096k
 	BLOCKSIZE := 64k
 	BOARD_NAME := nbg6817
