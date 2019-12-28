@@ -11,9 +11,7 @@ CPU_SUBTYPE:=neon-vfpv4
 MAINTAINER:=John Crispin <john@phrozen.org>
 SUBTARGETS:=generic
 
-# TODO: drop kmod-usb-dwc3-of-simple when migrating to 4.19
-KERNEL_PATCHVER:=4.14
-KERNEL_TESTING_PATCHVER := 4.19
+KERNEL_PATCHVER:=4.19
 
 KERNELNAME:=zImage Image dtbs
 
@@ -22,7 +20,7 @@ DEFAULT_PACKAGES += \
 	kmod-leds-gpio kmod-gpio-button-hotplug swconfig \
 	kmod-ata-core kmod-ata-ahci kmod-ata-ahci-platform \
 	kmod-usb-ohci kmod-usb2 kmod-usb-ledtrig-usbport \
-	kmod-usb3 kmod-usb-dwc3-of-simple kmod-usb-phy-qcom-dwc3 \
+	kmod-usb3 kmod-usb-dwc3-qcom kmod-usb-phy-qcom-dwc3-no-of-simple \
 	kmod-ath10k-ct wpad-basic \
 	uboot-envtools
 
