@@ -231,30 +231,6 @@
 	};
 };
 
-&hs_phy_0 {		/* USB3 port 0 HS phy */
-	status = "okay";
-};
-
-&hs_phy_1 {		/* USB3 port 1 HS phy */
-	status = "okay";
-};
-
-&ss_phy_0 {		/* USB3 port 0 SS phy */
-	status = "okay";
-
-	rx_eq = <2>;
-	tx_deamp_3_5db = <32>;
-	mpll = <160>;
-};
-
-&ss_phy_1 {		/* USB3 port 1 SS phy */
-	status = "okay";
-
-	rx_eq = <2>;
-	tx_deamp_3_5db = <32>;
-	mpll = <160>;
-};
-
 &pcie0 {
 	status = "okay";
 
