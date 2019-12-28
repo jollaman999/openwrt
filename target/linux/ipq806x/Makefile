@@ -11,7 +11,9 @@ CPU_SUBTYPE:=neon-vfpv4
 MAINTAINER:=John Crispin <john@phrozen.org>
 SUBTARGETS:=generic
 
-KERNEL_PATCHVER:=4.19
+# TODO: drop kmod-usb-dwc3-of-simple when migrating to 4.19
+KERNEL_PATCHVER:=4.14
+KERNEL_TESTING_PATCHVER := 4.19
 
 KERNELNAME:=zImage Image dtbs
 
