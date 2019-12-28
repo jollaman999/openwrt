@@ -29,7 +29,6 @@
 		led-failsafe = &general;
 		led-running = &power;
 		led-upgrade = &general;
-		label-mac-device = &gmac2;
 	};
 
 	chosen {
