@@ -1716,7 +1716,7 @@ config BUSYBOX_DEFAULT_READPROFILE
 	default n
 config BUSYBOX_DEFAULT_RENICE
 	bool
-	default n
+	default y
 config BUSYBOX_DEFAULT_REV
 	bool
 	default n
@@ -2091,7 +2091,7 @@ config BUSYBOX_DEFAULT_FEATURE_MAKEDEVS_TABLE
 	default n
 config BUSYBOX_DEFAULT_MAN
 	bool
-	default n
+	default y
 config BUSYBOX_DEFAULT_MICROCOM
 	bool
 	default n
@@ -2188,7 +2188,7 @@ config BUSYBOX_DEFAULT_ARP
 	default n
 config BUSYBOX_DEFAULT_ARPING
 	bool
-	default n
+	default y
 config BUSYBOX_DEFAULT_BRCTL
 	bool
 	default y
@@ -2749,7 +2749,7 @@ config BUSYBOX_DEFAULT_FEATURE_PS_ADDITIONAL_COLUMNS
 	default n
 config BUSYBOX_DEFAULT_PSTREE
 	bool
-	default n
+	default y
 config BUSYBOX_DEFAULT_PWDX
 	bool
 	default n
