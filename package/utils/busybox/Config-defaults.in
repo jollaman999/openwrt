@@ -2091,7 +2091,7 @@ config BUSYBOX_DEFAULT_FEATURE_MAKEDEVS_TABLE
 	default n
 config BUSYBOX_DEFAULT_MAN
 	bool
-	default y
+	default n
 config BUSYBOX_DEFAULT_MICROCOM
 	bool
 	default n
