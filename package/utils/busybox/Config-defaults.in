@@ -2737,16 +2737,16 @@ config BUSYBOX_DEFAULT_FEATURE_PS_WIDE
 	default y
 config BUSYBOX_DEFAULT_FEATURE_PS_LONG
 	bool
-	default n
+	default y
 config BUSYBOX_DEFAULT_FEATURE_PS_TIME
 	bool
-	default n
+	default y
 config BUSYBOX_DEFAULT_FEATURE_PS_UNUSUAL_SYSTEMS
 	bool
 	default n
 config BUSYBOX_DEFAULT_FEATURE_PS_ADDITIONAL_COLUMNS
 	bool
-	default n
+	default y
 config BUSYBOX_DEFAULT_PSTREE
 	bool
 	default y
