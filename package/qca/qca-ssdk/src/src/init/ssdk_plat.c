@@ -906,7 +906,8 @@ static const a_int8_t *qca_phy_feature_str[QCA_PHY_FEATURE_MAX] = {
 	"PHY_QGMAC",
 	"PHY_XGMAC",
 	"PHY_I2C",
-	"PHY_INIT"
+	"PHY_INIT",
+	"PHY_FORCE"
 };
 
 void ssdk_dts_phyinfo_dump(a_uint32_t dev_id)

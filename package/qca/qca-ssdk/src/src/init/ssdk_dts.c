@@ -162,6 +162,15 @@ ssdk_port_phyinfo* ssdk_port_phyinfo_get(a_uint32_t dev_id, a_uint32_t port_id)
 	return phyinfo_tmp;
 }
 
+a_bool_t ssdk_port_feature_get(a_uint32_t dev_id, a_uint32_t port_id, phy_features_t feature)
+{
+	ssdk_port_phyinfo *phyinfo = ssdk_port_phyinfo_get(dev_id, port_id);
+	if (phyinfo && (phyinfo->phy_features & feature)) {
+		return A_TRUE;
+	}
+	return A_FALSE;
+}
+
 struct mii_bus *
 ssdk_dts_miibus_get(a_uint32_t dev_id, a_uint32_t phy_addr)
 {
@@ -532,9 +541,10 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 		ssdk_init_cfg *cfg)
 {
 	struct device_node *phy_info_node, *port_node;
+
 	ssdk_port_phyinfo *port_phyinfo;
-	a_uint32_t port_id, phy_addr, phy_i2c_addr;
-	a_bool_t phy_c45, phy_combo, phy_i2c;
+	a_uint32_t port_id, phy_addr, phy_i2c_addr, forced_speed, forced_duplex;
+	a_bool_t phy_c45, phy_combo, phy_i2c, phy_forced;
 	const char *mac_type = NULL;
 	sw_error_t rv = SW_OK;
 	struct device_node *mdio_node;
@@ -546,9 +556,12 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 	}
 
 	for_each_available_child_of_node(phy_info_node, port_node) {
-		if (of_property_read_u32(port_node, "port_id", &port_id) ||
-				of_property_read_u32(port_node, "phy_address", &phy_addr))
+		if (of_property_read_u32(port_node, "port_id", &port_id))
 			return SW_BAD_VALUE;
+
+		/* initialize phy_addr in case of undefined dts field */
+		phy_addr = 0xff;
+		of_property_read_u32(port_node, "phy_address", &phy_addr);
 
 		if (!cfg->port_cfg.wan_bmp) {
 			cfg->port_cfg.wan_bmp = BIT(port_id);
@@ -556,13 +569,19 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 			cfg->port_cfg.lan_bmp |= BIT(port_id);
 		}
 
+		if (!of_property_read_u32(port_node, "forced-speed", &forced_speed) &&
+			!of_property_read_u32(port_node, "forced-duplex", &forced_duplex)) {
+			phy_forced = A_TRUE;
+		} else {
+			phy_forced = A_FALSE;
+		}
+
 		phy_c45 = of_property_read_bool(port_node,
 				"ethernet-phy-ieee802.3-c45");
 		phy_combo = of_property_read_bool(port_node,
 				"ethernet-phy-combo");
 		mdio_node = of_parse_phandle(port_node, "mdiobus", 0);
-		phy_i2c = of_property_read_bool(port_node,
-				"phy-i2c-mode");
+		phy_i2c = of_property_read_bool(port_node, "phy-i2c-mode");
 
 		if (phy_i2c) {
 			SSDK_INFO("[PORT %d] phy-i2c-mode\n", port_id);
@@ -597,6 +616,10 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 
 			if (phy_i2c) {
 				port_phyinfo->phy_features |= PHY_F_I2C;
+			}
+
+			if (phy_forced) {
+				port_phyinfo->phy_features |= PHY_F_FORCE;
 			}
 
 			if (!of_property_read_string(port_node, "port_mac_sel", &mac_type))

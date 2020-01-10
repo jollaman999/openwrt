@@ -2403,7 +2403,6 @@ adpt_hppe_port_mux_mac_type_set(a_uint32_t dev_id, fal_port_t port_id,
 {
 	sw_error_t rv = SW_OK;
 	a_uint32_t mode_tmp;
-	ssdk_port_phyinfo *phyinfo = NULL;
 
 	/*init the port interface mode before set it according to three mac modes*/
 	rv = adpt_hppe_port_interface_mode_set(dev_id, port_id, PORT_INTERFACE_MODE_MAX);
@@ -2506,8 +2505,7 @@ adpt_hppe_port_mux_mac_type_set(a_uint32_t dev_id, fal_port_t port_id,
 				}
 				break;
 			case PORT_WRAPPER_SGMII_PLUS:
-				phyinfo = ssdk_port_phyinfo_get(dev_id, port_id);
-				if (phyinfo && (phyinfo->phy_features & PHY_F_QGMAC)) {
+				if (ssdk_port_feature_get(dev_id, port_id, PHY_F_QGMAC)) {
 					qca_hppe_port_mac_type_set(dev_id, port_id,
 							PORT_GMAC_TYPE);
 				} else {

@@ -137,6 +137,7 @@ sw_error_t ssdk_lan_bmp_set(a_uint32_t dev_id, a_uint32_t lan_bmp);
 sw_error_t ssdk_wan_bmp_set(a_uint32_t dev_id, a_uint32_t wan_bmp);
 a_uint32_t ssdk_inner_bmp_get(a_uint32_t dev_id);
 ssdk_port_phyinfo* ssdk_port_phyinfo_get(a_uint32_t dev_id, a_uint32_t port_id);
+a_bool_t ssdk_port_feature_get(a_uint32_t dev_id, a_uint32_t port_id, phy_features_t feature);
 struct mii_bus *
 ssdk_dts_miibus_get(a_uint32_t dev_id, a_uint32_t phy_addr);
 hsl_reg_mode ssdk_switch_reg_access_mode_get(a_uint32_t dev_id);
@@ -154,6 +155,7 @@ struct clk *ssdk_dts_cmnclk_get(a_uint32_t dev_id);
 int ssdk_switch_device_num_init(void);
 void ssdk_switch_device_num_exit(void);
 a_uint32_t ssdk_switch_device_num_get(void);
+
 #ifndef BOARD_AR71XX
 #if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
 sw_error_t ssdk_dt_parse(ssdk_init_cfg *cfg, a_uint32_t num, a_uint32_t *dev_id);
