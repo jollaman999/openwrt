@@ -28,6 +28,12 @@
 
 static a_bool_t phy_ops_flag = A_FALSE;
 
+static struct mutex qca808x_reg_lock;
+
+#define QCA808X_LOCKER_INIT		mutex_init(&qca808x_reg_lock)
+#define QCA808X_REG_LOCK		mutex_lock(&qca808x_reg_lock)
+#define QCA808X_REG_UNLOCK		mutex_unlock(&qca808x_reg_lock)
+
 /******************************************************************************
 *
 * qca808x_phy_mii_read - mii register read
@@ -99,10 +105,23 @@ qca808x_phy_debug_write(a_uint32_t dev_id, a_uint32_t phy_id, a_uint16_t reg_id,
 {
 	sw_error_t rv = SW_OK;
 
+	QCA808X_REG_LOCK;
 	rv = qca808x_phy_reg_write(dev_id, phy_id, QCA808X_DEBUG_PORT_ADDRESS, reg_id);
-	PHY_RTN_ON_ERROR(rv);
+	if (rv != SW_OK)
+	{
+		QCA808X_REG_UNLOCK;
+		SSDK_ERROR("qca808x_phy_reg_write failed\n");
+		return SW_FAIL;
+	}
 
 	rv = qca808x_phy_reg_write(dev_id, phy_id, QCA808X_DEBUG_PORT_DATA, reg_val);
+	if (rv != SW_OK)
+	{
+		QCA808X_REG_UNLOCK;
+		SSDK_ERROR("qca808x_phy_reg_write failed\n");
+		return SW_FAIL;
+	}
+	QCA808X_REG_UNLOCK;
 
 	return rv;
 }
@@ -117,13 +136,24 @@ a_uint16_t
 qca808x_phy_debug_read(a_uint32_t dev_id, a_uint32_t phy_id, a_uint16_t reg_id)
 {
 	sw_error_t rv = SW_OK;
+	a_uint16_t phy_data = 0;
 
+	QCA808X_REG_LOCK;
 	rv = qca808x_phy_reg_write(dev_id, phy_id, QCA808X_DEBUG_PORT_ADDRESS, reg_id);
 	if (rv != SW_OK) {
+		QCA808X_REG_UNLOCK;
+		SSDK_ERROR("qca808x_phy_reg_write failed\n");
 		return PHY_INVALID_DATA;
 	}
+	phy_data = qca808x_phy_reg_read(dev_id, phy_id, QCA808X_DEBUG_PORT_DATA);
+	if (phy_data == PHY_INVALID_DATA) {
+		QCA808X_REG_UNLOCK;
+		SSDK_ERROR("qca808x_phy_reg_read failed\n");
+		return PHY_INVALID_DATA;
+	}
+	QCA808X_REG_UNLOCK;
 
-	return qca808x_phy_reg_read(dev_id, phy_id, QCA808X_DEBUG_PORT_DATA);
+	return phy_data;
 }
 
 /******************************************************************************
@@ -2119,10 +2149,10 @@ static sw_error_t qca808x_phy_api_ops_init(void)
 */
 int qca808x_phy_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 {
-	if(phy_ops_flag == A_FALSE) {
-		if (qca808x_phy_api_ops_init() == SW_OK) {
-			phy_ops_flag = A_TRUE;
-		}
+	if(phy_ops_flag == A_FALSE &&
+			qca808x_phy_api_ops_init() == SW_OK) {
+		QCA808X_LOCKER_INIT;
+		phy_ops_flag = A_TRUE;
 	}
 	qca808x_phy_hw_init(dev_id, port_bmp);
 
