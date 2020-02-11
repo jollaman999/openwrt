@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2016-2020, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -2734,6 +2734,11 @@ _adpt_hppe_port_phyaddr_update(a_uint32_t dev_id, a_uint32_t port_id,
 	if(mode == PORT_WRAPPER_10GBASE_R)
 	{
 		port_phyinfo = ssdk_port_phyinfo_get(dev_id, port_id);
+		if (!port_phyinfo)
+		{
+			SSDK_ERROR("port_phyinfo of port%d is null\n", port_id);
+			return SW_FAIL;
+		}
 		phy_addr = port_phyinfo->phy_addr;
 		qca_ssdk_phy_address_set(dev_id, port_id, phy_addr);
 		hsl_port_phy_access_type_set(dev_id, port_id, PHY_I2C_ACCESS);
