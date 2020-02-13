@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, 2015-2019, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012, 2015-2020, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -375,6 +375,8 @@ qca_mac_sw_sync_port_status_init(a_uint32_t dev_id);
 struct qca_phy_priv* ssdk_phy_priv_data_get(a_uint32_t dev_id);
 /*qca808x_end*/
 sw_error_t qca_switch_init(a_uint32_t dev_id);
+void qca_mac_sw_sync_work_stop(struct qca_phy_priv *priv);
+void qca_mac_sw_sync_work_resume(struct qca_phy_priv *priv);
 /*qca808x_start*/
 #ifdef __cplusplus
 }

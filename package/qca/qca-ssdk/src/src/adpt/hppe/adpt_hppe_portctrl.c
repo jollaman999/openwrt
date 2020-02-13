@@ -1997,12 +1997,19 @@ adpt_hppe_port_interface_mode_set(a_uint32_t dev_id, fal_port_t port_id,
 			      fal_port_interface_mode_t mode)
 {
 	sw_error_t rv = SW_OK;
+	struct qca_phy_priv *priv;
+
 	ADPT_DEV_ID_CHECK(dev_id);
 	if (A_TRUE != hsl_port_prop_check (dev_id, port_id, HSL_PP_EXCL_CPU) &&
 		mode != PORT_INTERFACE_MODE_MAX)
 	{
 		return SW_BAD_PARAM;
 	}
+
+	priv = ssdk_phy_priv_data_get(dev_id);
+	SW_RTN_ON_NULL(priv);
+	qca_mac_sw_sync_work_stop(priv);
+
 	port_interface_mode[dev_id][port_id] = mode;
 
 	return rv;
@@ -3018,6 +3025,9 @@ adpt_hppe_port_interface_mode_apply(a_uint32_t dev_id)
 	mutex_lock(&priv->mac_sw_sync_lock);
 	rv = _adpt_hppe_port_interface_mode_apply(dev_id, A_TRUE);
 	mutex_unlock(&priv->mac_sw_sync_lock);
+
+	qca_mac_sw_sync_work_resume(priv);
+
 	return rv;
 }
 

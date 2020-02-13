@@ -1438,6 +1438,18 @@ qca_mac_sw_sync_work_stop(struct qca_phy_priv *priv)
 	cancel_delayed_work_sync(&priv->mac_sw_sync_dwork);
 }
 
+void
+qca_mac_sw_sync_work_resume(struct qca_phy_priv *priv)
+{
+	if (priv->version != QCA_VER_HPPE)
+	{
+		return;
+	}
+
+	schedule_delayed_work(&priv->mac_sw_sync_dwork,
+					msecs_to_jiffies(QCA_MAC_SW_SYNC_WORK_DELAY));
+}
+
 int
 qca_phy_id_chip(struct qca_phy_priv *priv)
 {
