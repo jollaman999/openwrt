@@ -2736,6 +2736,7 @@ _adpt_hppe_port_phyaddr_update(a_uint32_t dev_id, a_uint32_t port_id,
 		port_phyinfo = ssdk_port_phyinfo_get(dev_id, port_id);
 		phy_addr = port_phyinfo->phy_addr;
 		qca_ssdk_phy_address_set(dev_id, port_id, phy_addr);
+		hsl_port_phy_access_type_set(dev_id, port_id, PHY_I2C_ACCESS);
 		SSDK_DEBUG("port %x phy_addr is %x\n", port_id, phy_addr);
 	}
 	else
@@ -2748,6 +2749,7 @@ _adpt_hppe_port_phyaddr_update(a_uint32_t dev_id, a_uint32_t port_id,
 			SW_RTN_ON_ERROR (rv);
 			phy_addr++;
 			qca_ssdk_phy_address_set(dev_id, port_id, phy_addr);
+			hsl_port_phy_access_type_set(dev_id, port_id, PHY_MDIO_ACCESS);
 			SSDK_DEBUG("port %x phy_addr is %x\n", port_id, phy_addr);
 		}
 	}
