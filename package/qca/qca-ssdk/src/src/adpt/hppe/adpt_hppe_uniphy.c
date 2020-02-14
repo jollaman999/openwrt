@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2017-2020, The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -529,6 +529,8 @@ adpt_hppe_uniphy_mode_set(a_uint32_t dev_id, a_uint32_t index, a_uint32_t mode)
 	if (mode == PORT_WRAPPER_MAX) {
 		ssdk_uniphy_raw_clock_reset(index);
 		return SW_OK;
+	} else {
+		__adpt_hppe_gcc_uniphy_sys_set(dev_id, index, A_TRUE);
 	}
 
 	switch(mode) {
