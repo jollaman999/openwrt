@@ -71,6 +71,8 @@ typedef struct
 {
 	a_uint8_t port_id;
 	a_uint8_t phy_addr;
+	a_uint8_t port_duplex;
+	a_uint32_t port_speed;
 	phy_features_t phy_features;
 	struct mii_bus *miibus;
 } ssdk_port_phyinfo;
@@ -138,6 +140,7 @@ sw_error_t ssdk_wan_bmp_set(a_uint32_t dev_id, a_uint32_t wan_bmp);
 a_uint32_t ssdk_inner_bmp_get(a_uint32_t dev_id);
 ssdk_port_phyinfo* ssdk_port_phyinfo_get(a_uint32_t dev_id, a_uint32_t port_id);
 a_bool_t ssdk_port_feature_get(a_uint32_t dev_id, a_uint32_t port_id, phy_features_t feature);
+a_uint32_t ssdk_port_force_speed_get(a_uint32_t dev_id, a_uint32_t port_id);
 struct mii_bus *
 ssdk_dts_miibus_get(a_uint32_t dev_id, a_uint32_t phy_addr);
 hsl_reg_mode ssdk_switch_reg_access_mode_get(a_uint32_t dev_id);

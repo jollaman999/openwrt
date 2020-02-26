@@ -171,6 +171,15 @@ a_bool_t ssdk_port_feature_get(a_uint32_t dev_id, a_uint32_t port_id, phy_featur
 	return A_FALSE;
 }
 
+a_uint32_t ssdk_port_force_speed_get(a_uint32_t dev_id, a_uint32_t port_id)
+{
+	ssdk_port_phyinfo *phyinfo = ssdk_port_phyinfo_get(dev_id, port_id);
+	if (phyinfo && (phyinfo->phy_features & PHY_F_FORCE)) {
+		return phyinfo->port_speed;
+	}
+	return FAL_SPEED_BUTT;
+}
+
 struct mii_bus *
 ssdk_dts_miibus_get(a_uint32_t dev_id, a_uint32_t phy_addr)
 {
@@ -543,7 +552,8 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 	struct device_node *phy_info_node, *port_node;
 
 	ssdk_port_phyinfo *port_phyinfo;
-	a_uint32_t port_id, phy_addr, phy_i2c_addr, forced_speed, forced_duplex;
+	a_uint8_t forced_duplex;
+	a_uint32_t port_id, phy_addr, phy_i2c_addr, forced_speed;
 	a_bool_t phy_c45, phy_combo, phy_i2c, phy_forced;
 	const char *mac_type = NULL;
 	sw_error_t rv = SW_OK;
@@ -570,7 +580,7 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 		}
 
 		if (!of_property_read_u32(port_node, "forced-speed", &forced_speed) &&
-			!of_property_read_u32(port_node, "forced-duplex", &forced_duplex)) {
+			!of_property_read_u8(port_node, "forced-duplex", &forced_duplex)) {
 			phy_forced = A_TRUE;
 		} else {
 			phy_forced = A_FALSE;
@@ -620,6 +630,8 @@ static sw_error_t ssdk_dt_parse_phy_info(struct device_node *switch_node, a_uint
 
 			if (phy_forced) {
 				port_phyinfo->phy_features |= PHY_F_FORCE;
+				port_phyinfo->port_speed = forced_speed;
+				port_phyinfo->port_duplex = forced_duplex;
 			}
 
 			if (!of_property_read_string(port_node, "port_mac_sel", &mac_type))
