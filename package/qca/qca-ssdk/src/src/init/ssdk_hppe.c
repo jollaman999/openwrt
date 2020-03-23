@@ -844,6 +844,7 @@ sw_error_t qca_hppe_acl_byp_intf_mac_learn(a_uint32_t dev_id)
 	a_uint32_t index = 0, num;
 	fal_acl_rule_t rule = { 0 };
 	a_uint8_t* mac;
+	a_uint32_t port_bmp = qca_ssdk_port_bmp_get(dev_id);
 
 	num = ssdk_intf_mac_num_get();
 	if(num == 0){
@@ -871,7 +872,7 @@ sw_error_t qca_hppe_acl_byp_intf_mac_learn(a_uint32_t dev_id)
 		fal_acl_rule_add(dev_id, LIST_ID_BYP_FDB_LRN, index, 1, &rule);
 	}
 	fal_acl_list_bind(dev_id, LIST_ID_BYP_FDB_LRN, FAL_ACL_DIREC_IN,
-				FAL_ACL_BIND_PORTBITMAP, 0x7c);
+				FAL_ACL_BIND_PORTBITMAP, port_bmp);
 
 	return SW_OK;
 }
