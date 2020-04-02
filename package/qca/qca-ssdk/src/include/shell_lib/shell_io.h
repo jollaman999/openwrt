@@ -41,8 +41,6 @@ void set_full_cmdstrp(char **cmdstrp);
 int get_jump(void);
 sw_data_type_t * cmd_data_type_find(sw_data_type_e type);
 void  cmd_strtol(char *str, a_uint32_t * arg_val);
-sw_error_t cmd_data_check_udf_element(char *cmdstr, a_uint8_t * val, a_uint32_t * len);
-sw_error_t cmd_data_check_ruletype(char *cmd_str, fal_acl_rule_type_t * arg_val, a_uint32_t size);
 sw_error_t cmd_data_check_portmap(char *cmdstr, fal_pbmp_t * val, a_uint32_t size);
 sw_error_t cmd_data_check_confirm(char *cmdstr, a_bool_t def, a_bool_t * val, a_uint32_t size);
 
@@ -447,7 +445,13 @@ cmd_data_check_ctrlpkt_appprofile(char *info, void *val, a_uint32_t size);
 #endif
 #ifdef IN_ACL
 sw_error_t
+cmd_data_check_ruletype(char *cmd_str, fal_acl_rule_type_t * arg_val, a_uint32_t size);
+sw_error_t
+cmd_data_check_udf_pkt_type(char *cmdstr, fal_acl_udf_pkt_type_t * arg_val, a_uint32_t size);
+sw_error_t
 cmd_data_check_udf_type(char *cmdstr, fal_acl_udf_type_t * arg_val, a_uint32_t size);
+sw_error_t
+cmd_data_check_udf_element(char *cmdstr, a_uint8_t * val, a_uint32_t * len);
 sw_error_t
 cmd_data_check_fieldop(char *cmdstr, fal_acl_field_op_t def, fal_acl_field_op_t * val);
 

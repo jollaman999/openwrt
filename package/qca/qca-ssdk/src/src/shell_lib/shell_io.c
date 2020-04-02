@@ -178,6 +178,8 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_UINT_A, cmd_data_check_uinta, NULL),
 	#ifdef IN_ACL
     SW_TYPE_DEF(SW_ACLRULE, NULL, NULL),
+    SW_TYPE_DEF(SW_ACL_UDF_PKT_TYPE, cmd_data_check_udf_pkt_type, NULL),
+    SW_TYPE_DEF(SW_ACL_UDF_TYPE, cmd_data_check_udf_type, NULL),
 	#endif
 	#ifdef IN_LED
     SW_TYPE_DEF(SW_LEDPATTERN, (param_check_t)cmd_data_check_ledpattern, NULL),
@@ -219,7 +221,6 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_PPPOE, (param_check_t)cmd_data_check_pppoe, NULL),
     SW_TYPE_DEF(SW_PPPOE_LESS, (param_check_t)cmd_data_check_pppoe_less, NULL),
 	#endif
-    SW_TYPE_DEF(SW_ACL_UDF_TYPE, NULL, NULL),
 	#if defined(IN_IP) || defined(IN_NAT)
     SW_TYPE_DEF(SW_IP_HOSTENTRY, (param_check_t)cmd_data_check_host_entry, NULL),
     SW_TYPE_DEF(SW_ARP_LEARNMODE, cmd_data_check_arp_learn_mode, NULL),
@@ -324,7 +325,6 @@ static sw_data_type_t sw_data_type[] =
     SW_TYPE_DEF(SW_MRU_INFO, NULL, NULL),
     SW_TYPE_DEF(SW_MTU_ENTRY, (param_check_t)cmd_data_check_mtu_entry, NULL),
     SW_TYPE_DEF(SW_MRU_ENTRY, (param_check_t)cmd_data_check_mru_entry, NULL),
-    SW_TYPE_DEF(SW_ACL_UDF_PKT_TYPE, NULL, NULL),
     #ifdef IN_SHAPER
     SW_TYPE_DEF(SW_PORT_SHAPER_TOKEN_CONFIG, (param_check_t)cmd_data_check_port_shaper_token_config, NULL),
     SW_TYPE_DEF(SW_SHAPER_TOKEN_CONFIG, (param_check_t)cmd_data_check_shaper_token_config, NULL),
@@ -2575,6 +2575,34 @@ cmd_data_check_ruletype(char *cmd_str, fal_acl_rule_type_t * arg_val,
 }
 
 sw_error_t
+cmd_data_check_udf_pkt_type(char *cmdstr, fal_acl_udf_pkt_type_t * arg_val, a_uint32_t size)
+{
+    if (NULL == cmdstr)
+    {
+        return SW_BAD_VALUE;
+    }
+
+    if (!strcasecmp(cmdstr, "non-ip"))
+    {
+        *arg_val = FAL_ACL_UDF_NON_IP;
+    }
+    else if (!strcasecmp(cmdstr, "ipv4"))
+    {
+        *arg_val = FAL_ACL_UDF_IP4;
+    }
+    else if (!strcasecmp(cmdstr, "ipv6"))
+    {
+        *arg_val = FAL_ACL_UDF_IP6;
+    }
+    else
+    {
+        return SW_BAD_VALUE;
+    }
+
+    return SW_OK;
+}
+
+sw_error_t
 cmd_data_check_udf_type(char *cmdstr, fal_acl_udf_type_t * arg_val, a_uint32_t size)
 {
     if (NULL == cmdstr)
@@ -2607,6 +2635,60 @@ cmd_data_check_udf_type(char *cmdstr, fal_acl_udf_type_t * arg_val, a_uint32_t s
         return SW_BAD_VALUE;
     }
 
+    return SW_OK;
+}
+
+sw_error_t
+cmd_data_check_udf_element(char *cmdstr, a_uint8_t * val, a_uint32_t * len)
+{
+    char *tmp = NULL;
+    a_uint32_t i = 0, j;
+    a_uint32_t data;
+
+    memset(val, 0, 16);
+    if (NULL == cmdstr)
+    {
+        return SW_BAD_VALUE;
+    }
+
+    if (0 == cmdstr[0])
+    {
+        return SW_BAD_VALUE;
+    }
+
+    tmp = (void *) strsep(&cmdstr, "-");
+    while (tmp)
+    {
+        if (16 <= i)
+        {
+            return SW_BAD_VALUE;
+        }
+
+        if ((2 < strlen(tmp)) || (0 == strlen(tmp)))
+        {
+            return SW_BAD_VALUE;
+        }
+
+        for (j = 0; j < strlen(tmp); j++)
+        {
+            if (A_FALSE == is_hex(tmp[j]))
+            {
+                return SW_BAD_VALUE;
+            }
+        }
+
+        sscanf(tmp, "%x", &data);
+
+        val[i++] = data & 0xff;
+        tmp = (void *) strsep(&cmdstr, "-");
+    }
+
+    if (0 == i)
+    {
+        return SW_BAD_VALUE;
+    }
+
+    *len = i;
     return SW_OK;
 }
 
@@ -2922,61 +3004,6 @@ cmd_data_check_ip6addr(char *cmdstr, void * val, a_uint32_t size)
     }
 
     *(fal_ip6_addr_t*)val = ip6;
-    return SW_OK;
-}
-
-
-sw_error_t
-cmd_data_check_udf_element(char *cmdstr, a_uint8_t * val, a_uint32_t * len)
-{
-    char *tmp = NULL;
-    a_uint32_t i = 0, j;
-    a_uint32_t data;
-
-    memset(val, 0, 16);
-    if (NULL == cmdstr)
-    {
-        return SW_BAD_VALUE;
-    }
-
-    if (0 == cmdstr[0])
-    {
-        return SW_BAD_VALUE;
-    }
-
-    tmp = (void *) strsep(&cmdstr, "-");
-    while (tmp)
-    {
-        if (16 <= i)
-        {
-            return SW_BAD_VALUE;
-        }
-
-        if ((2 < strlen(tmp)) || (0 == strlen(tmp)))
-        {
-            return SW_BAD_VALUE;
-        }
-
-        for (j = 0; j < strlen(tmp); j++)
-        {
-            if (A_FALSE == is_hex(tmp[j]))
-            {
-                return SW_BAD_VALUE;
-            }
-        }
-
-        sscanf(tmp, "%x", &data);
-
-        val[i++] = data & 0xff;
-        tmp = (void *) strsep(&cmdstr, "-");
-    }
-
-    if (0 == i)
-    {
-        return SW_BAD_VALUE;
-    }
-
-    *len = i;
     return SW_OK;
 }
 
