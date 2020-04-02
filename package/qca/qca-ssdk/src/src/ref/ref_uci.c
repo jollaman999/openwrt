@@ -7861,7 +7861,7 @@ parse_acl_rule(struct switch_val *val)
 			cmd_data_check_uint16((char*)ext_value_p->option_value,
 						&tmpdata, sizeof(tmpdata));
 			rule.ctagged_val = tmpdata;
-			rule.ctagged_mask = 1;
+			rule.ctagged_mask = BITS(0,3);
 			FAL_FIELD_FLG_SET(rule.field_flg,
 					FAL_ACL_FIELD_MAC_CTAGGED);
 		} else if(!strcmp(ext_value_p->option_name, "ctag_vlan_id")) {
@@ -7895,7 +7895,7 @@ parse_acl_rule(struct switch_val *val)
 			cmd_data_check_uint16((char*)ext_value_p->option_value,
 						&tmpdata, sizeof(tmpdata));
 			rule.stagged_val = tmpdata;
-			rule.stagged_mask = 1;
+			rule.stagged_mask = BITS(0,3);
 			FAL_FIELD_FLG_SET(rule.field_flg,
 					FAL_ACL_FIELD_MAC_STAGGED);
 		} else if(!strcmp(ext_value_p->option_name, "stag_vlan_id")) {
