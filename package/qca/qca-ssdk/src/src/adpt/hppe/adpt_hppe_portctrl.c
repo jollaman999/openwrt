@@ -4146,7 +4146,7 @@ adpt_hppe_uniphy_speed_set(a_uint32_t dev_id, a_uint32_t port_id, fal_port_speed
 	mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
 	if (mode == PORT_WRAPPER_USXGMII)
 	{
-		adpt_hppe_uniphy_usxgmii_autoneg_completed(dev_id,uniphy_index);
+		/* adpt_hppe_uniphy_usxgmii_autoneg_completed(dev_id,uniphy_index); */
 		/* configure xpcs speed at usxgmii mode */
 		adpt_hppe_uniphy_usxgmii_speed_set(dev_id, uniphy_index, speed);
 	}
@@ -4477,8 +4477,6 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 			(priv->port_old_link[port_id - 1] == PORT_LINK_UP))
 		{
 			SSDK_DEBUG("Port %d change to link down status\n", port_id);
-			/* first check uniphy auto-neg complete interrupt to usxgmii */
-			adpt_hppe_uniphy_autoneg_status_check(priv->device_id, port_id);
 			/* disable ppe port bridge txmac */
 			adpt_hppe_port_bridge_txmac_set(priv->device_id, port_id, A_FALSE);
 			/* disable rx mac */
@@ -4509,6 +4507,8 @@ qca_hppe_mac_sw_sync_task(struct qca_phy_priv *priv)
 				SSDK_DEBUG("Port %d the interface mode switched\n",
 						port_id);
 			}
+			/* first check uniphy auto-neg complete interrupt to usxgmii */
+			adpt_hppe_uniphy_autoneg_status_check(priv->device_id, port_id);
 			if (status == A_TRUE)
 			{
 				adpt_hppe_gcc_uniphy_clock_status_set(priv->device_id,
