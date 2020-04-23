@@ -8261,6 +8261,8 @@ parse_acl_rule(struct switch_val *val)
 				!strcmp(ext_value_p->option_value, "no")){
 				FAL_ACTION_FLG_CLR(rule.action_flg,
 					FAL_ACL_ACTION_DENY);
+				FAL_ACTION_FLG_SET(rule.action_flg,
+					FAL_ACL_ACTION_PERMIT);
 			}
 		} else if(!strcmp(ext_value_p->option_name, "dscp_of_remark")) {
 			cmd_data_check_uint8((char*)ext_value_p->option_value,
