@@ -51,10 +51,12 @@
 #include "ref_port_ctrl.h"
 
 #if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
+#ifdef DESS
 #ifdef BOARD_AR71XX
 struct reset_control *ess_mac_clock_disable[5] = {NULL,NULL,NULL,NULL,NULL};
 #else
 extern struct reset_control *ess_mac_clock_disable[5];
+#endif
 #endif
 #endif
 
@@ -203,6 +205,7 @@ static int qca_switch_force_mac_status(struct qca_phy_priv *priv, a_uint32_t por
 	if (priv->version == 0x14)
 	{
 #if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
+#ifdef DESS
 		/*disable mac clock*/
 		reset_control_assert(ess_mac_clock_disable[port_id -1]);
 		udelay(10);
@@ -213,6 +216,7 @@ static int qca_switch_force_mac_status(struct qca_phy_priv *priv, a_uint32_t por
 		qca_switch_reg_write(priv->device_id,reg,(a_uint8_t*)&value,4);
 		/*enable mac clock*/
 		reset_control_deassert(ess_mac_clock_disable[port_id -1]);
+#endif
 #endif
 	}
 	if (priv->version == QCA_VER_AR8337 ||

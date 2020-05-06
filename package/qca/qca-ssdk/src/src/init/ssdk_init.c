@@ -1914,6 +1914,7 @@ static struct phy_driver qca_phy_driver = {
 
 #ifndef BOARD_AR71XX
 #if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
+#ifdef DESS
 struct reset_control *ess_rst = NULL;
 struct reset_control *ess_mac_clock_disable[5] = {NULL,NULL,NULL,NULL,NULL};
 
@@ -1926,11 +1927,13 @@ void ssdk_ess_reset(void)
 	reset_control_deassert(ess_rst);
 	mdelay(100);
 }
+#endif
 
 char ssdk_driver_name[] = "ess_ssdk";
 
 static int ssdk_probe(struct platform_device *pdev)
 {
+#ifdef DESS
 	ess_rst = devm_reset_control_get(&pdev->dev, "ess_rst");
 	ess_mac_clock_disable[0] = devm_reset_control_get(&pdev->dev, "ess_mac1_clk_dis");
 	ess_mac_clock_disable[1] = devm_reset_control_get(&pdev->dev, "ess_mac2_clk_dis");
@@ -1962,7 +1965,7 @@ static int ssdk_probe(struct platform_device *pdev)
 		SSDK_ERROR("ess_mac5_clock_disable fail!\n");
 		return -1;
 	}
-
+#endif
 	return 0;
 }
 
@@ -2486,7 +2489,6 @@ static void ssdk_driver_register(a_uint32_t dev_id)
 
 	reg_mode = ssdk_switch_reg_access_mode_get(dev_id);
 
-#ifdef DESS
 	if(reg_mode == HSL_REG_LOCAL_BUS) {
 #ifndef BOARD_AR71XX
 #if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
@@ -2494,7 +2496,6 @@ static void ssdk_driver_register(a_uint32_t dev_id)
 #endif
 #endif
 	}
-#endif
 
 	flag = ssdk_ess_switch_flag_get(dev_id);
 	if(reg_mode == HSL_REG_MDIO && flag == A_FALSE) {
