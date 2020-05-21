@@ -2307,7 +2307,7 @@ adpt_hppe_port_interface_mode_switch_mac_reset(a_uint32_t dev_id,
 	a_uint32_t port_mac_type;
 
 	phy_type = hsl_phy_type_get(dev_id, port_id);
-	if (phy_type != AQUANTIA_PHY_CHIP) {
+	if (phy_type != AQUANTIA_PHY_CHIP && phy_type != SFP_PHY_CHIP) {
 		return SW_OK;
 	}
 
@@ -2320,8 +2320,11 @@ adpt_hppe_port_interface_mode_switch_mac_reset(a_uint32_t dev_id,
 	}
 
 	mode = ssdk_dt_global_get_mac_mode(dev_id, uniphy_index);
-	if ((mode == PORT_WRAPPER_USXGMII) || (mode == PORT_WRAPPER_SGMII_CHANNEL0)
-			|| (mode == PORT_WRAPPER_SGMII0_RGMII4)) {
+	if ((mode == PORT_WRAPPER_USXGMII) ||
+		(mode == PORT_WRAPPER_SGMII_CHANNEL0) ||
+		(mode == PORT_WRAPPER_SGMII0_RGMII4) ||
+		(mode == PORT_WRAPPER_SGMII_FIBER) ||
+		(mode == PORT_WRAPPER_10GBASE_R)) {
 		ssdk_port_mac_clock_reset(dev_id, port_id);
 		port_mac_type = qca_hppe_port_mac_type_get(dev_id, port_id);
 		if (port_mac_type == PORT_XGMAC_TYPE) {
