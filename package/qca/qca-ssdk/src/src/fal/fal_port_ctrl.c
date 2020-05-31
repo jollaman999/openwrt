@@ -1448,10 +1448,8 @@ _fal_port_remote_loopback_get (a_uint32_t dev_id, fal_port_t port_id,
 /*qca808x_end*/
     adpt_api_t *p_adpt_api;
 
-    if((p_adpt_api = adpt_api_ptr_get(dev_id)) != NULL) {
-        if (NULL == p_adpt_api->adpt_port_remote_loopback_get)
-            return SW_NOT_SUPPORTED;
-
+    if((p_adpt_api = adpt_api_ptr_get(dev_id)) != NULL &&
+        p_adpt_api->adpt_port_remote_loopback_get!= NULL) {
         rv = p_adpt_api->adpt_port_remote_loopback_get(dev_id, port_id, enable);
         return rv;
     }
