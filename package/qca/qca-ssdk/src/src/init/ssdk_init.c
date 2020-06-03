@@ -3497,10 +3497,12 @@ static int __init regi_init(void)
 
 	ssdk_sysfs_init();
 
-	/* register the notifier later should be ok */
-	ssdk_dev_notifier.notifier_call = ssdk_dev_event;
-	ssdk_dev_notifier.priority = 1;
-	register_netdevice_notifier(&ssdk_dev_notifier);
+	if (rv == 0){
+		/* register the notifier later should be ok */
+		ssdk_dev_notifier.notifier_call = ssdk_dev_event;
+		ssdk_dev_notifier.priority = 1;
+		register_netdevice_notifier(&ssdk_dev_notifier);
+	}
 /*qca808x_start*/
 
 out:
