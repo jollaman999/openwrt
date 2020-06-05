@@ -16,6 +16,7 @@
 #include "hsl_phy.h"
 #include "hsl.h"
 /*qca808x_end*/
+#include "ssdk_dts.h"
 #if defined(ISIS) ||defined(ISISC) ||defined(GARUDA)
 #include <f1_phy.h>
 #endif
@@ -282,6 +283,11 @@ int ssdk_phy_driver_init(a_uint32_t dev_id, ssdk_init_cfg *cfg)
 	{
 		if (port_bmp[dev_id] & (0x1 << i))
 		{
+/*qca808x_end*/
+			if(ssdk_port_feature_get(dev_id, i, PHY_F_FORCE)) {
+				continue;
+			}
+/*qca808x_start*/
 			phy_id = hsl_phyid_get(dev_id, i, cfg);
 			phytype = hsl_phytype_get_by_phyid(dev_id, phy_id);
 			if (MAX_PHY_CHIP != phytype) {
