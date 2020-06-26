@@ -59,7 +59,7 @@ define Build/Compile/kmod
 		CONFIG_FAST_CLASSIFIER=m \
 		CROSS_COMPILE="$(TARGET_CROSS)" \
 		ARCH="$(LINUX_KARCH)" \
-		SUBDIRS="$(PKG_BUILD_DIR)/fast-classifier" \
+		M="$(PKG_BUILD_DIR)/fast-classifier" \
 		EXTRA_CFLAGS="$(EXTRA_CFLAGS) -Wno-implicit-function-declaration" \
 		modules
 endef

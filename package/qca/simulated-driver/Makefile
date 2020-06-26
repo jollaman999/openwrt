@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 The Linux Foundation. All rights reserved.
+# Copyright (c) 2015, 2020 The Linux Foundation. All rights reserved.
 # Permission to use, copy, modify, and/or distribute this software for
 # any purpose with or without fee is hereby granted, provided that the
 # above copyright notice and this permission notice appear in all copies.
@@ -53,14 +53,16 @@ define Build/Compile
 	$(MAKE) -C "$(LINUX_DIR)" \
 		CROSS_COMPILE="$(TARGET_CROSS)" \
 		ARCH="$(LINUX_KARCH)" \
-		SUBDIRS="$(PKG_BUILD_DIR)/simulated-driver" \
+		M="$(PKG_BUILD_DIR)/simulated-driver" \
 		EXTRA_CFLAGS="$(EXTRA_CFLAGS)" \
 		modules
 endef
 
+ifneq ($(CONFIG_PACKAGE_kmod-shortcut-fe-drv),)
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include/shortcut-fe
 	$(CP) -rf $(PKG_BUILD_DIR)/simulated-driver/sfe_drv.h $(1)/usr/include/shortcut-fe
 endef
+endif
 
 $(eval $(call KernelPackage,shortcut-fe-drv))
