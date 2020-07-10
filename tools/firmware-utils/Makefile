@@ -63,7 +63,6 @@ define Host/Compile
 	$(call cc,mkmylofw)
 	$(call cc,mkplanexfw sha1)
 	$(call cc,mkporayfw,-Wall)
-	$(call cc,mkrasimage,--std=gnu99)
 	$(call cc,mkrtn56uimg,-lz)
 	$(call cc,mksenaofw md5,-Wall --std=gnu99)
 	$(call cc,mksercommfw,-Wall)
