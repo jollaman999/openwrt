@@ -2894,6 +2894,10 @@ adpt_hppe_port_autoneg_adv_set(a_uint32_t dev_id, fal_port_t port_id,
 
 	rv = phy_drv->phy_autoneg_adv_set (dev_id, phy_id, autoadv);
 	SW_RTN_ON_ERROR (rv);
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0))
+	rv = hsl_port_phydev_adv_update (dev_id, port_id, autoadv);
+	SW_RTN_ON_ERROR (rv);
+#endif
 
 	return SW_OK;
 

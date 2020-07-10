@@ -344,7 +344,7 @@ ifeq (KSLIB, $(MODULE_TYPE))
 
   endif
 
-  ifeq (4_4, $(OS_VER))
+  ifeq ($(OS_VER),$(filter 4_4 5_4, $(OS_VER)))
                 MODULE_CFLAG += -DKVER34
                 MODULE_CFLAG += -DKVER32
             MODULE_CFLAG += -DLNX26_22
@@ -367,6 +367,7 @@ ifeq (KSLIB, $(MODULE_TYPE))
 	    else ifeq ($(ARCH), arm)
 	    MODULE_INC += -I$(SYS_PATH) \
               -I$(TOOL_PATH)/../lib/gcc/$(TARGET_NAME)/$(GCC_VERSION)/include/ \
+              -I$(TOOL_PATH)/../lib/gcc/$(TARGET_NAME)/7.5.0/include/ \
               -I$(TOOL_PATH)/../../lib/armv7a-vfp-neon-rdk-linux-gnueabi/gcc/arm-rdk-linux-gnueabi/4.8.4/include/ \
               -I$(SYS_PATH)/include \
               -I$(SYS_PATH)/source/include \
@@ -376,6 +377,7 @@ ifeq (KSLIB, $(MODULE_TYPE))
               -I$(SYS_PATH)/arch/arm/include \
               -I$(SYS_PATH)/source/arch/arm/include/asm \
               -I$(SYS_PATH)/arch/arm/include/generated \
+              -I$(SYS_PATH)/arch/arm/include/generated/uapi \
               -I$(SYS_PATH)/include/generated/uapi \
               -I$(SYS_PATH)/include/uapi \
               -I$(SYS_PATH)/arch/arm/include/uapi \

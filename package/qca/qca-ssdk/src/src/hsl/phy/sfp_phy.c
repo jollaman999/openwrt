@@ -30,6 +30,16 @@
 * sfp_phy_init -
 *
 */
+#if (LINUX_VERSION_CODE < KERNEL_VERSION (5, 0, 0))
+#define SFP_PHY_FEATURES        (SUPPORTED_FIBRE | \
+                                SUPPORTED_1000baseT_Full | \
+                                SUPPORTED_10000baseT_Full | \
+                                SUPPORTED_Pause | \
+                                SUPPORTED_Asym_Pause)
+#else
+__ETHTOOL_DECLARE_LINK_MODE_MASK(SFP_PHY_FEATURES) __ro_after_init;
+#endif
+
 static int
 sfp_phy_probe(struct phy_device *pdev)
 {
@@ -93,7 +103,7 @@ static struct phy_driver sfp_phy_driver = {
 	.config_aneg	= sfp_phy_config_aneg,
 	.aneg_done	= sfp_phy_aneg_done,
 	.read_status	= sfp_read_status,
-	.features	= PHY_BASIC_FEATURES,
+	.features	= SFP_PHY_FEATURES,
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,9,0))
 	.mdiodrv.driver	= { .owner = THIS_MODULE },
 #else
@@ -161,6 +171,23 @@ void sfp_phy_device_remove(a_uint32_t dev_id, a_uint32_t port)
 #endif
 }
 
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0))
+static void sfp_features_init(void)
+{
+	const int features[] = {
+		ETHTOOL_LINK_MODE_FIBRE_BIT,
+		ETHTOOL_LINK_MODE_1000baseT_Full_BIT,
+		ETHTOOL_LINK_MODE_10000baseT_Full_BIT,
+		ETHTOOL_LINK_MODE_Pause_BIT,
+		ETHTOOL_LINK_MODE_Asym_Pause_BIT,
+	};
+
+	linkmode_set_bit_array(features,
+		ARRAY_SIZE(features),
+		SFP_PHY_FEATURES);
+}
+#endif
+
 int sfp_phy_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 {
 	a_uint32_t port_id = 0;
@@ -172,7 +199,9 @@ int sfp_phy_init(a_uint32_t dev_id, a_uint32_t port_bmp)
 			sfp_phy_device_setup(dev_id, port_id, SFP_PHY);
 		}
 	}
-
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0))
+	sfp_features_init();
+#endif
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,9,0))
 	phy_driver_register(&sfp_phy_driver, THIS_MODULE);
 #else

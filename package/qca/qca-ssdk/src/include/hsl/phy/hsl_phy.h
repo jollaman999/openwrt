@@ -20,6 +20,7 @@ extern "C" {
 #endif				/* __cplusplus */
 
 #include "fal.h"
+#include <linux/version.h>
 
 	typedef sw_error_t(*hsl_phy_init) (a_uint32_t dev_id,
 					   a_uint32_t phy_id);
@@ -447,6 +448,12 @@ hsl_phydriver_update(a_uint32_t dev_id, a_uint32_t port_id,
 void
 qca_ssdk_phy_address_set(a_uint32_t dev_id, a_uint32_t port_id,
 	a_uint32_t phy_addr);
+
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0))
+sw_error_t
+hsl_port_phydev_adv_update(a_uint32_t dev_id, a_uint32_t port_id,
+	a_uint32_t autoadv);
+#endif
 /*qca808x_start*/
 #ifdef __cplusplus
 }

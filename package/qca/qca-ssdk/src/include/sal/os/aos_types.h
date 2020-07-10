@@ -44,6 +44,7 @@ typedef __a_uint32_t   a_uint32_t;
 typedef __a_int32_t    a_int32_t;
 typedef __a_uint64_t   a_uint64_t;
 typedef __a_int64_t    a_int64_t;
+typedef unsigned long  a_ulong_t;
 
 
 typedef void *                   acore_t;

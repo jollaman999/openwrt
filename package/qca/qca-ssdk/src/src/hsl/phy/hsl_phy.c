@@ -551,6 +551,84 @@ hsl_ssdk_phy_mode_set(a_uint32_t dev_id, fal_port_interface_mode_t mode)
 
 	return SW_OK;
 }
+
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 0, 0))
+static sw_error_t
+hsl_phy_adv_to_linkmode_adv(a_uint32_t autoadv, a_ulong_t *advertising)
+{
+	linkmode_mod_bit(ETHTOOL_LINK_MODE_Pause_BIT,
+			advertising, autoadv & FAL_PHY_ADV_PAUSE);
+	linkmode_mod_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT,
+			advertising, autoadv & FAL_PHY_ADV_ASY_PAUSE);
+
+	linkmode_mod_bit(ETHTOOL_LINK_MODE_10baseT_Half_BIT,
+			advertising, autoadv & FAL_PHY_ADV_10T_HD);
+	linkmode_mod_bit(ETHTOOL_LINK_MODE_10baseT_Full_BIT,
+			advertising, autoadv & FAL_PHY_ADV_10T_FD);
+
+	linkmode_mod_bit(ETHTOOL_LINK_MODE_100baseT_Half_BIT,
+			advertising, autoadv & FAL_PHY_ADV_100TX_HD);
+	linkmode_mod_bit(ETHTOOL_LINK_MODE_100baseT_Full_BIT,
+			advertising, autoadv & FAL_PHY_ADV_100TX_FD);
+
+	linkmode_mod_bit(ETHTOOL_LINK_MODE_1000baseT_Full_BIT,
+			advertising, autoadv & FAL_PHY_ADV_1000T_FD);
+
+	linkmode_mod_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT,
+			advertising, autoadv & FAL_PHY_ADV_2500T_FD);
+
+	linkmode_mod_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT,
+			advertising, autoadv & FAL_PHY_ADV_5000T_FD);
+
+	linkmode_mod_bit(ETHTOOL_LINK_MODE_10000baseT_Full_BIT,
+			advertising, autoadv & FAL_PHY_ADV_10000T_FD);
+
+	SSDK_DEBUG("autoadv:0x%x, advertising::0x%lx\n",
+		autoadv, *advertising);
+
+	return SW_OK;
+}
+
+static sw_error_t
+hsl_port_phydev_get(a_uint32_t dev_id, a_uint32_t port_id,
+	struct phy_device **phydev)
+{
+	struct qca_phy_priv *priv;
+	a_uint32_t phy_addr;
+
+	priv = ssdk_phy_priv_data_get(dev_id);
+	SW_RTN_ON_NULL(priv);
+
+	phy_addr = qca_ssdk_port_to_phy_addr(dev_id, port_id);
+	SW_RTN_ON_NULL(phydev);
+	*phydev = mdiobus_get_phy(priv->miibus, phy_addr);
+	if(*phydev == NULL)
+	{
+		SSDK_ERROR("port %d phydev is NULL\n", port_id);
+		return SW_NOT_INITIALIZED;
+	}
+	SSDK_DEBUG("phy[%d]: device %s, driver %s\n",
+		(*phydev)->mdio.addr, phydev_name(*phydev),
+		(*phydev)->drv ? (*phydev)->drv->name : "unknown");
+
+	return SW_OK;
+}
+
+sw_error_t
+hsl_port_phydev_adv_update(a_uint32_t dev_id, a_uint32_t port_id,
+	a_uint32_t autoadv)
+{
+	sw_error_t rv = SW_OK;
+	struct phy_device *phydev;
+
+	rv = hsl_port_phydev_get(dev_id, port_id, &phydev);
+	SW_RTN_ON_ERROR(rv);
+	rv = hsl_phy_adv_to_linkmode_adv(autoadv, phydev->advertising);
+
+	return rv;
+}
+#endif
+
 /*qca808x_start*/
 sw_error_t ssdk_phy_driver_cleanup(void)
 {

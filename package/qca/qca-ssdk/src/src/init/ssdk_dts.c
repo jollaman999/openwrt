@@ -663,7 +663,11 @@ static void ssdk_dt_parse_intf_mac(void)
 			continue;
 		}
 		maddr = (a_uint8_t *)of_get_mac_address(dp_node);
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5, 0, 0))
 		if (maddr && is_valid_ether_addr(maddr)) {
+#else
+		if (!IS_ERR(maddr) && is_valid_ether_addr(maddr)) {
+#endif
 			ssdk_dt_global.num_intf_mac++;
 			ether_addr_copy(ssdk_dt_global.intf_mac[dp-1].uc, maddr);
 			SSDK_INFO("%s MAC %02x:%02x:%02x:%02x:%02x:%02x\n",

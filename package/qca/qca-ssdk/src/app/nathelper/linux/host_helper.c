@@ -365,7 +365,11 @@ uint32_t get_next_hop(uint32_t daddr, uint32_t saddr)
         }
     }
 
+#if (LINUX_VERSION_CODE > KERNEL_VERSION(5, 1, 0))
+    return ntohl(mrnh->fib_nh_gw4);
+#else
     return ntohl(mrnh->nh_gw);
+#endif
 }
 
 uint32_t napt_set_default_route(fal_ip4_addr_t dst_addr, fal_ip4_addr_t src_addr)
