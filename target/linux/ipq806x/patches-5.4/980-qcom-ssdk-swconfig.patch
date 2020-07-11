@@ -316,8 +316,8 @@
  	},
 +	{
 +		.cmd = SWITCH_CMD_LIST_REG,
++		.validate = GENL_DONT_VALIDATE_STRICT | GENL_DONT_VALIDATE_DUMP,
 +		.doit = swconfig_list_attrs,
-+		.policy = switch_policy,
 +	},
  	{
  		.cmd = SWITCH_CMD_LIST_PORT,
@@ -328,8 +328,8 @@
  	},
 +	{
 +		.cmd = SWITCH_CMD_GET_REG,
++		.validate = GENL_DONT_VALIDATE_STRICT | GENL_DONT_VALIDATE_DUMP,
 +		.doit = swconfig_get_attr,
-+		.policy = switch_policy,
 +	},
  	{
  		.cmd = SWITCH_CMD_GET_VLAN,
@@ -340,8 +340,8 @@
  	},
 +	{
 +		.cmd = SWITCH_CMD_SET_REG,
++		.validate = GENL_DONT_VALIDATE_STRICT | GENL_DONT_VALIDATE_DUMP,
 +		.doit = swconfig_set_attr,
-+		.policy = switch_policy,
 +	},
  	{
  		.cmd = SWITCH_CMD_SET_GLOBAL,
