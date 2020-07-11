@@ -1385,7 +1385,7 @@
 			#address-cells = <1>;
 			#size-cells = <0>;
 
-			compatible = "qcom,ipq8064-mdio", "syscon";
+			compatible = "qcom,ipq8064-mdio", "syscon", "virtual,mdio-gpio";
 			reg = <0x37000000 0x200000>;
 			resets = <&gcc GMAC_CORE1_RESET>;
 			reset-names = "stmmaceth";
