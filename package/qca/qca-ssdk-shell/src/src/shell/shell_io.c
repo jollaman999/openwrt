@@ -4607,7 +4607,7 @@ cmd_data_check_mac_field(fal_acl_rule_t * entry)
         FAL_FIELD_FLG_SET(entry->field_flg, FAL_ACL_FIELD_VSI);
     }
 
-    /* get vsi field configuration */
+    /* get pppoe session id field configuration */
     cmd_data_check_element("pppoe session id field", "no", "usage: <yes/no/y/n>\n",
                            cmd_data_check_confirm, (cmd, A_FALSE, &tmpdata,
                                    sizeof (a_bool_t)));
