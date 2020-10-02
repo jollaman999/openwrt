@@ -804,7 +804,7 @@
  		pcie0: pci@1b500000 {
  			compatible = "qcom,pcie-ipq8064";
  			reg = <0x1b500000 0x1000
-@@ -601,6 +1323,167 @@
+@@ -601,6 +1323,165 @@
  			perst-gpio = <&qcom_pinmux 63 GPIO_ACTIVE_LOW>;
  		};
  
@@ -970,7 +970,7 @@
  		vsdcc_fixed: vsdcc-regulator {
  			compatible = "regulator-fixed";
  			regulator-name = "SDCC Power";
-@@ -676,4 +1559,17 @@
+@@ -674,4 +1557,17 @@
  			};
  		};
  	};
