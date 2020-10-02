@@ -223,7 +223,6 @@
 	pinctrl-0 = <&mdio0_pins>;
 	pinctrl-names = "default";
 
-
 	phy0: ethernet-phy@0 {
 		reg = <0>;
 		qca,ar8327-initvals = <
