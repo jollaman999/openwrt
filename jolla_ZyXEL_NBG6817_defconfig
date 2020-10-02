@@ -90,6 +90,7 @@ CONFIG_DEFAULT_kmod-gpio-button-hotplug=y
 CONFIG_DEFAULT_kmod-ipt-offload=y
 CONFIG_DEFAULT_kmod-leds-gpio=y
 CONFIG_DEFAULT_kmod-phy-qcom-ipq806x-usb=y
+CONFIG_DEFAULT_kmod-qca-ssdk-hnat=y
 CONFIG_DEFAULT_kmod-usb-dwc3-qcom=y
 CONFIG_DEFAULT_kmod-usb-ledtrig-usbport=y
 CONFIG_DEFAULT_kmod-usb-ohci=y
@@ -271,18 +272,14 @@ CONFIG_KERNEL_SQUASHFS_FRAGMENT_CACHE_SIZE=3
 CONFIG_KERNEL_SQUASHFS_XATTR=y
 CONFIG_KERNEL_CC_OPTIMIZE_FOR_PERFORMANCE=y
 # CONFIG_KERNEL_CC_OPTIMIZE_FOR_SIZE is not set
-CONFIG_KERNEL_AUDIT=y
-CONFIG_KERNEL_SECURITY=y
-CONFIG_KERNEL_SECURITY_NETWORK=y
-CONFIG_KERNEL_SECURITY_SELINUX=y
-CONFIG_KERNEL_SECURITY_SELINUX_BOOTPARAM=y
-CONFIG_KERNEL_SECURITY_SELINUX_DISABLE=y
-# CONFIG_KERNEL_SECURITY_SELINUX_DEVELOP is not set
-CONFIG_KERNEL_LSM="lockdown,yama,loadpin,safesetid,integrity,selinux"
-CONFIG_KERNEL_EXT4_FS_SECURITY=y
-CONFIG_KERNEL_F2FS_FS_SECURITY=y
-CONFIG_KERNEL_UBIFS_FS_SECURITY=y
-CONFIG_KERNEL_JFFS2_FS_SECURITY=y
+# CONFIG_KERNEL_AUDIT is not set
+# CONFIG_KERNEL_SECURITY is not set
+# CONFIG_KERNEL_SECURITY_NETWORK is not set
+# CONFIG_KERNEL_SECURITY_SELINUX is not set
+# CONFIG_KERNEL_EXT4_FS_SECURITY is not set
+# CONFIG_KERNEL_F2FS_FS_SECURITY is not set
+# CONFIG_KERNEL_UBIFS_FS_SECURITY is not set
+# CONFIG_KERNEL_JFFS2_FS_SECURITY is not set
 # end of Kernel build options
 
 #
@@ -324,8 +321,7 @@ CONFIG_PKG_FORTIFY_SOURCE_1=y
 # CONFIG_PKG_RELRO_NONE is not set
 # CONFIG_PKG_RELRO_PARTIAL is not set
 CONFIG_PKG_RELRO_FULL=y
-CONFIG_TARGET_ROOTFS_SECURITY_LABELS=y
-CONFIG_SELINUXTYPE_targeted=y
+# CONFIG_TARGET_ROOTFS_SECURITY_LABELS is not set
 # end of Global build settings
 
 CONFIG_DEVEL=y
@@ -431,7 +427,7 @@ CONFIG_PACKAGE_base-files=y
 CONFIG_PACKAGE_block-mount=y
 # CONFIG_PACKAGE_blockd is not set
 # CONFIG_PACKAGE_bridge is not set
-CONFIG_PACKAGE_busybox=m
+CONFIG_PACKAGE_busybox=y
 # CONFIG_BUSYBOX_CUSTOM is not set
 CONFIG_BUSYBOX_DEFAULT_HAVE_DOT_CONFIG=y
 CONFIG_BUSYBOX_DEFAULT_DESKTOP=y
@@ -1475,7 +1471,7 @@ CONFIG_BUSYBOX_DEFAULT_FEATURE_SYSLOGD_READ_BUFFER_SIZE=0
 # CONFIG_BUSYBOX_DEFAULT_FEATURE_IPC_SYSLOG is not set
 CONFIG_BUSYBOX_DEFAULT_FEATURE_IPC_SYSLOG_BUFFER_SIZE=0
 # CONFIG_BUSYBOX_DEFAULT_FEATURE_KMSG_SYSLOG is not set
-CONFIG_PACKAGE_busybox-selinux=y
+# CONFIG_PACKAGE_busybox-selinux is not set
 CONFIG_PACKAGE_ca-bundle=y
 # CONFIG_PACKAGE_ca-certificates is not set
 CONFIG_PACKAGE_dnsmasq=y
@@ -1505,7 +1501,7 @@ CONFIG_PACKAGE_netifd=y
 # CONFIG_PACKAGE_om-watchdog is not set
 CONFIG_PACKAGE_openwrt-keyring=y
 CONFIG_PACKAGE_opkg=y
-CONFIG_PACKAGE_procd=m
+CONFIG_PACKAGE_procd=y
 
 #
 # Configuration
@@ -1514,9 +1510,9 @@ CONFIG_PACKAGE_procd=m
 # CONFIG_PROCD_ZRAM_TMPFS is not set
 # end of Configuration
 
-CONFIG_PACKAGE_procd-selinux=y
+# CONFIG_PACKAGE_procd-selinux is not set
 # CONFIG_PACKAGE_qos-scripts is not set
-CONFIG_PACKAGE_refpolicy=y
+# CONFIG_PACKAGE_refpolicy is not set
 CONFIG_PACKAGE_resolveip=y
 CONFIG_PACKAGE_rpcd=y
 CONFIG_PACKAGE_rpcd-mod-file=y
@@ -1894,7 +1890,6 @@ CONFIG_PACKAGE_kmod-scsi-core=y
 #
 # Cryptographic API modules
 #
-CONFIG_PACKAGE_kmod-crypto-acompress=y
 CONFIG_PACKAGE_kmod-crypto-aead=y
 CONFIG_PACKAGE_kmod-crypto-aes=y
 CONFIG_PACKAGE_kmod-crypto-arc4=y
@@ -2117,7 +2112,7 @@ CONFIG_PACKAGE_kmod-lib-crc16=y
 # CONFIG_PACKAGE_kmod-lib-crc32c is not set
 # CONFIG_PACKAGE_kmod-lib-crc7 is not set
 # CONFIG_PACKAGE_kmod-lib-crc8 is not set
-CONFIG_PACKAGE_kmod-lib-lz4=y
+# CONFIG_PACKAGE_kmod-lib-lz4 is not set
 CONFIG_PACKAGE_kmod-lib-textsearch=y
 # end of Libraries
 
@@ -2874,7 +2869,7 @@ CONFIG_PACKAGE_php7-pecl-mcrypt=y
 # CONFIG_PACKAGE_micropython is not set
 # CONFIG_PACKAGE_micropython-lib is not set
 # CONFIG_PACKAGE_python-pip-conf is not set
-CONFIG_PACKAGE_python3=y
+# CONFIG_PACKAGE_python3 is not set
 # CONFIG_PACKAGE_python3-aiohttp is not set
 # CONFIG_PACKAGE_python3-aiohttp-cors is not set
 # CONFIG_PACKAGE_python3-apipkg is not set
@@ -2883,14 +2878,12 @@ CONFIG_PACKAGE_python3=y
 # CONFIG_PACKAGE_python3-asn1crypto is not set
 # CONFIG_PACKAGE_python3-astral is not set
 # CONFIG_PACKAGE_python3-async-timeout is not set
-CONFIG_PACKAGE_python3-asyncio=y
-# CONFIG_PACKAGE_python3-asyncio-src is not set
+# CONFIG_PACKAGE_python3-asyncio is not set
 # CONFIG_PACKAGE_python3-atomicwrites is not set
 # CONFIG_PACKAGE_python3-attrs is not set
 # CONFIG_PACKAGE_python3-automat is not set
 # CONFIG_PACKAGE_python3-awscli is not set
-CONFIG_PACKAGE_python3-base=y
-# CONFIG_PACKAGE_python3-base-src is not set
+# CONFIG_PACKAGE_python3-base is not set
 # CONFIG_PACKAGE_python3-bcrypt is not set
 # CONFIG_PACKAGE_python3-boto3 is not set
 # CONFIG_PACKAGE_python3-botocore is not set
@@ -2900,37 +2893,29 @@ CONFIG_PACKAGE_python3-base=y
 # CONFIG_PACKAGE_python3-cachetools is not set
 # CONFIG_PACKAGE_python3-certifi is not set
 # CONFIG_PACKAGE_python3-cffi is not set
-CONFIG_PACKAGE_python3-cgi=y
-# CONFIG_PACKAGE_python3-cgi-src is not set
-CONFIG_PACKAGE_python3-cgitb=y
-# CONFIG_PACKAGE_python3-cgitb-src is not set
+# CONFIG_PACKAGE_python3-cgi is not set
+# CONFIG_PACKAGE_python3-cgitb is not set
 # CONFIG_PACKAGE_python3-chardet is not set
 # CONFIG_PACKAGE_python3-ciso8601 is not set
 # CONFIG_PACKAGE_python3-click is not set
 # CONFIG_PACKAGE_python3-click-log is not set
-CONFIG_PACKAGE_python3-codecs=y
-# CONFIG_PACKAGE_python3-codecs-src is not set
+# CONFIG_PACKAGE_python3-codecs is not set
 # CONFIG_PACKAGE_python3-colorama is not set
 # CONFIG_PACKAGE_python3-constantly is not set
 # CONFIG_PACKAGE_python3-contextlib2 is not set
 # CONFIG_PACKAGE_python3-cryptodome is not set
 # CONFIG_PACKAGE_python3-cryptodomex is not set
 # CONFIG_PACKAGE_python3-cryptography is not set
-CONFIG_PACKAGE_python3-ctypes=y
-# CONFIG_PACKAGE_python3-ctypes-src is not set
+# CONFIG_PACKAGE_python3-ctypes is not set
 # CONFIG_PACKAGE_python3-curl is not set
 # CONFIG_PACKAGE_python3-dateutil is not set
-CONFIG_PACKAGE_python3-dbm=y
-# CONFIG_PACKAGE_python3-dbm-src is not set
-CONFIG_PACKAGE_python3-decimal=y
-# CONFIG_PACKAGE_python3-decimal-src is not set
-CONFIG_PACKAGE_python3-decorator=y
-# CONFIG_PACKAGE_python3-decorator-src is not set
+# CONFIG_PACKAGE_python3-dbm is not set
+# CONFIG_PACKAGE_python3-decimal is not set
+# CONFIG_PACKAGE_python3-decorator is not set
 # CONFIG_PACKAGE_python3-defusedxml is not set
 # CONFIG_PACKAGE_python3-dev is not set
 # CONFIG_PACKAGE_python3-distro is not set
-CONFIG_PACKAGE_python3-distutils=y
-# CONFIG_PACKAGE_python3-distutils-src is not set
+# CONFIG_PACKAGE_python3-distutils is not set
 # CONFIG_PACKAGE_python3-django is not set
 # CONFIG_PACKAGE_python3-django-appconf is not set
 # CONFIG_PACKAGE_python3-django-compressor is not set
@@ -2955,16 +2940,14 @@ CONFIG_PACKAGE_python3-distutils=y
 # CONFIG_PACKAGE_python3-docutils is not set
 # CONFIG_PACKAGE_python3-dotenv is not set
 # CONFIG_PACKAGE_python3-drf-nested-routers is not set
-CONFIG_PACKAGE_python3-email=y
-# CONFIG_PACKAGE_python3-email-src is not set
+# CONFIG_PACKAGE_python3-email is not set
 # CONFIG_PACKAGE_python3-et_xmlfile is not set
 # CONFIG_PACKAGE_python3-evdev is not set
 # CONFIG_PACKAGE_python3-execnet is not set
 # CONFIG_PACKAGE_python3-flask is not set
 # CONFIG_PACKAGE_python3-flask-login is not set
 # CONFIG_PACKAGE_python3-flup is not set
-CONFIG_PACKAGE_python3-gdbm=y
-# CONFIG_PACKAGE_python3-gdbm-src is not set
+# CONFIG_PACKAGE_python3-gdbm is not set
 # CONFIG_PACKAGE_python3-gmpy2 is not set
 # CONFIG_PACKAGE_python3-gnupg is not set
 # CONFIG_PACKAGE_python3-gpiod is not set
@@ -2984,9 +2967,9 @@ CONFIG_PACKAGE_python3-gdbm=y
 # CONFIG_PACKAGE_python3-jsonschema is not set
 # CONFIG_PACKAGE_python3-lib2to3 is not set
 # CONFIG_PACKAGE_python3-libmodbus is not set
-CONFIG_PACKAGE_python3-libselinux=y
-CONFIG_PACKAGE_python3-libsemanage=y
-CONFIG_PACKAGE_python3-light=y
+# CONFIG_PACKAGE_python3-libselinux is not set
+# CONFIG_PACKAGE_python3-libsemanage is not set
+# CONFIG_PACKAGE_python3-light is not set
 
 #
 # Configuration
@@ -2995,31 +2978,24 @@ CONFIG_PACKAGE_python3-light=y
 # CONFIG_PYTHON3_HOST_PIP_CACHE_WORLD_READABLE is not set
 # end of Configuration
 
-# CONFIG_PACKAGE_python3-light-src is not set
-CONFIG_PACKAGE_python3-logging=y
-# CONFIG_PACKAGE_python3-logging-src is not set
+# CONFIG_PACKAGE_python3-logging is not set
 # CONFIG_PACKAGE_python3-lxml is not set
-CONFIG_PACKAGE_python3-lzma=y
-# CONFIG_PACKAGE_python3-lzma-src is not set
+# CONFIG_PACKAGE_python3-lzma is not set
 # CONFIG_PACKAGE_python3-markdown is not set
 # CONFIG_PACKAGE_python3-markupsafe is not set
 # CONFIG_PACKAGE_python3-maxminddb is not set
 # CONFIG_PACKAGE_python3-more-itertools is not set
 # CONFIG_PACKAGE_python3-multidict is not set
-CONFIG_PACKAGE_python3-multiprocessing=y
-# CONFIG_PACKAGE_python3-multiprocessing-src is not set
-CONFIG_PACKAGE_python3-ncurses=y
-# CONFIG_PACKAGE_python3-ncurses-src is not set
+# CONFIG_PACKAGE_python3-multiprocessing is not set
+# CONFIG_PACKAGE_python3-ncurses is not set
 # CONFIG_PACKAGE_python3-netdisco is not set
 # CONFIG_PACKAGE_python3-netifaces is not set
-CONFIG_PACKAGE_python3-networkx=y
-# CONFIG_PACKAGE_python3-networkx-src is not set
+# CONFIG_PACKAGE_python3-networkx is not set
 # CONFIG_PACKAGE_python3-newt is not set
 # CONFIG_PACKAGE_python3-numpy is not set
 # CONFIG_PACKAGE_python3-oauthlib is not set
 # CONFIG_PACKAGE_python3-openpyxl is not set
-CONFIG_PACKAGE_python3-openssl=y
-# CONFIG_PACKAGE_python3-openssl-src is not set
+# CONFIG_PACKAGE_python3-openssl is not set
 # CONFIG_PACKAGE_python3-packages is not set
 # CONFIG_PACKAGE_python3-packaging is not set
 # CONFIG_PACKAGE_python3-paho-mqtt is not set
@@ -3028,8 +3004,7 @@ CONFIG_PACKAGE_python3-openssl=y
 # CONFIG_PACKAGE_python3-passlib is not set
 # CONFIG_PACKAGE_python3-pillow is not set
 # CONFIG_PACKAGE_python3-pip is not set
-CONFIG_PACKAGE_python3-pkg-resources=y
-# CONFIG_PACKAGE_python3-pkg-resources-src is not set
+# CONFIG_PACKAGE_python3-pkg-resources is not set
 # CONFIG_PACKAGE_python3-pluggy is not set
 # CONFIG_PACKAGE_python3-ply is not set
 # CONFIG_PACKAGE_python3-psutil is not set
@@ -3037,8 +3012,7 @@ CONFIG_PACKAGE_python3-pkg-resources=y
 # CONFIG_PACKAGE_python3-pyasn1 is not set
 # CONFIG_PACKAGE_python3-pyasn1-modules is not set
 # CONFIG_PACKAGE_python3-pycparser is not set
-CONFIG_PACKAGE_python3-pydoc=y
-# CONFIG_PACKAGE_python3-pydoc-src is not set
+# CONFIG_PACKAGE_python3-pydoc is not set
 # CONFIG_PACKAGE_python3-pyjwt is not set
 # CONFIG_PACKAGE_python3-pymysql is not set
 # CONFIG_PACKAGE_python3-pynacl is not set
@@ -3066,8 +3040,8 @@ CONFIG_PACKAGE_python3-pydoc=y
 # CONFIG_PACKAGE_python3-seafile-server is not set
 # CONFIG_PACKAGE_python3-searpc is not set
 # CONFIG_PACKAGE_python3-sentry-sdk is not set
-CONFIG_PACKAGE_python3-sepolgen=y
-CONFIG_PACKAGE_python3-sepolicy=y
+# CONFIG_PACKAGE_python3-sepolgen is not set
+# CONFIG_PACKAGE_python3-sepolicy is not set
 # CONFIG_PACKAGE_python3-service-identity is not set
 # CONFIG_PACKAGE_python3-setuptools is not set
 # CONFIG_PACKAGE_python3-simplejson is not set
@@ -3076,8 +3050,7 @@ CONFIG_PACKAGE_python3-sepolicy=y
 # CONFIG_PACKAGE_python3-smbus is not set
 # CONFIG_PACKAGE_python3-speedtest-cli is not set
 # CONFIG_PACKAGE_python3-sqlalchemy is not set
-CONFIG_PACKAGE_python3-sqlite3=y
-# CONFIG_PACKAGE_python3-sqlite3-src is not set
+# CONFIG_PACKAGE_python3-sqlite3 is not set
 # CONFIG_PACKAGE_python3-sqlparse is not set
 # CONFIG_PACKAGE_python3-stem is not set
 # CONFIG_PACKAGE_python3-sysrepo is not set
@@ -3086,10 +3059,8 @@ CONFIG_PACKAGE_python3-sqlite3=y
 # CONFIG_PACKAGE_python3-toml is not set
 # CONFIG_PACKAGE_python3-twisted is not set
 # CONFIG_PACKAGE_python3-unidecode is not set
-CONFIG_PACKAGE_python3-unittest=y
-# CONFIG_PACKAGE_python3-unittest-src is not set
-CONFIG_PACKAGE_python3-urllib=y
-# CONFIG_PACKAGE_python3-urllib-src is not set
+# CONFIG_PACKAGE_python3-unittest is not set
+# CONFIG_PACKAGE_python3-urllib is not set
 # CONFIG_PACKAGE_python3-urllib3 is not set
 # CONFIG_PACKAGE_python3-vobject is not set
 # CONFIG_PACKAGE_python3-voluptuous is not set
@@ -3097,8 +3068,7 @@ CONFIG_PACKAGE_python3-urllib=y
 # CONFIG_PACKAGE_python3-wcwidth is not set
 # CONFIG_PACKAGE_python3-websocket-client is not set
 # CONFIG_PACKAGE_python3-werkzeug is not set
-CONFIG_PACKAGE_python3-xml=y
-# CONFIG_PACKAGE_python3-xml-src is not set
+# CONFIG_PACKAGE_python3-xml is not set
 # CONFIG_PACKAGE_python3-xmltodict is not set
 # CONFIG_PACKAGE_python3-yaml is not set
 # CONFIG_PACKAGE_python3-yarl is not set
@@ -4052,8 +4022,8 @@ CONFIG_PACKAGE_libaio=y
 # CONFIG_PACKAGE_libarchive is not set
 # CONFIG_PACKAGE_libarchive-noopenssl is not set
 # CONFIG_PACKAGE_libasm is not set
-CONFIG_PACKAGE_libaudit=y
-CONFIG_PACKAGE_libauparse=y
+# CONFIG_PACKAGE_libaudit is not set
+# CONFIG_PACKAGE_libauparse is not set
 # CONFIG_PACKAGE_libavahi-client is not set
 # CONFIG_PACKAGE_libavahi-compat-libdnssd is not set
 # CONFIG_PACKAGE_libavahi-dbus-support is not set
@@ -4122,7 +4092,7 @@ CONFIG_LIBCURL_PROXY=y
 # CONFIG_PACKAGE_libcxx is not set
 # CONFIG_PACKAGE_libdaemon is not set
 # CONFIG_PACKAGE_libdaq is not set
-CONFIG_PACKAGE_libdb47=y
+# CONFIG_PACKAGE_libdb47 is not set
 # CONFIG_PACKAGE_libdb47xx is not set
 # CONFIG_PACKAGE_libdbi is not set
 # CONFIG_PACKAGE_libdbus is not set
@@ -4150,13 +4120,13 @@ CONFIG_PACKAGE_libexpat=y
 # CONFIG_PACKAGE_libexslt is not set
 CONFIG_PACKAGE_libext2fs=y
 # CONFIG_PACKAGE_libextractor is not set
-CONFIG_PACKAGE_libf2fs=m
-CONFIG_PACKAGE_libf2fs-selinux=y
+CONFIG_PACKAGE_libf2fs=y
+# CONFIG_PACKAGE_libf2fs-selinux is not set
 # CONFIG_PACKAGE_libfaad2 is not set
 # CONFIG_PACKAGE_libfastjson is not set
 CONFIG_PACKAGE_libfdisk=y
 # CONFIG_PACKAGE_libfdt is not set
-CONFIG_PACKAGE_libffi=y
+# CONFIG_PACKAGE_libffi is not set
 CONFIG_PACKAGE_libffmpeg-audio-dec=y
 # CONFIG_PACKAGE_libffmpeg-custom is not set
 # CONFIG_PACKAGE_libffmpeg-full is not set
@@ -4171,7 +4141,7 @@ CONFIG_PACKAGE_libfreetype=y
 CONFIG_PACKAGE_libgcrypt=y
 # CONFIG_PACKAGE_libgd is not set
 CONFIG_PACKAGE_libgd-full=y
-CONFIG_PACKAGE_libgdbm=y
+# CONFIG_PACKAGE_libgdbm is not set
 # CONFIG_PACKAGE_libgee is not set
 CONFIG_PACKAGE_libgmp=y
 # CONFIG_PACKAGE_libgnurl is not set
@@ -4329,7 +4299,7 @@ CONFIG_PACKAGE_libsasl2=y
 # CONFIG_PACKAGE_libsearpc is not set
 # CONFIG_PACKAGE_libseccomp is not set
 CONFIG_PACKAGE_libselinux=y
-CONFIG_PACKAGE_libsemanage=y
+# CONFIG_PACKAGE_libsemanage is not set
 # CONFIG_PACKAGE_libsensors is not set
 CONFIG_PACKAGE_libsepol=y
 # CONFIG_PACKAGE_libshout is not set
@@ -6420,18 +6390,18 @@ CONFIG_PACKAGE_e2fsprogs=y
 # CONFIG_PACKAGE_e4crypt is not set
 # CONFIG_PACKAGE_exfat-fsck is not set
 # CONFIG_PACKAGE_exfat-mkfs is not set
-CONFIG_PACKAGE_f2fs-tools=m
-CONFIG_PACKAGE_f2fs-tools-selinux=y
-CONFIG_PACKAGE_f2fsck=m
-CONFIG_PACKAGE_f2fsck-selinux=y
+CONFIG_PACKAGE_f2fs-tools=y
+# CONFIG_PACKAGE_f2fs-tools-selinux is not set
+CONFIG_PACKAGE_f2fsck=y
+# CONFIG_PACKAGE_f2fsck-selinux is not set
 # CONFIG_PACKAGE_filefrag is not set
 CONFIG_PACKAGE_fstrim=y
 CONFIG_PACKAGE_fuse-utils=y
 CONFIG_PACKAGE_fuse3-utils=y
 # CONFIG_PACKAGE_hfsfsck is not set
 # CONFIG_PACKAGE_lsattr is not set
-CONFIG_PACKAGE_mkf2fs=m
-CONFIG_PACKAGE_mkf2fs-selinux=y
+CONFIG_PACKAGE_mkf2fs=y
+# CONFIG_PACKAGE_mkf2fs-selinux is not set
 # CONFIG_PACKAGE_mkhfs is not set
 # CONFIG_PACKAGE_ncdu is not set
 CONFIG_PACKAGE_nfs-utils=y
@@ -6559,42 +6529,42 @@ CONFIG_PACKAGE_zoneinfo-simple=y
 #
 # libselinux tools
 #
-CONFIG_PACKAGE_libselinux-avcstat=y
-CONFIG_PACKAGE_libselinux-compute_av=y
-CONFIG_PACKAGE_libselinux-compute_create=y
-CONFIG_PACKAGE_libselinux-compute_member=y
-CONFIG_PACKAGE_libselinux-compute_relabel=y
-CONFIG_PACKAGE_libselinux-getconlist=y
-CONFIG_PACKAGE_libselinux-getdefaultcon=y
-CONFIG_PACKAGE_libselinux-getenforce=y
-CONFIG_PACKAGE_libselinux-getfilecon=y
-CONFIG_PACKAGE_libselinux-getpidcon=y
-CONFIG_PACKAGE_libselinux-getsebool=y
-CONFIG_PACKAGE_libselinux-getseuser=y
-CONFIG_PACKAGE_libselinux-matchpathcon=y
-CONFIG_PACKAGE_libselinux-policyvers=y
-CONFIG_PACKAGE_libselinux-sefcontext_compile=y
-CONFIG_PACKAGE_libselinux-selabel_digest=y
-CONFIG_PACKAGE_libselinux-selabel_get_digests_all_partial_matches=y
-CONFIG_PACKAGE_libselinux-selabel_lookup=y
-CONFIG_PACKAGE_libselinux-selabel_lookup_best_match=y
-CONFIG_PACKAGE_libselinux-selabel_partial_match=y
-CONFIG_PACKAGE_libselinux-selinux_check_access=y
-CONFIG_PACKAGE_libselinux-selinux_check_securetty_context=y
-CONFIG_PACKAGE_libselinux-selinuxenabled=y
-CONFIG_PACKAGE_libselinux-selinuxexeccon=y
-CONFIG_PACKAGE_libselinux-setenforce=y
-CONFIG_PACKAGE_libselinux-setfilecon=y
-CONFIG_PACKAGE_libselinux-togglesebool=y
-CONFIG_PACKAGE_libselinux-validatetrans=y
+# CONFIG_PACKAGE_libselinux-avcstat is not set
+# CONFIG_PACKAGE_libselinux-compute_av is not set
+# CONFIG_PACKAGE_libselinux-compute_create is not set
+# CONFIG_PACKAGE_libselinux-compute_member is not set
+# CONFIG_PACKAGE_libselinux-compute_relabel is not set
+# CONFIG_PACKAGE_libselinux-getconlist is not set
+# CONFIG_PACKAGE_libselinux-getdefaultcon is not set
+# CONFIG_PACKAGE_libselinux-getenforce is not set
+# CONFIG_PACKAGE_libselinux-getfilecon is not set
+# CONFIG_PACKAGE_libselinux-getpidcon is not set
+# CONFIG_PACKAGE_libselinux-getsebool is not set
+# CONFIG_PACKAGE_libselinux-getseuser is not set
+# CONFIG_PACKAGE_libselinux-matchpathcon is not set
+# CONFIG_PACKAGE_libselinux-policyvers is not set
+# CONFIG_PACKAGE_libselinux-sefcontext_compile is not set
+# CONFIG_PACKAGE_libselinux-selabel_digest is not set
+# CONFIG_PACKAGE_libselinux-selabel_get_digests_all_partial_matches is not set
+# CONFIG_PACKAGE_libselinux-selabel_lookup is not set
+# CONFIG_PACKAGE_libselinux-selabel_lookup_best_match is not set
+# CONFIG_PACKAGE_libselinux-selabel_partial_match is not set
+# CONFIG_PACKAGE_libselinux-selinux_check_access is not set
+# CONFIG_PACKAGE_libselinux-selinux_check_securetty_context is not set
+# CONFIG_PACKAGE_libselinux-selinuxenabled is not set
+# CONFIG_PACKAGE_libselinux-selinuxexeccon is not set
+# CONFIG_PACKAGE_libselinux-setenforce is not set
+# CONFIG_PACKAGE_libselinux-setfilecon is not set
+# CONFIG_PACKAGE_libselinux-togglesebool is not set
+# CONFIG_PACKAGE_libselinux-validatetrans is not set
 # end of libselinux tools
 
 # CONFIG_PACKAGE_acpid is not set
 CONFIG_PACKAGE_adb=y
 # CONFIG_PACKAGE_ap51-flash is not set
 # CONFIG_PACKAGE_at is not set
-CONFIG_PACKAGE_audit=y
-CONFIG_PACKAGE_audit-utils=y
+# CONFIG_PACKAGE_audit is not set
+# CONFIG_PACKAGE_audit-utils is not set
 # CONFIG_PACKAGE_bandwidthd is not set
 # CONFIG_PACKAGE_bandwidthd-pgsql is not set
 # CONFIG_PACKAGE_bandwidthd-php is not set
@@ -6618,7 +6588,7 @@ CONFIG_PACKAGE_audit-utils=y
 # CONFIG_PACKAGE_canutils is not set
 # CONFIG_PACKAGE_cgroup-tools is not set
 # CONFIG_PACKAGE_cgroupfs-mount is not set
-CONFIG_PACKAGE_checkpolicy=y
+# CONFIG_PACKAGE_checkpolicy is not set
 # CONFIG_PACKAGE_checksec is not set
 # CONFIG_PACKAGE_checksec_automator is not set
 # CONFIG_PACKAGE_chkcon is not set
@@ -6936,21 +6906,7 @@ CONFIG_PACKAGE_openssl-util=y
 # CONFIG_PACKAGE_pciutils is not set
 # CONFIG_PACKAGE_pcsc-tools is not set
 # CONFIG_PACKAGE_pcscd is not set
-CONFIG_PACKAGE_policycoreutils=y
-CONFIG_PACKAGE_policycoreutils-fixfiles=y
-CONFIG_PACKAGE_policycoreutils-genhomedircon=y
-CONFIG_PACKAGE_policycoreutils-load_policy=y
-CONFIG_PACKAGE_policycoreutils-newrole=y
-CONFIG_PACKAGE_policycoreutils-open_init_pty=y
-CONFIG_PACKAGE_policycoreutils-pp=y
-CONFIG_PACKAGE_policycoreutils-restorecon=y
-CONFIG_PACKAGE_policycoreutils-restorecon_xattr=y
-CONFIG_PACKAGE_policycoreutils-run_init=y
-CONFIG_PACKAGE_policycoreutils-secon=y
-CONFIG_PACKAGE_policycoreutils-semodule=y
-CONFIG_PACKAGE_policycoreutils-sestatus=y
-CONFIG_PACKAGE_policycoreutils-setfiles=y
-CONFIG_PACKAGE_policycoreutils-setsebool=y
+# CONFIG_PACKAGE_policycoreutils is not set
 # CONFIG_PACKAGE_powertop is not set
 # CONFIG_PACKAGE_pps-tools is not set
 # CONFIG_PACKAGE_prlimit is not set
@@ -6996,12 +6952,12 @@ CONFIG_PACKAGE_qca-ssdk-shell=y
 # CONFIG_PACKAGE_sane-daemon is not set
 # CONFIG_PACKAGE_sane-frontends is not set
 # CONFIG_PACKAGE_sed is not set
-CONFIG_PACKAGE_selinux-audit2allow=y
-CONFIG_PACKAGE_selinux-chcat=y
-CONFIG_PACKAGE_selinux-semanage=y
-CONFIG_PACKAGE_semodule-utils=y
+# CONFIG_PACKAGE_selinux-audit2allow is not set
+# CONFIG_PACKAGE_selinux-chcat is not set
+# CONFIG_PACKAGE_selinux-semanage is not set
+# CONFIG_PACKAGE_semodule-utils is not set
 # CONFIG_PACKAGE_serdisplib-tools is not set
-CONFIG_PACKAGE_setools=y
+# CONFIG_PACKAGE_setools is not set
 # CONFIG_PACKAGE_setserial is not set
 CONFIG_PACKAGE_shadow-chage=y
 CONFIG_PACKAGE_shadow-chfn=y
