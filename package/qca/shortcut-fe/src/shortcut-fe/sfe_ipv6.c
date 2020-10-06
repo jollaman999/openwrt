@@ -2,7 +2,7 @@
  * sfe_ipv6.c
  *	Shortcut forwarding engine - IPv6 support.
  *
- * Copyright (c) 2015-2016, 2019, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2015-2016, 2019-2020 The Linux Foundation. All rights reserved.
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
  * above copyright notice and this permission notice appear in all copies.
@@ -22,6 +22,7 @@
 #include <linux/icmp.h>
 #include <net/tcp.h>
 #include <linux/etherdevice.h>
+#include <linux/version.h>
 
 #include "sfe.h"
 #include "sfe_cm.h"
@@ -1277,7 +1278,7 @@ static int sfe_ipv6_recv_udp(struct sfe_ipv6 *si, struct sk_buff *skb, struct ne
 	 * change the cloned skb's data section.
 	 */
 	if (unlikely(skb_cloned(skb))) {
-		DEBUG_TRACE("%p: skb is a cloned skb\n", skb);
+		DEBUG_TRACE("%px: skb is a cloned skb\n", skb);
 		skb = skb_unshare(skb, GFP_ATOMIC);
                 if (!skb) {
 			DEBUG_WARN("Failed to unshare the cloned skb\n");
@@ -1826,7 +1827,7 @@ static int sfe_ipv6_recv_tcp(struct sfe_ipv6 *si, struct sk_buff *skb, struct ne
 	 * change the cloned skb's data section.
 	 */
 	if (unlikely(skb_cloned(skb))) {
-		DEBUG_TRACE("%p: skb is a cloned skb\n", skb);
+		DEBUG_TRACE("%px: skb is a cloned skb\n", skb);
 		skb = skb_unshare(skb, GFP_ATOMIC);
                 if (!skb) {
 			DEBUG_WARN("Failed to unshare the cloned skb\n");
@@ -2221,7 +2222,7 @@ int sfe_ipv6_recv(struct net_device *dev, struct sk_buff *skb)
 		si->packets_not_forwarded++;
 		spin_unlock_bh(&si->lock);
 
-		DEBUG_TRACE("payload_len: %u, exceeds len: %u\n", payload_len, (len - sizeof(struct sfe_ipv6_ip_hdr)));
+		DEBUG_TRACE("payload_len: %u, exceeds len: %lu\n", payload_len, (len - sizeof(struct sfe_ipv6_ip_hdr)));
 		return 0;
 	}
 
@@ -2419,7 +2420,7 @@ int sfe_ipv6_create_rule(struct sfe_connection_create *sic)
 		spin_unlock_bh(&si->lock);
 
 		DEBUG_TRACE("connection already exists - mark: %08x, p: %d\n"
-			    "  s: %s:%pM:%pI6:%u, d: %s:%pM:%pI6:%u\n",
+			    "  s: %s:%pxM:%pI6:%u, d: %s:%pxM:%pI6:%u\n",
 			    sic->mark, sic->protocol,
 			    sic->src_dev->name, sic->src_mac, sic->src_ip.ip6, ntohs(sic->src_port),
 			    sic->dest_dev->name, sic->dest_mac, sic->dest_ip.ip6, ntohs(sic->dest_port));
@@ -2629,8 +2630,8 @@ int sfe_ipv6_create_rule(struct sfe_connection_create *sic)
 	 * We have everything we need!
 	 */
 	DEBUG_INFO("new connection - mark: %08x, p: %d\n"
-		   "  s: %s:%pM(%pM):%pI6(%pI6):%u(%u)\n"
-		   "  d: %s:%pM(%pM):%pI6(%pI6):%u(%u)\n",
+		   "  s: %s:%pxM(%pxM):%pI6(%pI6):%u(%u)\n"
+		   "  d: %s:%pxM(%pxM):%pI6(%pI6):%u(%u)\n",
 		   sic->mark, sic->protocol,
 		   sic->src_dev->name, sic->src_mac, sic->src_mac_xlate,
 		   sic->src_ip.ip6, sic->src_ip_xlate.ip6, ntohs(sic->src_port), ntohs(sic->src_port_xlate),
@@ -2753,16 +2754,16 @@ another_round:
 /*
  * sfe_ipv6_periodic_sync()
  */
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,19,0))
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 15, 0))
 static void sfe_ipv6_periodic_sync(unsigned long arg)
 #else
-static void sfe_ipv6_periodic_sync(struct timer_list *t)
+static void sfe_ipv6_periodic_sync(struct timer_list *tl)
 #endif
 {
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,19,0))
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 15, 0))
 	struct sfe_ipv6 *si = (struct sfe_ipv6 *)arg;
 #else
-	struct sfe_ipv6 *si = from_timer(si, t, timer);
+	struct sfe_ipv6 *si = from_timer(si, tl, timer);
 #endif
 	u64 now_jiffies;
 	int quota;
@@ -3354,7 +3355,7 @@ static int __init sfe_ipv6_init(void)
 	/*
 	 * Create a timer to handle periodic statistics.
 	 */
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(4,19,0))
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 15, 0))
 	setup_timer(&si->timer, sfe_ipv6_periodic_sync, (unsigned long)si);
 #else
 	timer_setup(&si->timer, sfe_ipv6_periodic_sync, 0);
