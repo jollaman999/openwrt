@@ -15,7 +15,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/notsodeep
   SECTION:=net
   CATEGORY:=Network
-  DEPENDS:=+libnfnetlink +libnetfilter-queue
+  DEPENDS:=+libnfnetlink +libnetfilter-queue +iptables-mod-nfqueue
   TITLE:=Active DPI circumvention utility for Linux
   URL:=https://github.com/farukuzun/notsodeep
 endef
