@@ -353,7 +353,7 @@ CONFIG_TOOLCHAINOPTS=y
 #
 # CONFIG_BINUTILS_USE_VERSION_2_32 is not set
 # CONFIG_BINUTILS_USE_VERSION_2_34 is not set
-CONFIG_BINUTILS_USE_VERSION_2_35=y
+CONFIG_BINUTILS_USE_VERSION_2_35_1=y
 CONFIG_EXTRA_BINUTILS_CONFIG_OPTIONS=""
 
 #
@@ -384,8 +384,8 @@ CONFIG_LIBC_USE_MUSL=y
 CONFIG_GDB=y
 CONFIG_USE_MUSL=y
 CONFIG_SSP_SUPPORT=y
-CONFIG_BINUTILS_VERSION_2_35=y
-CONFIG_BINUTILS_VERSION="2.35"
+CONFIG_BINUTILS_VERSION_2_35_1=y
+CONFIG_BINUTILS_VERSION="2.35.1"
 CONFIG_GCC_VERSION_10=y
 CONFIG_GCC_VERSION="10.2.0"
 # CONFIG_GCC_USE_IREMAP is not set
@@ -2191,7 +2191,7 @@ CONFIG_PACKAGE_kmod-ipt-nat=y
 # CONFIG_PACKAGE_kmod-ipt-nat6 is not set
 # CONFIG_PACKAGE_kmod-ipt-nathelper-rtsp is not set
 # CONFIG_PACKAGE_kmod-ipt-nflog is not set
-# CONFIG_PACKAGE_kmod-ipt-nfqueue is not set
+CONFIG_PACKAGE_kmod-ipt-nfqueue=y
 CONFIG_PACKAGE_kmod-ipt-offload=y
 # CONFIG_PACKAGE_kmod-ipt-physdev is not set
 # CONFIG_PACKAGE_kmod-ipt-proto is not set
@@ -2221,9 +2221,9 @@ CONFIG_PACKAGE_kmod-nf-nathelper=y
 CONFIG_PACKAGE_kmod-nf-nathelper-extra=y
 CONFIG_PACKAGE_kmod-nf-reject=y
 CONFIG_PACKAGE_kmod-nf-reject6=y
-# CONFIG_PACKAGE_kmod-nfnetlink is not set
+CONFIG_PACKAGE_kmod-nfnetlink=y
 # CONFIG_PACKAGE_kmod-nfnetlink-log is not set
-# CONFIG_PACKAGE_kmod-nfnetlink-queue is not set
+CONFIG_PACKAGE_kmod-nfnetlink-queue=y
 # CONFIG_PACKAGE_kmod-nft-arp is not set
 # CONFIG_PACKAGE_kmod-nft-bridge is not set
 # CONFIG_PACKAGE_kmod-nft-core is not set
@@ -4194,7 +4194,7 @@ CONFIG_PACKAGE_libmcrypt=y
 # CONFIG_PACKAGE_libmilter-sendmail is not set
 CONFIG_PACKAGE_libminiupnpc=y
 # CONFIG_PACKAGE_libmms is not set
-# CONFIG_PACKAGE_libmnl is not set
+CONFIG_PACKAGE_libmnl=y
 # CONFIG_PACKAGE_libmodbus is not set
 # CONFIG_PACKAGE_libmosquitto-nossl is not set
 # CONFIG_PACKAGE_libmosquitto-ssl is not set
@@ -4213,7 +4213,7 @@ CONFIG_PACKAGE_libncurses=y
 # CONFIG_PACKAGE_libnetfilter-cthelper is not set
 # CONFIG_PACKAGE_libnetfilter-cttimeout is not set
 # CONFIG_PACKAGE_libnetfilter-log is not set
-# CONFIG_PACKAGE_libnetfilter-queue is not set
+CONFIG_PACKAGE_libnetfilter-queue=y
 CONFIG_PACKAGE_libnetsnmp=y
 CONFIG_PACKAGE_libnettle=y
 
@@ -4224,7 +4224,7 @@ CONFIG_PACKAGE_libnettle=y
 # end of Configuration
 
 # CONFIG_PACKAGE_libnewt is not set
-# CONFIG_PACKAGE_libnfnetlink is not set
+CONFIG_PACKAGE_libnfnetlink=y
 # CONFIG_PACKAGE_libnftnl is not set
 CONFIG_PACKAGE_libnghttp2=y
 # CONFIG_PACKAGE_libnl is not set
@@ -4404,8 +4404,6 @@ CONFIG_PACKAGE_libxml2=y
 # CONFIG_PACKAGE_log4cplus is not set
 # CONFIG_PACKAGE_loudmouth is not set
 # CONFIG_PACKAGE_lttng-ust is not set
-# CONFIG_PACKAGE_measurement-kit is not set
-# CONFIG_MEASUREMENT_KIT_BUILD_DEPENDS is not set
 # CONFIG_PACKAGE_minizip is not set
 # CONFIG_PACKAGE_mtdev is not set
 CONFIG_PACKAGE_musl-fts=y
@@ -5285,7 +5283,7 @@ CONFIG_PACKAGE_iptables-mod-conntrack-extra=y
 # CONFIG_PACKAGE_iptables-mod-lua is not set
 # CONFIG_PACKAGE_iptables-mod-nat-extra is not set
 # CONFIG_PACKAGE_iptables-mod-nflog is not set
-# CONFIG_PACKAGE_iptables-mod-nfqueue is not set
+CONFIG_PACKAGE_iptables-mod-nfqueue=y
 # CONFIG_PACKAGE_iptables-mod-physdev is not set
 # CONFIG_PACKAGE_iptables-mod-proto is not set
 # CONFIG_PACKAGE_iptables-mod-psd is not set
@@ -6067,6 +6065,7 @@ CONFIG_PACKAGE_memcached=y
 # CONFIG_PACKAGE_nlbwmon is not set
 # CONFIG_PACKAGE_noddos is not set
 # CONFIG_PACKAGE_noping is not set
+CONFIG_PACKAGE_notsodeep=y
 # CONFIG_PACKAGE_nut is not set
 # CONFIG_PACKAGE_obfs4proxy is not set
 CONFIG_PACKAGE_odhcp6c=y
