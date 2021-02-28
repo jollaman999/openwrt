@@ -6141,12 +6141,6 @@ cmd_data_check_acl_action(fal_acl_rule_t * entry)
         FAL_ACTION_FLG_SET(entry->action_flg, FAL_ACL_ACTION_METADATA_EN);
     }
 
-    cmd_data_check_element("qos res prec", "0",
-                           "usage: the format is 0x0-0x7 or 0-7\n",
-                            cmd_data_check_integer, (cmd, &tmpdata, 0x7,
-                                    0x0));
-    entry->qos_res_prec = tmpdata;
-
     return SW_OK;
 }
 
@@ -6939,7 +6933,6 @@ cmd_data_print_aclrule(char * param_name, a_uint32_t * buf,
         dprintf("\n[meta_data]:no");
     }
 
-    dprintf("\n[qos_res_prec]:%d", rule->qos_res_prec);
     dprintf("\n[match_counter]:%d", rule->match_cnt);
     dprintf("\n[match_bytes]:%lld", rule->match_bytes);
 

@@ -513,7 +513,6 @@ enum{
         a_uint64_t            match_bytes;
         /*new add acl action for IPQ60xx*/
         a_uint8_t             dscp_mask;
-        a_uint8_t             qos_res_prec;
     } fal_acl_rule_t;
 
 
