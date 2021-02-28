@@ -511,8 +511,6 @@ enum{
         a_uint8_t             service_code;
         a_uint8_t             cpu_code;
         a_uint64_t            match_bytes;
-        /*new add acl action for IPQ60xx*/
-        a_uint8_t             dscp_mask;
     } fal_acl_rule_t;
 
 

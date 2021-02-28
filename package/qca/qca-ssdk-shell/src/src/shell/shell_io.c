@@ -5615,12 +5615,6 @@ cmd_data_check_acl_action(fal_acl_rule_t * entry)
                                        0x0));
         entry->dscp = tmpdata & 0xff;
 
-        cmd_data_check_element("dscp mask", NULL,
-                               "usage: the format is 0x0-0xff or 0-255\n",
-                               cmd_data_check_integer, (cmd, &tmpdata, 0xff,
-                                       0x0));
-        entry->dscp_mask = tmpdata & 0xff;
-
         FAL_ACTION_FLG_SET(entry->action_flg, FAL_ACL_ACTION_REMARK_DSCP);
     }
 
@@ -6784,7 +6778,6 @@ cmd_data_print_aclrule(char * param_name, a_uint32_t * buf,
     {
         dprintf("\n[remark_dscp]:yes");
         dprintf("  [dscp]:%d", rule->dscp);
-        dprintf("  [dscp_mask]:%d", rule->dscp_mask);
     }
 
     if (FAL_ACTION_FLG_TST(rule->action_flg, FAL_ACL_ACTION_REMARK_UP))
