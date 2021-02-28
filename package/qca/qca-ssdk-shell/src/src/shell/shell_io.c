@@ -17472,81 +17472,6 @@ cmd_data_check_port_pri(char *cmd_str, void * val, a_uint32_t size)
     }
     while (talk_mode && (SW_OK != rv));
 
-    do
-    {
-        cmd = get_sub_cmd("post_acl_pri_prece", "0");
-        SW_RTN_ON_NULL_PARAM(cmd);
-
-        if (!strncasecmp(cmd, "quit", 4))
-        {
-            return SW_BAD_VALUE;
-        }
-        else if (!strncasecmp(cmd, "help", 4))
-        {
-            dprintf("usage: priority\n");
-            rv = SW_BAD_VALUE;
-        }
-        else
-        {
-            rv = cmd_data_check_uint8(cmd, &(entry.post_acl_pri),
-                                       sizeof (a_uint8_t));
-            if (SW_OK != rv)
-                dprintf("usage: priority\n");
-        }
-
-    }
-    while (talk_mode && (SW_OK != rv));
-
-    do
-    {
-        cmd = get_sub_cmd("pcp_pri_force", "no");
-        SW_RTN_ON_NULL_PARAM(cmd);
-
-        if (!strncasecmp(cmd, "quit", 4))
-        {
-            return SW_BAD_VALUE;
-        }
-        else if (!strncasecmp(cmd, "help", 4))
-        {
-            dprintf("usage: <yes/no/y/n>\n");
-            rv = SW_BAD_VALUE;
-        }
-        else
-        {
-            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.pcp_pri_force),
-                                       sizeof (a_bool_t));
-            if (SW_OK != rv)
-                dprintf("usage: <yes/no/y/n>\n");
-        }
-
-    }
-    while (talk_mode && (SW_OK != rv));
-
-    do
-    {
-        cmd = get_sub_cmd("dscp_pri_force", "no");
-        SW_RTN_ON_NULL_PARAM(cmd);
-
-        if (!strncasecmp(cmd, "quit", 4))
-        {
-            return SW_BAD_VALUE;
-        }
-        else if (!strncasecmp(cmd, "help", 4))
-        {
-            dprintf("usage: <yes/no/y/n>\n");
-            rv = SW_BAD_VALUE;
-        }
-        else
-        {
-            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.dscp_pri_force),
-                                       sizeof (a_bool_t));
-            if (SW_OK != rv)
-                dprintf("usage: <yes/no/y/n>\n");
-        }
-
-    }
-    while (talk_mode && (SW_OK != rv));
-
     *(fal_qos_pri_precedence_t *)val = entry;
     return SW_OK;
 }
@@ -17560,10 +17485,8 @@ cmd_data_print_port_pri(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t siz
     
     dprintf("\n[pcp_pri_prece]:0x%x [dscp_pri_prece]:0x%x [preheader_pri_prece]:0x%x ",
 			entry->pcp_pri, entry->dscp_pri, entry->preheader_pri);
-    dprintf("\n[flow_pri_prece]:0x%x [acl_pri_prece]:0x%x [post_acl_pri_prece]:0x%x ",
-			entry->flow_pri, entry->acl_pri, entry->post_acl_pri);
-    dprintf("\n[pcp_pri_force]:0x%x [dscp_pri_force]:0x%x ",
-			entry->pcp_pri_force, entry->dscp_pri_force);
+    dprintf("\n[flow_pri_prece]:0x%x [acl_pri_prece]:0x%x ",
+			entry->flow_pri, entry->acl_pri);
 }
 
 sw_error_t
@@ -17801,181 +17724,6 @@ cmd_data_check_cosmap(char *cmd_str, void * val, a_uint32_t size)
     }
     while (talk_mode && (SW_OK != rv));
 
-    do
-    {
-        cmd = get_sub_cmd("dscp_mask", "0");
-        SW_RTN_ON_NULL_PARAM(cmd);
-
-        if (!strncasecmp(cmd, "quit", 4))
-        {
-            return SW_BAD_VALUE;
-        }
-        else if (!strncasecmp(cmd, "help", 4))
-        {
-            dprintf("usage: dscp mask\n");
-            rv = SW_BAD_VALUE;
-        }
-        else
-        {
-            rv = cmd_data_check_uint8(cmd, &(entry.dscp_mask),
-                                       sizeof (a_uint8_t));
-            if (SW_OK != rv)
-                dprintf("usage: dscp mask\n");
-        }
-
-    }
-    while (talk_mode && (SW_OK != rv));
-
-    do
-    {
-        cmd = get_sub_cmd("dscp_en", "no");
-        SW_RTN_ON_NULL_PARAM(cmd);
-
-        if (!strncasecmp(cmd, "quit", 4))
-        {
-            return SW_BAD_VALUE;
-        }
-        else if (!strncasecmp(cmd, "help", 4))
-        {
-            dprintf("usage: <yes/no/y/n>\n");
-            rv = SW_BAD_VALUE;
-        }
-        else
-        {
-            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.dscp_en),
-                                       sizeof (a_bool_t));
-            if (SW_OK != rv)
-                dprintf("usage: <yes/no/y/n>\n");
-        }
-
-    }
-    while (talk_mode && (SW_OK != rv));
-
-    do
-    {
-        cmd = get_sub_cmd("pcp_en", "no");
-        SW_RTN_ON_NULL_PARAM(cmd);
-
-        if (!strncasecmp(cmd, "quit", 4))
-        {
-            return SW_BAD_VALUE;
-        }
-        else if (!strncasecmp(cmd, "help", 4))
-        {
-            dprintf("usage: <yes/no/y/n>\n");
-            rv = SW_BAD_VALUE;
-        }
-        else
-        {
-            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.pcp_en),
-                                       sizeof (a_bool_t));
-            if (SW_OK != rv)
-                dprintf("usage: <yes/no/y/n>\n");
-        }
-
-    }
-    while (talk_mode && (SW_OK != rv));
-
-    do
-    {
-        cmd = get_sub_cmd("dei_en", "no");
-        SW_RTN_ON_NULL_PARAM(cmd);
-
-        if (!strncasecmp(cmd, "quit", 4))
-        {
-            return SW_BAD_VALUE;
-        }
-        else if (!strncasecmp(cmd, "help", 4))
-        {
-            dprintf("usage: <yes/no/y/n>\n");
-            rv = SW_BAD_VALUE;
-        }
-        else
-        {
-            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.dei_en),
-                                       sizeof (a_bool_t));
-            if (SW_OK != rv)
-                dprintf("usage: <yes/no/y/n>\n");
-        }
-
-    }
-    while (talk_mode && (SW_OK != rv));
-
-    do
-    {
-        cmd = get_sub_cmd("pri_en", "no");
-        SW_RTN_ON_NULL_PARAM(cmd);
-
-        if (!strncasecmp(cmd, "quit", 4))
-        {
-            return SW_BAD_VALUE;
-        }
-        else if (!strncasecmp(cmd, "help", 4))
-        {
-            dprintf("usage: <yes/no/y/n>\n");
-            rv = SW_BAD_VALUE;
-        }
-        else
-        {
-            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.pri_en),
-                                       sizeof (a_bool_t));
-            if (SW_OK != rv)
-                dprintf("usage: <yes/no/y/n>\n");
-        }
-
-    }
-    while (talk_mode && (SW_OK != rv));
-
-    do
-    {
-        cmd = get_sub_cmd("dp_en", "no");
-        SW_RTN_ON_NULL_PARAM(cmd);
-
-        if (!strncasecmp(cmd, "quit", 4))
-        {
-            return SW_BAD_VALUE;
-        }
-        else if (!strncasecmp(cmd, "help", 4))
-        {
-            dprintf("usage: <yes/no/y/n>\n");
-            rv = SW_BAD_VALUE;
-        }
-        else
-        {
-            rv = cmd_data_check_confirm(cmd, A_FALSE, &(entry.dp_en),
-                                       sizeof (a_bool_t));
-            if (SW_OK != rv)
-                dprintf("usage: <yes/no/y/n>\n");
-        }
-
-    }
-    while (talk_mode && (SW_OK != rv));
-
-    do
-    {
-        cmd = get_sub_cmd("qos_prec", "0");
-        SW_RTN_ON_NULL_PARAM(cmd);
-
-        if (!strncasecmp(cmd, "quit", 4))
-        {
-            return SW_BAD_VALUE;
-        }
-        else if (!strncasecmp(cmd, "help", 4))
-        {
-            dprintf("usage: dscp mask\n");
-            rv = SW_BAD_VALUE;
-        }
-        else
-        {
-            rv = cmd_data_check_uint8(cmd, &(entry.qos_prec),
-                                       sizeof (a_uint8_t));
-            if (SW_OK != rv)
-                dprintf("usage: dscp mask\n");
-        }
-
-    }
-    while (talk_mode && (SW_OK != rv));
-
     *(fal_qos_cosmap_t *)val = entry;
     return SW_OK;
 }
@@ -17989,12 +17737,8 @@ cmd_data_print_cosmap(a_uint8_t * param_name, a_uint32_t * buf, a_uint32_t size)
     
     dprintf("\n[internal_pcp]:0x%x [internal_dei]:0x%x [internal_pri]:0x%x ",
 			entry->internal_pcp, entry->internal_dei, entry->internal_pri);
-    dprintf("\n[internal_dscp]:0x%x [internal_dp]:0x%x [dscp_mask]:0x%x ",
-			entry->internal_dscp, entry->internal_dp, entry->dscp_mask);
-    dprintf("\n[dscp_en]:0x%x [pcp_en]:0x%x [dei_en]:0x%x ",
-			entry->dscp_en, entry->pcp_en, entry->dei_en);
-    dprintf("\n[pri_en]:0x%x [dp_en]:0x%x [qos_prec]:0x%x ",
-			entry->pri_en, entry->dp_en, entry->qos_prec);
+    dprintf("\n[internal_dscp]:0x%x [internal_dp]:0x%x ",
+			entry->internal_dscp, entry->internal_dp);
 }
 
 void
