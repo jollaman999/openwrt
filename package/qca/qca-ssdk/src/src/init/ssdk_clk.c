@@ -402,20 +402,18 @@ static void ssdk_ppe_cmnblk_init(void)
 
 	iounmap(gcc_pll_base);
 }
-#endif
-
 void ssdk_port_mac_clock_reset(
 	a_uint32_t dev_id,
 	a_uint32_t port_id)
 {
-#if defined(CONFIG_OF) && (LINUX_VERSION_CODE >= KERNEL_VERSION(4,4,0))
 	ssdk_port_reset(dev_id, port_id, SSDK_RESET_ASSERT);
 	msleep(150);
 	ssdk_port_reset(dev_id, port_id, SSDK_RESET_DEASSERT);
 	msleep(150);
-#endif
+
 	return;
 }
+#endif
 
 static
 void ssdk_uniphy1_clock_source_set(void)
