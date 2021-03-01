@@ -112,12 +112,14 @@ struct fast_classifier {
 
 static struct fast_classifier __sc;
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5,2,0))
 static struct nla_policy fast_classifier_genl_policy[FAST_CLASSIFIER_A_MAX + 1] = {
 	[FAST_CLASSIFIER_A_TUPLE] = {
 		.type = NLA_UNSPEC,
 		.len = sizeof(struct fast_classifier_tuple)
 	},
 };
+#endif
 
 static struct genl_multicast_group fast_classifier_genl_mcgrp[] = {
 	{
@@ -136,21 +138,27 @@ static const struct genl_ops fast_classifier_gnl_ops[] = {
 	{
 		.cmd = FAST_CLASSIFIER_C_OFFLOAD,
 		.flags = 0,
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5,2,0))
 		.policy = fast_classifier_genl_policy,
+#endif
 		.doit = fast_classifier_offload_genl_msg,
 		.dumpit = NULL,
 	},
 	{
 		.cmd = FAST_CLASSIFIER_C_OFFLOADED,
 		.flags = 0,
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5,2,0))
 		.policy = fast_classifier_genl_policy,
+#endif
 		.doit = NULL,
 		.dumpit = fast_classifier_nl_genl_msg_DUMP,
 	},
 	{
 		.cmd = FAST_CLASSIFIER_C_DONE,
 		.flags = 0,
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5,2,0))
 		.policy = fast_classifier_genl_policy,
+#endif
 		.doit = NULL,
 		.dumpit = fast_classifier_nl_genl_msg_DUMP,
 	},
