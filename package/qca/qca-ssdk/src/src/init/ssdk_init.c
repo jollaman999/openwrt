@@ -1799,7 +1799,11 @@ qca_phy_config_aneg(struct phy_device *pdev)
 
 int qca_phy_suspend(struct phy_device *phydev)
 {
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,9,0))
+	struct mii_bus *bus = phydev->mdio.bus;
+#else
 	struct mii_bus *bus = phydev->bus;
+#endif
 	int val = 0;
 	int addr;
 
@@ -1815,7 +1819,11 @@ int qca_phy_suspend(struct phy_device *phydev)
 
 int qca_phy_resume(struct phy_device *phydev)
 {
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,9,0))
+	struct mii_bus *bus = phydev->mdio.bus;
+#else
 	struct mii_bus *bus = phydev->bus;
+#endif
 	int val = 0;
 	int addr;
 
