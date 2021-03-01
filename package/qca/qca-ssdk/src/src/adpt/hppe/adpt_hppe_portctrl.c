@@ -1994,6 +1994,7 @@ adpt_hppe_port_counter_get(a_uint32_t dev_id, fal_port_t port_id,
 
 static sw_error_t
 _adpt_hppe_port_interface_mode_set(a_uint32_t dev_id, fal_port_t port_id,
+			      fal_port_interface_mode_t mode)
 {
 	sw_error_t rv = SW_OK;
 	struct qca_phy_priv *priv;
