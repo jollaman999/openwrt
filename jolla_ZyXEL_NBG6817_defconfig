@@ -304,8 +304,9 @@ CONFIG_IPV6=y
 # Stripping options
 #
 # CONFIG_NO_STRIP is not set
-CONFIG_USE_STRIP=y
-CONFIG_STRIP_ARGS="--strip-all"
+# CONFIG_USE_STRIP is not set
+CONFIG_USE_SSTRIP=y
+CONFIG_SSTRIP_ARGS="-z"
 # CONFIG_STRIP_KERNEL_EXPORTS is not set
 # CONFIG_USE_MKLIBS is not set
 CONFIG_USE_UCLIBCXX=y
@@ -380,27 +381,27 @@ CONFIG_EXTRA_GCC_CONFIG_OPTIONS=""
 # CONFIG_GCC_DEFAULT_SSP is not set
 # CONFIG_SJLJ_EXCEPTIONS is not set
 # CONFIG_INSTALL_GFORTRAN is not set
-# CONFIG_INSTALL_GCCGO is not set
 
 #
 # C Library
 #
-CONFIG_LIBC_USE_GLIBC=y
-# CONFIG_LIBC_USE_MUSL is not set
+# CONFIG_LIBC_USE_GLIBC is not set
+CONFIG_LIBC_USE_MUSL=y
+# CONFIG_MUSL_DISABLE_CRYPT_SIZE_HACK is not set
 
 #
 # Debuggers
 #
 CONFIG_GDB=y
-CONFIG_USE_GLIBC=y
+CONFIG_USE_MUSL=y
 CONFIG_SSP_SUPPORT=y
 CONFIG_BINUTILS_VERSION_2_35_1=y
 CONFIG_BINUTILS_VERSION="2.35.1"
 CONFIG_GCC_VERSION_10=y
 CONFIG_GCC_VERSION="10.2.0"
 # CONFIG_GCC_USE_IREMAP is not set
-CONFIG_LIBC="glibc"
-CONFIG_TARGET_SUFFIX="gnueabi"
+CONFIG_LIBC="musl"
+CONFIG_TARGET_SUFFIX="muslgnueabi"
 # CONFIG_IB is not set
 # CONFIG_SDK is not set
 # CONFIG_MAKE_TOOLCHAIN is not set
@@ -1509,18 +1510,13 @@ CONFIG_FSTOOLS_UBIFS_EXTROOT=y
 CONFIG_PACKAGE_fwtool=y
 CONFIG_PACKAGE_getrandom=y
 CONFIG_PACKAGE_jsonfilter=y
-# CONFIG_PACKAGE_libasan is not set
 CONFIG_PACKAGE_libatomic=y
 CONFIG_PACKAGE_libc=y
 CONFIG_PACKAGE_libgcc=y
 # CONFIG_PACKAGE_libgomp is not set
-# CONFIG_PACKAGE_liblsan is not set
 CONFIG_PACKAGE_libpthread=y
 CONFIG_PACKAGE_librt=y
 CONFIG_PACKAGE_libstdcpp=y
-# CONFIG_PACKAGE_libthread-db is not set
-# CONFIG_PACKAGE_libtsan is not set
-# CONFIG_PACKAGE_libubsan is not set
 CONFIG_PACKAGE_logd=y
 CONFIG_PACKAGE_mtd=y
 CONFIG_PACKAGE_netifd=y
@@ -3774,7 +3770,6 @@ CONFIG_OPENSSL_WITH_PSK=y
 CONFIG_OPENSSL_ENGINE=y
 CONFIG_OPENSSL_ENGINE_BUILTIN=y
 CONFIG_OPENSSL_ENGINE_BUILTIN_DEVCRYPTO=y
-CONFIG_OPENSSL_WITH_ASYNC=y
 # CONFIG_PACKAGE_libopenssl-afalg_sync is not set
 CONFIG_PACKAGE_libopenssl-conf=y
 # CONFIG_PACKAGE_libopenssl-gost_engine is not set
@@ -6734,8 +6729,6 @@ CONFIG_PACKAGE_jshn=y
 # CONFIG_PACKAGE_lcdproc-clients is not set
 # CONFIG_PACKAGE_lcdproc-drivers is not set
 # CONFIG_PACKAGE_lcdproc-server is not set
-CONFIG_PACKAGE_ldconfig=y
-CONFIG_PACKAGE_ldd=y
 # CONFIG_PACKAGE_less is not set
 # CONFIG_PACKAGE_less-wide is not set
 CONFIG_PACKAGE_libjson-script=y
