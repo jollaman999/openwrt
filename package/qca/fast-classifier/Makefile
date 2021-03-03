@@ -6,7 +6,6 @@ PKG_SOURCE_PROTO:=git
 PKG_BRANCH:=master
 PKG_RELEASE:=1
 
-LOCAL_SRC:=$(TOPDIR)/package/qca/shortcut-fe/src/
 include $(INCLUDE_DIR)/local-development.mk
 ifeq ($(DUMP)$(PKG_VERSION),)
   PKG_REV:=$(shell git ls-remote $(PKG_SOURCE_URL) $(PKG_BRANCH) | cut -b -7)
@@ -22,7 +21,7 @@ define KernelPackage/$(PKG_NAME)/Default
   SUBMENU:=Network Support
   DEPENDS:=@IPV6 +kmod-ipt-conntrack +kmod-shortcut-fe
   TITLE:=Kernel driver for FAST Classifier
-  FILES:=$(PKG_BUILD_DIR)/fast-classifier/fast-classifier.ko
+  FILES:=$(PKG_BUILD_DIR)/fast-classifier.ko
   KCONFIG:=CONFIG_NF_CONNTRACK_CHAIN_EVENTS=y
   PROVIDES:=$(PKG_NAME)
 endef
@@ -51,23 +50,22 @@ endef
 
 SFE_MAKE_OPTS:=SFE_SUPPORT_IPV6=y
 
-define Build/Compile/kmod
+define Build/Configure
+	cp $(STAGING_DIR)/usr/include/shortcut-fe/*.h $(PKG_BUILD_DIR)
+endef
+
+define Build/Compile
 	$(MAKE) -C "$(LINUX_DIR)" $(strip $(SFE_MAKE_OPTS)) \
 		CONFIG_FAST_CLASSIFIER=m \
-		CROSS_COMPILE="$(TARGET_CROSS)" \
-		ARCH="$(LINUX_KARCH)" \
-		M="$(PKG_BUILD_DIR)/fast-classifier" \
+		$(KERNEL_MAKE_FLAGS) \
+		M="$(PKG_BUILD_DIR)" \
 		EXTRA_CFLAGS="$(EXTRA_CFLAGS) -Wno-implicit-function-declaration" \
 		modules
 endef
 
-define Build/Compile
-	$(Build/Compile/kmod)
-endef
-
 define Build/InstallDev
-	$(INSTALL_DIR) $(1)/usr/include
-	$(CP) $(PKG_BUILD_DIR)/fast-classifier/fast-classifier.h $(1)/usr/include/
+	$(INSTALL_DIR) $(1)/usr/include/fast-classifier
+	$(CP) $(PKG_BUILD_DIR)/*.h $(1)/usr/include/fast-classifier
 endef
 
 $(eval $(call KernelPackage,$(PKG_NAME)))

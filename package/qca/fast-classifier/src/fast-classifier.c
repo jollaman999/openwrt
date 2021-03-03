@@ -36,9 +36,9 @@
 #include <linux/if_bridge.h>
 #include <linux/hashtable.h>
 
-#include <sfe_backport.h>
-#include <sfe.h>
-#include <sfe_cm.h>
+#include "sfe_backport.h"
+#include "sfe.h"
+#include "sfe_cm.h"
 #include "fast-classifier.h"
 
 typedef enum fast_classifier_exception {
