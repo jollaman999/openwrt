@@ -804,7 +804,7 @@
  		pcie0: pci@1b500000 {
  			compatible = "qcom,pcie-ipq8064";
  			reg = <0x1b500000 0x1000
-@@ -601,6 +1323,165 @@
+@@ -601,6 +1323,177 @@
  			perst-gpio = <&qcom_pinmux 63 GPIO_ACTIVE_LOW>;
  		};
  
@@ -889,6 +889,9 @@
 +			qcom,nss-common = <&nss_common>;
 +			qcom,qsgmii-csr = <&qsgmii_csr>;
 +
++			tx-fifo-depth = <16384>;
++			rx-fifo-depth = <16384>;
++
 +			clocks = <&gcc GMAC_CORE1_CLK>;
 +			clock-names = "stmmaceth";
 +
@@ -911,6 +914,9 @@
 +
 +			qcom,nss-common = <&nss_common>;
 +			qcom,qsgmii-csr = <&qsgmii_csr>;
++
++			tx-fifo-depth = <16384>;
++			rx-fifo-depth = <16384>;
 +
 +			clocks = <&gcc GMAC_CORE2_CLK>;
 +			clock-names = "stmmaceth";
@@ -935,6 +941,9 @@
 +			qcom,nss-common = <&nss_common>;
 +			qcom,qsgmii-csr = <&qsgmii_csr>;
 +
++			tx-fifo-depth = <16384>;
++			rx-fifo-depth = <16384>;
++
 +			clocks = <&gcc GMAC_CORE3_CLK>;
 +			clock-names = "stmmaceth";
 +
@@ -958,6 +967,9 @@
 +			qcom,nss-common = <&nss_common>;
 +			qcom,qsgmii-csr = <&qsgmii_csr>;
 +
++			tx-fifo-depth = <16384>;
++			rx-fifo-depth = <16384>;
++
 +			clocks = <&gcc GMAC_CORE4_CLK>;
 +			clock-names = "stmmaceth";
 +
@@ -970,7 +982,7 @@
  		vsdcc_fixed: vsdcc-regulator {
  			compatible = "regulator-fixed";
  			regulator-name = "SDCC Power";
-@@ -674,4 +1557,17 @@
+@@ -674,4 +1569,17 @@
  			};
  		};
  	};
