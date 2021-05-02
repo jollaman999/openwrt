@@ -1953,6 +1953,12 @@ CONFIG_PACKAGE_kmod-crypto-hmac=y
 # CONFIG_PACKAGE_kmod-crypto-hw-geode is not set
 # CONFIG_PACKAGE_kmod-crypto-hw-hifn-795x is not set
 # CONFIG_PACKAGE_kmod-crypto-hw-padlock is not set
+CONFIG_PACKAGE_kmod-crypto-hw-qce=y
+CONFIG_QCE_SKCIPHER=y
+# CONFIG_KERNEL_CRYPTO_DEV_QCE_ENABLE_ALL is not set
+CONFIG_KERNEL_CRYPTO_DEV_QCE_ENABLE_SKCIPHER=y
+# CONFIG_KERNEL_CRYPTO_DEV_QCE_ENABLE_SHA is not set
+CONFIG_KERNEL_CRYPTO_DEV_QCE_SW_MAX_LEN=512
 # CONFIG_PACKAGE_kmod-crypto-hw-talitos is not set
 # CONFIG_PACKAGE_kmod-crypto-kpp is not set
 CONFIG_PACKAGE_kmod-crypto-manager=y
