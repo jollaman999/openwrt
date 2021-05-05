@@ -98,6 +98,11 @@ CONFIGURE_ARGS += \
 	--enable-wpas --enable-sha512 --enable-fortress --enable-fastmath
 endif
 
+ifeq ($(CONFIG_PACKAGE_openvpn-wolfssl),y)
+CONFIGURE_ARGS += \
+	--enable-openvpn
+endif
+
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include $(1)/usr/lib/pkgconfig
 	$(CP) $(PKG_INSTALL_DIR)/usr/include/* $(1)/usr/include/
