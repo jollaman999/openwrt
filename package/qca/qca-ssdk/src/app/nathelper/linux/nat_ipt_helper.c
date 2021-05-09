@@ -15,6 +15,7 @@
 
 #ifdef KVER32
 #include <linux/kconfig.h>
+#include <linux/version.h>
 #include <generated/autoconf.h>
 #else
 #include <linux/autoconf.h>
@@ -78,7 +79,11 @@
 #define NF_NAT_INIT_ENTRIES_NUM 5
 
 static int
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5,9,0))
 nat_ipt_set_ctl(struct sock *sk, int cmd, void __user * user, unsigned int len);
+#else
+nat_ipt_set_ctl(struct sock *sk, int cmd, sockptr_t ptr, unsigned int len);
+#endif
 static int
 nat_ipt_get_ctl(struct sock *sk, int cmd, void __user * user, int *len);
 
@@ -606,6 +611,38 @@ nat_ipt_hook_type_check(struct ipt_replace ireplace)
     return ret;
 }
 
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5,9,0))
+static void
+nat_ipt_rules_cp_from_sockptr(void **buf, unsigned int *buf_len,
+                           sockptr_t arg, size_t offset, unsigned int size)
+{
+    if(*buf == 0)
+    {
+        return;
+    }
+
+    if (*buf_len < size)
+    {
+        if(*buf)
+        {
+            kfree(*buf);
+            *buf = kmalloc(size, GFP_ATOMIC);
+			if(*buf == NULL)
+			{
+				HNAT_PRINTK("%s memory allocate fail\n", __func__);
+				return;
+			}
+            *buf_len = size;
+        }
+    }
+    HNAT_PRINTK("(2)nat_ipt_rules_cp_from_sockptr *buf:%x arg:%x offset:%d size:%d\n",
+                (unsigned int)*buf, (unsigned int)&arg, offset, size);
+    copy_from_sockptr_offset(*buf, arg, offset, size);
+
+    return;
+}
+#endif
+
 static void
 nat_ipt_rules_cp_from_user(void **buf, unsigned int *buf_len,
                            void __user *user, unsigned int user_len)
@@ -637,7 +674,11 @@ nat_ipt_rules_cp_from_user(void **buf, unsigned int *buf_len,
 }
 
 static int
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5,9,0))
 nat_ipt_set_ctl(struct sock *sk, int cmd, void __user * user, unsigned int len)
+#else
+nat_ipt_set_ctl(struct sock *sk, int cmd, sockptr_t arg, unsigned int len)
+#endif
 {
     struct ipt_replace ireplace;
 
@@ -648,7 +689,11 @@ nat_ipt_set_ctl(struct sock *sk, int cmd, void __user * user, unsigned int len)
     if (cmd != IPT_SO_SET_REPLACE)
         goto normal;
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5,9,0))
     copy_from_user(&ireplace, user, sizeof (ireplace));
+#else
+    copy_from_sockptr(&ireplace, arg, sizeof (ireplace));
+#endif
 
     if (strcmp(ireplace.name, "nat")
             || (ireplace.num_entries == ireplace.num_counters))
@@ -669,9 +714,15 @@ nat_ipt_set_ctl(struct sock *sk, int cmd, void __user * user, unsigned int len)
         goto normal;
     }
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5,9,0))
     nat_ipt_rules_cp_from_user((void **)&sbuffer, &slen,
                                (user + sizeof (ireplace)),
                                ireplace.size);
+#else
+    nat_ipt_rules_cp_from_sockptr((void **)&sbuffer, &slen,
+                                  arg, sizeof (ireplace),
+                                  ireplace.size);
+#endif
 
     if (ireplace.num_entries > ireplace.num_counters)
     {
@@ -686,7 +737,11 @@ normal:
     /*save old_replace for next hook type check*/
     old_replace = ireplace;
 
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(5,9,0))
     return orgi_ipt_sockopts.set(sk, cmd, user, len);
+#else
+    return orgi_ipt_sockopts.set(sk, cmd, arg, len);
+#endif
 }
 
 static int

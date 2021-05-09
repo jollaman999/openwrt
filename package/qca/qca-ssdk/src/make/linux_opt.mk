@@ -344,7 +344,7 @@ ifeq (KSLIB, $(MODULE_TYPE))
 
   endif
 
-  ifeq ($(OS_VER),$(filter 4_4 5_4, $(OS_VER)))
+  ifeq ($(OS_VER),$(filter 4_4 5_4 5_10, $(OS_VER)))
                 MODULE_CFLAG += -DKVER34
                 MODULE_CFLAG += -DKVER32
             MODULE_CFLAG += -DLNX26_22

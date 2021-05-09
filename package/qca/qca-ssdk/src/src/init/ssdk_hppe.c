@@ -93,7 +93,7 @@ qca_hppe_fpga_xgmac_gpio_enable(a_uint32_t dev_id)
 	a_uint32_t val;
 	void __iomem *ppe_gpio_base;
 
-	ppe_gpio_base = ioremap_nocache(0x01008000, 0x100);
+	ppe_gpio_base = ioremap(0x01008000, 0x100);
 	if (!ppe_gpio_base) {
 		printk("can't get gpio address!\n");
 		return -1;

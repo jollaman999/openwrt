@@ -403,7 +403,7 @@ static void ssdk_ppe_cmnblk_init(void)
 	void __iomem *gcc_pll_base = NULL;
 	a_uint32_t reg_val;
 
-	gcc_pll_base = ioremap_nocache(CMN_BLK_ADDR, CMN_BLK_SIZE);
+	gcc_pll_base = ioremap(CMN_BLK_ADDR, CMN_BLK_SIZE);
 	if (!gcc_pll_base) {
 		SSDK_ERROR("can't map gcc pll address!\n");
 		return;
@@ -754,7 +754,7 @@ qca_cppe_fpga_xgmac_clock_enable(a_uint32_t dev_id)
 {
 	void __iomem *cppe_xgmac_clock_base;
 
-	cppe_xgmac_clock_base = ioremap_nocache(CPPE_XGMAC_CLK_REG,
+	cppe_xgmac_clock_base = ioremap(CPPE_XGMAC_CLK_REG,
 		CPPE_XGMAC_CLK_SIZE);
 	if (!cppe_xgmac_clock_base) {
 		SSDK_INFO("can't get cppe xgmac clock address!\n");

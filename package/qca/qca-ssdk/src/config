@@ -26,6 +26,10 @@ ifeq ($(KVER),$(filter 5.4%,$(KVER)))
 OS_VER=5_4
 endif
 
+ifeq ($(KVER),$(filter 5.10%,$(KVER)))
+OS_VER=5_10
+endif
+
 ifeq ($(KVER), 3.4.0)
 OS_VER=3_4
 endif
@@ -104,7 +108,7 @@ ifeq ($(ARCH), arm)
 endif
 
 ifeq ($(ARCH), arm64)
-ifeq ($(KVER),$(filter 4.1% 4.4% 4.9% 4.14% 5.4%, $(KVER)))
+ifeq ($(KVER),$(filter 4.1% 4.4% 4.9% 4.14% 5.4% 5.10%, $(KVER)))
   CPU_CFLAG=  -DMODULE -Os -pipe -march=armv8-a -mcpu=cortex-a53+crypto -fno-caller-saves -fno-strict-aliasing -Werror -fno-common -Wno-format-security -Wno-pointer-sign -Wno-unused-but-set-variable -Wno-error=unused-result -mcmodel=large
 endif
 endif

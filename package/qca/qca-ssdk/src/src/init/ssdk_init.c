@@ -2768,7 +2768,7 @@ static int ssdk_dess_mac_mode_init(a_uint32_t dev_id, a_uint32_t mac_mode)
 							(a_uint8_t *)&reg_value, 4);
 			mdelay(10);
 			/*softreset psgmii, fixme*/
-			gcc_addr = ioremap_nocache(0x1812000, 0x200);
+			gcc_addr = ioremap(0x1812000, 0x200);
 			if (!gcc_addr) {
 				SSDK_ERROR("gcc map fail!\n");
 				return 0;

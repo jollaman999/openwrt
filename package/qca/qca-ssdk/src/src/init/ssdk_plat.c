@@ -1237,7 +1237,7 @@ ssdk_plat_init(ssdk_init_cfg *cfg, a_uint32_t dev_id)
 	reg_mode = ssdk_uniphy_reg_access_mode_get(dev_id);
 	if(reg_mode == HSL_REG_LOCAL_BUS) {
 		ssdk_uniphy_reg_map_info_get(dev_id, &map);
-		qca_phy_priv_global[dev_id]->uniphy_hw_addr = ioremap_nocache(map.base_addr,
+		qca_phy_priv_global[dev_id]->uniphy_hw_addr = ioremap(map.base_addr,
 									map.size);
 		if (!qca_phy_priv_global[dev_id]->uniphy_hw_addr) {
 			SSDK_ERROR("%s ioremap fail.", __func__);
@@ -1251,7 +1251,7 @@ ssdk_plat_init(ssdk_init_cfg *cfg, a_uint32_t dev_id)
 	reg_mode = ssdk_switch_reg_access_mode_get(dev_id);
 	if(reg_mode == HSL_REG_LOCAL_BUS) {
 		ssdk_switch_reg_map_info_get(dev_id, &map);
-		qca_phy_priv_global[dev_id]->hw_addr = ioremap_nocache(map.base_addr,
+		qca_phy_priv_global[dev_id]->hw_addr = ioremap(map.base_addr,
 								map.size);
 		if (!qca_phy_priv_global[dev_id]->hw_addr) {
 			SSDK_ERROR("%s ioremap fail.", __func__);
@@ -1284,7 +1284,7 @@ ssdk_plat_init(ssdk_init_cfg *cfg, a_uint32_t dev_id)
 			return -1;
 		}
 
-		qca_phy_priv_global[dev_id]->psgmii_hw_addr = ioremap_nocache(map.base_addr,
+		qca_phy_priv_global[dev_id]->psgmii_hw_addr = ioremap(map.base_addr,
 								map.size);
 		if (!qca_phy_priv_global[dev_id]->psgmii_hw_addr) {
 			SSDK_ERROR("%s ioremap fail.", __func__);
