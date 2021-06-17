@@ -82,6 +82,17 @@ $(Package/ath10k-firmware-default)
   CATEGORY:=Firmware
 endef
 
+QCA99X0_BOARD_REV:=ddcec9efd245da9365c474f513a855a55f3ac7fe
+QCA99X0_BOARD_FILE:=board-2.bin.$(QCA99X0_BOARD_REV)
+
+define Download/qca99x0-board
+  URL:=https://source.codeaurora.org/quic/qsdk/oss/firmware/ath10k-firmware/plain/ath10k/QCA99X0/hw2.0
+  URL_FILE:=board-2.bin?id=$(QCA99X0_BOARD_REV)
+  FILE:=$(QCA99X0_BOARD_FILE)
+  HASH:=03711ac21e60ef59d3815e235eb721c0c22851b5410299411085aa6f2af45401
+endef
+$(eval $(call Download,qca99x0-board))
+
 define Build/Compile
 
 endef
