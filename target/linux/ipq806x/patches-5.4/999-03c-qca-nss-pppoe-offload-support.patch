@@ -267,9 +267,9 @@ index df5d418..23590dd 100644
  
  		error = ppp_register_net_channel(dev_net(dev), &po->chan);
  		if (error) {
-@@ -996,9 +998,76 @@ static int pppoe_fill_forward_path(struct net_device_path_ctx *ctx,
- 	return 0;
+@@ -1001,11 +1003,78 @@ static int pppoe_flow_offload_check(struct ppp_channel *chan,
  }
+ #endif /* CONFIG_NF_FLOW_TABLE */
  
 -static const struct ppp_channel_ops pppoe_chan_ops = {
 -	.start_xmit = pppoe_xmit,
@@ -339,8 +339,10 @@ index df5d418..23590dd 100644
 +	.get_addressing = pppoe_get_addressing,
 +	/* General ppp channel ops */
 +	.ops.start_xmit = pppoe_xmit,
--	.fill_forward_path = pppoe_fill_forward_path,
-+	.ops.fill_forward_path = pppoe_fill_forward_path,
+ #if IS_ENABLED(CONFIG_NF_FLOW_TABLE)
+-	.flow_offload_check = pppoe_flow_offload_check,
++	.ops.flow_offload_check = pppoe_flow_offload_check,
+ #endif
 +	.ops.get_channel_protocol = pppoe_get_channel_protocol,
 +	.ops.hold = pppoe_hold_chan,
 +	.ops.release = pppoe_release_chan,
@@ -390,9 +392,9 @@ index 326a6fa..db352ff 100644
 --- a/include/linux/ppp_channel.h
 +++ b/include/linux/ppp_channel.h
 @@ -32,6 +32,14 @@ struct ppp_channel_ops {
-	int	(*fill_forward_path)(struct net_device_path_ctx *,
-				     struct net_device_path *,
-				     const struct ppp_channel *);
+ #if IS_ENABLED(CONFIG_NF_FLOW_TABLE)
+ 	int	(*flow_offload_check)(struct ppp_channel *, struct flow_offload_hw_path *);
+ #endif
 +	/* Get channel protocol type, one of PX_PROTO_XYZ or specific to
 +	 * the channel subtype
 +	 */

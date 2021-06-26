@@ -68,6 +68,18 @@
 +/* QCA NSS ECM Support - End */
 +
  #endif /* _CONNTRACK_PROTO_GRE_H */
+--- a/include/net/addrconf.h
++++ b/include/net/addrconf.h
+@@ -497,4 +497,9 @@ int if6_proc_init(void);
+ void if6_proc_exit(void);
+ #endif
+ 
++/* QCA NSS ECM support - Start */
++struct net_device *ipv6_dev_find(struct net *net, struct in6_addr *addr,
++				 int strict);
++/* QCA NSS ECM support - End */
++
+ #endif
 --- a/drivers/net/tun.c
 +++ b/drivers/net/tun.c
 @@ -2833,6 +2833,8 @@ static int tun_set_iff(struct net *net,
@@ -101,9 +113,10 @@
  
 --- a/include/linux/if_bridge.h
 +++ b/include/linux/if_bridge.h
-@@ -53,5 +53,6 @@
+@@ -68,6 +68,7 @@ extern void br_fdb_update_unregister_notify(struct notifier_block *nb);
  extern void brioctl_set(int (*ioctl_hook)(struct net *, unsigned int, void __user *));
- extern void br_dev_update_stats(struct net_device *dev, struct rtnl_link_stats64 *nlstats);
+ extern void br_dev_update_stats(struct net_device *dev,
+ 				struct rtnl_link_stats64 *nlstats);
 +extern bool br_is_hairpin_enabled(struct net_device *dev);
  
  #if IS_ENABLED(CONFIG_BRIDGE) && IS_ENABLED(CONFIG_BRIDGE_IGMP_SNOOPING)

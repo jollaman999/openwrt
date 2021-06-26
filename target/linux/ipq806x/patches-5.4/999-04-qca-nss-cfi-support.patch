@@ -2,10 +2,10 @@ diff --git a/crypto/authenc.c b/crypto/authenc.c
 index 3f0ed9402..17ce66bba 100644
 --- a/crypto/authenc.c
 +++ b/crypto/authenc.c
-@@ -417,6 +417,8 @@ static int crypto_authenc_create(struct crypto_template *tmpl,
- 		     enc->base.cra_driver_name) >= CRYPTO_MAX_ALG_NAME)
- 		goto err_free_inst;
+@@ -449,6 +449,8 @@ static int crypto_authenc_create(struct crypto_template *tmpl,
  
+ 	inst->alg.base.cra_flags = (auth_base->cra_flags |
+ 				    enc->base.cra_flags) & CRYPTO_ALG_ASYNC;
 +	inst->alg.base.cra_flags |= (auth_base->cra_flags |
 +				    enc->base.cra_flags) & CRYPTO_ALG_NOSUPP_SG;
  	inst->alg.base.cra_priority = enc->base.cra_priority * 10 +
