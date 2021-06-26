@@ -2331,13 +2331,8 @@ CONFIG_PACKAGE_kmod-nss-ifb=y
 # CONFIG_PACKAGE_kmod-phy-broadcom is not set
 # CONFIG_PACKAGE_kmod-phy-realtek is not set
 # CONFIG_PACKAGE_kmod-phylink is not set
-# CONFIG_PACKAGE_kmod-qca-nss-cfi-cryptoapi is not set
-# CONFIG_PACKAGE_kmod-qca-nss-crypto is not set
 CONFIG_PACKAGE_kmod-qca-nss-drv=y
-# CONFIG_PACKAGE_kmod-qca-nss-drv-capwapmgr is not set
-# CONFIG_PACKAGE_kmod-qca-nss-drv-dtlsmgr is not set
 # CONFIG_PACKAGE_kmod-qca-nss-drv-gre is not set
-# CONFIG_PACKAGE_kmod-qca-nss-drv-ipsecmgr is not set
 # CONFIG_PACKAGE_kmod-qca-nss-drv-l2tpv2 is not set
 # CONFIG_PACKAGE_kmod-qca-nss-drv-lag-mgr is not set
 # CONFIG_PACKAGE_kmod-qca-nss-drv-map-t is not set
