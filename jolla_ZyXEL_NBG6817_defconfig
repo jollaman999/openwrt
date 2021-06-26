@@ -2321,26 +2321,12 @@ CONFIG_PACKAGE_kmod-mii=y
 # CONFIG_PACKAGE_kmod-natsemi is not set
 # CONFIG_PACKAGE_kmod-ne2k-pci is not set
 # CONFIG_PACKAGE_kmod-niu is not set
-# CONFIG_PACKAGE_kmod-nss-ifb is not set
 # CONFIG_PACKAGE_kmod-of-mdio is not set
 # CONFIG_PACKAGE_kmod-pcnet32 is not set
 # CONFIG_PACKAGE_kmod-phy-bcm84881 is not set
 # CONFIG_PACKAGE_kmod-phy-broadcom is not set
 # CONFIG_PACKAGE_kmod-phy-realtek is not set
 # CONFIG_PACKAGE_kmod-phylink is not set
-# CONFIG_PACKAGE_kmod-qca-nss-drv is not set
-# CONFIG_PACKAGE_kmod-qca-nss-drv-gre is not set
-# CONFIG_PACKAGE_kmod-qca-nss-drv-l2tpv2 is not set
-# CONFIG_PACKAGE_kmod-qca-nss-drv-lag-mgr is not set
-# CONFIG_PACKAGE_kmod-qca-nss-drv-map-t is not set
-# CONFIG_PACKAGE_kmod-qca-nss-drv-pppoe is not set
-# CONFIG_PACKAGE_kmod-qca-nss-drv-pptp is not set
-# CONFIG_PACKAGE_kmod-qca-nss-drv-profile is not set
-# CONFIG_PACKAGE_kmod-qca-nss-drv-pvxlanmgr is not set
-# CONFIG_PACKAGE_kmod-qca-nss-drv-tun6rd is not set
-# CONFIG_PACKAGE_kmod-qca-nss-drv-tunipip6 is not set
-# CONFIG_PACKAGE_kmod-qca-nss-drv-vlan-mgr is not set
-# CONFIG_PACKAGE_kmod-qca-nss-gmac is not set
 CONFIG_PACKAGE_kmod-qca-ssdk-hnat=y
 # CONFIG_PACKAGE_kmod-qca-ssdk-nohnat is not set
 # CONFIG_PACKAGE_kmod-qlcnic is not set
@@ -2426,21 +2412,6 @@ CONFIG_PACKAGE_kmod-pppoe=y
 # CONFIG_PACKAGE_kmod-pppol2tp is not set
 CONFIG_PACKAGE_kmod-pppox=y
 # CONFIG_PACKAGE_kmod-pptp is not set
-# CONFIG_PACKAGE_kmod-qca-nss-drv-qdisc is not set
-# CONFIG_PACKAGE_kmod-qca-nss-ecm-noload is not set
-# CONFIG_PACKAGE_kmod-qca-nss-ecm-premium is not set
-
-#
-# ECM Configuration
-#
-# CONFIG_QCA_NSS_ECM_EXAMPLES_PCC is not set
-# CONFIG_QCA_NSS_ECM_EXAMPLES_MARK is not set
-# CONFIG_QCA_NSS_ECM_OVS is not set
-# CONFIG_QCA_ECM_SFE_SUPPORT is not set
-# end of ECM Configuration
-
-# CONFIG_PACKAGE_kmod-qca-nss-ecm-premium-noload is not set
-# CONFIG_PACKAGE_kmod-qca-nss-ecm-standard is not set
 # CONFIG_PACKAGE_kmod-sched is not set
 # CONFIG_PACKAGE_kmod-sched-act-vlan is not set
 # CONFIG_PACKAGE_kmod-sched-bpf is not set
