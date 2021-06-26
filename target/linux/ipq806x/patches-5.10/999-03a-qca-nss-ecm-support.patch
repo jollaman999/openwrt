@@ -1282,6 +1282,43 @@
  struct fib_table *fib_trie_table(u32 id, struct fib_table *alias)
  {
  	struct fib_table *tb;
+--- a/net/ipv6/addrconf.c
++++ b/net/ipv6/addrconf.c
+@@ -7173,3 +7173,34 @@ void addrconf_cleanup(void)
+
+ 	destroy_workqueue(addrconf_wq);
+ }
++
++/* QCA NSS ECM support - Start */
++/* nss_ecm_ipv6_dev_find()
++ *	Find (and hold) net device that has the given address.
++ *	Or NULL on failure.
++ */
++struct net_device *nss_ecm_ipv6_dev_find(struct net *net, struct in6_addr *addr)
++{
++	struct inet6_ifaddr *ifp;
++	struct net_device *dev;
++
++	ifp = ipv6_get_ifaddr(net, addr, NULL, 1);
++	if (!ifp)
++		return NULL;
++
++	if (!ifp->idev) {
++		in6_ifa_put(ifp);
++		return NULL;
++	}
++
++	dev = ifp->idev->dev;
++	if (dev)
++		dev_hold(dev);
++
++	in6_ifa_put(ifp);
++
++	return dev;
++}
++EXPORT_SYMBOL(nss_ecm_ipv6_dev_find);
++/* QCA NSS ECM support - End */
++
 --- a/net/ipv6/ndisc.c
 +++ b/net/ipv6/ndisc.c
 @@ -646,6 +646,7 @@ void ndisc_send_ns(struct net_device *de
