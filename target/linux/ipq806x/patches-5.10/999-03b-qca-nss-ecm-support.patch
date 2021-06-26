@@ -68,17 +68,6 @@
 +/* QCA NSS ECM Support - End */
 +
  #endif /* _CONNTRACK_PROTO_GRE_H */
---- a/include/net/addrconf.h
-+++ b/include/net/addrconf.h
-@@ -497,4 +497,8 @@ int if6_proc_init(void);
- void if6_proc_exit(void);
- #endif
-
-+/* QCA NSS ECM support - Start */
-+struct net_device *nss_ecm_ipv6_dev_find(struct net *net, struct in6_addr *addr);
-+/* QCA NSS ECM support - End */
-+
- #endif
 --- a/drivers/net/tun.c
 +++ b/drivers/net/tun.c
 @@ -2833,6 +2833,8 @@ static int tun_set_iff(struct net *net,
