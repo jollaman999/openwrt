@@ -164,15 +164,17 @@
  
 --- a/include/net/bonding.h
 +++ b/include/net/bonding.h
-@@ -238,6 +238,7 @@ struct bonding {
+@@ -247,8 +247,9 @@ struct bonding {
  #endif /* CONFIG_DEBUG_FS */
  	struct rtnl_link_stats64 bond_stats;
- 	struct lock_class_key stats_lock_key;
-+	u32      id; /* QCA NSS ECM support */
+ #ifdef CONFIG_XFRM_OFFLOAD
+ 	struct xfrm_state *xs;
+ #endif /* CONFIG_XFRM_OFFLOAD */
++	u32   id; /* QCA NSS ECM support */
  };
-
+ 
  #define bond_slave_get_rcu(dev) \
-@@ -749,4 +749,12 @@ static inline void bond_tx_drop(struct n
+@@ -758,4 +758,12 @@ static inline void bond_tx_drop(struct n
  	dev_kfree_skb_any(skb);
  }
  
@@ -965,10 +967,12 @@
  			spin_unlock_bh(&br->hash_lock);
  		}
  	}
-@@ -586,6 +623,12 @@ void br_fdb_update(struct net_bridge *br
+@@ -586,8 +623,14 @@ void br_fdb_update(struct net_bridge *br
  				/* Take over HW learned entry */
- 				if (unlikely(fdb->added_by_external_learn))
- 					fdb->added_by_external_learn = 0;
+ 				if (unlikely(test_bit(BR_FDB_ADDED_BY_EXT_LEARN,
+ 						      &fdb->flags)))
+ 					clear_bit(BR_FDB_ADDED_BY_EXT_LEARN,
+ 						  &fdb->flags);
 +
 +				/* QCA NSS ECM support - Start */
 +				atomic_notifier_call_chain(
@@ -976,8 +980,8 @@
 +					0, (void *)addr);
 +				/* QCA NSS ECM support - End */
  			}
- 			if (now != fdb->updated)
- 				fdb->updated = now;
+ 
+ 			if (unlikely(test_bit(BR_FDB_ADDED_BY_USER, &flags)))
 @@ -695,6 +738,25 @@ static void fdb_notify(struct net_bridge
  	struct sk_buff *skb;
  	int err = -ENOBUFS;
@@ -994,7 +998,7 @@
 +
 +		fdb_event.dev = fdb->dst->dev;
 +		ether_addr_copy(fdb_event.addr, fdb->key.addr.addr);
-+		fdb_event.is_local = fdb->is_local;
++		fdb_event.is_local = test_bit(BR_FDB_LOCAL, &fdb->flags);
 +		atomic_notifier_call_chain(&br_fdb_notifier_list,
 +					   event,
 +					   (void *)&fdb_event);
@@ -1278,44 +1282,6 @@
  struct fib_table *fib_trie_table(u32 id, struct fib_table *alias)
  {
  	struct fib_table *tb;
---- a/net/ipv6/addrconf.c
-+++ b/net/ipv6/addrconf.c
-@@ -7173,3 +7173,35 @@ void addrconf_cleanup(void)
- 
- 	destroy_workqueue(addrconf_wq);
- }
-+
-+/* QCA NSS ECM support - Start */
-+/* ipv6_dev_find()
-+ *	Find (and hold) net device that has the given address.
-+ *	Or NULL on failure.
-+ */
-+struct net_device *ipv6_dev_find(struct net *net, struct in6_addr *addr,
-+				 int strict)
-+{
-+	struct inet6_ifaddr *ifp;
-+	struct net_device *dev;
-+
-+	ifp = ipv6_get_ifaddr(net, addr, NULL, strict);
-+	if (!ifp)
-+		return NULL;
-+
-+	if (!ifp->idev) {
-+		in6_ifa_put(ifp);
-+		return NULL;
-+	}
-+
-+	dev = ifp->idev->dev;
-+	if (dev)
-+		dev_hold(dev);
-+
-+	in6_ifa_put(ifp);
-+
-+	return dev;
-+}
-+EXPORT_SYMBOL(ipv6_dev_find);
-+/* QCA NSS ECM support - End */
-+
 --- a/net/ipv6/ndisc.c
 +++ b/net/ipv6/ndisc.c
 @@ -646,6 +646,7 @@ void ndisc_send_ns(struct net_device *de
@@ -1555,7 +1521,7 @@
  
 --- a/net/netfilter/Kconfig
 +++ b/net/netfilter/Kconfig
-@@ -158,6 +158,13 @@ config NF_CONNTRACK_TIMEOUT
+@@ -146,6 +146,13 @@ config NF_CONNTRACK_TIMEOUT
  
  	  If unsure, say `N'.
  
@@ -1566,9 +1532,9 @@
 +	  This option enables support for connection tracking extension
 +	  for dscp remark.
 +
- config NF_CONNTRACK_CHAIN_EVENTS
- 	bool "Register multiple callbacks to ct events"
- 	depends on NF_CONNTRACK_EVENTS
+ config NF_CONNTRACK_TIMESTAMP
+ 	bool  'Connection tracking timestamping'
+ 	depends on NETFILTER_ADVANCED
 --- a/net/netfilter/Makefile
 +++ b/net/netfilter/Makefile
 @@ -14,6 +14,7 @@ nf_conntrack-$(CONFIG_NF_CONNTRACK_LABEL
