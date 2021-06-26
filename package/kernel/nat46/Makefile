@@ -25,11 +25,6 @@ endef
 
 include $(INCLUDE_DIR)/kernel-defaults.mk
 
-define Build/InstallDev
-	mkdir -p $(1)/usr/include/nat46
-	$(CP) $(PKG_BUILD_DIR)/nat46/modules/*.h $(1)/usr/include/nat46/
-endef
-
 define Build/Compile
 	$(KERNEL_MAKE) M="$(PKG_BUILD_DIR)/nat46/modules" \
 		MODFLAGS="-DMODULE -mlong-calls" \
