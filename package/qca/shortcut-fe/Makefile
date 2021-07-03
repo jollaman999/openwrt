@@ -25,7 +25,6 @@ ifeq ($(DUMP)$(PKG_VERSION),)
   PKG_VERSION:=g$(PKG_REV)
 endif
 
-
 include $(INCLUDE_DIR)/package.mk
 
 define KernelPackage/shortcut-fe
