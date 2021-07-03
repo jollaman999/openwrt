@@ -15,4 +15,5 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-iptables -A FORWARD -m physdev --physdev-is-bridged -j ACCEPT
+iptables -D FORWARD -m physdev --physdev-is-bridged -j ACCEPT
+iptables -I FORWARD 1 -m physdev --physdev-is-bridged -j ACCEPT
