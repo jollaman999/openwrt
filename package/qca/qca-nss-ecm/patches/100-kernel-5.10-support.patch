@@ -2104,7 +2104,7 @@ index 0f0042a..bc937c7 100644
 -		DEBUG_ERROR("Failed to create ecm sfe ipv4 reject_acceleration_for_ipsec file in debugfs\n");
 -		goto task_cleanup;
 -	}
-+	idebugfs_create_u32("reject_acceleration_for_ipsec", S_IRUGO | S_IWUSR, ecm_sfe_ipv4_dentry,
++	debugfs_create_u32("reject_acceleration_for_ipsec", S_IRUGO | S_IWUSR, ecm_sfe_ipv4_dentry,
 +					(u32 *)&ecm_sfe_ipv4_reject_acceleration_for_ipsec);
  #endif
 -
@@ -2168,7 +2168,7 @@ index 0f0042a..bc937c7 100644
 -	}
 -
 +	debugfs_create_u32("no_action_limit_default", S_IRUGO | S_IWUSR, ecm_sfe_ipv4_dentry,
-+					(u32 *)&ecm_sfe_ipv4_no_action_limit_default));
++					(u32 *)&ecm_sfe_ipv4_no_action_limit_default);
 +	debugfs_create_u32("driver_fail_limit_default", S_IRUGO | S_IWUSR, ecm_sfe_ipv4_dentry,
 +					(u32 *)&ecm_sfe_ipv4_driver_fail_limit_default);
 +	debugfs_create_u32("nack_limit_default", S_IRUGO | S_IWUSR, ecm_sfe_ipv4_dentry,
@@ -2191,7 +2191,7 @@ index 0f0042a..bc937c7 100644
 -		DEBUG_ERROR("Failed to create ecm non-ported files in debugfs\n");
 -		goto task_cleanup;
 -	}
-+	ecm_sfe_non_ported_ipv4_debugfs_init(ecm_sfe_ipv4_dentry)
++	ecm_sfe_non_ported_ipv4_debugfs_init(ecm_sfe_ipv4_dentry);
  #endif
 -
  #ifdef ECM_MULTICAST_ENABLE

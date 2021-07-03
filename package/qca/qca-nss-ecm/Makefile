@@ -45,6 +45,7 @@ define KernelPackage/qca-nss-ecm/Default
 	+iptables-mod-extra +kmod-ipt-conntrack \
 	+iptables-mod-physdev \
 	+kmod-pppoe @!LINUX_3_18 \
+	+kmod-shortcut-fe-drv \
 	+kmod-ipsec
   TITLE:=QCA NSS Enhanced Connection Manager (ECM)
   FILES:=$(PKG_BUILD_DIR)/*.ko $(FILES_EXAMPLES)
@@ -95,7 +96,7 @@ $(call KernelPackage/qca-nss-ecm/Default)
   TITLE+= (with premium features)
   VARIANT:=premium
   DEPENDS+=+kmod-nat46 \
-	+kmod-l2tp +kmod-pppol2tp +kmod-pptp \
+	+kmod-l2tp +kmod-pppol2tp +kmod-pptp +kmod-shortcut-fe-drv \
 	+kmod-bonding
 endef
 
@@ -126,7 +127,7 @@ define KernelPackage/qca-nss-ecm-noload
   TITLE+= (with noload features)
   PROVIDES:=kmod-qca-nss-ecm
   VARIANT:=noload
-  DEPENDS+=+kmod-l2tp +kmod-pppol2tp +kmod-pptp \
+  DEPENDS+=+kmod-l2tp +kmod-pppol2tp +kmod-pptp +kmod-shortcut-fe-drv \
 	   +kmod-bonding
 endef
 
@@ -168,8 +169,6 @@ define Build/InstallDev
 endef
 
 EXTRA_CFLAGS+= \
-	-I$(STAGING_DIR)/usr/include/hyfibr \
-	-I$(STAGING_DIR)/usr/include/qca-mcs \
 	-I$(STAGING_DIR)/usr/include/qca-nss-drv \
 	-I$(STAGING_DIR)/usr/include/shortcut-fe \
 	-I$(STAGING_DIR)/usr/include/nat46
@@ -178,7 +177,7 @@ ECM_MAKE_OPTS:=ECM_CLASSIFIER_HYFI_ENABLE=y
 ifneq ($(LOCAL_VARIANT),standard)
 ECM_MAKE_OPTS+=ECM_MULTICAST_ENABLE=y \
 		ECM_INTERFACE_IPSEC_ENABLE=y \
-		# ECM_INTERFACE_PPTP_ENABLE=y \
+		ECM_INTERFACE_PPTP_ENABLE=y \
 		ECM_INTERFACE_L2TPV2_ENABLE=y \
 		ECM_INTERFACE_GRE_TAP_ENABLE=y \
 		ECM_INTERFACE_GRE_TUN_ENABLE=y \
@@ -195,9 +194,9 @@ ifeq ($(filter $(CONFIG_KERNEL_IPQ_MEM_PROFILE), 256),)
 ECM_MAKE_OPTS+=ECM_XFRM_ENABLE=y
 endif
 
-# ifneq ($(CONFIG_PACKAGE_kmod-nat46),)
-# ECM_MAKE_OPTS+=ECM_INTERFACE_MAP_T_ENABLE=y
-# endif
+ifneq ($(CONFIG_PACKAGE_kmod-nat46),)
+ECM_MAKE_OPTS+=ECM_INTERFACE_MAP_T_ENABLE=y
+endif
 
 ifneq ($(CONFIG_PACKAGE_kmod-qca-nss-drv-ovpn-link),)
 ECM_MAKE_OPTS+=ECM_INTERFACE_OVPN_ENABLE=y
@@ -234,7 +233,6 @@ define Build/Compile
 		EXAMPLES_BUILD_PCC="$(CONFIG_QCA_NSS_ECM_EXAMPLES_PCC)" \
 		EXAMPLES_BUILD_MARK="$(CONFIG_QCA_NSS_ECM_EXAMPLES_MARK)" \
 		EXAMPLES_BUILD_OVS="$(CONFIG_QCA_NSS_ECM_OVS)" \
-		ECM_FRONT_END_SFE_ENABLE="$(CONFIG_QCA_ECM_SFE_SUPPORT)" \
 		modules
 endef
 
@@ -256,10 +254,6 @@ menu "ECM Configuration"
 		bool "Build OVS classifier external module"
 		help
 			Selecting this will build the OVS classifier external module.
-		default n
-
-	config QCA_ECM_SFE_SUPPORT
-		bool "Add SFE support to ECM driver"
 		default n
 endmenu
 endef
