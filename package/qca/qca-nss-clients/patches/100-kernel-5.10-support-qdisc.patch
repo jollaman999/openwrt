@@ -792,14 +792,14 @@
   *	Invoked periodically to get updated stats
   */
 -static void nss_qdisc_get_stats_timer_callback(unsigned long int data)
-+static void nss_qdisc_get_stats_timer_callback(struct timer_list *arg)
++static void nss_qdisc_get_stats_timer_callback(struct timer_list *tl)
  {
 -	struct nss_qdisc *nq = (struct nss_qdisc *)data;
-+	struct nss_qdisc *nq = (struct nss_qdisc *)arg->cust_data;
++	struct nss_qdisc *nq = from_timer(nq, tl, stats_get_timer);
  	nss_tx_status_t rc;
  	struct nss_if_msg nim;
  	int msg_type;
-@@ -2604,9 +2625,8 @@ void nss_qdisc_start_basic_stats_polling
+@@ -2604,9 +2625,7 @@ void nss_qdisc_start_basic_stats_polling
  		return;
  	}
  
@@ -807,7 +807,6 @@
 -	nq->stats_get_timer.function = nss_qdisc_get_stats_timer_callback;
 -	nq->stats_get_timer.data = (unsigned long)nq;
 +	timer_setup(&nq->stats_get_timer, nss_qdisc_get_stats_timer_callback, 0);
-+	nq->stats_get_timer.cust_data = (unsigned long)nq;
  	nq->stats_get_timer.expires = jiffies + HZ;
  	atomic_set(&nq->pending_stat_requests, 1);
  	add_timer(&nq->stats_get_timer);
